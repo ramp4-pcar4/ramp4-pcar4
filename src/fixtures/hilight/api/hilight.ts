@@ -11,6 +11,9 @@ import { FogHilightMode } from './hilight-mode/fog-hilight-mode';
 import { GlowHilightMode } from './hilight-mode/glow-hilight-mode';
 import { LiftHilightMode } from './hilight-mode/lift-hilight-mode';
 
+/**
+ * Exposes methods to manage the hilighting of features on the map
+ */
 export class HilightAPI extends FixtureInstance {
     hilightMode: BaseHilightMode = new BaseHilightMode({}, this.$iApi);
 
@@ -61,9 +64,11 @@ export class HilightAPI extends FixtureInstance {
     }
 
     /**
-     * Create the Hilight layer.
+     * Initialize the Hilight layer.
+     *
+     * @returns {Promise} resolves when layer is initialized
      */
-    async initHilightLayer() {
+    async initHilightLayer(): Promise<void> {
         const hilightLayer = this.$iApi.geo.layer.createLayer({
             id: HILIGHT_LAYER_NAME,
             layerType: LayerType.GRAPHIC,
@@ -77,20 +82,23 @@ export class HilightAPI extends FixtureInstance {
     /**
      * Add the given Graphics to the Hilighter
      *
-     * @param graphics Graphics to add
+     * @param {Graphic | Array<Graphic>} graphics Graphics to add
+     * @returns {Promise} resolves when graphics have been added
      */
-    async addHilight(graphics: Array<Graphic> | Graphic) {
+    async addHilight(graphics: Array<Graphic> | Graphic): Promise<void> {
         const gs = graphics instanceof Array ? graphics : [graphics];
         await this.hilightMode.add(gs);
     }
 
     /**
-     * Remove the given Graphics from the Hilighter
+     * Remove the given Graphics from the Hilighter. If no graphics are provided,
+     * all highlighted items will be removed.
      *
-     * @param graphics Graphics to remove
+     * @param {Graphic | Array<Graphic> | undefined} graphics Graphics to remove
+     * @returns {Promise} resolves when graphics have been removed
      */
-    async removeHilight(graphics?: Array<Graphic> | Graphic) {
-        const gs: Array<Graphic> | undefined = graphics
+    async removeHilight(graphics?: Array<Graphic> | Graphic): Promise<void> {
+        const gs = graphics
             ? graphics instanceof Array
                 ? graphics
                 : [graphics]
@@ -98,6 +106,11 @@ export class HilightAPI extends FixtureInstance {
         await this.hilightMode.remove(gs);
     }
 
+    /**
+     * Reload the provided graphics that are currently highlighted.
+     *
+     * @param {Array<Graphic> | Graphic} graphics
+     */
     async reloadHilight(graphics: Array<Graphic> | Graphic) {
         const gs = graphics instanceof Array ? graphics : [graphics];
         await this.hilightMode.reloadHilight(gs);

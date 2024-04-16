@@ -230,11 +230,13 @@ export class DetailsAPI extends FixtureInstance {
                 // our request on this thread is still the most recent one. begin to add graphics to highlighter
                 await hilightFix.addHilight(graphics);
 
-                // NOTE if addHighlight is also slow, will need additional check here. this one is trickier, since
-                //      our stale graphics have been added but need to get-gone. However, calling remove will
-                //      remove everything; if a new fast request came in after it and alredy completed, then
-                //      remove will erase that as well. May need to add timestamp to the origin key for
-                //      targeted removal.
+                // while unlikely, given everything is async its possible that a delete request completes before
+                // the graphics could be added to the hilight layer.
+                // so check one again. If we're now stale, remove the hilight.
+                if (this.detailsStore.lastHilight !== thisHighlight) {
+                    // hilight removal will gracefully exit if something else already deleted any of these graphics.
+                    hilightFix.removeHilight(graphics);
+                }
             }
         }
     }

@@ -3,7 +3,10 @@ import type { Graphic } from '@/geo/api';
 import { HILIGHT_LAYER_NAME } from '../hilight-defs';
 import { LiftHilightMode } from './lift-hilight-mode';
 
-// This hilight mode uses the ESRI highlight to outline the given graphics, creating a "glow"
+/**
+ * Hilight mode that lifts graphics and applies a glow outline to make them
+ * stand out from the rest of the map.
+ */
 export class GlowHilightMode extends LiftHilightMode {
     handlers: Array<string> = [];
 
@@ -25,10 +28,7 @@ export class GlowHilightMode extends LiftHilightMode {
         });
     }
 
-    /**
-     * Adds the given graphics to the hilight layer.
-     */
-    async add(graphics: Array<Graphic>) {
+    async add(graphics: Array<Graphic> | Graphic) {
         // add the given graphics to the layer
         await super.add(graphics);
 
@@ -40,24 +40,18 @@ export class GlowHilightMode extends LiftHilightMode {
             hilightLayer.isLoaded &&
             hilightLayer instanceof GraphicLayer
         ) {
-            const gs: Array<Graphic> =
-                graphics instanceof Array ? graphics : [graphics];
+            const gs = graphics instanceof Array ? graphics : [graphics];
             this.$iApi.geo.map.esriView
                 ?.whenLayerView(hilightLayer.esriLayer)
                 ?.then(function (layerView) {
                     layerView.highlight(
-                        gs.map(
-                            (g: Graphic) => hilightLayer.getEsriGraphic(g.id)!
-                        )
+                        gs.map(g => hilightLayer.getEsriGraphic(g.id)!)
                     );
                 });
         }
     }
 
-    /**
-     * Removes the given graphics from the hilight layer.
-     */
-    async remove(graphics?: Array<Graphic>) {
+    async remove(graphics?: Array<Graphic> | Graphic | undefined) {
         await super.remove(graphics);
         // removing the graphic will also remove the esri highlight
         // so there's nothing else to do here
