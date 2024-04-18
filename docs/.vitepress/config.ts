@@ -49,8 +49,24 @@ export default {
               text: "Using RAMP4",
               collapsed: false,
               items: [
+                { text: "Default Setup", link: "/using-ramp4/default-setup" },
                 { text: "Language Configuration", link: "/using-ramp4/config-language" },
-                { text: "Layers Configuration", link: "/using-ramp4/layer-config" },
+                { text: "Layers", 
+                  collapsed: false,
+                  items : [
+                        { text: "Overview", link: "/using-ramp4/layer-overview" },
+                        { text: "Layer Properties",
+                        collapsed: true,
+                        items: [
+                            { text: "Required Layer Properties", link: "/using-ramp4/layers/required-properties" },
+                            { text: "Basic Layer Properties", link: "/using-ramp4/layers/basic-properties" },
+                            { text: "Fancy Layer Properties", link: "/using-ramp4/layers/fancy-properties" },
+                            { text: "Sublayer Layer Properties", link: "/using-ramp4/layers/sublayer-properties" }
+                        ]
+                        },
+                        { text: "Additional Layers Information", link: "/using-ramp4/layers/additional-layer-sections"}
+                    ]
+                },
                 { text: "Fixtures",
                   collapsed: false,
                   items : [
@@ -65,11 +81,10 @@ export default {
                             { text: "Data Grid", link: "/using-ramp4/fixtures/grid" },
                             { text: "Layer Settings", link: "/using-ramp4/fixtures/layer-settings" },
                         ]
-                    }
+                    },
+                    { text: "Custom Fixtures", link: "/using-ramp4/fixtures/custom-fixtures" },
                     ]
                 },
-                        { text: "Default Setup", link: "/using-ramp4/default-setup" },
-                        { text: "Custom Fixtures", link: "/using-ramp4/fixtures/custom-fixtures" },
                         { text: "Incompatibility", link: "/using-ramp4/incompatibility" },
             ]
             },
