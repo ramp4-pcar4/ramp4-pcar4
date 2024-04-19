@@ -5,26 +5,25 @@ import {
     InstanceAPI,
     MapImageSublayer,
     MapLayer,
-    NotificationType
+    NotificationType,
+    ReactiveIdentifyFactory
 } from '@/api/internal';
+import type { IdentifyResult } from '@/api/internal';
+
 import {
     CoreFilter,
     DefPromise,
     DrawState,
     Extent,
     GeometryType,
-    IdentifyResultFormat,
     LayerFormat,
     LayerIdentifyMode,
     LayerState,
     LayerType,
     TreeNode
 } from '@/geo/api';
-
 import type {
-    IdentifyItem,
     IdentifyParameters,
-    IdentifyResult,
     Point,
     QueryFeaturesParams,
     RampLayerConfig,
@@ -529,23 +528,16 @@ export class MapImageLayer extends MapLayer {
             qOpts.filterSql = sublayer.getCombinedSqlFilter();
 
             sublayer
-                .queryFeaturesDiscrete(qOpts)
+                .queryOIDs(qOpts)
                 .then(results => {
-                    results.forEach(dgr => {
-                        const item: IdentifyItem = reactive({
-                            data: undefined,
-                            format: IdentifyResultFormat.ESRI,
-                            loaded: false,
-                            loading: new Promise(resolve => {
-                                dgr.graphic.then(g => {
-                                    item.data = g.attributes;
-                                    item.loaded = true;
-                                    resolve();
-                                });
-                            })
-                        });
-
-                        result.items.push(item); // push, incase something was bound to the array
+                    results.forEach(hitOid => {
+                        // push, incase something was bound to the array
+                        result.items.push(
+                            ReactiveIdentifyFactory.makeOidItem(
+                                hitOid,
+                                sublayer
+                            )
+                        );
                     });
 
                     // Resolve the loading promise, set the flag

@@ -7,16 +7,18 @@ import {
     SimpleRenderer,
     UniqueValueRenderer
 } from '@/api/internal';
+
 import { LineStyleType } from '@/geo/api';
 import type { Attributes, FieldDefinition, LegendSymbology } from '@/geo/api';
-import {
+
+import { EsriRendererFromJson, EsriRequest } from '@/geo/esri';
+import type {
+    EsriClassBreaksRenderer,
     EsriRenderer,
     EsriSimpleRenderer,
-    EsriUniqueValueRenderer,
-    EsriClassBreaksRenderer,
-    EsriRendererFromJson,
-    EsriRequest
+    EsriUniqueValueRenderer
 } from '@/geo/esri';
+
 import svgjs from 'svg.js';
 import to from 'await-to-js';
 

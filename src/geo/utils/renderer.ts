@@ -3,11 +3,12 @@
 
 import { RendererType } from '@/geo/api';
 import type { Attributes, FieldDefinition } from '@/geo/api';
-import {
+
+import { EsriSimpleMarkerSymbol } from '@/geo/esri';
+import type {
     EsriClassBreakInfo,
     EsriClassBreaksRenderer,
     EsriRenderer,
-    EsriSimpleMarkerSymbol,
     EsriSimpleRenderer,
     EsriSymbol,
     EsriUniqueValueInfo,

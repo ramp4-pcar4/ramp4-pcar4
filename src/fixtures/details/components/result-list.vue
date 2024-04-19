@@ -2,7 +2,7 @@
     <div
         class="detailsContent relative flex flex-col flex-grow pl-5"
         :style="results.length > 1 ? { 'margin-left': '42px' } : ''"
-        v-if="isDataLoaded && activeGreedy === 0"
+        v-if="isLayerResultLoaded && activeGreedy === 0"
     >
         <!-- layer name -->
         <h1
@@ -15,7 +15,7 @@
         <!-- highlight toggle -->
         <div
             class="p-8 mb-8 bg-gray-100 flex justify-between"
-            v-if="details.hasHilighter() && supportsFeatures && isMapLayer"
+            v-if="canHighlight"
         >
             <label for="toggle">{{ t('details.togglehilight.title') }}</label>
             <Toggle
@@ -30,7 +30,9 @@
         <!-- paginator and list button for multiple features -->
         <div
             class="flex flex-col justify-between p-8 mb-8 bg-gray-100"
-            v-if="layerExists && getLayerResults().length > 1 && !showList"
+            v-if="
+                layerExists && getLayerIdentifyItems().length > 1 && !showList
+            "
         >
             <div class="flex justify-between">
                 <button
@@ -63,7 +65,7 @@
                         {{
                             t('details.item.count', [
                                 currentIdx + 1,
-                                getLayerResults().length
+                                getLayerIdentifyItems().length
                             ])
                         }}
                     </span>
@@ -74,7 +76,9 @@
                         @click="advanceItemIndex(1)"
                         class="mx-2 rotate-180 opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
                         :aria-label="t('details.item.next.item')"
-                        :disabled="currentIdx === getLayerResults().length - 1"
+                        :disabled="
+                            currentIdx === getLayerIdentifyItems().length - 1
+                        "
                     >
                         <svg height="24" width="24" viewBox="0 0 23 23">
                             <g>
@@ -90,11 +94,11 @@
 
         <!-- details result, or result list -->
         <div v-if="layerExists">
-            <div v-if="getLayerResults().length > 0">
+            <div v-if="getLayerIdentifyItems().length > 0">
                 <div v-if="showList" class="flex flex-col" v-focus-list>
                     <button
                         class="flex flex-grow truncate default-focus-style hover:bg-gray-200"
-                        v-for="(item, idx) in getLayerResults()"
+                        v-for="(item, idx) in getLayerIdentifyItems()"
                         :key="idx"
                         @click="clickListItem(idx)"
                         v-focus-item
@@ -107,7 +111,7 @@
                     </button>
                 </div>
                 <ResultItem
-                    :data="identifyItem"
+                    :data="currentIdentifyItem"
                     :uid="uid"
                     :open="true"
                     v-else
@@ -135,30 +139,38 @@
 </template>
 
 <script setup lang="ts">
+// acts as the result container for a single layer's result set. Includes header controls,
+// and will render the list view if we're in that mode. If in single detail mode, it just
+// inserts a result-item under the header.
+
 import { useLayerStore } from '@/stores/layer';
-import { useDetailsStore } from '../store';
 import { useI18n } from 'vue-i18n';
+import type { DetailsAPI } from '../api/details';
+import ResultItem from './result-item.vue';
+import Toggle from '../../../components/controls/toggle-switch-control.vue';
+
 import { GlobalEvents } from '@/api';
+import type {
+    IdentifyItem,
+    IdentifyResult,
+    InstanceAPI,
+    LayerInstance,
+    PanelInstance
+} from '@/api';
 
 import {
     computed,
-    ref,
     inject,
     onMounted,
     onBeforeMount,
     onBeforeUnmount,
+    ref,
     watch
 } from 'vue';
-
-import type { InstanceAPI } from '@/api';
-import type { IdentifyResult, IdentifyItem } from '@/geo/api';
 import type { PropType } from 'vue';
-import type { LayerInstance, PanelInstance } from '@/api';
-import type { DetailsAPI } from '../api/details';
-import type { DetailsItemInstance } from '../store';
 
-import ResultItem from './result-item.vue';
-import Toggle from '../../../components/controls/toggle-switch-control.vue';
+import { useDetailsStore } from '../store';
+import type { DetailsItemInstance } from '../store';
 
 const iApi = inject<InstanceAPI>('iApi')!;
 
@@ -170,10 +182,30 @@ const props = defineProps({
 });
 const { t } = useI18n();
 
+/**
+ * If we could find the bound layer in our instance
+ */
 const layerExists = ref<Boolean>(false);
-const details = ref<DetailsAPI>(iApi.fixture.get('details'));
+
+/**
+ * Details fixture
+ */
+const detailsFixutre = ref<DetailsAPI>(iApi.fixture.get('details'));
+
+/**
+ * Value of the onscreen highlighter toggle control
+ */
 const hilightToggle = ref<boolean>(true);
+
+/**
+ * If we are displaying list view or single item view
+ */
 const showList = ref<boolean>(false);
+
+/**
+ * Index of the item we are displaying within the result's item array.
+ * Persists in list view
+ */
 const currentIdx = ref<number>(0);
 
 const handlers = ref<Array<string>>([]);
@@ -186,27 +218,18 @@ const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(
 /**
  * Return the LayerInstance that cooresponds with the UID provided in props.
  */
-const getLayerInfo = () => {
-    let layer: LayerInstance | undefined = layerStore.getLayerByUid(props.uid);
-    return layer;
+const getBoundLayer = () => {
+    return layerStore.getLayerByUid(props.uid);
 };
 
 /**
- * Computed property that returns true if the layer is loaded.
+ * Computed property that returns true if the layer's overall identify result has loaded.
  */
-const isDataLoaded = computed<Boolean>(() => {
+const isLayerResultLoaded = computed<Boolean>(() => {
     const results = props.results.find((layer: IdentifyResult) => {
         return layer.uid === props.uid;
     });
     return results?.loaded ?? false;
-});
-
-/**
- * Computed property that returns true if the layer supports features.
- */
-const supportsFeatures = computed<Boolean>(() => {
-    const layer: LayerInstance | undefined = getLayerInfo();
-    return layer?.supportsFeatures ?? false;
 });
 
 const itemRequestTime = computed<Number | undefined>(() => {
@@ -217,7 +240,7 @@ const itemRequestTime = computed<Number | undefined>(() => {
 });
 
 const layerName = computed<string>(() => {
-    const layer: LayerInstance | undefined = getLayerInfo();
+    const layer = getBoundLayer();
 
     if (
         layer &&
@@ -230,28 +253,36 @@ const layerName = computed<string>(() => {
 });
 
 /**
- * Retrieves the points that are returned by identify. If there are no results, returns an empty array.
+ * Retrieves the identify items that belong to the layer currently bound to this list.
+ * If there are no results, returns an empty array.
  */
-const getLayerResults = () => {
-    const results = props.results.find((layer: IdentifyResult) => {
-        return layer.uid === props.uid;
+const getLayerIdentifyItems = () => {
+    const results = props.results.find((layerResult: IdentifyResult) => {
+        return layerResult.uid === props.uid;
     });
     return results ? results.items : [];
 };
 
 /**
- * Computed property that returns a specific data point.
+ * Computed property that returns the identify item currently being viewed.
+ * In list mode, this returns last item viewed in detail view (defaults to first).
+ * If no results, returns undefined
  */
-const identifyItem = computed<IdentifyItem>(() => {
-    return getLayerResults()[currentIdx.value];
+const currentIdentifyItem = computed<IdentifyItem>(() => {
+    return getLayerIdentifyItems()[currentIdx.value];
 });
 
 /**
- * Computed property that returns true if the layer is a map layer.
+ * Computed property that indicates if highlighting is a possibility
  */
-const isMapLayer = computed<Boolean>(() => {
-    const layer: LayerInstance | undefined = getLayerInfo();
-    return layer?.mapLayer ?? false;
+const canHighlight = computed<Boolean>(() => {
+    if (detailsFixutre.value.hasHilighter()) {
+        const layer = getBoundLayer();
+        if (layer) {
+            return layer.mapLayer && layer.supportsFeatures;
+        }
+    }
+    return false;
 });
 
 /**
@@ -259,21 +290,18 @@ const isMapLayer = computed<Boolean>(() => {
  * @param value the value to assign the highlight
  */
 const onHilightToggle = (value: boolean) => {
+    // change control state, remember in store, update any highlighting
+
     hilightToggle.value = value;
-    details.value.onHilightToggle(
-        value,
-        !showList.value
-            ? getLayerResults()[currentIdx.value]
-            : getLayerResults(),
-        props.uid
-    );
+    detailsStore.hilightToggle = value;
+    updateHighlight();
 };
 
 /**
  * Initialize the details screen
  */
 const initDetails = () => {
-    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(props.uid);
+    const layer = getBoundLayer();
 
     currentIdx.value = currentIdx.value ?? 0;
     hilightToggle.value = detailsStore.hilightToggle ?? hilightToggle.value;
@@ -287,48 +315,43 @@ const initDetails = () => {
 };
 
 /**
- * Advance the item index by direction
+ * Advance the item index by direction (an integer)
  */
 const advanceItemIndex = (direction: number) => {
     currentIdx.value += direction;
 };
 
 /**
- * Updates the highlighter when something changes (panel minimized, opened, change in selected point, etc.)
+ * Updates the highlighter when something changes (panel minimized, opened, change in selected result, etc.)
  */
 const updateHighlight = () => {
-    if (!identifyItem.value) {
-        return;
-    }
+    const resultItems = getLayerIdentifyItems();
 
-    if (isDataLoaded.value && identifyItem.value.loaded) {
-        if (hilightToggle.value && supportsFeatures.value && isMapLayer.value) {
-            details.value.hilightDetailsItems(
-                !showList.value
-                    ? getLayerResults()[currentIdx.value]
-                    : getLayerResults(),
-                props.uid
-            );
-        } else if (!supportsFeatures.value || !isMapLayer.value) {
-            details.value.removeDetailsHilight();
+    if (
+        hilightToggle.value &&
+        isLayerResultLoaded &&
+        resultItems.length > 0 &&
+        canHighlight.value
+    ) {
+        // we are highlighting, and there is something that could be hilighted.
+        // the hilightDetailsItems will handle the waiting for items to finish loading, as well as ensuring
+        // that any stale loads will not be drawn / removed when users spam their highlights real fast.
+
+        if (showList.value) {
+            // highlight entire list
+            // TODO once pagination becomes a thing, this needs to just highlight what is on current page of the list.
+            detailsFixutre.value.hilightDetailsItems(resultItems, props.uid);
+        } else {
+            // highlight current item being displayed.
+            // being extra careful just incase our index went beyond the array bounds
+            const currItem = resultItems[currentIdx.value];
+            if (currItem) {
+                detailsFixutre.value.hilightDetailsItems([currItem], props.uid);
+            }
         }
     } else {
-        // wait for load.
-        const localCurrentIndex = currentIdx.value;
-        identifyItem.value.loading.then(() => {
-            // see if the screen is still on the item we were waiting for
-            // TODO do we also need to check if the screen itself changed to the list
-            //      view or closed? Would this vue component be unmounted and dead at
-            //      that point? Don't want stale updateAlerts pinging off after the fact.
-            //      Could implement another flag, set it on seeList() and panel close.
-            if (localCurrentIndex === currentIdx.value) {
-                // re-call, knowing the item is now loaded.
-                updateHighlight();
-            }
-        });
-
-        // TODO do we need some type of updateAlert that says the screen is now
-        //      in a loading state?
+        // nothing to hilight. This ensures any old details highlights get wiped
+        detailsFixutre.value.removeDetailsHilight();
     }
 };
 
@@ -345,15 +368,17 @@ const clickShowList = () => {
  * Clean up for when the details screen is closed.
  */
 const detailsClosed = () => {
-    details.value.removeDetailsHilight();
-    detailsStore.hilightToggle = true;
+    detailsFixutre.value.removeDetailsHilight();
+
+    // (JR) commenting this out. if user turns off toggle, it shouldnt reset back to on when screen closes.
+    // detailsStore.hilightToggle = true;
 };
 
 /**
  * Clean up for when the details screen is minimized.
  */
 const detailsMinimized = () => {
-    details.value.removeDetailsHilight();
+    detailsFixutre.value.removeDetailsHilight();
 };
 
 /**
@@ -398,12 +423,8 @@ onMounted(() => {
     handlers.value.push(
         iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, () => {
             if (hilightToggle.value) {
-                details.value.reloadDetailsHilight(
-                    !showList.value
-                        ? getLayerResults()[currentIdx.value]
-                        : getLayerResults(),
-                    props.uid
-                );
+                // will just wipe and re-apply the highlight
+                updateHighlight();
             }
         })
     );
@@ -413,15 +434,15 @@ onBeforeMount(() => {
     // Keep an eye to see if the currently selected identify item has been changed.
     watchers.value.push(
         watch(
-            identifyItem,
+            currentIdentifyItem,
             () => {
                 // Re-initialize the details panel if the layer has changed.
                 initDetails();
 
                 // If the identifyItem is undefined, clear any hilights.
-
-                if (identifyItem.value === undefined) {
-                    details.value.removeDetailsHilight();
+                // this occurs when the bound layer has no results.
+                if (currentIdentifyItem.value === undefined) {
+                    detailsFixutre.value.removeDetailsHilight();
                 }
             },
             {
@@ -450,6 +471,7 @@ onBeforeMount(() => {
 });
 
 onBeforeUnmount(() => {
+    // clean up hooks into various events.
     watchers.value.forEach(unwatch => unwatch());
     handlers.value.forEach(handler => iApi.event.off(handler));
 });
