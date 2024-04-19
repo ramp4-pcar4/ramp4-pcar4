@@ -52,6 +52,7 @@ import { useAreasOfInterestStore } from '@/fixtures/areas-of-interest/store';
 import { useConfigStore } from '@/stores/config';
 import { useDetailsStore } from '@/fixtures/details/store';
 import { useExportStore } from '@/fixtures/export/store';
+import { useExtentguardStore } from '@/fixtures/extentguard/store';
 import { useFixtureStore } from '@/stores/fixture';
 import { useGeosearchStore } from '@/fixtures/geosearch/store';
 import { useGridStore } from '@/fixtures/grid/store';
@@ -489,6 +490,7 @@ export class InstanceAPI {
             'areas-of-interest',
             'details',
             'export',
+            'extentguard',
             'geosearch',
             'grid',
             'help',
@@ -502,10 +504,12 @@ export class InstanceAPI {
         ];
 
         if (fixtureIds.includes(id) && !this.fixture.get(id)) {
+            // protects against a call wanting a store for a fixture that's been removed
             return undefined;
         }
 
         switch (id) {
+            // Fixture stores
             case 'appbar':
                 return <Readonly<T>>useAppbarStore(this.$vApp.$pinia);
             case 'areas-of-interest':
@@ -514,6 +518,8 @@ export class InstanceAPI {
                 return <Readonly<T>>useDetailsStore(this.$vApp.$pinia);
             case 'export':
                 return <Readonly<T>>useExportStore(this.$vApp.$pinia);
+            case 'extentguard':
+                return <Readonly<T>>useExtentguardStore(this.$vApp.$pinia);
             case 'geosearch':
                 return <Readonly<T>>useGeosearchStore(this.$vApp.$pinia);
             case 'grid':
@@ -534,6 +540,8 @@ export class InstanceAPI {
                 return <Readonly<T>>useScrollguardStore(this.$vApp.$pinia);
             case 'wizard':
                 return <Readonly<T>>useWizardStore(this.$vApp.$pinia);
+
+            // core stores
             case 'config':
                 return <Readonly<T>>useConfigStore(this.$vApp.$pinia);
             case 'fixture':

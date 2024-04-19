@@ -10,6 +10,19 @@ The fixture interface has three methods, all optional. They take no parameters a
 - `initialized()` is run when the fixture is `added` and the instance Map has finished initializing
 - `removed()` is run after fixture is removed from the RAMP instance
 
+## Pre-Made Fixtures
+
+RAMP includes some pre-made fixtures that are not considered "default", meaning they must be added. Given the implementation exists in the library, only the fixture name needs to be provided to the instance.
+
+This can be accomplished via the `startingFixtures` array in the instance configuration, or via an API call (`instance.fixture.add('fixturename')`).
+
+The current list of available fixture names are
+
+- `areas-of-interest`
+- `export`
+- `extentguard`
+- `metadata`
+
 ## Creation
 
 ### Internal

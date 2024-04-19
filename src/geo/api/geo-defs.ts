@@ -327,6 +327,14 @@ export interface MapMove {
     moveTime: number;
 }
 
+// needs to align to esri values for GoToOptions2D.easing
+export type ZoomEasing =
+    | 'linear'
+    | 'ease'
+    | 'ease-in'
+    | 'ease-out'
+    | 'ease-in-out';
+
 export interface ScreenPoint {
     screenX: number;
     screenY: number;

@@ -201,8 +201,8 @@ export class FixtureAPI extends APIScope {
                 'mapnav',
                 'northarrow',
                 'overviewmap',
-                'scrollguard',
                 'panguard',
+                'scrollguard',
                 'settings',
                 'wizard'
             ];

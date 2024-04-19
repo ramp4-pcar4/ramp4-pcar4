@@ -96,6 +96,26 @@
                 }
             }
         },
+        "extentguard": {
+            "type": "object",
+            "description": "Provides the configuration to the extentguard fixture.",
+            "properties": {
+                "alwaysOn": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Indicates if the extentguard should be active regardless of the extent set the map is using."
+                },
+                "extentSetIds": {
+                    "type": "array",
+                    "description": "Indicates a specific set of extent set ids. The extent guard will only be active if the map is using one of these extent sets. Ignored if alwaysOn is true.",
+                    "default": [],
+                    "items": {
+                        "type": "string",
+                        "description": "An extent set id"
+                    }
+                }
+            }
+        },
         "areas-of-interest": {
             "type": "object",
             "description": "Provides the configuration to the areas of interest fixture",
@@ -2412,13 +2432,6 @@
             "type": "object",
             "description": "Optional configuration for required map fixtures. TODO: fixtures may not exist so cannot enforce fixtures in config file",
             "properties": {
-                "legend": {
-                    "$ref": "#/$defs/legend",
-                    "default": {
-                        "root": {}
-                    },
-                    "description": "Provides configuration to legend. If not supplied, a blank legend is displayed."
-                },
                 "appbar": {
                     "$ref": "#/$defs/appbar",
                     "default": {
@@ -2426,52 +2439,18 @@
                     },
                     "description": "Provides configuration to the appbar. If not supplied, default appbar controls are displayed."
                 },
-                "mapnav": {
-                    "$ref": "#/$defs/mapnav",
-                    "default": {
-                        "zoom": "buttons",
-                        "items": [
-                            "fullscreen",
-                            "home",
-                            "geolocator",
-                            "help",
-                            "basemap"
-                        ]
-                    },
-                    "description": "Provides configuration to the appbar. If not supplied, default appbar controls are displayed."
+                "areas-of-interest": {
+                    "$ref": "#/$defs/areas-of-interest",
+                    "description": "Provides configuration to the areas of interest fixture"
                 },
-                "geosearch": {
-                    "$ref": "#/$defs/geosearch",
-                    "default": {
-                        "serviceUrls": {
-                            "geoNames": "https://geogratis.gc.ca/services/geoname/@{language}/geonames.json",
-                            "geoLocation": "https://geogratis.gc.ca/services/geolocation/@{language}/locate",
-                            "geoProvince": "https://geogratis.gc.ca/services/geoname/@{language}/codes/province.json",
-                            "geoTypes": "https://geogratis.gc.ca/services/geoname/@{language}/codes/concise.json"
-                        }
-                    },
-                    "description": "Provides configuration to geosearch. If not supplied, default geosearch services are used."
-                },
-                "grid": {
+                "basemap": {
+                    "description": "Provides configuration to the basemap fixture",
                     "type": "object",
-                    "description": "Provides configuration to the grid fixture.",
                     "properties": {
-                        "mergeGrids": {
-                            "type": "array",
-                            "description": "Provides specifications for merge grids. Can also be used to configure single-layer grids, but the 'gridOption' property within the layer configuration object is preferred.",
-                            "items": {
-                                "$ref": "#/$defs/mergeGrid"
-                            }
-                        },
                         "panelTeleport": {
                             "$ref": "#/$defs/panelTeleport"
-                        },
-                        "panelWidth": {
-                            "$ref": "#/$defs/panelWidth"
                         }
-                    },
-                    "required": ["mergeGrids"],
-                    "unevaluatedProperties": false
+                    }
                 },
                 "details": {
                     "description": "Provides default template configuration to the details fixture. If not supplied, RAMP default templates wil be used.",
@@ -2511,6 +2490,47 @@
                     },
                     "required": ["templates"]
                 },
+                "export": {
+                    "$ref": "#/$defs/export",
+                    "description": "Provides the configuration to the export fixture"
+                },
+                "extentguard": {
+                    "$ref": "#/$defs/extentguard",
+                    "description": "Provides configuration to the extentguard fixture"
+                },
+                "geosearch": {
+                    "$ref": "#/$defs/geosearch",
+                    "default": {
+                        "serviceUrls": {
+                            "geoNames": "https://geogratis.gc.ca/services/geoname/@{language}/geonames.json",
+                            "geoLocation": "https://geogratis.gc.ca/services/geolocation/@{language}/locate",
+                            "geoProvince": "https://geogratis.gc.ca/services/geoname/@{language}/codes/province.json",
+                            "geoTypes": "https://geogratis.gc.ca/services/geoname/@{language}/codes/concise.json"
+                        }
+                    },
+                    "description": "Provides configuration to geosearch. If not supplied, default geosearch services are used."
+                },
+                "grid": {
+                    "type": "object",
+                    "description": "Provides configuration to the grid fixture.",
+                    "properties": {
+                        "mergeGrids": {
+                            "type": "array",
+                            "description": "Provides specifications for merge grids. Can also be used to configure single-layer grids, but the 'gridOption' property within the layer configuration object is preferred.",
+                            "items": {
+                                "$ref": "#/$defs/mergeGrid"
+                            }
+                        },
+                        "panelTeleport": {
+                            "$ref": "#/$defs/panelTeleport"
+                        },
+                        "panelWidth": {
+                            "$ref": "#/$defs/panelWidth"
+                        }
+                    },
+                    "required": ["mergeGrids"],
+                    "unevaluatedProperties": false
+                },
                 "help": {
                     "$ref": "#/$defs/help",
                     "default": {
@@ -2523,22 +2543,6 @@
                         }
                     },
                     "description": "Specifies details for the Help section"
-                },
-                "northarrow": {
-                    "$ref": "#/$defs/northarrow",
-                    "default": {
-                        "arrowIcon": "",
-                        "poleIcon": ""
-                    },
-                    "description": "Provides configuration to the north arrow and pole marker"
-                },
-                "overviewmap": {
-                    "$ref": "#/$defs/overviewmap",
-                    "description": "Provides the configuration to the overviewmap fixture"
-                },
-                "scrollguard": {
-                    "$ref": "#/$defs/scrollguard",
-                    "description": "Provides the configuration to the scrollguard fixture"
                 },
                 "hilight": {
                     "description": "Provides configuration to the map's highlighter",
@@ -2568,23 +2572,6 @@
                         }
                     }
                 },
-                "areas-of-interest": {
-                    "$ref": "#/$defs/areas-of-interest",
-                    "description": "Provides configuration to the areas of interest fixture"
-                },
-                "basemap": {
-                    "description": "Provides configuration to the basemap fixture",
-                    "type": "object",
-                    "properties": {
-                        "panelTeleport": {
-                            "$ref": "#/$defs/panelTeleport"
-                        }
-                    }
-                },
-                "export": {
-                    "$ref": "#/$defs/export",
-                    "description": "Provides the configuration to the export fixture"
-                },
                 "layer-reorder": {
                     "description": "Provides configuration to the layer reorder fixture",
                     "type": "object",
@@ -2594,6 +2581,27 @@
                         }
                     }
                 },
+                "legend": {
+                    "$ref": "#/$defs/legend",
+                    "default": {
+                        "root": {}
+                    },
+                    "description": "Provides configuration to legend. If not supplied, a blank legend is displayed."
+                },
+                "mapnav": {
+                    "$ref": "#/$defs/mapnav",
+                    "default": {
+                        "zoom": "buttons",
+                        "items": [
+                            "fullscreen",
+                            "home",
+                            "geolocator",
+                            "help",
+                            "basemap"
+                        ]
+                    },
+                    "description": "Provides configuration to the appbar. If not supplied, default appbar controls are displayed."
+                },
                 "metadata": {
                     "description": "Provides configuration to the metadata fixture",
                     "type": "object",
@@ -2602,6 +2610,22 @@
                             "$ref": "#/$defs/panelTeleport"
                         }
                     }
+                },
+                "northarrow": {
+                    "$ref": "#/$defs/northarrow",
+                    "default": {
+                        "arrowIcon": "",
+                        "poleIcon": ""
+                    },
+                    "description": "Provides configuration to the north arrow and pole marker"
+                },
+                "overviewmap": {
+                    "$ref": "#/$defs/overviewmap",
+                    "description": "Provides the configuration to the overviewmap fixture"
+                },
+                "scrollguard": {
+                    "$ref": "#/$defs/scrollguard",
+                    "description": "Provides the configuration to the scrollguard fixture"
                 },
                 "settings": {
                     "description": "Provides configuration to the settings fixture",

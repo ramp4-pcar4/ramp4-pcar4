@@ -91,6 +91,29 @@ export class Extent extends BaseGeometry {
     }
 
     /**
+     * Reports if a point is within the boundary of the extent.
+     * For performance reasons, the point must be in the same spatial reference as the extent.
+     *
+     * @param {Point} testPoint
+     * @returns {boolean} if point was within the extent or not
+     */
+    contains(testPoint: Point): boolean {
+        if (this.sr.isEqual(testPoint.sr)) {
+            return (
+                this.xmin <= testPoint.x &&
+                this.xmax >= testPoint.x &&
+                this.ymin <= testPoint.y &&
+                this.ymax >= testPoint.y
+            );
+        } else {
+            console.error(
+                'Extent.contains(point) must have point in same spatial reference as the extent.'
+            );
+            return false;
+        }
+    }
+
+    /**
      * Returns an array of point arrays (e.g. [[x1, y1], [x2, y2]] )
      */
     toArray(): Array<Array<number>> {
