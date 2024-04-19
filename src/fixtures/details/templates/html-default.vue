@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import type { PropType } from 'vue';
-import type { IdentifyItem } from '@/geo/api';
+import type { IdentifyItem } from '@/api';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();

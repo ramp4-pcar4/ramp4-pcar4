@@ -670,7 +670,7 @@ export class FileUtils extends APIScope {
      * while respecting caching considerations.
      *
      * @param {String | Object} rawData json-compatible payload from config
-     * @param {Boolean=false} caching if layer is concerned about caching the payload
+     * @param {Boolean} [caching=false] if layer is concerned about caching the payload
      * @returns {Object} data as a Json object
      */
     rawDataJsonParser(rawData: any, caching: boolean = false): any {

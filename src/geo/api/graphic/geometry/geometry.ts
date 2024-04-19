@@ -17,10 +17,10 @@ import {
     SpatialReference
 } from '@/geo/api';
 import type { MapClick, MapMove } from '@/geo/api';
-import {
+
+import type {
     EsriExtent,
     EsriGeometry,
-    EsriGraphic,
     EsriMultipoint,
     EsriPictureMarkerSymbol,
     EsriPoint,
@@ -31,6 +31,8 @@ import {
     EsriSimpleMarkerSymbol,
     EsriSymbol
 } from '@/geo/esri';
+import { EsriGraphic } from '@/geo/esri';
+
 import { LineStyle } from '../style/line-style';
 import { PolygonStyle } from '../style/polygon-style';
 

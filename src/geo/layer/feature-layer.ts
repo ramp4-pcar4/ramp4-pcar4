@@ -1,20 +1,21 @@
-import { AttribLayer, InstanceAPI } from '@/api/internal';
+import {
+    AttribLayer,
+    InstanceAPI,
+    ReactiveIdentifyFactory
+} from '@/api/internal';
+import type { IdentifyResult } from '@/api/internal';
 import {
     CoreFilter,
     DataFormat,
     DefPromise,
     Extent,
     GeometryType,
-    IdentifyResultFormat,
     LayerFormat,
     LayerIdentifyMode,
     LayerType
 } from '@/geo/api';
 import type {
-    DiscreteGraphicResult,
-    IdentifyItem,
     IdentifyParameters,
-    IdentifyResult,
     Point,
     QueryFeaturesParams,
     RampLayerConfig
@@ -182,7 +183,11 @@ export class FeatureLayer extends AttribLayer {
         // allows us to pause and wait for various things before generating contents of result.items[]
         let clientBlocker = Promise.resolve();
         let serverBlocker = Promise.resolve();
-        let hitBucket: Array<DiscreteGraphicResult> = []; // collates results across promises
+
+        /**
+         * Collates results (OIDs) across promises
+         */
+        let hitBucket: Array<number> = [];
 
         // if our identify mode needs server hit, run it
         if (
@@ -210,7 +215,7 @@ export class FeatureLayer extends AttribLayer {
 
             qOpts.filterSql = this.getCombinedSqlFilter();
 
-            serverBlocker = this.queryFeaturesDiscrete(qOpts).then(results => {
+            serverBlocker = this.queryOIDs(qOpts).then(results => {
                 hitBucket = results;
             });
         }
@@ -231,16 +236,12 @@ export class FeatureLayer extends AttribLayer {
                     .filter(
                         hr =>
                             hr.layerId === this.id &&
-                            hitBucket.findIndex(dgr => hr.oid === dgr.oid) ===
-                                -1
+                            hitBucket.findIndex(
+                                alreadyHitOid => hr.oid === alreadyHitOid
+                            ) === -1
                     )
                     .forEach(hr => {
-                        hitBucket.push({
-                            oid: hr.oid,
-                            graphic: this.getGraphic(hr.oid, {
-                                getAttribs: true
-                            })
-                        });
+                        hitBucket.push(hr.oid);
                     });
             });
         }
@@ -248,21 +249,11 @@ export class FeatureLayer extends AttribLayer {
         Promise.all([clientBlocker, serverBlocker])
             .then(() => {
                 // both identifies have completed. convert our hits into identify result goodness
-                hitBucket.forEach(dgr => {
-                    const item: IdentifyItem = reactive({
-                        data: undefined,
-                        format: IdentifyResultFormat.ESRI,
-                        loaded: false,
-                        loading: new Promise(resolve => {
-                            dgr.graphic.then(g => {
-                                item.data = g.attributes;
-                                item.loaded = true;
-                                resolve();
-                            });
-                        })
-                    });
-
-                    result.items.push(item); // push, incase something was bound to the array
+                hitBucket.forEach(hitOid => {
+                    // push, incase something was bound to the array
+                    result.items.push(
+                        ReactiveIdentifyFactory.makeOidItem(hitOid, this)
+                    );
                 });
 
                 // Resolve the loading promise, set the flag

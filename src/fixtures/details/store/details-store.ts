@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import type { DetailsItemInstance } from './details-state';
-import type { LayerInstance } from '@/api';
-import type { IdentifyResult } from '@/geo/api';
+import type { IdentifyResult, LayerInstance } from '@/api';
 import { ref } from 'vue';
 
 export const useDetailsStore = defineStore('details', () => {
