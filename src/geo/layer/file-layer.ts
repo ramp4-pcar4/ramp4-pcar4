@@ -6,11 +6,13 @@
 import {
     AttribLayer,
     FileLayerAttributeLoader,
-    InstanceAPI
+    InstanceAPI,
+    ReactiveIdentifyFactory
 } from '@/api/internal';
 
 import type {
     AttributeLoaderDetails,
+    IdentifyResult,
     QueryFeaturesFileParams
 } from '@/api/internal';
 
@@ -30,9 +32,7 @@ import {
 import type {
     GeoJsonOptions,
     GetGraphicParams,
-    IdentifyItem,
     IdentifyParameters,
-    IdentifyResult,
     QueryFeaturesParams,
     RampLayerConfig
 } from '@/geo/api';
@@ -272,7 +272,16 @@ export class FileLayer extends AttribLayer {
         // allows us to pause and wait for various things before generating contents of result.items[]
         let symbolBlocker = Promise.resolve();
         let geomBlocker = Promise.resolve();
-        let hitBucket: Array<Graphic> = []; // collates results across promises
+
+        /**
+         * Graphics found from geographic query
+         */
+        let geomHitBucket: Array<Graphic> = [];
+
+        /**
+         * Object ids found from hit test
+         */
+        let symbolHitBucket: Array<number> = [];
 
         // if our identify mode needs geometry hit, run it
         if (
@@ -300,7 +309,7 @@ export class FileLayer extends AttribLayer {
             qOpts.filterSql = this.getCombinedSqlFilter();
 
             geomBlocker = this.queryFeatures(qOpts).then(results => {
-                hitBucket = results;
+                geomHitBucket = results;
             });
         }
 
@@ -316,43 +325,41 @@ export class FileLayer extends AttribLayer {
                 // in any results from the geometry. Add things that pass the filter
                 // to our hit bucket
                 const hitArray = await options.hitTest!;
-                const hitGraphics = await Promise.all(
+                symbolHitBucket = await Promise.all(
                     hitArray
                         .filter(
                             hr =>
                                 hr.layerId === this.id &&
-                                hitBucket.findIndex(
+                                geomHitBucket.findIndex(
                                     g => hr.oid === g.attributes[this.oidField]
                                 ) === -1
                         )
-                        .map(hr => {
-                            // will be fast since all local
-                            return this.getGraphic(hr.oid, {
-                                getAttribs: true
-                            });
-                        })
+                        .map(hr => hr.oid)
                 );
-
-                hitBucket = hitBucket.concat(hitGraphics);
             });
         }
 
         Promise.all([symbolBlocker, geomBlocker])
             .then(() => {
                 // both identifies have completed. convert our hits into identify result goodness
-                hitBucket.forEach(gr => {
-                    // file layer resolves all items at once,
-                    // so our item-level stuff can be created in
-                    // a loaded state
+                // geoms are already extracted
+                // symbols are just oids
 
-                    const item: IdentifyItem = reactive({
-                        data: gr.attributes,
-                        format: IdentifyResultFormat.ESRI,
-                        loaded: true,
-                        loading: Promise.resolve()
-                    });
+                // push any items, incase something was bound to the array
 
-                    result.items.push(item); // push, incase something was bound to the array
+                geomHitBucket.forEach(gr => {
+                    result.items.push(
+                        ReactiveIdentifyFactory.makeRawItem(
+                            IdentifyResultFormat.ESRI,
+                            gr.attributes
+                        )
+                    );
+                });
+
+                symbolHitBucket.forEach(oid => {
+                    result.items.push(
+                        ReactiveIdentifyFactory.makeOidItem(oid, this)
+                    );
                 });
 
                 // Resolve the loading promise, set the flag

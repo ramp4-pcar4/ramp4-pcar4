@@ -20,6 +20,7 @@ import { useAppbarStore } from '@/fixtures/appbar/store';
 import { useGridStore } from '@/fixtures/grid/store';
 import { LayerState, LayerType } from '@/geo/api';
 import type {
+    IdentifyResultFormat,
     MapClick,
     MapMove,
     RampBasemapConfig,
@@ -1152,7 +1153,7 @@ export class EventAPI extends APIScope {
                     payload: {
                         data: any;
                         uid: string;
-                        format: string;
+                        format: IdentifyResultFormat;
                     },
                     open?: boolean
                 ) => {

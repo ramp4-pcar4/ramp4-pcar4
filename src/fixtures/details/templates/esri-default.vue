@@ -18,10 +18,10 @@
 <script setup lang="ts">
 import { inject } from 'vue';
 import type { PropType } from 'vue';
-import type { FieldDefinition, IdentifyItem } from '@/geo/api';
+import type { FieldDefinition } from '@/geo/api';
 import type { DetailsFieldItem } from '@/fixtures/details/store';
 import linkifyHtml from 'linkify-html';
-import type { InstanceAPI } from '@/api';
+import type { IdentifyItem, InstanceAPI } from '@/api';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();

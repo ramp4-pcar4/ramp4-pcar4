@@ -325,10 +325,7 @@ export class TableLayer extends DataLayer {
         options: QueryFeaturesParams
     ): Promise<Array<DiscreteGraphicResult>> {
         // TODO potential optimization.
-        //      if we have a big array of OIDs returned below, comparable to
-        //      layers record count, and this.attLoader.isLoaded is false,
-        //      we could trigger a getattributes call to bulk download them upfront.
-        //      would be more efficient (way less web calls).
+        //      see notes in same method inside AttribLayer
 
         const oids = await this.queryOIDs(options);
 
