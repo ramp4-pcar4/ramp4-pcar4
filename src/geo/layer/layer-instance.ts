@@ -229,6 +229,16 @@ export class LayerInstance extends APIScope {
      */
     canModifyLayer: boolean;
 
+    /**
+     * Indicates if the layer can be reloaded.
+     */
+    canReload: boolean;
+
+    /**
+     * url of the service
+     */
+    url: string;
+
     protected _parentLayer: LayerInstance | undefined;
     protected _sublayers: Array<LayerInstance>;
 
@@ -277,6 +287,8 @@ export class LayerInstance extends APIScope {
         this.expectedTime = { draw: 0, load: 0 };
         this.maxLoadTime = 0;
         this.canModifyLayer = true;
+        this.canReload = true;
+        this.url = '';
     }
 
     /**
