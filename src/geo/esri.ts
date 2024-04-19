@@ -26,7 +26,6 @@ import EsriTileLayer from '@arcgis/core/layers/TileLayer';
 import EsriWMSLayer from '@arcgis/core/layers/WMSLayer';
 import EsriField from '@arcgis/core/layers/support/Field';
 import EsriLOD from '@arcgis/core/layers/support/LOD';
-import EsriSublayer from '@arcgis/core/layers/support/Sublayer';
 import EsriWMSSublayer from '@arcgis/core/layers/support/WMSSublayer';
 import EsriMap from '@arcgis/core/Map';
 import EsriClassBreaksRenderer from '@arcgis/core/renderers/ClassBreaksRenderer';
@@ -47,13 +46,10 @@ import EsriSymbol from '@arcgis/core/symbols/Symbol';
 import { fromJSON as EsriSymbolFromJson } from '@arcgis/core/symbols/support/jsonUtils';
 import EsriFeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
 import EsriMapView from '@arcgis/core/views/MapView';
-import EsriBasemapGallery from '@arcgis/core/widgets/BasemapGallery';
-import EsriScaleBar from '@arcgis/core/widgets/ScaleBar';
 
 // sorted by name
 export {
     EsriBasemap,
-    EsriBasemapGallery,
     EsriClassBreakInfo,
     EsriClassBreaksRenderer,
     EsriColour,
@@ -82,14 +78,12 @@ export {
     EsriRenderer,
     EsriRendererFromJson,
     EsriRequest,
-    EsriScaleBar,
     EsriSimpleFillSymbol,
     EsriSimpleLineSymbol,
     EsriSimpleMarkerSymbol,
     EsriSimpleRenderer,
     EsriSpatialReference,
     EsriSymbol,
-    EsriSublayer,
     EsriSymbolFromJson,
     EsriTileLayer,
     EsriUniqueValueInfo,

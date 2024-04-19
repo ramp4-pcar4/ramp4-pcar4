@@ -26,6 +26,8 @@
 </template>
 
 <script setup lang="ts">
+// this renders the list of symbology items that run along the left side
+
 import { ref, watch, onBeforeMount, onBeforeUnmount } from 'vue';
 import { useLayerStore } from '@/stores/layer';
 

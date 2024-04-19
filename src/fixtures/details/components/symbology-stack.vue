@@ -58,6 +58,9 @@
 </template>
 
 <script setup lang="ts">
+// this renders the everything needed for a symbol stack running along the left side of the panel.
+// includes symbol stacking, loading spinners, result count badge
+
 import type { LayerInstance } from '@/api';
 
 import { onMounted, type PropType, ref } from 'vue';

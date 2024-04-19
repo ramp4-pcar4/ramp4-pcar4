@@ -1,5 +1,11 @@
-import { AttribLayer, FixtureInstance, LayerInstance } from '@/api';
-import type { Graphic, IdentifyItem, IdentifyResult } from '@/geo/api';
+import {
+    AttribLayer,
+    FixtureInstance,
+    LayerInstance,
+    ReactiveIdentifyFactory
+} from '@/api';
+import type { IdentifyItem, IdentifyResult } from '@/api';
+import type { Graphic, IdentifyResultFormat } from '@/geo/api';
 import { DetailsItemInstance, useDetailsStore } from '../store';
 
 import type {
@@ -49,39 +55,31 @@ export class DetailsAPI extends FixtureInstance {
     }
 
     /**
-     * Provided with the data for a single feature, toggles the details panel directly with the feature screen.
+     * Provided with the data for a single feature, shows or hides details panel.
+     * If panel is closed or incoming data is different than current content, panel is shown.
+     * If panel open and incoming data is what is currently shown, panel closes.
+     * The `open` parameter can override the behavior.
+     * featureData payload (can be empty if forcing closed)
+     * - uid    : uid string of the layer hosting the feature
+     * - format : structure of the data. IdentifyResultFormat value.
+     * - data   : source information for the feature. Analogous to the data property of an IdentifyItem
      *
-     * @param {{data: any, uid: string, format: string}} featureData
-     * @param {boolean | undefined} open
+     * @param {{data: any, uid: string, format: IdentifyResultFormat}} featureData
+     * @param {boolean | undefined} open can force the panel to open (true) or close (false) regardless of current panel state
      * @memberof DetailsAPI
      */
     toggleFeature(
-        featureData: { data: any; uid: string; format: string },
+        featureData: { data: any; uid: string; format: IdentifyResultFormat },
         open: boolean | undefined
     ): void {
-        // Close the identified layers panel.
         const panel = this.$iApi.panel.get('details-panel');
-        if (panel.isOpen) {
-            this.$iApi.panel.close(panel);
-        }
 
-        // result: is IdentifyResult class
-        const props: any = {
-            result: {
-                items: [
-                    {
-                        data: featureData.data,
-                        format: featureData.format,
-                        loaded: true,
-                        loading: Promise.resolve()
-                    }
-                ],
-                uid: featureData.uid,
-                loading: Promise.resolve(),
-                loaded: true,
-                requestTime: Date.now()
-            }
-        };
+        if (open === false) {
+            // close panel and run away. allows a close without providing featureData
+            panel.close();
+            this.detailsStore.currentFeatureId = undefined;
+            return;
+        }
 
         // feature ids are composed of the layer uid and feature object id
         const layer: LayerInstance | undefined = this.$iApi.geo.layer.getLayer(
@@ -93,27 +91,43 @@ export class DetailsAPI extends FixtureInstance {
                 ? featureData.data[layer?.oidField ?? '']
                 : JSON.stringify(featureData.data)
         }`;
-        this.detailsStore.currentFeatureId = featureData.data
-            ? currFeatureId
-            : undefined;
+
+        if (
+            panel.isOpen &&
+            currFeatureId === this.detailsStore.currentFeatureId &&
+            !(open === true)
+        ) {
+            // panel is open, same request was fired at it, and not a force-open. Close it.
+            panel.close();
+            this.detailsStore.currentFeatureId = undefined;
+            return;
+        }
+
+        // at this point, we are showing the payload
+
+        this.detailsStore.currentFeatureId = currFeatureId;
 
         // Check to see if the layer has a fixture config in the store.
         this._loadDetailsConfig(layer);
 
-        // toggle rules based on last opened details panel
-        if (open === false) {
-            this.$iApi.panel!.close(panel);
-        } else if (!panel.isOpen) {
-            this.detailsStore.payload = [props.result];
+        const fakeResult: IdentifyResult = {
+            items: [
+                ReactiveIdentifyFactory.makeRawItem(
+                    featureData.format,
+                    featureData.data
+                )
+            ],
+            uid: featureData.uid,
+            loading: Promise.resolve(),
+            loaded: true,
+            errored: false,
+            requestTime: Date.now()
+        };
 
-            // open the items panel
-            this.$iApi.panel!.open({
-                id: 'details-panel',
-                screen: 'details-screen',
-                props: props
-            });
-        } else {
-            this.$iApi.panel!.close(panel);
+        this.detailsStore.payload = [fakeResult];
+
+        if (!panel.isOpen) {
+            panel.open();
         }
     }
 
@@ -256,14 +270,28 @@ export class DetailsAPI extends FixtureInstance {
     }
 
     /**
-     * Reload map elements of the hilighter.
-     * @param items items to reload
-     * @param layerUid uid of layer the items belong to
+     * Reload map elements of the hilighter for a set of identify items.
+     *
+     * @param {IdentifyItem | Array<IdentifyItem>} items items to reload
+     * @param {string} layerUid uid of layer the items belong to
      */
     async reloadDetailsHilight(
         items: IdentifyItem | Array<IdentifyItem>,
         layerUid: string
     ) {
+        // DEV NOTE: this call is not being used anymore. But since part of public API, remains
+        //           for respectful compatibility
+
+        // TODO this method doesn't use the lastHilight flag, so in theory if a stale
+        //      batch of identify items is passed, they will end up drawing.
+        //      Might be easier to depreciate this method? Breaks API but
+        //      the method is really just a shortcut to remove + add, without the
+        //      smarter code of those methods.
+        //      Alternate, replace all the guts with
+        //        await removeDetailsHilight
+        //        await hilightDetailsItems(items, layerUid)
+        //      but that technically changes the method behavior
+
         // hilight all provided identify items for this layer
         const hItems = items instanceof Array ? items : [items];
         const hilightFix: HilightAPI = this.$iApi.fixture.get('hilight');
@@ -277,9 +305,10 @@ export class DetailsAPI extends FixtureInstance {
     }
 
     /**
-     * Return the graphics of the given IdentifyItems.
-     * @param items items to hilight
+     * Return the graphics of the given IdentifyItems once the items have loaded.
+     * @param {Array<IdentifyItem>} items identify items to hilight. Items should be of ESRI format
      * @param layerUid uid of layer the items belong to
+     * @returns {Promise<Array<Graphic>>} resolves with array of graphics
      */
     async getHilightGraphics(
         items: Array<IdentifyItem>,
@@ -292,15 +321,15 @@ export class DetailsAPI extends FixtureInstance {
             // get all the identified Graphics
             await Promise.all(
                 items.map(async item => {
+                    // ensure item finishes loading
+                    await item.loading;
+
                     const oid = item.data[layer.oidField];
-                    const g: Graphic = await (layer as AttribLayer).getGraphic(
-                        oid,
-                        {
-                            getGeom: true,
-                            getAttribs: true,
-                            getStyle: true
-                        }
-                    );
+                    const g = await layer.getGraphic(oid, {
+                        getGeom: true,
+                        getAttribs: true,
+                        getStyle: true
+                    });
                     g.id = hilightFix.constructGraphicKey(
                         ORIGIN_DETAILS,
                         layerUid,
@@ -316,23 +345,26 @@ export class DetailsAPI extends FixtureInstance {
     /**
      * Updates hilighted graphics when the hilight toggler is toggled.
      *
-     * @param hilightOn Whether the toggler has been turned on/off
-     * @param items The items that are affected by the toggle
-     * @param layerUid the layer UID
+     * @param {boolean} hilightOn Whether the toggler has been turned on/off
+     * @param {IdentifyItem | Array<IdentifyItem>} items The identify items to highlight. Only required if turning on
+     * @param {string} layerUid the layer UID that owns the items. Only required if turning on
      */
     onHilightToggle(
         hilightOn: boolean,
-        items: IdentifyItem | Array<IdentifyItem>,
-        layerUid: string
+        items?: IdentifyItem | Array<IdentifyItem>,
+        layerUid?: string
     ) {
-        if (hilightOn) {
-            // hilight got turned on
+        // DEV NOTE: this call is not being used anymore. But since part of public API, remains
+        //           for respectful compatibility
+
+        this.detailsStore.hilightToggle = hilightOn;
+
+        if (hilightOn && items && layerUid) {
+            // hilight got turned on, and valid params provided
             this.hilightDetailsItems(items, layerUid);
-            this.detailsStore.hilightToggle = true;
-        } else {
+        } else if (!hilightOn) {
             // hilight got turned off
             this.removeDetailsHilight();
-            this.detailsStore.hilightToggle = false;
         }
     }
 

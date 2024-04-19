@@ -1,4 +1,6 @@
-import { InstanceAPI, MapLayer } from '@/api/internal';
+import { InstanceAPI, MapLayer, ReactiveIdentifyFactory } from '@/api/internal';
+import type { IdentifyResult } from '@/api/internal';
+
 import {
     DataFormat,
     DefPromise,
@@ -9,18 +11,17 @@ import {
     LayerType,
     UrlWrapper
 } from '@/geo/api';
-
 import type {
-    IdentifyItem,
     LegendSymbology,
     RampLayerConfig,
     RampLayerWmsSublayerConfig,
     IdentifyParameters,
-    IdentifyResult,
     Point
 } from '@/geo/api';
 
-import { EsriRequest, EsriWMSLayer, EsriWMSSublayer } from '@/geo/esri';
+import { EsriRequest, EsriWMSLayer } from '@/geo/esri';
+import type { EsriWMSSublayer } from '@/geo/esri';
+
 import { markRaw, reactive } from 'vue';
 
 /**
@@ -228,26 +229,35 @@ export class WmsLayer extends MapLayer {
                 // TODO is is possible to have more than one item as a result? check how this works
                 if (response) {
                     // we have all the data already so can init the item as loaded
-                    const item: IdentifyItem = reactive({
-                        data: response,
-                        format: IdentifyResultFormat.UNKNOWN,
-                        loaded: true,
-                        loading: Promise.resolve()
-                    });
+
+                    let validReturn = true;
+
+                    // figure out format
+                    let format: IdentifyResultFormat;
 
                     if (typeof response !== 'string') {
                         // likely json or an image
                         // TODO improve the dection (maybe use the this.mimeType?)
-                        item.format = IdentifyResultFormat.JSON;
-                        result.items.push(item);
+                        format = IdentifyResultFormat.JSON;
                     } else if (
                         response.indexOf('Search returned no results') === -1 &&
                         response !== ''
                     ) {
                         // TODO if service is french, will the "no results" message be different?
                         // TODO consider utilizing the infoMap variable above to detect HTML format.
-                        item.format = IdentifyResultFormat.TEXT;
-                        result.items.push(item);
+                        format = IdentifyResultFormat.TEXT;
+                    } else {
+                        validReturn = false;
+                        format = IdentifyResultFormat.UNKNOWN;
+                    }
+
+                    if (validReturn) {
+                        result.items.push(
+                            ReactiveIdentifyFactory.makeRawItem(
+                                format,
+                                response
+                            )
+                        );
                     }
                 }
 

@@ -444,28 +444,6 @@ export interface IdentifyParameters {
     hitTest?: Promise<Array<GraphicHitResult>>; // Optional results of local hits to incorporate in the identify
 }
 
-export interface IdentifyItem {
-    data: any;
-    format: IdentifyResultFormat;
-    loaded: boolean;
-    loading: Promise<void>;
-}
-
-// the result of identifying against a logical layer ( a feature class or WMS )
-export interface IdentifyResult {
-    items: Array<IdentifyItem>;
-    uid: string; // this would match to the logical layer.
-    loaded: boolean;
-    errored: boolean;
-    loading: Promise<void>; // represents the list of results has been found, but the content of items in the array may still be resolving
-    requestTime: number; // tracks timestamp of identify request
-}
-
-export interface MapIdentifyResult {
-    results: IdentifyResult[];
-    click: MapClick;
-}
-
 //TODO: Enhance this when a RAMP Graphic is properly defined
 export interface GraphicHitResult {
     oid: number; // graphic OBJECTID

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { APIScope, InstanceAPI } from '@/api/internal';
+import type { IdentifyResult } from '@/api/internal';
 import {
     DataFormat,
     DrawState,
@@ -24,7 +25,6 @@ import type {
     FieldDefinition,
     GetGraphicParams,
     IdentifyParameters,
-    IdentifyResult,
     LegendSymbology,
     TabularAttributeSet
 } from '@/geo/api';

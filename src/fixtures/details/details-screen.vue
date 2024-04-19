@@ -45,10 +45,8 @@ import SymbologyList from './components/symbology-list.vue';
 import ResultList from './components/result-list.vue';
 
 import type { PropType } from 'vue';
-import type { InstanceAPI } from '@/api';
-import type { PanelInstance } from '@/api';
+import type { IdentifyResult, InstanceAPI, PanelInstance } from '@/api';
 import type { DetailsItemInstance } from './store';
-import type { IdentifyResult } from '@/geo/api';
 
 import { useI18n } from 'vue-i18n';
 import { useDetailsStore } from './store';
