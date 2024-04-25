@@ -60,6 +60,13 @@ export class CommonGraphicLayer extends MapLayer {
         return this._graphics.find(g => g.id === graphicId);
     }
 
+    /**
+     * Gets the ESRI graphic from the layer, if it exists, that is rendering the Graphic with the
+     * provided id.
+     *
+     * @param {string} graphicId id of the graphic to find
+     * @returns {ESRIGraphic} the graphic, undefined if no matching id is found.
+     */
     getEsriGraphic(graphicId: string): EsriGraphic | undefined {
         return this.esriLayer?.graphics.find((g: any) => g.id === graphicId);
     }
@@ -130,9 +137,9 @@ export class CommonGraphicLayer extends MapLayer {
     }
 
     /**
-     * If geometry specified, removes those items. Else removes all geometry.
+     * If Graphics are specified, removes those graphics from the layer. Passing no parameter removes all Graphics.
      *
-     * @param geometry any strings should reference a particular geometry instance with that ID. If undefined, all geometry is removed.
+     * @param {Graphic | string | Array<Graphic | string>} graphics Valid formats: A Graphic object, a graphic ID in string form, or an array of Graphic objects and/or graphic ID strings
      */
     removeGraphic(graphics?: Array<string | Graphic> | string | Graphic): void {
         if (!this.esriLayer) {
@@ -163,25 +170,23 @@ export class CommonGraphicLayer extends MapLayer {
             }
         });
 
-        const targets: Array<__esri.Graphic> = [];
         ids.forEach(id => {
             // need to tag the param as `any` because .id is something we manually added
-            const target = this.esriLayer?.graphics.find(
+
+            const esriIdx = this.esriLayer!.graphics.findIndex(
                 (g: any) => g.id === id
             );
-            if (target) {
-                targets.push(target);
-                const rampIdx = this._graphics.findIndex(g => g.id === id);
-                if (rampIdx != -1) {
-                    this._graphics.splice(rampIdx, 1);
-                }
+            if (esriIdx > -1) {
+                this.esriLayer!.graphics.removeAt(esriIdx);
+            }
+
+            const rampIdx = this._graphics.findIndex(g => g.id === id);
+            if (rampIdx > -1) {
+                this._graphics.splice(rampIdx, 1);
             }
         });
 
         // TODO remove hover stuff once supported
-        this.esriLayer.removeMany(targets);
-        this._graphics = this._graphics.filter(g => ids.includes(g.id));
-
         // TODO raise event?
     }
 }

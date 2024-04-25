@@ -1,12 +1,12 @@
 import type { Graphic } from '@/geo/api';
 import { BaseHilightMode } from './base-hilight-mode';
 
-// This hilight mode populates the hilight layer with the given graphics, essentially "lifting" them
+/**
+ * Hilight mode that places graphics in a top-most layer, essentially "lifting" them
+ * above other map elements.
+ */
 export class LiftHilightMode extends BaseHilightMode {
-    /**
-     * Adds the given graphics to the hilight layer.
-     */
-    async add(graphics: Array<Graphic>) {
+    async add(graphics: Array<Graphic> | Graphic) {
         const hilightLayer = await this.getHilightLayer();
         if (!hilightLayer) {
             return;
@@ -14,10 +14,7 @@ export class LiftHilightMode extends BaseHilightMode {
         await hilightLayer.addGraphic(graphics);
     }
 
-    /**
-     * Removes the given graphics from the hilight layer.
-     */
-    async remove(graphics: Array<Graphic> | undefined) {
+    async remove(graphics: Array<Graphic> | Graphic | undefined) {
         const hilightLayer = await this.getHilightLayer();
         if (!hilightLayer) {
             return;
@@ -25,10 +22,7 @@ export class LiftHilightMode extends BaseHilightMode {
         hilightLayer.removeGraphic(graphics);
     }
 
-    /**
-     * Reload the hilighter's map elements.
-     */
-    async reloadHilight(graphics: Array<Graphic>) {
+    async reloadHilight(graphics: Array<Graphic> | Graphic) {
         await this.remove(graphics);
         await this.add(graphics);
     }

@@ -4,6 +4,10 @@ import { useConfigStore } from '@/stores/config';
 import { FOG_HILIGHT_LAYER_NAME } from '../hilight-defs';
 import { LiftHilightMode } from './lift-hilight-mode';
 
+/**
+ * Hilight mode that places a translucent tile beneath a graphics to make them
+ * stand out from the rest of the map.
+ */
 export class FogHilightMode extends LiftHilightMode {
     handlers: Array<string> = [];
     // TODO: make these configurable later
@@ -92,10 +96,7 @@ export class FogHilightMode extends LiftHilightMode {
         }
     }
 
-    /**
-     * Adds the given graphics to the hilight layer.
-     */
-    async add(graphics: Array<Graphic>) {
+    async add(graphics: Array<Graphic> | Graphic) {
         this.lastAdd = Date.now();
 
         // turn the fog "on"
@@ -109,10 +110,7 @@ export class FogHilightMode extends LiftHilightMode {
         await super.add(graphics);
     }
 
-    /**
-     * Removes the given graphics from the hilight layer.
-     */
-    async remove(graphics?: Array<Graphic>) {
+    async remove(graphics?: Array<Graphic> | Graphic | undefined) {
         // remove the given graphics from the layer
         await super.remove(graphics);
 
@@ -142,13 +140,13 @@ export class FogHilightMode extends LiftHilightMode {
         }, 300);
     }
 
-    async reloadHilight(graphics: Array<Graphic>) {
+    async reloadHilight(graphics: Array<Graphic> | Graphic) {
         await this.updateFogLayer();
         await super.reloadHilight(graphics);
     }
 
     /**
-     * Returns the Hilight layer.
+     * Returns the "fog" tile layer.
      */
     private getFogLayer(): TileLayer | undefined {
         const hilightLayer = this.$iApi.geo.layer.getLayer(
