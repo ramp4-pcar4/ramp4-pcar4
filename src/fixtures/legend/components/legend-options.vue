@@ -298,7 +298,7 @@ const removeLayer = () => {
  * Reloads a layer on the map.
  */
 const reloadLayer = () => {
-    if (reloadableLayer) {
+    if (reloadableLayer.value) {
         toRaw(props.legendItem!.layer!).reload();
         dropdown.value.open = false;
     }
