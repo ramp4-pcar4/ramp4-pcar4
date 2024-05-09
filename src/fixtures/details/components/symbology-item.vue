@@ -18,6 +18,10 @@
 </template>
 
 <script setup lang="ts">
+// this constructs an entire list item in the symbology-list
+// includes the symbology-stack, as well as fancy slideout magic to show
+// layer name when moused over
+
 import { computed } from 'vue';
 import SymbologyStack from './symbology-stack.vue';
 import { useDetailsStore } from '../store';

@@ -587,20 +587,29 @@ export class AttribLayer extends MapLayer {
      * - includeGeometry : a boolean to indicate if result features should include the geometry
      * - sourceSR : a spatial reference indicating what the source layer is encoded in. providing can assist in result geometry being of a proper resolution
      *
+     * Each result item is loaded independently. This will capitalize on caching, but will be expensive
+     * when expecting a large result set and nothing currently cached.
+     *
      * @param options {Object} options to provide filters and helpful information.
      * @returns {Promise} resolves in an array of object ids and promises resolving in each feature
      */
     async queryFeaturesDiscrete(
         options: QueryFeaturesParams
     ): Promise<Array<DiscreteGraphicResult>> {
-        // NOTE this assumes a server based layer
-        //      local based layers should override this function
-
         // TODO potential optimization.
         //      if we have a big array of OIDs returned below, comparable to
         //      layers record count, and this.attLoader.isLoaded is false,
         //      we could trigger a getattributes call to bulk download them upfront.
         //      would be more efficient (way less web calls).
+        //      However it would mean all the individual graphic promises "wait"
+        //      until that bulk download is done. As-is, can get them resolving
+        //      as each one completes.
+        //      May also want to avoid that if options.includeGeometry is true,
+        //      since we likely need a server hit anyway.
+
+        // DEV NOTE: now that this is no longer used to fuel identify request items,
+        //           it could be migrated inside of queryFeatures().
+        //           but since it is public API, keeping separate for backwards compatibility.
 
         const oids = await this.queryOIDs(options);
 

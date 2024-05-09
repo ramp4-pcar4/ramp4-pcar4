@@ -37,31 +37,44 @@ const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
 const el = ref<HTMLElement>();
 
-const openDetails = () => {
-    let data = Object.assign({}, props.params.data);
-    delete data['rvInteractive'];
-    delete data['rvSymbol'];
+/**
+ * Will create an event to open details for the row this button lurks in.
+ */
+const openDetails = async () => {
+    const rowData = props.params.data;
+    const layerUid = rowData['rvUid'];
+    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(layerUid)!;
 
-    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
-        data['rvUid']
-    )!;
+    // find OID for the row. need to account for any merge-grid attribute name mapping
 
-    delete data['rvUid'];
+    const realOidField = layer.oidField;
 
-    // replace any mapped attributes with original attribute name for details renderer
-    props.params.layerCols[layer.id].forEach((attrPair: AttributeMapPair) => {
-        if (attrPair.mappedAttr) {
-            data[attrPair.origAttr] = data[attrPair.mappedAttr];
-            delete data[attrPair.mappedAttr];
-        }
+    const mapperPair: AttributeMapPair | undefined = props.params.layerCols[
+        layer.id
+    ].find((attrPair: AttributeMapPair) => {
+        return attrPair.origAttr === realOidField;
     });
 
-    // grid only supports esri features at the moment, so we hardcode that format
-    iApi.event.emit(GlobalEvents.DETAILS_TOGGLE, {
-        data: data,
-        uid: props.params.data.rvUid,
-        format: IdentifyResultFormat.ESRI
+    const dataOidField = mapperPair?.mappedAttr || realOidField;
+
+    // get the source graphic from the layer. Will skirt around any funny business
+    // with the grid changing up data. Since grid is open, will utilize the grid's
+    // local data source --> fast.
+    const sourceGraphic = await layer.getGraphic(rowData[dataOidField], {
+        getAttribs: true
     });
+
+    // grid only supports esri features at the moment, so we hardcode that format.
+    // use force-open flag.
+    iApi.event.emit(
+        GlobalEvents.DETAILS_TOGGLE,
+        {
+            data: sourceGraphic.attributes,
+            uid: layerUid,
+            format: IdentifyResultFormat.ESRI
+        },
+        true
+    );
 
     if (props.params.isTeleport) {
         iApi.scrollToInstance();

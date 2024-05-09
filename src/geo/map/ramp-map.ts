@@ -8,6 +8,8 @@ import {
     LayerInstance,
     MaptipAPI
 } from '@/api/internal';
+import type { IdentifyResult, MapIdentifyResult } from '@/api/internal';
+
 import {
     CoreFilter,
     DefPromise,
@@ -23,9 +25,7 @@ import {
 import type {
     GraphicHitResult,
     IdentifyParameters,
-    IdentifyResult,
     MapClick,
-    MapIdentifyResult,
     RampBasemapConfig,
     RampExtentSetConfig,
     RampLodSetConfig,
@@ -34,7 +34,10 @@ import type {
     ScreenPoint,
     Screenshot
 } from '@/geo/api';
-import { EsriGraphic, EsriLOD, EsriMapView } from '@/geo/esri';
+
+import { EsriMapView } from '@/geo/esri';
+import type { EsriGraphic, EsriLOD } from '@/geo/esri';
+
 import { useLayerStore } from '@/stores/layer';
 import { MapCaptionAPI } from './caption';
 import { markRaw, toRaw } from 'vue';
