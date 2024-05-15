@@ -78,7 +78,7 @@ export class MapImageSublayer extends AttribLayer {
     /**
      * Load actions for a MapImage sublayer
      */
-    onLoadActions(): Array<Promise<void>> {
+    protected onLoadActions(): Array<Promise<void>> {
         // Note we do not call super.onLoadActions, which you would see happen in
         //      every other layer. We don't want to wire up the standard "top level"
         //      layer stuff for sublayers.
@@ -125,11 +125,16 @@ export class MapImageSublayer extends AttribLayer {
         this.parentLayer?.reload();
     }
 
+    cancelLoad(): void {
+        // parent layer will exist, gets set on this objects constructor
+        this.parentLayer?.cancelLoad();
+    }
+
     /**
      * Indicates if the Esri map sublayer and the parent's Esri map layer exist.
      */
     get layerExists(): boolean {
-        return this.parentLayer?.esriLayer && this.esriSubLayer ? true : false;
+        return !!(this.parentLayer?.esriLayer && this.esriSubLayer);
     }
 
     /**
@@ -250,12 +255,6 @@ export class MapImageSublayer extends AttribLayer {
         this.parentLayer.touchTolerance = tolerance;
     }
 
-    /**
-     * Applies the current filter settings to the physical map layer.
-     *
-     * @function applySqlFilter
-     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
-     */
     applySqlFilter(exclusions: Array<string> = []): void {
         if (!this.parentLayer?.esriLayer || !this.esriSubLayer) {
             this.noLayerErr();

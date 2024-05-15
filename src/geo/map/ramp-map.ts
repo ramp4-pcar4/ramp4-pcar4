@@ -66,7 +66,8 @@ export class MapAPI extends CommonMapAPI {
     layerDefaultTimes: LayerTimes = {
         // DEV NOTE these values get updated in createMap(). Using 0 here to avoid having defaults in two spots.
         draw: 0,
-        load: 0
+        load: 0,
+        fail: 0
     };
 
     /**
@@ -95,6 +96,10 @@ export class MapAPI extends CommonMapAPI {
             config.layerTimeDefault?.expectedDrawTime ?? 10000;
         this.layerDefaultTimes.load =
             config.layerTimeDefault?.expectedLoadTime ?? 10000;
+
+        // using falsey || since a 0 would cause every layer to fail instantly
+        this.layerDefaultTimes.fail =
+            config.layerTimeDefault?.maxLoadTime || 90000;
 
         this.viewPromise.then(() => {
             // Timing issues beginning at ESRI v4.26 make us need to wait until the initial view gets created.
@@ -309,12 +314,15 @@ export class MapAPI extends CommonMapAPI {
             type: 'pointer-leave',
             handler: this.esriView.on('pointer-leave', esriMouseLeave => {
                 // guarantee that no mouse move start/end event fires after the mouse leave event
-                setTimeout(() => {
-                    this.$iApi.event.emit(
-                        GlobalEvents.MAP_MOUSELEAVE,
-                        esriMouseLeave.native
-                    );
-                }, Math.max(this.mapMouseThrottle, 100) + 1);
+                setTimeout(
+                    () => {
+                        this.$iApi.event.emit(
+                            GlobalEvents.MAP_MOUSELEAVE,
+                            esriMouseLeave.native
+                        );
+                    },
+                    Math.max(this.mapMouseThrottle, 100) + 1
+                );
             })
         });
 
@@ -564,7 +572,9 @@ export class MapAPI extends CommonMapAPI {
     }
 
     /**
-     * Adds a layer to the map. The layer is considered "registered" with RAMP until it is removed.
+     * Registers a layer with the instance and attempts to add it to the the map.
+     * The return value provides an async indicator if the map add was successful,
+     * but the layer is registered regardless.
      * Optionally can specify the layer order index for map layers.
      *
      * @param {LayerInstance} layer the Ramp layer to add
@@ -630,6 +640,10 @@ export class MapAPI extends CommonMapAPI {
             const layerStore = useLayerStore(this.$vApp.$pinia);
             layerStore.addLayer(layer, index);
 
+            // layer is in the store, so is registered.
+            this.$iApi.event.emit(GlobalEvents.LAYER_REGISTERED, layer);
+
+            const startTime = Date.now();
             let timeElapsed = 0;
             // This interval waits for layer initiation, and has a kickout for layers that initiate forever.
             // After it initiates the callback will start the next step in the loading pipeline.
@@ -637,14 +651,25 @@ export class MapAPI extends CommonMapAPI {
             const layerWatcher = setInterval(() => {
                 timeElapsed += 250;
                 if (
-                    timeElapsed >= 20000 ||
+                    timeElapsed >= layer.expectedTime.fail ||
                     layer.layerState === LayerState.ERROR
                 ) {
                     // Layer took too long to initiate. Move to error to avoid infinite load animation.
-                    // Issue #1491 Ponders making the 20 second timeout configurable.
                     clearInterval(layerWatcher);
-                    layer.onError(); // need this thanks to an edge case where the legend sometimes doesnt update
-                    console.error(`Failed to add layer: ${layer.id}.`);
+
+                    if (layer.lastCancel < startTime) {
+                        // only ping this message if the layer wasn't cancelled.
+                        // might seem a bit much, but it is a useful console msg for debugging.
+
+                        console.error(`Failed to add layer: ${layer.id}.`);
+                    }
+
+                    // no longer call layer.onError() here.
+                    // is now handled by layer initiate() timer.
+
+                    // this is a bit redundant, but our API was minted to return a promise that resolves/rejects depending
+                    // on if the layer is Added To The Map.  RAMP itself doesn't care. Layer already registered, will
+                    // see and react to events on the layer.
                     reject();
                 } else if (
                     layer.initiationState === InitiationState.INITIATED &&
@@ -652,6 +677,8 @@ export class MapAPI extends CommonMapAPI {
                 ) {
                     // we have initiated, and confirm either the map layer exists or layer doesn't live on the map.
                     // carry on with resolution steps.
+                    // Re: cancelling a load - would have gotten caught in error block above. if comes after, layer load
+                    //     process will handle it.
                     clearInterval(layerWatcher);
                     if (layer.mapLayer) {
                         // ramp layer is map ready, add it at the correct position
@@ -660,11 +687,11 @@ export class MapAPI extends CommonMapAPI {
                         // data layer
                         // there is no esri layer "load" first, so we trigger
                         // the data layer load now.
+
                         layer.onLoad();
                     }
 
-                    // layer has been added to the map, fire layer registered event
-                    this.$iApi.event.emit(GlobalEvents.LAYER_REGISTERED, layer);
+                    // finish the promise result (indicates layer is inside the map or equivalent)
                     resolve();
                 }
             }, 250);
@@ -953,11 +980,14 @@ export class MapAPI extends CommonMapAPI {
             return;
         }
 
+        // now that we can cancel before an initiation finishes, this error will cause more problems than good
+        /*
         if (layerInstance.mapLayer && !layerInstance.esriLayer) {
             throw new Error(
                 'Attempted to remove layer from the map without an esri layer. Likely layer.initiate() was not called or had not finished.'
             );
         }
+        */
 
         // if layer is parent layer, then remove all its sublayers first if there is at least one active sublayer
         if (
@@ -968,8 +998,6 @@ export class MapAPI extends CommonMapAPI {
         }
 
         // Now we start the layer removal process
-        // Clean up layer
-        layerInstance.terminate();
 
         const layerStore = useLayerStore(this.$vApp.$pinia);
         layerStore.removeLayer(layerInstance);
@@ -977,9 +1005,13 @@ export class MapAPI extends CommonMapAPI {
         // Clean up the layer config store
         layerStore.removeLayerConfig(layerInstance.id);
 
-        // Remove the layer from the map
-        if (layerInstance.mapLayer) {
-            this.esriMap.remove(layerInstance.esriLayer!);
+        // Remove the layer from the map, if its there
+        layerInstance.removeEsriLayer();
+
+        // Clean up layer.
+        // This removes the reference to .esriLayer so must happen after removeEsriLayer()
+        if (layerInstance.initiationState === InitiationState.INITIATED) {
+            layerInstance.terminate();
         }
 
         layerInstance.isRemoved = true;
@@ -1249,9 +1281,8 @@ export class MapAPI extends CommonMapAPI {
      *
      * @param {MapClick | Point} targetPoint the place on the map to execute the identify
      * @memberof MapAPI
-     * @returns MapIdentifyResult
+     * @returns {MapIdentifyResult} results of the identify
      */
-
     runIdentify(targetPoint: MapClick | Point): MapIdentifyResult {
         const layers = this.$iApi.geo.layer
             .allLayersOnMap(false)
@@ -1424,7 +1455,7 @@ export class MapAPI extends CommonMapAPI {
             return {
                 oid: topGraphic.getObjectId(),
                 layerId: hitLayer.id,
-                layerIdx: hitLayer.getLayerTree().layerIdx
+                layerIdx: hitLayer.layerIdx
             };
         }
     }

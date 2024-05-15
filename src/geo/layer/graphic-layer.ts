@@ -41,16 +41,11 @@ export class GraphicLayer extends CommonGraphicLayer {
         return esriConfig;
     }
 
-    /**
-     * Triggers when the layer loads.
-     *
-     * @function onLoadActions
-     */
-    onLoadActions(): Array<Promise<void>> {
+    protected onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        // TODO if we ever have a way to "configure" initial graphics in the layer config,
-        //      would probably want to create them here.
+        // if we ever have a way to "configure" initial graphics in the layer config,
+        // would probably want to create them here.
 
         this.layerTree.name = this.name;
         this.updateDrawState(DrawState.UP_TO_DATE);
