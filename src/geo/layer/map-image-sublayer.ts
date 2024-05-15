@@ -12,8 +12,6 @@ import type {
 } from '@/geo/api';
 import { markRaw } from 'vue';
 
-const lblVizMsg = 'Accessed labelVisibility prior to layer being loaded';
-
 /**
  * A layer class which implements an ESRI Map Image Sublayer.
  */
@@ -78,7 +76,7 @@ export class MapImageSublayer extends AttribLayer {
     /**
      * Load actions for a MapImage sublayer
      */
-    onLoadActions(): Array<Promise<void>> {
+    protected onLoadActions(): Array<Promise<void>> {
         // Note we do not call super.onLoadActions, which you would see happen in
         //      every other layer. We don't want to wire up the standard "top level"
         //      layer stuff for sublayers.
@@ -107,13 +105,13 @@ export class MapImageSublayer extends AttribLayer {
         // anything that needs to be set prior to the layer doing its initial draw should be done here.
         // this.esriSublayer will be set by the time this call runs.
 
+        this.initiationState = InitiationState.INITIATED; // hardcoding this one because we don't want event API to fire here
+
         // see if any config stuff is overriding labels
         const vizOverr = this.labelVizOverride();
         if (vizOverr !== undefined) {
             this.labelVisibility = vizOverr;
         }
-
-        this.initiationState = InitiationState.INITIATED; // hardcoding this one because we don't want event API to fire here
     }
 
     async reload(): Promise<void> {
@@ -125,11 +123,20 @@ export class MapImageSublayer extends AttribLayer {
         this.parentLayer?.reload();
     }
 
+    cancelLoad(): void {
+        // parent layer will exist, gets set on this objects constructor
+        this.parentLayer?.cancelLoad();
+    }
+
     /**
      * Indicates if the Esri map sublayer and the parent's Esri map layer exist.
      */
     get layerExists(): boolean {
-        return this.parentLayer?.esriLayer && this.esriSubLayer ? true : false;
+        return !!(
+            this.parentLayer?.layerExists &&
+            this.esriSubLayer &&
+            this.initiationState === InitiationState.INITIATED
+        );
     }
 
     /**
@@ -139,12 +146,11 @@ export class MapImageSublayer extends AttribLayer {
      * @returns {Boolean} visibility of the sublayer
      */
     get visibility(): boolean {
-        if (!this.parentLayer?.esriLayer || !this.esriSubLayer) {
-            this.noLayerErr();
+        if (this.layerExists) {
+            return this.esriSubLayer!.visible;
+        } else {
             return false;
         }
-
-        return this.esriSubLayer.visible;
     }
 
     /**
@@ -154,11 +160,11 @@ export class MapImageSublayer extends AttribLayer {
      * @param {Boolean} value the new visibility setting
      */
     set visibility(value: boolean) {
-        if (!this.parentLayer?.esriLayer || !this.esriSubLayer) {
+        if (this.layerExists) {
+            this.esriSubLayer!.visible = value;
+        } else {
             this.noLayerErr();
-            return;
         }
-        this.esriSubLayer.visible = value;
     }
 
     /**
@@ -168,11 +174,11 @@ export class MapImageSublayer extends AttribLayer {
      * @returns {Boolean} opacity of the sublayer
      */
     get opacity(): number {
-        if (!this.parentLayer?.esriLayer || !this.esriSubLayer) {
-            this.noLayerErr();
+        if (this.layerExists) {
+            return this.esriSubLayer!.opacity;
+        } else {
             return 0;
         }
-        return this.esriSubLayer.opacity;
     }
 
     /**
@@ -182,7 +188,7 @@ export class MapImageSublayer extends AttribLayer {
      * @param {Boolean} value the new opacity setting
      */
     set opacity(value: number) {
-        if (!this.parentLayer?.esriLayer || !this.esriSubLayer) {
+        if (!this.layerExists) {
             this.noLayerErr();
             return;
         }
@@ -191,7 +197,7 @@ export class MapImageSublayer extends AttribLayer {
                 `Opacity of a Map Image Sublayer was set. The service does not support sublayer opacity. LayerId ${this.id}`
             );
         }
-        this.esriSubLayer.opacity = value;
+        this.esriSubLayer!.opacity = value;
     }
 
     /**
@@ -200,12 +206,11 @@ export class MapImageSublayer extends AttribLayer {
      * @returns {number} the mouse tolerance of the parent layer
      */
     get mouseTolerance(): number {
-        if (!this.parentLayer?.esriLayer || !this.esriSubLayer) {
-            this.noLayerErr();
+        if (this.layerExists) {
+            return this.parentLayer!.mouseTolerance;
+        } else {
             return 0;
         }
-
-        return this.parentLayer.mouseTolerance;
     }
 
     /**
@@ -214,12 +219,11 @@ export class MapImageSublayer extends AttribLayer {
      * @param {number} tolerance the new mouse tolerance
      */
     set mouseTolerance(tolerance: number) {
-        if (!this.parentLayer?.esriLayer || !this.esriSubLayer) {
+        if (this.layerExists) {
+            this.parentLayer!.mouseTolerance = tolerance;
+        } else {
             this.noLayerErr();
-            return;
         }
-
-        this.parentLayer.mouseTolerance = tolerance;
     }
 
     /**
@@ -228,12 +232,11 @@ export class MapImageSublayer extends AttribLayer {
      * @returns {number} the touch tolerance of the parent layer
      */
     get touchTolerance(): number {
-        if (!this.parentLayer?.esriLayer || !this.esriSubLayer) {
-            this.noLayerErr();
+        if (this.layerExists) {
+            return this.parentLayer!.touchTolerance;
+        } else {
             return 0;
         }
-
-        return this.parentLayer.touchTolerance;
     }
 
     /**
@@ -242,29 +245,26 @@ export class MapImageSublayer extends AttribLayer {
      * @param {number} tolerance the new touch tolerance of the parent layer
      */
     set touchTolerance(tolerance: number) {
-        if (!this.parentLayer?.esriLayer || !this.esriSubLayer) {
+        if (this.layerExists) {
+            this.parentLayer!.touchTolerance = tolerance;
+        } else {
             this.noLayerErr();
-            return;
         }
-
-        this.parentLayer.touchTolerance = tolerance;
     }
 
-    /**
-     * Applies the current filter settings to the physical map layer.
-     *
-     * @function applySqlFilter
-     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
-     */
     applySqlFilter(exclusions: Array<string> = []): void {
-        if (!this.parentLayer?.esriLayer || !this.esriSubLayer) {
+        if (this.layerExists) {
+            if (this.supportsFeatures) {
+                const sql = this.filter.getCombinedSql(exclusions);
+                this.esriSubLayer!.definitionExpression = sql;
+            } else {
+                console.error(
+                    'Attempted to apply an SQL filter to a sublayer that does not support it (likely Raster datatype)'
+                );
+            }
+        } else {
             this.noLayerErr();
-            return;
         }
-
-        // TODO possibly check against this sublayer being a Raster Layer sublayer
-        const sql = this.filter.getCombinedSql(exclusions);
-        this.esriSubLayer.definitionExpression = sql;
     }
 
     /**
@@ -297,24 +297,18 @@ export class MapImageSublayer extends AttribLayer {
      * Visibility of labels on this layer
      */
     get labelVisibility(): boolean {
-        if (this.esriSubLayer) {
-            return this.esriSubLayer.labelsVisible;
+        if (this.layerExists) {
+            return this.esriSubLayer!.labelsVisible;
         } else {
-            // should only happen if called prior to layer load.
-            // we have nothing in RAMP using this, its just for API respect
-            console.error(lblVizMsg);
             return false;
         }
     }
 
     set labelVisibility(val: boolean) {
-        if (this.esriSubLayer) {
-            this.esriSubLayer.labelsVisible = val;
+        if (this.layerExists) {
+            this.esriSubLayer!.labelsVisible = val;
         } else {
-            // should only happen if called prior to layer load.
-            // the only call in RAMP core does that check. Message is just
-            // for API respect
-            console.error(lblVizMsg);
+            this.noLayerErr();
         }
     }
 

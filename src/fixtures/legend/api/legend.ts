@@ -129,8 +129,7 @@ export class LegendAPI extends FixtureInstance {
             this.$iApi,
             {
                 layerId: layer.id,
-                sublayerIndex:
-                    layer.layerIdx !== -1 ? layer.layerIdx : undefined,
+                sublayerIndex: layer.isSublayer ? layer.layerIdx : undefined,
                 name: layer.name
             },
             parent
@@ -301,42 +300,80 @@ export class LegendAPI extends FixtureInstance {
         return items;
     }
 
+    /**
+     * Return every legend block bound to a registered layer. Parent-child layer types will
+     * return everything tied to the entire layer (parent & children)
+     *
+     * @param {LayerInstance | string} layer a layer instance, layer id, or layer uid
+     * @returns {Array<LayerItem>} all legend items bound to the layer
+     */
+    getLayerBoundItems(layer: LayerInstance | string): Array<LayerItem> {
+        // find the parentmost layer id
+        let parentMostId = '';
+
+        // since we support uid on parameter, and can't diff between regular id, need a layer-lookup for string
+        const layerInstance =
+            layer instanceof LayerInstance
+                ? layer
+                : this.$iApi.geo.layer.getLayer(layer);
+        if (layerInstance) {
+            // if sublayer doesn't have parentlayer, things already horribly broken.
+            // empty string just avoids undefined errors, will eventually return [] just slower
+            parentMostId = layerInstance.isSublayer
+                ? layerInstance.parentLayer?.id || ''
+                : layerInstance.id;
+        } else {
+            // layer not registered.
+            return [];
+        }
+
+        // find every block related to the layer
+        const fullLegend = this.getLegend();
+
+        // sad, was hoping TS 5.5 would be smart enough to know the filter is all LayerItem
+        // @ts-ignore
+        return fullLegend.filter(
+            block =>
+                block instanceof LayerItem &&
+                (block.layerId === parentMostId ||
+                    block.parentLayerId === parentMostId)
+        );
+    }
+
     // Update
 
     /**
-     * Update an existing layer item with data from the given layer
-     * Does nothing if the layer item is not found
+     * Update all layer items bound to the given layer.
+     * Does nothing if no layer items are found
      *
-     * @param {LayerInstance} layer the layer to update the layer item with
+     * @param {LayerInstance} layer the layer to update the legend with
      * @memberof LegendAPI
      */
     updateLegend(layer: LayerInstance): void {
         // helper function to link a layer into a layer item
         const updateLayerItem = (
-            layer: LayerInstance | string,
+            sourceLayer: LayerInstance | string,
             error: boolean
         ) => {
-            const layerItem: LayerItem | undefined = this.getLayerItem(layer);
+            const layerItem = this.getLayerItem(sourceLayer);
             if (error) {
-                if (layerItem && layer instanceof LayerInstance) {
-                    layerItem.layer = layer;
+                if (layerItem && sourceLayer instanceof LayerInstance) {
+                    layerItem.layer = sourceLayer;
                 }
                 layerItem?.error();
             } else {
                 layerItem?.load(
-                    layer instanceof LayerInstance ? layer : undefined
+                    sourceLayer instanceof LayerInstance
+                        ? sourceLayer
+                        : undefined
                 );
             }
         };
+
         layer
             .loadPromise()
             .then(() => {
-                let layerItem: LayerItem | undefined = this.getLayerItem(layer);
-                // if load was cancelled, just update the parent and do not grow out tree
-                if (layerItem?.loadCancelled) {
-                    updateLayerItem(layer, false);
-                    return;
-                }
+                let layerItem = this.getLayerItem(layer);
                 if (layer.layerType === LayerType.MAPIMAGE) {
                     // For MIL, need to do tree growing magic
                     const treeParser = (node: TreeNode) => {
@@ -406,6 +443,7 @@ export class LegendAPI extends FixtureInstance {
                 }
             })
             .catch(() => {
+                // layer had a failure, or was manually cancelled.
                 updateLayerItem(layer, true); // update the root layer item first
                 if (layer.supportsSublayers) {
                     layer.config.sublayers.forEach((sublayer: any) => {
@@ -452,27 +490,21 @@ export class LegendAPI extends FixtureInstance {
     }
 
     /**
-     * Reload the legend item connected to the layer with the given layer id/uid
+     * Reload the all legend items connected to the given layer.
+     * This preps the items for the reload. It does not reload the actual layer.
+     * Parent-child layer types will prep all items related to the layer (both
+     * parent and sublayers)
      *
-     * @param {string} layerId the id or uid of the reloaded layer
+     * @param {LayerInstance | string} layer a layer instance, layer id, or layer uid referencing the reloaded layer
      * @returns {boolean} returns true if item was successfully reloaded, false otherwise
      * @memberof LegendAPI
      */
-    reloadLayerItem(layerId: string): boolean {
-        const item: LayerItem | undefined = this.getLayerItem(layerId);
+    reloadLayerItem(layer: LayerInstance | string): boolean {
+        const affectedBlocks = this.getLayerBoundItems(layer);
 
-        if (!item) {
-            return false;
-        }
+        affectedBlocks.forEach(block => block.reload());
 
-        if (!(item instanceof LayerItem)) {
-            console.warn('reloading is not supported for non layer items');
-            return false;
-        }
-
-        item._loadCancelled = false;
-        item.reload();
-        return true;
+        return affectedBlocks.length > 0;
     }
 
     // Delete
@@ -698,8 +730,9 @@ export class LegendAPI extends FixtureInstance {
             currItem.layer = currLayer;
             currItem.name = currLayer.name;
             currItem.layerId = currLayer.id;
-            currItem.sublayerIndex =
-                layer.layerIdx === -1 ? undefined : layer.layerIdx;
+            currItem.sublayerIndex = layer.isSublayer
+                ? layer.layerIdx
+                : undefined;
         }
 
         return { ...currItem, ...extraConfig };
