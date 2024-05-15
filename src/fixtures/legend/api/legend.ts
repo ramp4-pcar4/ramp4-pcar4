@@ -129,8 +129,7 @@ export class LegendAPI extends FixtureInstance {
             this.$iApi,
             {
                 layerId: layer.id,
-                sublayerIndex:
-                    layer.layerIdx !== -1 ? layer.layerIdx : undefined,
+                sublayerIndex: layer.isSublayer ? layer.layerIdx : undefined,
                 name: layer.name
             },
             parent
@@ -198,14 +197,11 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     getItem(uid: string): LegendItem | undefined {
-        const legend: Array<LegendItem> = this.getLegend();
+        const legend = this.getLegend();
 
         let result: LegendItem | undefined;
-        legend.some((item: LegendItem) => {
-            result = this._searchTree(
-                item,
-                (item: LegendItem) => item.uid === uid
-            );
+        legend.some(topItem => {
+            result = this.searchTreeFirst(topItem, item => item.uid === uid);
             return result !== undefined;
         });
 
@@ -213,40 +209,39 @@ export class LegendAPI extends FixtureInstance {
     }
 
     /**
-     * Get a layer item connected to the layer with the given id/uid or the given layer instance.
+     * Get the first found layer item connected to the layer with the given id/uid or the given layer instance.
      *
      * @param {string | LayerInstance} layer the id/uid of the layer or layer instance
      * @returns {LegendItem | undefined} return layer item tied to the found layer. returns undefined if no such item is found.
      * @memberof LegendAPI
      */
     getLayerItem(layer: string | LayerInstance): LayerItem | undefined {
-        let id: string = typeof layer === 'string' ? layer : layer.id;
-        const legend: Array<LegendItem> = this.getLegend();
-
+        let uid: string;
+        let id: string;
         let result: LayerItem | undefined;
 
-        // first try fetching item with id
-        legend.some((item: LegendItem) => {
-            result = this._searchTree(
-                item,
-                (item: LegendItem) =>
-                    item instanceof LayerItem && item.layerId === id
-            ) as unknown as LayerItem;
+        if (typeof layer === 'string') {
+            id = layer;
+            uid = layer;
+        } else {
+            id = layer.id;
+            uid = layer.uid;
+        }
+
+        const legend = this.getLegend();
+
+        // find first
+        legend.some(topItem => {
+            result = this.searchTreeFirst(
+                topItem,
+                item =>
+                    item instanceof LayerItem &&
+                    (item.layerId === id || item.uid === uid)
+            ) as unknown as LayerItem | undefined;
+
+            // kickout
             return result !== undefined;
         });
-
-        if (result === undefined) {
-            // if item couldn't be found with the id, try using uid instead
-            id = typeof layer === 'string' ? layer : layer.uid;
-            legend.some((item: LegendItem) => {
-                result = this._searchTree(
-                    item,
-                    (item: LegendItem) =>
-                        item instanceof LayerItem && item.layerUid === id
-                ) as unknown as LayerItem;
-                return result !== undefined;
-            });
-        }
 
         return result;
     }
@@ -260,21 +255,11 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     getAllExpanded(expanded?: boolean): Array<LegendItem> {
-        const legend: Array<LegendItem> = this.getLegend();
-        const items: Array<LegendItem> = [];
         const check = expanded ?? true;
 
-        legend.forEach(item => {
-            items.push(
-                ...this._searchTreeAll(item, (item: LegendItem) => {
-                    return (
-                        item.children.length > 0 && item.expanded === check // Do we want to include leaves here?
-                    );
-                })
-            );
-        });
-
-        return items;
+        return this.searchLegend(
+            item => item.children.length > 0 && item.expanded === check
+        );
     }
 
     /**
@@ -286,57 +271,86 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     getAllVisible(visibility?: boolean): Array<LegendItem> {
-        const legend: Array<LegendItem> = this.getLegend();
-        const items: Array<LegendItem> = [];
         const check = visibility ?? true;
+        return this.searchLegend(item => item.visibility === check);
+    }
 
-        legend.forEach(item => {
-            items.push(
-                ...this._searchTreeAll(item, (item: LegendItem) => {
-                    return item.visibility === check;
-                })
-            );
-        });
+    /**
+     * Return every legend block bound to a registered layer. Parent-child layer types will
+     * return everything tied to the entire layer (parent & children)
+     *
+     * @param {LayerInstance | string} layer a layer instance, layer id, or layer uid
+     * @returns {Array<LayerItem>} all legend items bound to the layer
+     */
+    getLayerBoundItems(layer: LayerInstance | string): Array<LayerItem> {
+        // find the parentmost layer id
+        let parentMostId = '';
 
-        return items;
+        // since we support uid on parameter, and can't diff between regular id, need a layer-lookup for string
+        const layerInstance =
+            layer instanceof LayerInstance
+                ? layer
+                : this.$iApi.geo.layer.getLayer(layer);
+        if (layerInstance) {
+            // if sublayer doesn't have parentlayer, things already horribly broken.
+            // empty string just avoids undefined errors, will eventually return [] just slower
+            parentMostId = layerInstance.isSublayer
+                ? layerInstance.parentLayer?.id || ''
+                : layerInstance.id;
+        } else {
+            // layer not registered.
+            return [];
+        }
+
+        return this.searchLegend(
+            block =>
+                block instanceof LayerItem &&
+                (block.layerId === parentMostId ||
+                    block.parentLayerId === parentMostId)
+        ) as unknown as Array<LayerItem>;
     }
 
     // Update
 
     /**
-     * Update an existing layer item with data from the given layer
-     * Does nothing if the layer item is not found
+     * Update all layer items bound to the given layer.
+     * Does nothing if no layer items are found
      *
-     * @param {LayerInstance} layer the layer to update the layer item with
+     * @param {LayerInstance} layer the layer to update the legend with
      * @memberof LegendAPI
      */
     updateLegend(layer: LayerInstance): void {
         // helper function to link a layer into a layer item
         const updateLayerItem = (
-            layer: LayerInstance | string,
+            sourceLayer: LayerInstance | string,
             error: boolean
         ) => {
-            const layerItem: LayerItem | undefined = this.getLayerItem(layer);
+            const layerItem = this.getLayerItem(sourceLayer);
             if (error) {
-                if (layerItem && layer instanceof LayerInstance) {
-                    layerItem.layer = layer;
+                if (layerItem && sourceLayer instanceof LayerInstance) {
+                    layerItem.layer = sourceLayer;
                 }
                 layerItem?.error();
             } else {
                 layerItem?.load(
-                    layer instanceof LayerInstance ? layer : undefined
+                    sourceLayer instanceof LayerInstance
+                        ? sourceLayer
+                        : undefined
                 );
             }
         };
+
         layer
             .loadPromise()
             .then(() => {
-                let layerItem: LayerItem | undefined = this.getLayerItem(layer);
-                // if load was cancelled, just update the parent and do not grow out tree
-                if (layerItem?.loadCancelled) {
-                    updateLayerItem(layer, false);
-                    return;
-                }
+                // NOTE: potential limitation here.
+                //       getLayerItem() only returns the first match found.
+                //       If we had a legend that shows the same layer in multiple blocks,
+                //       this might get squirrely. This isn't a typical (or even sensical)
+                //       scenario, but you can configure a legend that way.
+                //       Not changing anything at the moment (algo is a bit "intense"),
+                //       but commenting to make it obvious if we do encounter something.
+                let layerItem = this.getLayerItem(layer);
                 if (layer.layerType === LayerType.MAPIMAGE) {
                     // For MIL, need to do tree growing magic
                     const treeParser = (node: TreeNode) => {
@@ -406,6 +420,7 @@ export class LegendAPI extends FixtureInstance {
                 }
             })
             .catch(() => {
+                // layer had a failure, or was manually cancelled.
                 updateLayerItem(layer, true); // update the root layer item first
                 if (layer.supportsSublayers) {
                     layer.config.sublayers.forEach((sublayer: any) => {
@@ -452,27 +467,21 @@ export class LegendAPI extends FixtureInstance {
     }
 
     /**
-     * Reload the legend item connected to the layer with the given layer id/uid
+     * Reload the all legend items connected to the given layer.
+     * This preps the items for the reload. It does not reload the actual layer.
+     * Parent-child layer types will prep all items related to the layer (both
+     * parent and sublayers)
      *
-     * @param {string} layerId the id or uid of the reloaded layer
+     * @param {LayerInstance | string} layer a layer instance, layer id, or layer uid referencing the reloaded layer
      * @returns {boolean} returns true if item was successfully reloaded, false otherwise
      * @memberof LegendAPI
      */
-    reloadLayerItem(layerId: string): boolean {
-        const item: LayerItem | undefined = this.getLayerItem(layerId);
+    reloadLayerItem(layer: LayerInstance | string): boolean {
+        const affectedBlocks = this.getLayerBoundItems(layer);
 
-        if (!item) {
-            return false;
-        }
+        affectedBlocks.forEach(block => block.reload());
 
-        if (!(item instanceof LayerItem)) {
-            console.warn('reloading is not supported for non layer items');
-            return false;
-        }
-
-        item._loadCancelled = false;
-        item.reload();
-        return true;
+        return affectedBlocks.length > 0;
     }
 
     // Delete
@@ -503,6 +512,8 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     removeLayerItem(layer: string | LayerInstance): boolean {
+        // see NOTE comment in updateLegend(). This only removes the first
+        // found item. Very rare to have > 1, but just sayin'.
         const itemToRemove: LayerItem | undefined = this.getLayerItem(layer);
 
         if (itemToRemove !== undefined) {
@@ -515,13 +526,13 @@ export class LegendAPI extends FixtureInstance {
     // _Helpers
 
     /**
-     * Search for first legend item that satisfies the predicate, starting from the given root item.
+     * Search for the first legend item that satisfies the predicate, starting from the given root item.
      *
      * @param {LegendItem} root the root item to start searching from
      * @param {(item: LegendItem) => boolean} predicate boolean predicate to test each item
      * @returns {LegendItem \ undefined} return the first item that satisfies the given predicate. returns undefined if item is not found.
      */
-    private _searchTree(
+    searchTreeFirst(
         root: LegendItem,
         predicate: (item: LegendItem) => boolean
     ): LegendItem | undefined {
@@ -529,8 +540,8 @@ export class LegendAPI extends FixtureInstance {
             return root;
         } else {
             let result: LegendItem | undefined;
-            root.children.some((child: LegendItem) => {
-                result = this._searchTree(child, predicate);
+            root.children.some(child => {
+                result = this.searchTreeFirst(child, predicate);
                 return result !== undefined;
             });
             return result;
@@ -542,9 +553,9 @@ export class LegendAPI extends FixtureInstance {
      *
      * @param {LegendItem} root the root item to start searching from
      * @param {(item: LegendItem) => boolean} predicate predicate boolean predicate to test each item
-     * @returns {LegendItem \ undefined} return the first item that satisfies the given predicate. returns undefined if item is not found.
+     * @returns {Array<LegendItem>} return all items that satisfies the given predicate.
      */
-    private _searchTreeAll(
+    searchTreeAll(
         root: LegendItem,
         predicate: (item: LegendItem) => boolean
     ): Array<LegendItem> {
@@ -563,6 +574,22 @@ export class LegendAPI extends FixtureInstance {
         }
 
         return items;
+    }
+
+    /**
+     * Search the entire legend for items that satisfy the predicate
+     *
+     * @param {(item: LegendItem) => boolean} predicate predicate boolean predicate to test each item
+     * @returns {Array<LegendItem>} return all items that satisfies the given predicate.
+     */
+    searchLegend(predicate: (item: LegendItem) => boolean): Array<LegendItem> {
+        // for reasons mysterious, the legend store doesn't track the legend root.
+        // it only tracks the children of the root.
+        // the extra flat() lets us mimic as if we could just pass the ultimate root
+        // to searchTreeAll
+        return this.getLegend()
+            .map(rootChildItem => this.searchTreeAll(rootChildItem, predicate))
+            .flat();
     }
 
     /**
@@ -698,8 +725,9 @@ export class LegendAPI extends FixtureInstance {
             currItem.layer = currLayer;
             currItem.name = currLayer.name;
             currItem.layerId = currLayer.id;
-            currItem.sublayerIndex =
-                layer.layerIdx === -1 ? undefined : layer.layerIdx;
+            currItem.sublayerIndex = layer.isSublayer
+                ? layer.layerIdx
+                : undefined;
         }
 
         return { ...currItem, ...extraConfig };
