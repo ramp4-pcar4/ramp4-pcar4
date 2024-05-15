@@ -129,8 +129,7 @@ export class LegendAPI extends FixtureInstance {
             this.$iApi,
             {
                 layerId: layer.id,
-                sublayerIndex:
-                    layer.layerIdx !== -1 ? layer.layerIdx : undefined,
+                sublayerIndex: layer.isSublayer ? layer.layerIdx : undefined,
                 name: layer.name
             },
             parent
@@ -304,39 +303,37 @@ export class LegendAPI extends FixtureInstance {
     // Update
 
     /**
-     * Update an existing layer item with data from the given layer
-     * Does nothing if the layer item is not found
+     * Update all layer items bound to the given layer.
+     * Does nothing if no layer items are found
      *
-     * @param {LayerInstance} layer the layer to update the layer item with
+     * @param {LayerInstance} layer the layer to update the legend with
      * @memberof LegendAPI
      */
     updateLegend(layer: LayerInstance): void {
         // helper function to link a layer into a layer item
         const updateLayerItem = (
-            layer: LayerInstance | string,
+            sourceLayer: LayerInstance | string,
             error: boolean
         ) => {
-            const layerItem: LayerItem | undefined = this.getLayerItem(layer);
+            const layerItem = this.getLayerItem(sourceLayer);
             if (error) {
-                if (layerItem && layer instanceof LayerInstance) {
-                    layerItem.layer = layer;
+                if (layerItem && sourceLayer instanceof LayerInstance) {
+                    layerItem.layer = sourceLayer;
                 }
                 layerItem?.error();
             } else {
                 layerItem?.load(
-                    layer instanceof LayerInstance ? layer : undefined
+                    sourceLayer instanceof LayerInstance
+                        ? sourceLayer
+                        : undefined
                 );
             }
         };
+
         layer
             .loadPromise()
             .then(() => {
-                let layerItem: LayerItem | undefined = this.getLayerItem(layer);
-                // if load was cancelled, just update the parent and do not grow out tree
-                if (layerItem?.loadCancelled) {
-                    updateLayerItem(layer, false);
-                    return;
-                }
+                let layerItem = this.getLayerItem(layer);
                 if (layer.layerType === LayerType.MAPIMAGE) {
                     // For MIL, need to do tree growing magic
                     const treeParser = (node: TreeNode) => {
@@ -406,6 +403,7 @@ export class LegendAPI extends FixtureInstance {
                 }
             })
             .catch(() => {
+                // layer had a failure, or was manually cancelled.
                 updateLayerItem(layer, true); // update the root layer item first
                 if (layer.supportsSublayers) {
                     layer.config.sublayers.forEach((sublayer: any) => {
@@ -470,7 +468,6 @@ export class LegendAPI extends FixtureInstance {
             return false;
         }
 
-        item._loadCancelled = false;
         item.reload();
         return true;
     }
@@ -698,8 +695,9 @@ export class LegendAPI extends FixtureInstance {
             currItem.layer = currLayer;
             currItem.name = currLayer.name;
             currItem.layerId = currLayer.id;
-            currItem.sublayerIndex =
-                layer.layerIdx === -1 ? undefined : layer.layerIdx;
+            currItem.sublayerIndex = layer.isSublayer
+                ? layer.layerIdx
+                : undefined;
         }
 
         return { ...currItem, ...extraConfig };

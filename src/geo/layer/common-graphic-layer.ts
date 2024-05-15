@@ -71,11 +71,6 @@ export class CommonGraphicLayer extends MapLayer {
         return this.esriLayer?.graphics.find((g: any) => g.id === graphicId);
     }
 
-    protected notLoadedErr(): void {
-        console.error('Attempted to manipulate the layer before it was loaded');
-        console.trace();
-    }
-
     /** Returns a copy of the graphics in the layer. */
     get graphics(): Array<Graphic> {
         return this._graphics.slice();
