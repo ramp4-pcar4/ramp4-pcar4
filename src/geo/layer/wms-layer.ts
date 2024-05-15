@@ -114,12 +114,7 @@ export class WmsLayer extends MapLayer {
         return esriConfig;
     }
 
-    /**
-     * Triggers when the layer loads.
-     *
-     * @function onLoadActions
-     */
-    onLoadActions(): Array<Promise<void>> {
+    protected onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
         this.layerTree.name = this.name;
@@ -534,6 +529,7 @@ export class WmsLayer extends MapLayer {
      * @function loadSymbology
      */
     loadSymbology(): void {
+        const startTime = Date.now();
         const configSublayers = this.config.sublayers;
         const legendArray = this.getLegendUrls(
             configSublayers.map((sublayer: any) => {
@@ -557,9 +553,11 @@ export class WmsLayer extends MapLayer {
                 drawPromise: this.$iApi.geo.symbology
                     .generateWMSSymbology(imageUri)
                     .then((data: any) => {
-                        symbologyItem.svgcode = data.svgcode;
-                        symbologyItem.imgHeight = data.imgHeight;
-                        symbologyItem.imgWidth = data.imgWidth;
+                        if (startTime > this.lastCancel) {
+                            symbologyItem.svgcode = data.svgcode;
+                            symbologyItem.imgHeight = data.imgHeight;
+                            symbologyItem.imgWidth = data.imgWidth;
+                        }
                     })
             };
             return symbologyItem;

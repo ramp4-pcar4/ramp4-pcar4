@@ -107,7 +107,7 @@ export enum GlobalEvents {
 
     /**
      * Fires when the load state of a layer changes.
-     * Payload: `({ layer: LayerInstance, state: string })`
+     * Payload: `({ layer: LayerInstance, state: string, userCancel: boolean })`
      */
     LAYER_LAYERSTATECHANGE = 'layer/layerstatechange',
 

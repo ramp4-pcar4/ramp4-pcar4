@@ -127,18 +127,15 @@ export class MapImageLayer extends MapLayer {
         return esriConfig;
     }
 
-    /**
-     * Triggers when the layer loads.
-     *
-     * @function onLoadActions
-     */
-    onLoadActions(): Array<Promise<void>> {
+    protected onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
         if (!this.esriLayer) {
             this.noLayerErr();
             return loadPromises;
         }
+
+        const startTime = Date.now();
 
         this.layerTree.name = this.name;
 
@@ -339,6 +336,11 @@ export class MapImageLayer extends MapLayer {
                         : {}
                 )
                 .then(() => {
+                    if (startTime < this.lastCancel) {
+                        // cancelled, kickout.
+                        return Promise.resolve();
+                    }
+
                     // apply any updates that were in the configuration snippets
                     const subC = subConfigs[miSL.layerIdx];
                     if (subC) {
@@ -350,13 +352,13 @@ export class MapImageLayer extends MapLayer {
                         // The order in that case is sublayer config -> parent config -> server -> true.
                         miSL.visibility = miSL.isRemoved
                             ? false
-                            : subC.state?.visibility ??
+                            : (subC.state?.visibility ??
                               (this.origState.visibility
-                                  ? miSL._serverVisibility ??
-                                    this.origState.visibility
-                                  : this.origState.visibility ??
-                                    miSL._serverVisibility) ??
-                              true;
+                                  ? (miSL._serverVisibility ??
+                                    this.origState.visibility)
+                                  : (this.origState.visibility ??
+                                    miSL._serverVisibility)) ??
+                              true);
                         miSL.opacity =
                             subC.state?.opacity ?? this.origState.opacity ?? 1;
                         miSL.nameField = subC.nameField || miSL.nameField || '';
@@ -397,7 +399,9 @@ export class MapImageLayer extends MapLayer {
                                 miSL.getSqlFilter(CoreFilter.PERMANENT)
                             )
                             .then(count => {
-                                miSL.featureCount = count;
+                                if (startTime > this.lastCancel) {
+                                    miSL.featureCount = count;
+                                }
                             });
                     } else {
                         return Promise.resolve();
@@ -432,10 +436,12 @@ export class MapImageLayer extends MapLayer {
         return loadPromises;
     }
 
-    updateLayerState(newState: LayerState): void {
+    updateLayerState(newState: LayerState, userCancel: boolean = false): void {
         // force any sublayers to also update their state and raise events
-        super.updateLayerState(newState);
-        this.sublayers.forEach(sublayer => sublayer.updateLayerState(newState));
+        super.updateLayerState(newState, userCancel);
+        this.sublayers.forEach(sublayer =>
+            sublayer.updateLayerState(newState, userCancel)
+        );
     }
 
     updateDrawState(newState: DrawState): void {
