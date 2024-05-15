@@ -74,6 +74,10 @@ export interface RampOptions {
     loadDefaultFixtures?: boolean;
     loadDefaultEvents?: boolean;
     startRequired?: boolean;
+
+    // remove ~@~
+    initDelay?: number;
+    loadDelay?: number;
 }
 
 export class InstanceAPI {
@@ -108,11 +112,19 @@ export class InstanceAPI {
 
     private _isFullscreen: boolean;
 
+    // remove ~@~
+    initDelay: number;
+    loadDelay: number;
+
     constructor(
         element: HTMLElement,
         configs?: RampConfigs,
         options?: RampOptions
     ) {
+        // remove ~@~
+        this.initDelay = options?.initDelay || 0;
+        this.loadDelay = options?.loadDelay || 0;
+
         this.event = new EventAPI(this);
 
         const appInstance = createApp(element, this);
