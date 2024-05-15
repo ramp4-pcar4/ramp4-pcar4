@@ -203,9 +203,8 @@ export class SymbologyAPI extends APIScope {
                 .viewbox(0, 0, 0, 0);
         }
 
-        const dataUri = await this.$iApi.geo.shared.convertImagetoDataURL(
-            imageUri
-        );
+        const dataUri =
+            await this.$iApi.geo.shared.convertImagetoDataURL(imageUri);
         if (dataUri === imageUri) {
             // Something went wrong
             return '';
@@ -251,9 +250,8 @@ export class SymbologyAPI extends APIScope {
         }
 
         // need to draw the image to get its size (technically not needed if we have a url, but this is simpler)
-        const convertedUrl = await this.$iApi.geo.shared.convertImagetoDataURL(
-            imageUri
-        );
+        const convertedUrl =
+            await this.$iApi.geo.shared.convertImagetoDataURL(imageUri);
 
         const { image } = await this.svgDrawImage(draw, convertedUrl);
 

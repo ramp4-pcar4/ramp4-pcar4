@@ -338,7 +338,10 @@ export interface LayerTimes {
      */
     load: number;
 
-    // TODO pr for #1491 will add 'fail' here
+    /**
+     * Max load time until forced failure
+     */
+    fail: number;
 }
 
 // needs to align to esri values for GoToOptions2D.easing
@@ -458,11 +461,22 @@ export interface IdentifyParameters {
     hitTest?: Promise<Array<GraphicHitResult>>; // Optional results of local hits to incorporate in the identify
 }
 
-//TODO: Enhance this when a RAMP Graphic is properly defined
+// this would need to expand if we start supporting hits from Graphic Layers (they have no concept of OID)
 export interface GraphicHitResult {
-    oid: number; // graphic OBJECTID
-    layerIdx: number; // layer index of the graphic
-    layerId: string; // graphic layer id
+    /**
+     * graphic Object ID value
+     */
+    oid: number;
+
+    /**
+     * layer index of the layer the graphic lives in
+     */
+    layerIdx: number;
+
+    /**
+     * layer id of layer the graphic lives in
+     */
+    layerId: string;
 }
 
 export interface MaptipProperties {
@@ -763,5 +777,6 @@ export interface RampMapConfig {
     layerTimeDefault?: {
         expectedDrawTime?: number;
         expectedLoadTime?: number;
+        maxLoadTime?: number;
     };
 }

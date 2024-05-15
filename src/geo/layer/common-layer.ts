@@ -47,7 +47,6 @@ export class CommonLayer extends LayerInstance {
      * Tracks load and draw elapsed time
      */
     timers: {
-        // TODO when implementing #1491, look into converting this type to LayerTimes
         draw: number | undefined;
         load: number | undefined;
     };
@@ -56,7 +55,10 @@ export class CommonLayer extends LayerInstance {
 
     protected loadDefProm: DefPromise; // a deferred promise that resolves when layer is fully ready and safe to use. for convenience of caller
 
-    protected loadPromFulfilled: boolean; // a boolean to track whether the promise has fulfilled or not
+    /**
+     * A boolean to track whether the promise is pending (false) or fulfilled/rejected (true)
+     */
+    protected loadPromDone: boolean;
     protected layerTree: TreeNode;
 
     // ----------- LAYER CONSTRUCTION AND INITIALIZAION -----------
@@ -77,6 +79,11 @@ export class CommonLayer extends LayerInstance {
             rampConfig.expectedDrawTime ?? defaultTimes.draw;
         this.expectedTime.load =
             rampConfig.expectedLoadTime ?? defaultTimes.draw;
+
+        // falsey || , 0 means defer to map default
+        this.expectedTime.fail = rampConfig.maxLoadTime || defaultTimes.fail;
+
+        this.lastCancel = 0;
         this.timers = {
             draw: undefined,
             load: undefined
@@ -100,25 +107,27 @@ export class CommonLayer extends LayerInstance {
         this.loadDefProm = new DefPromise();
         this.url = this.origRampConfig.url;
         this.canReload = !!(this.url || this.origRampConfig.caching);
-        this.loadPromFulfilled = false;
+        this.loadPromDone = false;
 
         this.layerTree = new TreeNode(0, this.uid, this.name, true); // is a layer with layer index 0 by default. subclasses will change this when they load
-        this.maxLoadTime = rampConfig.maxLoadTime ?? 20000;
     }
 
     updateInitiationState(newState: InitiationState): void {
         this.initiationState = newState;
+
         this.$iApi.event.emit(GlobalEvents.LAYER_INITIATIONSTATECHANGE, {
             state: newState,
             layer: this
         });
     }
 
-    updateLayerState(newState: LayerState): void {
+    updateLayerState(newState: LayerState, userCancel: boolean = false): void {
         this.layerState = newState;
+
         this.$iApi.event.emit(GlobalEvents.LAYER_LAYERSTATECHANGE, {
             state: newState,
-            layer: this
+            layer: this,
+            userCancel
         });
     }
 
@@ -135,19 +144,83 @@ export class CommonLayer extends LayerInstance {
         });
     }
 
+    // remove ~@~
+    async sleep(millsecs: number): Promise<void> {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve();
+            }, millsecs);
+        });
+    }
+
     // need this so initiate encapsulates the entire initiation process regardless of which inherited layer type is being initiated
     async initiate(): Promise<void> {
         this.updateInitiationState(InitiationState.INITIATING);
         this.startTimer(TimerType.LOAD);
+
+        const failStepsHelper = (consoleMessage: string) => {
+            // state check is for saftey. Typically will be in initializing state
+            // when this gets called. But if someone decides to force a layer
+            // into error via API, could get a timeout error doubling at a later time without
+            // the check.
+            if (this.layerState !== LayerState.ERROR) {
+                console.error(consoleMessage);
+                this.onError();
+            }
+        };
+
+        const startTime = Date.now();
+
+        // this timer is different than the one in MapAPI.addLayer() .
+        // that one is tracking "did I get added to the map" for the return value of addLayer.
+        // this timer works in tandem with the similar timer in onLoad() of this class.
+        // they share the same timer value, but typically a layer is all work in initiation or all work in load
+        const initTimeout = setTimeout(() => {
+            // took too long to init, send layer into error state
+
+            // need to ensure this timeout didn't keep running after a real cancel.
+            // if it was cancelled, stuffs already handled. We do nothing
+            if (startTime > this.lastCancel) {
+                // using lastCancel is a bit of trickery. We are timing out but server processes can still be running.
+                // if they return much later, the layer will flicker into existence on the map.
+                // doing this prevents that (everything async in init-load is respecting this var).
+                // However we do treat the error as genuine, so the notification will ping.
+                this.lastCancel = Date.now();
+                failStepsHelper(
+                    'Layer timed out during initialize. Id: ' + this.id
+                );
+            }
+        }, this.expectedTime.fail);
+
+        // remove ~@~
+        if (!this.isCosmetic) {
+            await this.sleep(this.$iApi.initDelay);
+        }
+
         const [initiateErr] = await to(this.onInitiate()); // Need this because some layers don't do error handling things
-        if (this.drawState !== DrawState.UP_TO_DATE) {
-            this.startTimer(TimerType.DRAW);
+
+        // we're done timing regardless. a) already timed out. b) init ok. c) init errored so already errored.
+        clearTimeout(initTimeout);
+
+        if (startTime > this.lastCancel) {
+            if (this.drawState !== DrawState.UP_TO_DATE) {
+                this.startTimer(TimerType.DRAW);
+            }
+            if (initiateErr) {
+                failStepsHelper(
+                    `Init error on layer id: ${this.id} . ${initiateErr.message}`
+                );
+            } else {
+                this.updateInitiationState(InitiationState.INITIATED);
+            }
+            // remove ~@~
+            if (!this.isCosmetic) {
+                this.$iApi.notify.show(
+                    NotificationType.INFO,
+                    'Finished init phase: ' + (this.name || this.id)
+                );
+            }
         }
-        if (initiateErr) {
-            console.error(initiateErr.message);
-            this.onError();
-        }
-        this.updateInitiationState(InitiationState.INITIATED);
     }
 
     protected async onInitiate(): Promise<void> {
@@ -170,7 +243,7 @@ export class CommonLayer extends LayerInstance {
         await Promise.all(this.sublayers.map(s => s.terminate()));
 
         this.loadDefProm = new DefPromise();
-        this.loadPromFulfilled = false;
+        this.loadPromDone = false;
 
         this.updateLayerState(LayerState.NEW);
         this.updateDrawState(DrawState.NOT_LOADED);
@@ -184,15 +257,20 @@ export class CommonLayer extends LayerInstance {
     onLoad(): void {
         // magic happens here. other layers will override onLoadActions,
         // meaning this will run the function appropriate for the layer who inherited LayerBase
+
+        const startTime = Date.now();
+
         let timedOut = false;
+
+        // this timer is different than the one in MapAPI.addLayer() .
+        // that one is tracking "did I get added to the map" for the return value of addLayer.
+        // this timer works in tandem with the similar timer in initiate() of this class.
+        // they share the same timer value, but typically a layer is all work in initiation or all work in load
         const loadTimeout = setTimeout(() => {
-            // if timeout is not 0, layer will go into error state after loading past timeout
-            // otherwise timeout is turned off (0), and layer can load forever
-            if (this.maxLoadTime) {
-                timedOut = true;
-                this.onError();
-            }
-        }, this.maxLoadTime); // configurable time limit for actions to execute
+            // took too long to load, send layer into error state
+            timedOut = true;
+            this.onError();
+        }, this.expectedTime.fail);
 
         // handling for any errors that are thrown when executing layer onLoadActions call
         // For issue https://github.com/ramp4-pcar4/ramp4-pcar4/issues/2103, without proper error handling here any subsequent
@@ -204,17 +282,34 @@ export class CommonLayer extends LayerInstance {
                 .then(() => {
                     clearTimeout(loadTimeout);
                     if (!timedOut) {
-                        // if promise was previously not in pending status, make a new one
-                        // otherwise we're trying to resolve a resolved/rejected promise
-                        if (this.loadPromFulfilled) {
-                            this.loadDefProm = new DefPromise();
-                        }
-                        this.loadDefProm.resolveMe();
-                        this.loadPromFulfilled = true;
                         this.stopTimer(TimerType.LOAD);
-                        // This will just trigger the above statements for each sublayer
-                        this.sublayers.forEach(sublayer => sublayer.onLoad());
-                        this.updateLayerState(LayerState.LOADED);
+
+                        // only finalize if this load was not cancelled
+                        if (startTime > this.lastCancel) {
+                            // if promise was previously not in pending status, make a new one
+                            // otherwise we're trying to resolve a resolved/rejected promise.
+                            // Anything watching the old promise already handled it. This ensures
+                            // anything looking at it going forward will get a resolved promise.
+                            if (this.loadPromDone) {
+                                this.loadDefProm = new DefPromise();
+                            }
+                            this.loadDefProm.resolveMe();
+                            this.loadPromDone = true;
+
+                            // This will just trigger the above statements for each sublayer
+                            this.sublayers.forEach(sublayer =>
+                                sublayer.onLoad()
+                            );
+                            this.updateLayerState(LayerState.LOADED);
+
+                            // remove ~@~
+                            if (!this.isCosmetic) {
+                                this.$iApi.notify.show(
+                                    NotificationType.INFO,
+                                    'Finished load phase: ' + this.name
+                                );
+                            }
+                        }
                     } else {
                         this.visibility = false;
                     }
@@ -231,58 +326,97 @@ export class CommonLayer extends LayerInstance {
         }
     }
 
-    // TODO what happens if the error state is hit after the layer is loaded?
-    //      Probably ok (rejecting a resolved promise that nobody is listening for).
-    //      Putting the layer in error status is what is important.
-    // when esri layer load errors
-    onError(): void {
+    onError(genuineError: boolean = true): void {
+        if (this.layerState === LayerState.ERROR) {
+            // we're already in Error. Different handlers are reporting the same scenario.
+            // do nothing to avoid event spam and conflicting event states from user cancel
+            // that has funny timing.
+            return;
+        }
+
+        if (this.initiationState === InitiationState.INITIATING) {
+            // something happened while initiating. push back to New
+            this.updateInitiationState(InitiationState.NEW);
+        }
+
         // if promise was previously not in pending status, make a new one
         // otherwise we're trying to reject a resolved promise
-        if (this.loadPromFulfilled) {
+        if (this.loadPromDone) {
             this.loadDefProm = new DefPromise();
         }
         this.loadDefProm.rejectMe();
-        this.loadPromFulfilled = true;
-        this.sublayers.forEach(sublayer => sublayer.onError());
-        this.$iApi.notify.show(
-            NotificationType.ERROR,
-            this.$iApi.$i18n.t('layer.error', {
-                id: this.id
-            })
-        );
+        this.loadPromDone = true;
+        this.sublayers.forEach(sublayer => sublayer.onError(genuineError));
+
+        // manually cancelling a loading layer will put in error state. We don't
+        // want to ping the user; they did the cancel click.
+        if (genuineError) {
+            this.$iApi.notify.show(
+                NotificationType.ERROR,
+                this.$iApi.$i18n.t('layer.error', {
+                    id: this.id
+                })
+            );
+        }
+
         this.stopTimer(TimerType.DRAW);
         this.stopTimer(TimerType.LOAD);
-        this.updateLayerState(LayerState.ERROR);
-    }
-
-    // performs setup on the layer that needs to occur after the esri layer
-    // exists, but before we mark the layer as loaded. Any async tasks must
-    // include their promise in the return array.
-    protected onLoadActions(): Array<Promise<void>> {
-        // currently nothing, but we have the option to insert
-        // an async setup that is global for all layers
-        return [];
+        this.updateLayerState(LayerState.ERROR, !genuineError);
     }
 
     /**
-     * Provides a promise that resolves when the layer has finished loading. If accessing layer properties that
-     * depend on the layer being loaded, wait on this promise before accessing them.
+     * Performs setup on the layer that needs to occur after initialization and
+     * the esri layer (if a map layer) loads, but before we mark the layer as loaded.
+     * Any async tasks must include their promise in the return array.
      *
-     * @method loadPromise
-     * @returns {Promise} resolves when the layer has finished loading
+     * @private
+     * @returns {Array<Promise<void>>} List of things to wait on.
      */
+    protected onLoadActions(): Array<Promise<void>> {
+        // currently nothing, but we have the option to insert
+        // an async setup that is global for all layers
+
+        // remove ~@~
+        if (this.isCosmetic) {
+            return [];
+        } else {
+            return [this.sleep(this.$iApi.loadDelay)];
+        }
+    }
+
+    cancelLoad(): void {
+        if (
+            this.isLoaded ||
+            this.initiationState === InitiationState.NEW ||
+            this.initiationState === InitiationState.TERMINATING ||
+            this.initiationState === InitiationState.TERMINATED
+        ) {
+            // we are loaded, terminating, terminated, or never initiated.
+            // do nothing.
+            return;
+        }
+
+        // set flag for other async load stuff to see
+        this.lastCancel = Date.now();
+
+        if (this.esriLayer && this.esriLayer.loadStatus === 'loading') {
+            // ESRI API is doing something. stop it.
+            this.esriLayer.cancelLoad();
+        }
+
+        // remove layer from map if it was there. this prevents cancelled layer
+        // that actually loaded (and its the ramp stuff thats slow/broken holding up LOAD)
+        // from showing when legend says Error.
+        this.removeEsriLayer();
+
+        // put layer in Errorland, flag to stop notification from pinging
+        this.onError(false);
+    }
+
     loadPromise(): Promise<void> {
         return this.loadDefProm.getPromise();
     }
 
-    /**
-     * Indicates if the layer is in a state that is makes sense to interact with.
-     * I.e. False if layer has not done it's initial load, or is in error state.
-     * Acts as a handy shortcut to inspecting the layerState.
-     *
-     * @method isLoaded
-     * @returns {Boolean} true if layer is loaded
-     */
     get isLoaded(): boolean {
         return this.layerState === LayerState.LOADED;
     }
@@ -338,30 +472,14 @@ export class CommonLayer extends LayerInstance {
         });
     }
 
-    /**
-     * Requests that an attribute load request be aborted. Useful when encountering a massive dataset or a runaway process.
-     *
-     */
     abortAttributeLoad(): void {
         this.stubError();
     }
 
-    /**
-     * Requests that any downloaded attribute sets or cached geometry be removed from memory. The next requests will pull from the server again.
-     *
-     */
     clearFeatureCache(): void {
         this.stubError();
     }
 
-    // formerly known as getFormattedAttributes
-    /**
-     * Invokes the process to get the full set of attribute values for the layer,
-     * formatted in a tabular format. Additional data properties are also included.
-     * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
-     *
-     * @returns {Promise} resolves with set of tabular attribute values
-     */
     getTabularAttributes(): Promise<TabularAttributeSet> {
         this.stubError();
 
@@ -389,46 +507,20 @@ export class CommonLayer extends LayerInstance {
         return Promise.resolve(new Graphic(new NoGeometry()));
     }
 
-    /**
-     * Gets the icon for a specific feature, as an SVG string.
-     *
-     * @param {Integer} objectId the object id of the feature to find
-     * @returns {Promise} resolves with an svg string encoding of the icon
-     */
     getIcon(objectId: number): Promise<string> {
         this.stubError();
         return Promise.resolve('');
     }
 
-    /**
-     * Returns the value of a named SQL filter on a layer.
-     *
-     * @param {String} filterKey the filter key / named filter to view
-     * @returns {String} the value of the where clause for the filter. Empty string if not defined.
-     */
     getSqlFilter(filterKey: string): string {
         this.stubError();
         return '';
     }
 
-    /**
-     * Applies an SQL filter to the layer. Will overwrite any existing filter for the given key.
-     * Use `1=2` for a "hide all" where clause.
-     *
-     * @param {String} filterKey the filter key / named filter to apply the SQL to
-     * @param {String} whereClause the WHERE clause of the filter
-     */
     setSqlFilter(filterKey: string, whereClause: string): void {
         this.stubError();
     }
 
-    /**
-     * Gets array of object ids that currently pass any filters for the layer
-     *
-     * @param {Array} [exclusions] list of any filters keys to exclude from the result. omission includes all filters
-     * @param {Extent} [extent] if provided, the result list will only include features intersecting the extent
-     * @returns {Promise} resolves with array of object ids that pass the filter. if no filters are active, resolves with undefined.
-     */
     getFilterOIDs(
         exclusions: Array<string> = [],
         extent: Extent | undefined = undefined
@@ -449,12 +541,6 @@ export class CommonLayer extends LayerInstance {
         return Promise.resolve(Extent.fromParams('fake', 0, 0, 0, 0));
     }
 
-    /**
-     * Applies the current filter settings to the physical map layer.
-     *
-     * @function applySqlFilter
-     * @param {Array} [exclusions] list of any filters to exclude from the result. omission includes all keys
-     */
     applySqlFilter(exclusions: Array<string> = []): void {
         this.stubError();
     }
@@ -467,7 +553,11 @@ export class CommonLayer extends LayerInstance {
      * @param {String} value value of the key
      * @param {Boolean} forceRefresh show the new fancy version of the layer or not
      */
-    setCustomParameter(key: string, value: string, forceRefresh = true): void {
+    setCustomParameter(
+        key: string,
+        value: string,
+        forceRefresh: boolean = true
+    ): void {
         this.stubError();
     }
 
