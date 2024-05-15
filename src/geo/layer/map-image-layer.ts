@@ -127,23 +127,20 @@ export class MapImageLayer extends MapLayer {
         return esriConfig;
     }
 
-    /**
-     * Triggers when the layer loads.
-     *
-     * @function onLoadActions
-     */
-    onLoadActions(): Array<Promise<void>> {
+    protected onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        if (!this.esriLayer) {
+        if (!this.layerExists) {
             this.noLayerErr();
             return loadPromises;
         }
 
+        const startTime = Date.now();
+
         this.layerTree.name = this.name;
 
         // throw error for FeatureServer added as MIL, has no export map function
-        if (!this.esriLayer.capabilities.exportMap) {
+        if (!this.esriLayer!.capabilities.exportMap) {
             this.$iApi.notify.show(
                 NotificationType.WARNING,
                 this.$iApi.$i18n.t('layer.noexportmap', {
@@ -156,11 +153,11 @@ export class MapImageLayer extends MapLayer {
             );
         }
         this.isDynamic =
-            this.esriLayer.capabilities.exportMap.supportsDynamicLayers;
+            this.esriLayer!.capabilities.exportMap.supportsDynamicLayers;
 
         this.extent =
             this.extent ??
-            Extent.fromESRI(this.esriLayer.fullExtent, this.id + '_extent');
+            Extent.fromESRI(this.esriLayer!.fullExtent, this.id + '_extent');
 
         const findSublayer = (targetIndex: number): __esri.Sublayer => {
             const finder = this.esriLayer?.allSublayers.find(s => {
@@ -304,16 +301,14 @@ export class MapImageLayer extends MapLayer {
             this.origRampConfig.sublayers
         )).forEach(sublayer => {
             if (!sublayer.cosmetic) {
-                // TODO add a check instead of 0 default on the index?
                 const rootSub = findSublayer(sublayer.index || 0);
-                // would need to validate layer tree every loop to shut up typescript. shutting it up with comment instead.
-                // @ts-ignore
                 processSublayer(rootSub, this.layerTree);
             }
         });
 
-        // process each leaf sublayer we walked to in the sublayer tree crawl above
-        leafsToInit.forEach((miSL: MapImageSublayer) => {
+        // process each leaf sublayer we walked to in the sublayer tree crawl above.
+        // leaf promises are added to our load actions promise array.
+        const leafLoadProms = leafsToInit.map(async miSL => {
             // NOTE: can consider alternates, like esriLayer.url + / + layerIdx
             const sublayer = findSublayer(miSL.layerIdx);
             const config = subConfigs[miSL.layerIdx];
@@ -321,9 +316,18 @@ export class MapImageLayer extends MapLayer {
 
             // the sublayer needs to be re-fetched because the initial sublayer was marked as "raw"
             miSL.fetchEsriSublayer(this);
-            miSL.initiate();
+            await miSL.initiate();
+
+            if (startTime < this.lastCancel) {
+                // cancelled, kickout.
+                // in practice this is instant, but being safe incase things change.
+                // Also fake testing delays can break stuff without it
+                return;
+            }
 
             // setting custom renderer here (if one is provided)
+            // this code applies esri renderer. loadLayerMetadata will
+            // generate the RAMP wrapper on the layer.
             const hasCustRed =
                 miSL.esriSubLayer && config?.customRenderer?.type;
             if (hasCustRed) {
@@ -332,83 +336,85 @@ export class MapImageLayer extends MapLayer {
                 );
             }
 
-            const pLMD: Promise<void> = miSL
-                .loadLayerMetadata(
-                    hasCustRed
-                        ? { customRenderer: miSL.esriSubLayer?.renderer }
-                        : {}
-                )
-                .then(() => {
-                    // apply any updates that were in the configuration snippets
-                    const subC = subConfigs[miSL.layerIdx];
-                    if (subC) {
-                        // If the sublayer is cancelled or removed, set to invisible.
-                        // Otherwise, sublayer visibility is normally checked (and set) in the following order:
-                        // sublayer config -> server -> parent config -> true.
-                        // First value in the order that is defined is taken as the sublayer's visibility.
-                        // However, if parent vis is set to false on config, we prioritize parent config over server vis.
-                        // The order in that case is sublayer config -> parent config -> server -> true.
-                        miSL.visibility = miSL.isRemoved
-                            ? false
-                            : subC.state?.visibility ??
-                              (this.origState.visibility
-                                  ? miSL._serverVisibility ??
-                                    this.origState.visibility
-                                  : this.origState.visibility ??
-                                    miSL._serverVisibility) ??
-                              true;
-                        miSL.opacity =
-                            subC.state?.opacity ?? this.origState.opacity ?? 1;
-                        miSL.nameField = subC.nameField || miSL.nameField || '';
+            await miSL.loadLayerMetadata(
+                hasCustRed
+                    ? { customRenderer: miSL.esriSubLayer?.renderer }
+                    : {}
+            );
 
-                        this.$iApi.geo.attributes.applyFieldMetadata(
-                            miSL,
-                            subC.fieldMetadata
-                        );
+            if (startTime < this.lastCancel) {
+                // cancelled, kickout.
+                return;
+            }
 
-                        if (!miSL.canModifyLayer) {
-                            this.$iApi.notify.show(
-                                NotificationType.WARNING,
-                                this.$iApi.$i18n.t(`layer.filtersdisabled`, {
-                                    name: miSL.name || miSL.id
-                                })
-                            );
-                        }
+            // apply any updates that were in the configuration snippets
+            const subC = subConfigs[miSL.layerIdx];
+            if (subC) {
+                // If the sublayer is cancelled or removed, set to invisible.
+                // Otherwise, sublayer visibility is normally checked (and set) in the following order:
+                // sublayer config -> server -> parent config -> true.
+                // First value in the order that is defined is taken as the sublayer's visibility.
+                // However, if parent vis is set to false on config, we prioritize parent config over server vis.
+                // The order in that case is sublayer config -> parent config -> server -> true.
+                miSL.visibility = miSL.isRemoved
+                    ? false
+                    : (subC.state?.visibility ??
+                      (this.origState.visibility
+                          ? (miSL._serverVisibility ??
+                            this.origState.visibility)
+                          : (this.origState.visibility ??
+                            miSL._serverVisibility)) ??
+                      true);
+                miSL.opacity =
+                    subC.state?.opacity ?? this.origState.opacity ?? 1;
+                miSL.nameField = subC.nameField || miSL.nameField || '';
 
-                        // NOTE the miSL.identify property is currently getting set in onLoadActions() of
-                        //      MapImageSublayer. This will get called by this layer's onLoad after this
-                        //      function runs. Not sure why that one part is there, but suggest leave
-                        //      it alone unless things stop working. This comment just helps you find it.
-                    } else {
-                        // pulling from parent would be cool, but complex. all the promises would need to be resolved in tree-order
-                        // maybe put defaulting here for visible/opac/identify
-                        this.$iApi.geo.attributes.applyFieldMetadata(miSL);
-                    }
+                this.$iApi.geo.attributes.applyFieldMetadata(
+                    miSL,
+                    subC.fieldMetadata
+                );
 
-                    // do any things that are specific to feature or raster subtypes
-                    if (miSL.supportsFeatures) {
-                        // ensure our massaged field lists get updated inside the sublayer
-                        miSL.updateFieldList();
+                if (!miSL.canModifyLayer) {
+                    this.$iApi.notify.show(
+                        NotificationType.WARNING,
+                        this.$iApi.$i18n.t(`layer.filtersdisabled`, {
+                            name: miSL.name || miSL.id
+                        })
+                    );
+                }
 
-                        // return request promise to get feature count (will block loaded event)
-                        return this.$iApi.geo.layer
-                            .loadFeatureCount(
-                                miSL.serviceUrl,
-                                miSL.getSqlFilter(CoreFilter.PERMANENT)
-                            )
-                            .then(count => {
-                                miSL.featureCount = count;
-                            });
-                    } else {
-                        return Promise.resolve();
-                    }
-                });
-            loadPromises.push(pLMD);
+                // NOTE the miSL.identify property is currently getting set in onLoadActions() of
+                //      MapImageSublayer. This will get called by this layer's onLoad after this
+                //      function runs. Not sure why that one part is there, but suggest leave
+                //      it alone unless things stop working. This comment just helps you find it.
+            } else {
+                // pulling from parent would be cool, but complex. all the promises would need to be resolved in tree-order
+                // maybe put defaulting here for visible/opac/identify
+                this.$iApi.geo.attributes.applyFieldMetadata(miSL);
+            }
+
+            // do any things that are specific to feature or raster subtypes
+            if (miSL.supportsFeatures) {
+                // ensure our massaged field lists get updated inside the sublayer
+                miSL.updateFieldList();
+
+                // get feature count
+                const count = await this.$iApi.geo.layer.loadFeatureCount(
+                    miSL.serviceUrl,
+                    miSL.getSqlFilter(CoreFilter.PERMANENT)
+                );
+
+                if (startTime > this.lastCancel) {
+                    miSL.featureCount = count;
+                }
+            }
         });
+
+        loadPromises.push(...leafLoadProms);
 
         // any sublayers lurking in the ESRI layer that are not in our set of sublayers,
         // we need to deal with.
-        this.esriLayer.allSublayers.forEach(s => {
+        this.esriLayer!.allSublayers.forEach(s => {
             if (
                 !s.sublayers &&
                 !leafsToInit.find(sublayer => sublayer.layerIdx === s.id)
@@ -432,10 +438,12 @@ export class MapImageLayer extends MapLayer {
         return loadPromises;
     }
 
-    updateLayerState(newState: LayerState): void {
+    updateLayerState(newState: LayerState, userCancel: boolean = false): void {
         // force any sublayers to also update their state and raise events
-        super.updateLayerState(newState);
-        this.sublayers.forEach(sublayer => sublayer.updateLayerState(newState));
+        super.updateLayerState(newState, userCancel);
+        this.sublayers.forEach(sublayer =>
+            sublayer.updateLayerState(newState, userCancel)
+        );
     }
 
     updateDrawState(newState: DrawState): void {

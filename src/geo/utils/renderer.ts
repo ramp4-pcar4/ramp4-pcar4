@@ -73,10 +73,6 @@ export class BaseRenderer {
         return this.searchRenderer(attributes).symbol;
     }
 
-    rendererToLegend(): any {
-        throw new Error('rendererToLegend not implemented in subclass');
-    }
-
     // worker function. determines if a field value should be wrapped in
     // any character and returns the character. E.g. string would return ', numbers return empty string.
     protected getFieldDelimiter(

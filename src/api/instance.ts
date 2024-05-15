@@ -75,6 +75,10 @@ export interface RampOptions {
     loadDefaultFixtures?: boolean;
     loadDefaultEvents?: boolean;
     startRequired?: boolean;
+
+    // remove ~@~
+    initDelay?: number;
+    loadDelay?: number;
 }
 
 export class InstanceAPI {
@@ -108,11 +112,19 @@ export class InstanceAPI {
 
     private _isFullscreen: boolean;
 
+    // remove ~@~
+    initDelay: number;
+    loadDelay: number;
+
     constructor(
         element: HTMLElement,
         configs?: RampConfigs,
         options?: RampOptions
     ) {
+        // remove ~@~
+        this.initDelay = options?.initDelay || 0;
+        this.loadDelay = options?.loadDelay || 0;
+
         this.event = new EventAPI(this);
 
         const appInstance = createApp(element, this);
@@ -229,7 +241,10 @@ export class InstanceAPI {
                         langConfig.layers.forEach(layerConfig => {
                             const layer =
                                 this.geo.layer.createLayer(layerConfig);
-                            this.geo.map.addLayer(layer, mapOrderPos);
+                            this.geo.map
+                                .addLayer(layer, mapOrderPos)
+                                // just to silence console about unhandled rejections.
+                                .catch(() => {});
                             if (layer.mapLayer) {
                                 // we only increment for map layers. Data layers get added but do not live in the map stack.
                                 // so no ++. We pass the param to map.addLayer above out of lazyness. It gets ignored for data layers.
