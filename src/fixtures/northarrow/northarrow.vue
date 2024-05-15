@@ -184,15 +184,17 @@ const updateNortharrow = async (newExtent: Extent) => {
                 });
                 iApi.geo.map.addLayer(poleLayer);
 
-                const poleGraphic = new Graphic(projPole, 'northpole');
-                const poleStyle = new PointStyle(
-                    poleStyleParams as
-                        | PointIconStyleOptions
-                        | PointMarkerStyleOptions
-                );
-                poleGraphic.style = poleStyle;
+                poleLayer.loadPromise().then(() => {
+                    const poleGraphic = new Graphic(projPole, 'northpole');
+                    const poleStyle = new PointStyle(
+                        poleStyleParams as
+                            | PointIconStyleOptions
+                            | PointMarkerStyleOptions
+                    );
+                    poleGraphic.style = poleStyle;
 
-                (poleLayer as CommonGraphicLayer).addGraphic(poleGraphic);
+                    (poleLayer as CommonGraphicLayer).addGraphic(poleGraphic);
+                });
             }
         }
     } else {

@@ -107,7 +107,7 @@ export enum GlobalEvents {
 
     /**
      * Fires when the load state of a layer changes.
-     * Payload: `({ layer: LayerInstance, state: string })`
+     * Payload: `({ layer: LayerInstance, state: string, userCancel: boolean })`
      */
     LAYER_LAYERSTATECHANGE = 'layer/layerstatechange',
 
@@ -750,10 +750,16 @@ export class EventAPI extends APIScope {
             case DefEH.LAYER_RELOAD_START_UPDATES_LEGEND:
                 // when a layer starts to reload, reset any entries in the standard legend to a loading state
                 zeHandler = (layer: LayerInstance) => {
-                    const legendApi =
-                        this.$iApi.fixture.get<LegendAPI>('legend');
-                    if (legendApi) {
-                        legendApi.reloadLayerItem(layer.uid);
+                    // If a sublayer reloads, its parent also reloaded.
+                    // Legend updates in this scenario key on parent layer
+                    // (since no guarantee sublayer exists when reload happens).
+                    // Ignore any events from sublayers
+                    if (!layer.isSublayer) {
+                        const legendApi =
+                            this.$iApi.fixture.get<LegendAPI>('legend');
+                        if (legendApi) {
+                            legendApi.reloadLayerItem(layer.uid);
+                        }
                     }
                 };
                 this.$iApi.event.on(

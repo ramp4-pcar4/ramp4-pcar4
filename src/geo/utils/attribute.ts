@@ -11,7 +11,7 @@ import type {
     RampLayerFieldMetadataConfig,
     TabularAttributeSet
 } from '@/geo/api';
-import { DataFormat, Graphic, NoGeometry } from '@/geo/api';
+import { DataFormat, GeometryType, Graphic, NoGeometry } from '@/geo/api';
 import { EsriGeometryFromJson, EsriRequest } from '@/geo/esri';
 import to from 'await-to-js';
 import deepmerge from 'deepmerge';
@@ -872,13 +872,18 @@ export class QuickCache {
     // extents for feature layer graphics that do not have a point geometry
     private extents: { [key: number]: Extent };
 
+    /**
+     * Used to determine if we need to cache geometry at different scales.
+     */
     readonly isPoint: boolean;
 
-    constructor(geomType: string) {
+    constructor(geomType: GeometryType) {
         this.attribs = {};
         this.geoms = {};
         this.extents = {};
-        this.isPoint = geomType === 'point';
+        this.isPoint =
+            geomType === GeometryType.POINT ||
+            geomType === GeometryType.MULTIPOINT;
     }
 
     private getScaleStore(scale: number): { [key: number]: any } {

@@ -11,8 +11,8 @@
                     legendItem.type === LegendType.Item
                         ? 'loaded-item'
                         : legendItem.type === LegendType.Error
-                        ? 'non-loaded-item bg-red-200'
-                        : 'non-loaded-item',
+                          ? 'non-loaded-item bg-red-200'
+                          : 'non-loaded-item',
                     (isGroup && controlAvailable(LegendControl.Expand)) ||
                     (!isGroup &&
                         legendItem instanceof LayerItem &&
@@ -52,11 +52,11 @@
                                   : 'legend.group.expand'
                           )
                         : legendItem instanceof LayerItem &&
-                          legendItem.type === LegendType.Item &&
-                          controlAvailable(LayerControl.Datatable) &&
-                          getDatagridExists()
-                        ? t('legend.layer.data')
-                        : ''
+                            legendItem.type === LegendType.Item &&
+                            controlAvailable(LayerControl.Datatable) &&
+                            getDatagridExists()
+                          ? t('legend.layer.data')
+                          : ''
                 "
                 v-tippy="{
                     placement: 'top-start',
@@ -251,7 +251,7 @@
                             placement: 'top-start'
                         }"
                         @mouseover.stop
-                        @click.stop="reloadIfReady"
+                        @click.stop="reloadLayer"
                         :aria-label="t('legend.layer.controls.reload')"
                     >
                         <div class="flex p-8">
@@ -575,7 +575,7 @@
 <script setup lang="ts">
 import { GlobalEvents, InstanceAPI } from '@/api';
 import type { LegendSymbology, RampLayerConfig } from '@/geo/api';
-import { LayerControl } from '@/geo/api';
+import { InitiationState, LayerControl } from '@/geo/api';
 import { useLayerStore } from '@/stores/layer';
 import to from 'await-to-js';
 import { marked } from 'marked';
@@ -742,61 +742,49 @@ const getDatagridExists = (): boolean => {
 };
 
 /**
- * Reloads layer if its "ready" to be reloaded.
- * If a layer has not been cancelled, it is ready to be reloaded.
- * If it has been cancelled by the user, then we wait for any currently in progress load to finish.
- */
-const reloadIfReady = () => {
-    // reload legend item state back to placeholder state
-    props.legendItem.reload();
-    if ((props.legendItem as LayerItem)._loadCancelled) {
-        const readyWatcher = setInterval(() => {
-            if ((props.legendItem as LayerItem).layer) {
-                Promise.allSettled([
-                    (props.legendItem as LayerItem).layer.loadPromise
-                ]).then(() => {
-                    clearInterval(readyWatcher);
-                    reloadLayer();
-                });
-            }
-        }, 250);
-    } else {
-        reloadLayer();
-    }
-};
-/**
  * Reloads a layer on the map.
+ * Layer is in an error'd state for that UI to be available.
  */
 const reloadLayer = () => {
+    props.legendItem.reload();
     // want the animation to play for half a second because a reload can fail "instantly", making it look like nothing happened to the user
     setTimeout(() => {
-        (props.legendItem as LayerItem)._loadCancelled = false;
-        // call reload on layer if it exists
-        if ((props.legendItem as LayerItem).layer !== undefined) {
-            toRaw((props.legendItem as LayerItem).layer!).reload();
-        } else {
-            // otherwise attempt to re-create layer with layer config
-            const layerConfig =
-                (props.legendItem as LayerItem).layerIdx === undefined ||
-                (props.legendItem as LayerItem).layerIdx === -1
-                    ? layerConfigs.value.find(
-                          (lc: RampLayerConfig) =>
-                              lc.id === (props.legendItem as LayerItem).layerId
-                      )
-                    : layerConfigs.value.find(
-                          (lc: RampLayerConfig) =>
-                              lc.id ===
-                              (props.legendItem as LayerItem).parentLayerId
-                      );
+        const layerItemProp = props.legendItem as LayerItem;
+        let recreateFromConfig = true;
+
+        if (layerItemProp.layer) {
+            // layer exists, reload it
+            toRaw(layerItemProp.layer).reload();
+            recreateFromConfig = false;
+        } else if (layerItemProp.isSublayer && layerItemProp.parentLayerId) {
+            // see if parent exists, if so, reload it.
+            const testParent = iApi.geo.layer.getLayer(
+                layerItemProp.parentLayerId
+            );
+            if (testParent) {
+                toRaw(testParent).reload();
+                recreateFromConfig = false;
+            }
+        }
+
+        if (recreateFromConfig) {
+            // were unable to find any layers. Attempt to re-create layer with layer config
+
+            const targetId = layerItemProp.isSublayer
+                ? layerItemProp.parentLayerId
+                : layerItemProp.layerId;
+
+            const layerConfig = layerConfigs.value.find(
+                (lc: RampLayerConfig) => lc.id === targetId
+            );
             if (layerConfig !== undefined) {
                 recreateLayer(layerConfig);
             }
         }
-        // catch error if reload fails
-        props.legendItem.loadPromise.catch(() => {
-            console.error('Failed to reload layer -', props.legendItem.name);
-        });
-    }, 500);
+
+        // just to silence console about unhandled rejections.
+        props.legendItem.loadPromise.catch(() => {});
+    }, 400);
 };
 
 /**
@@ -818,9 +806,13 @@ const recreateLayer = async (layerConfig: RampLayerConfig) => {
         } else {
             // try to re-create new layer based on layerConfig
             // same code to how layers are initialized when layer config array changes, expose this as layer API method?
+
+            // TODO low priority investigation: now that layers get registered right away,
+            // can this ELSE block even get hit anymore? I think we'll always find checkLayer.
+            // if layer got removed, legend block should have vanished.
             const layer = iApi.geo.layer.createLayer(layerConfig);
 
-            await iApi.geo.map.addLayer(layer!).catch(() => {
+            await iApi.geo.map.addLayer(layer).catch(() => {
                 throw new Error();
             });
 
@@ -838,20 +830,41 @@ const recreateLayer = async (layerConfig: RampLayerConfig) => {
  */
 const cancelOrRemoveLayer = () => {
     const layerItem: LayerItem = toRaw(props.legendItem as LayerItem); // so that typescript doesn't yell in the whole method
+    let safetyCount = 0;
+
     if (layerItem.type === LegendType.Error) {
         // layer in error state, remove layer permanently
-        // layer could appear in store later, so we need to keep checking if its there
+        // layer could appear later, so we need to keep checking if its there.
+        // It will typically be in the store (now happens soon as its added),
+        // but the ESRI layer may appear later if things get wacky.
+        // given we can also cancel prior to initiation finishing, we consider
+        // layers in that state.
 
         props.legendItem.toggleHidden(true); // temporarily hide item until we can remove it
 
         const removalWatcher = setInterval(() => {
-            // layer is gone from everywhere, so we are done
-            if (layerItem.layer && layerItem.layer.layerExists) {
+            // test: we can find the Ramp layer AND ...
+            //           the Esri layer exists OR layer is not on the path to have an Esri layer
+            //       OR if it's been 5 minutes, stop and try ur best (1200 * 250 === five mins)
+
+            const rampL = layerItem.layer;
+
+            if (
+                (rampL &&
+                    (rampL.layerExists ||
+                        rampL.initiationState === InitiationState.NEW ||
+                        rampL.initiationState === InitiationState.TERMINATING ||
+                        rampL.initiationState ===
+                            InitiationState.TERMINATED)) ||
+                safetyCount > 1200
+            ) {
                 // stop the interval
                 clearInterval(removalWatcher);
 
-                // layer is now there, time to remove!
-                iApi.geo.map.removeLayer(layerItem.layer);
+                if (rampL) {
+                    // remove from the map, which will de-register and remove anything from the map
+                    iApi.geo.map.removeLayer(rampL);
+                }
 
                 // remove layer config from store
                 layerStore.removeLayerConfig(layerItem.layerId);
@@ -861,46 +874,49 @@ const cancelOrRemoveLayer = () => {
                     .get<LegendAPI>('legend')
                     ?.removeLayerItem(layerItem.layerId);
             }
+
+            safetyCount++;
         }, 250);
     } else {
         // layer in loading state, "cancel" layer
         // this puts it in error state. user can then reload or remove
+
         props.legendItem.error();
-        (props.legendItem as LayerItem)._loadCancelled = true;
+
         // if a sublayer or parent layer was cancelled, cancel the parent layer and all other sublayers.
         // need to keep polling for the parent layer since some sublayers may not be in the config (stuff that came from a group)
 
-        // TODO: revisit the need for this watcher. Now that every registered layer is returned by allLayers, it should always
-        //       find the parent first find(). Unless I'm mis-understanding what parentLayerId is and that can be a
-        //       temporary group node thing. Possibly .parentLayerId on an MIL group isn't set until after load? Sorta makes sense.
+        // This should find stuff real quick now that layers are immediately registered. But keeping the watcher to handle
+        // any weird scenarios (e.g. RampMapAPI.addLayer had critical failure)
+        // The interval is at a faster rate to account for any rapid cancel & reload clicks. setInterval always waits the interval
+        // before first check.
         const cancelWatcher = setInterval(() => {
-            const parentLayer = iApi.geo.layer
-                .allLayers()
-                .find(
-                    l =>
-                        l.id === layerItem.parentLayerId ||
-                        l.id === layerItem.layerId
-                );
+            const parentmostId = layerItem.parentLayerId || layerItem.layerId;
+            const parentLayer = iApi.geo.layer.getLayer(parentmostId);
+
             if (parentLayer) {
                 clearInterval(cancelWatcher);
-                const layerItemToCancel = iApi.fixture
-                    .get<LegendAPI>('legend')
-                    ?.getLayerItem(parentLayer);
-                if (layerItemToCancel) {
-                    layerItemToCancel.error();
-                    layerItemToCancel._loadCancelled = true;
-                }
-                parentLayer.sublayers?.forEach(sl => {
-                    const sublayerItemToCancel = iApi.fixture
+
+                // cancel the ramp layer
+                parentLayer.cancelLoad();
+
+                // cancel any blocks tied to the layer or sublayers.
+
+                const affectedBlocks =
+                    iApi.fixture
                         .get<LegendAPI>('legend')
-                        ?.getLayerItem(sl);
-                    if (sublayerItemToCancel) {
-                        sublayerItemToCancel.error();
-                        sublayerItemToCancel._loadCancelled = true;
-                    }
-                });
+                        ?.getLayerBoundItems(parentLayer) || [];
+
+                affectedBlocks.forEach(block => block.error());
             }
-        }, 250);
+
+            if (safetyCount > 1200) {
+                // 1 minute
+                clearInterval(cancelWatcher);
+            }
+
+            safetyCount++;
+        }, 50);
     }
 };
 
