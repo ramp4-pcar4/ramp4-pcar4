@@ -127,12 +127,12 @@ export const useLayerStore = defineStore('layer', () => {
         }
 
         // find current position of layer id
-        const layerIdx = mapOrder.value.findIndex(
+        const layerOrderIdx = mapOrder.value.findIndex(
             layerId => layerId === layer.id
         );
-        if (layerIdx !== -1 && layerIdx !== index) {
+        if (layerOrderIdx !== -1 && layerOrderIdx !== index) {
             // remove from current position. re-insert at new position
-            mapOrder.value.splice(layerIdx, 1);
+            mapOrder.value.splice(layerOrderIdx, 1);
             mapOrder.value.splice(index, 0, layer.id);
             // copy to new array to trigger reactivity
             mapOrder.value = [...mapOrder.value];
