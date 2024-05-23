@@ -46,7 +46,7 @@
                     "
                     ref="zoomButton"
                     @click="(e: MouseEvent) => { e.stopPropagation(); zoomToFeature() }"
-                    class="text-gray-600 w-24 h-24 p-2 zoomButtonCenter"
+                    class="text-gray-600 w-24 h-24 p-2 flex justify-center items-center"
                     v-if="isMapLayer"
                 >
                     <div
@@ -419,10 +419,4 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style lang="scss" scoped>
-.zoomButtonCenter {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-</style>
+<style lang="scss" scoped></style>
