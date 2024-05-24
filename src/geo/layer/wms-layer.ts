@@ -285,6 +285,9 @@ export class WmsLayer extends MapLayer {
         if (!this.esriLayer) {
             this.noLayerErr();
         } else {
+            if (!this.esriLayer.customLayerParameters) {
+                this.esriLayer.customLayerParameters = [];
+            }
             this.esriLayer.customLayerParameters[key] = value;
             if (forceRefresh) {
                 this.esriLayer.refresh();
