@@ -14,7 +14,7 @@
                 <div class="p-8">
                     <svg
                         class="fill-current w-18 h-18 flip"
-                        viewBox="0 0 23 21"
+                        viewBox="0 0 24 24"
                     >
                         <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
                     </svg>
@@ -26,7 +26,7 @@
             <button
                 type="button"
                 @click="toggleLayerReorder"
-                class="relative mr-auto text-gray-500 hover:text-black"
+                class="relative mr-auto text-gray-500 hover:text-black flex justify-center items-center"
                 v-show="
                     getLayerReorderExists() &&
                     isControlAvailable('layerReorder')
@@ -38,7 +38,7 @@
                 <div class="p-8">
                     <svg
                         class="fill-current w-18 h-18 flip"
-                        viewBox="0 0 23 21"
+                        viewBox="0 0 24 24"
                     >
                         <path d="M0 0h24v24H0z" fill="none" />
                         <path
@@ -59,7 +59,7 @@
         >
             <template #header>
                 <div class="p-8">
-                    <svg class="fill-current w-18 h-18" viewBox="0 0 23 21">
+                    <svg class="fill-current w-18 h-18" viewBox="0 0 24 24">
                         <path
                             d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
                         />
@@ -91,7 +91,7 @@
         >
             <template #header>
                 <div class="flex p-8">
-                    <svg class="fill-current w-18 h-18" viewBox="0 0 23 21">
+                    <svg class="fill-current w-18 h-18" viewBox="0 0 24 24">
                         <path
                             d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
                         />

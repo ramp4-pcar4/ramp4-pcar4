@@ -8,7 +8,7 @@
             ref="dropdown"
         >
             <template #header>
-                <div class="flex p-4">
+                <div class="flex p-4 justify-center items-center">
                     <svg
                         class="inline-block fill-current w-18 h-18 mx-4"
                         viewBox="0 0 23 21"
