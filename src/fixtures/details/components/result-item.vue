@@ -46,7 +46,7 @@
                     "
                     ref="zoomButton"
                     @click="(e: MouseEvent) => { e.stopPropagation(); zoomToFeature() }"
-                    class="text-gray-600 w-24 h-24 p-2"
+                    class="text-gray-600 w-24 h-24 p-2 flex justify-center items-center"
                     v-if="isMapLayer"
                 >
                     <div
