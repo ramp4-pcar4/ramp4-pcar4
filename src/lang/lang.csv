@@ -52,5 +52,5 @@ layer.mismatch,{name} cannot be displayed in the current projection,1,{id} ne pe
 layer.filtersdisabled,Filters have been disabled for {name},1,Les filtres ont été désactivés pour {name},1
 layer.filterwarning,You are attempting to use a grid that contains unmodifiable layers. Filtering will be partially disabled.,1,Vous essayez d'utiliser une grille qui contient des couches non modifiables. Le filtrage sera partiellement désactivé.,1
 layer.noexportmap,{name} was attempted to be added as a Map Image Layer but Map Export is not enabled for the service,1,La tentative d’ajouter {name} comme couche d’imagerie cartographique a échouée car elle n’a pu être activé pour ce service,1
-caption.attributionMainText,Powered by ESRI,1,Propulsé par ESRI,0
-caption.attributionAltText,ESRI logo,1,Logo ESRI,0
+caption.attributionDefaultText,Powered by ESRI,1,Propulsé par ESRI,0
+caption.attributionLogoAltText,ESRI logo,1,Logo ESRI,0
