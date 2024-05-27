@@ -164,12 +164,16 @@ import rampStyles from './ramp.css';
 document.adoptedStyleSheets = [rampStyles];
 ```
 
-2. `ramp.iife.js` and `ramp.iife.browser.js`
+2. `ramp.browser.iife.prod.js` and `ramp.browser.iife.js`
 
-These are the IIFE versions of RAMP. They create a global `RAMP` variable with several properties, including `createInstance`, `configUpgrade`, `layerConfigUpgrade`, and `geo`. Here's an example of using the IIFE version:
+These are the IIFE versions of RAMP. They create a global `RAMP` variable with several properties, including `createInstance`, `configUpgrade`, `layerConfigUpgrade`, and `geo`. 
+
+The `ramp.browser.iife.prod.js` version is minified (most compressed), and is recommended for most use cases.
+
+Here's an example of using the IIFE version:
 
 ```html
-<script src="./ramp.iife.browser.js"></script>
+<script src="./ramp.browser.iife.js"></script>
 <script>
     const config = {...config definition goes here...}
     const options = {...options definition goes here...}
@@ -182,16 +186,18 @@ These are the IIFE versions of RAMP. They create a global `RAMP` variable with s
 </script>
 ```
 
-3. `ramp.esm.js` and `ramp.esm.browser.js`
+3. `ramp.browser.es.prod.js`, `ramp.browser.es.js`, and `ramp.bundle.es.js`
 
-These scripts are native ES modules, you'll need to import the desired function from the file. They contain the same properties as `ramp.iife.js`. 
+These scripts are native ES modules, you'll need to import the desired function from the file. They contain the same properties as `ramp.browser.iife.js`. 
 
-The `ramp.esm.js` version is intended for use in a host project that uses npm and has its own bundler like webpack or rollup. This version excludes all RAMP dependencies, expecting them to be handled by the host project's npm manager and bundled into the host's build. This allows for better optimization and deduplication of dependencies in the host project.
+The `ramp.browser.es.prod.js` version is minified (most compressed), and is recommended for most use cases.
+
+The `ramp.bundle.es.js` version is intended for use in a host project that uses npm and has its own bundler like webpack or rollup. This version excludes all RAMP dependencies, expecting them to be handled by the host project's npm manager and bundled into the host's build. This allows for better optimization and deduplication of dependencies in the host project.
 
 Here is a code snippet showing usage:
 
 ```javascript
-import { createInstance, geo } from './ramp.esm.js';
+import { createInstance, geo } from './ramp.browser.es.js';
 
 const config = {...config definition goes here...}
 const options = {...options definition goes here...}
