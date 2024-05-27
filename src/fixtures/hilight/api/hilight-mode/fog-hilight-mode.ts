@@ -132,9 +132,14 @@ export class FogHilightMode extends LiftHilightMode {
         // to be requested. If we see that one was, we will not turn off and
         // simply wait for next add to finish.
         const lastRemove = Date.now();
+        const hilightLayer = await this.getHilightLayer();
+        if (!hilightLayer) {
+            return;
+        }
         setTimeout(() => {
-            if (this.lastAdd < lastRemove) {
-                // nothing was added during the timeout, so we turn off the fog
+            if (this.lastAdd < lastRemove && !hilightLayer.getGraphicCount()) {
+                // nothing was added during the timeout AND there is nothing
+                // currently hilighted, so we turn off the fog
                 fogLayer.opacity = this.offOpacity;
             }
         }, 300);
