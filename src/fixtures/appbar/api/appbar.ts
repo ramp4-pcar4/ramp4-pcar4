@@ -86,7 +86,7 @@ export class AppbarAPI extends FixtureInstance {
             }
             // check for components with the id
             [id].some(v => {
-                if (this.$iApi.fixture.get(v) && !appbarStore.items[id]) {
+                if (this.$iApi.fixture.exists(v) && !appbarStore.items[id]) {
                     // if an item is registered globally, save the name of the registered component
                     (
                         appbarStore.items[id] as AppbarItemInstance

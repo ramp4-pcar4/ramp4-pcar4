@@ -82,7 +82,7 @@ class ExportFixture extends ExportAPI {
                 .get<ExportFootnoteFixture>('export-footnote')
                 ?.remove();
 
-            if (this.$iApi.fixture.get('appbar')) {
+            if (this.$iApi.fixture.exists('appbar')) {
                 const appbarStore = useAppbarStore(this.$vApp.$pinia);
                 appbarStore.removeButton('export');
             }

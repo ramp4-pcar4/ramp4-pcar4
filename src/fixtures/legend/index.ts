@@ -59,12 +59,12 @@ class LegendFixture extends LegendAPI {
             // console.log(`[fixture] ${this.id} removed`);
             unwatch();
 
-            if (this.$iApi.fixture.get('appbar')) {
+            if (this.$iApi.fixture.exists('appbar')) {
                 const appbarStore = useAppbarStore(this.$vApp.$pinia);
                 appbarStore.removeButton('legend');
             }
 
-            if (this.$iApi.fixture.get('mapnav')) {
+            if (this.$iApi.fixture.exists('mapnav')) {
                 const mapnavStore = useMapnavStore(this.$vApp.$pinia);
                 mapnavStore.removeItem('legend');
             }

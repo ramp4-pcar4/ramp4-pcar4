@@ -365,7 +365,7 @@ export class InstanceAPI {
         // remove each fixture
         addedFixtures.forEach((id: string) => {
             // check if the fixture exists first otherwise it will error
-            if (this.fixture.get(id) !== undefined) {
+            if (this.fixture.exists(id) !== undefined) {
                 this.fixture.remove(id);
             }
         });
@@ -503,7 +503,7 @@ export class InstanceAPI {
             'wizard'
         ];
 
-        if (fixtureIds.includes(id) && !this.fixture.get(id)) {
+        if (fixtureIds.includes(id) && !this.fixture.exists(id)) {
             // protects against a call wanting a store for a fixture that's been removed
             return undefined;
         }

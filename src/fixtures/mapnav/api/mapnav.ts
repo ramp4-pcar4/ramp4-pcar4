@@ -71,7 +71,7 @@ export class MapnavAPI extends FixtureInstance {
             // so we make the assumption that it will always have the `-nav-button` prefix
 
             // check if fixture exists, or if control is a system control
-            if (this.$iApi.fixture.get(id) || systemControls.includes(id)) {
+            if (this.$iApi.fixture.exists(id) || systemControls.includes(id)) {
                 this.mapnavStore.items[id].componentId = `${id}-nav-button`;
             }
         });
