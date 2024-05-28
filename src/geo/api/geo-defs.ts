@@ -539,8 +539,8 @@ export const enum LayerControl {
 
 // Attribution interface that contains all the core attributes of the attribution node
 export interface Attribution {
-    text: { disabled?: boolean; value?: string };
-    logo: {
+    text?: { disabled?: boolean; value?: string };
+    logo?: {
         disabled?: boolean;
         altText?: string;
         value?: string;

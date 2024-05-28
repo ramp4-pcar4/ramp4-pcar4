@@ -177,10 +177,10 @@ let config = {
                             'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                         attribution: {
                             text: {
-                                disabled: true
+                                disabled: false
                             },
                             logo: {
-                                disabled: true
+                                disabled: false
                             }
                         }
                     },
@@ -636,10 +636,10 @@ let config = {
                             'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                         attribution: {
                             text: {
-                                disabled: true
+                                disabled: false
                             },
                             logo: {
-                                disabled: true
+                                disabled: false
                             }
                         }
                     },
