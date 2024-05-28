@@ -42,7 +42,7 @@ class HelpFixture extends HelpAPI {
             // console.log(`[fixture] ${this.id} removed`);
             unwatch();
 
-            if (this.$iApi.fixture.get('mapnav')) {
+            if (this.$iApi.fixture.exists('mapnav')) {
                 const mapnavStore = useMapnavStore(this.$vApp.$pinia);
                 mapnavStore.removeItem('help');
             }

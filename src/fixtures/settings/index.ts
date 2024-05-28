@@ -33,7 +33,7 @@ class SettingsFixture extends SettingsAPI {
 
     removed() {
         // console.log(`[fixture] ${this.id} removed`);
-        if (this.$iApi.fixture.get('appbar')) {
+        if (this.$iApi.fixture.exists('appbar')) {
             const appbarStore = useAppbarStore(this.$vApp.$pinia);
             appbarStore.removeButton('settings');
         }

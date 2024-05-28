@@ -43,7 +43,7 @@ class DetailsFixture extends DetailsAPI {
 
             this.$iApi.panel.remove('details-panel');
 
-            if (this.$iApi.fixture.get('appbar')) {
+            if (this.$iApi.fixture.exists('appbar')) {
                 const appbarStore = useAppbarStore(this.$vApp.$pinia);
                 appbarStore.removeButton('details-panel');
             }
