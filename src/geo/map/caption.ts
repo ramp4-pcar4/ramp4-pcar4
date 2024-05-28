@@ -45,33 +45,45 @@ export class MapCaptionAPI extends APIScope {
         }
 
         const mapCaptionStore = useMapCaptionStore(this.$vApp.$pinia);
+        mapCaptionStore.coords = {
+            disabled: false,
+            formattedString: 'LAT_LONG_DMS'
+        }; // default
+        mapCaptionStore.scale = {
+            disabled: false,
+            imperialScale: false
+        }; // default
 
-        // check if map coords has been disabled
-        if (captionConfig.mapCoords.disabled) {
-            mapCaptionStore.coords = { disabled: true };
-        } else {
-            // get formatter specified in the config
-            const defaultFormatter: string | undefined =
-                captionConfig.mapCoords.formatter;
-            if (defaultFormatter !== undefined) {
-                this.setPointFormatter(defaultFormatter);
+        // check if map coords exists, and has been disabled
+        if (captionConfig.mapCoords) {
+            if (captionConfig.mapCoords.disabled) {
+                mapCaptionStore.coords.disabled = true;
+            } else {
+                // get formatter specified in the config
+                const defaultFormatter: string | undefined =
+                    captionConfig.mapCoords.formatter;
+                if (defaultFormatter !== undefined) {
+                    this.setPointFormatter(defaultFormatter);
+                }
             }
         }
 
-        // check if the scalebar has been disabled
-        if (captionConfig.scaleBar.disabled) {
-            mapCaptionStore.scale = { disabled: true };
-        } else {
-            // get the scalebar unit specified in the config
-            const useImperialUnits: boolean | undefined =
-                captionConfig.scaleBar.imperialScale;
-            if (useImperialUnits !== undefined) {
-                // update the value in the store
-                mapCaptionStore.toggleScale(useImperialUnits);
-                // wait for the map to load since updateScale needs map view resolution
-                this.$iApi.geo.map.viewPromise.then(() => {
-                    this.updateScale();
-                });
+        // check if the scalebar exists, and has not been disabled
+        if (captionConfig.scaleBar) {
+            if (captionConfig.scaleBar.disabled) {
+                mapCaptionStore.scale.disabled = true;
+            } else {
+                // get the scalebar unit specified in the config
+                const useImperialUnits: boolean | undefined =
+                    captionConfig.scaleBar.imperialScale;
+                if (useImperialUnits !== undefined) {
+                    // update the value in the store
+                    mapCaptionStore.toggleScale(useImperialUnits);
+                    // wait for the map to load since updateScale needs map view resolution
+                    this.$iApi.geo.map.viewPromise.then(() => {
+                        this.updateScale();
+                    });
+                }
             }
         }
 
