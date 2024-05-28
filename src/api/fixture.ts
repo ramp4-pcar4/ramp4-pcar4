@@ -32,6 +32,10 @@ export class FixtureAPI extends APIScope {
         super(iApi);
     }
 
+    exists(id: string) : boolean {
+        return id in useFixtureStore(this.$vApp.$pinia).items;
+    }
+
     /**
      * Loads a (built-in) fixture or adds supplied fixture into the R4MP Vue instance.
      *
