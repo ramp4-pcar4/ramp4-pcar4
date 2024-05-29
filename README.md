@@ -21,6 +21,14 @@ Documentation Site with unpublished changes can be found [here](https://ramp4-pc
 
 Head to the [Releases](https://github.com/ramp4-pcar4/ramp4-pcar4/releases) page for version-specific official documentation sites.
 
+## Browser Support
+
+RAMP **supports** modern versions of Google Chrome, Microsoft Edge, and Firefox on desktop, and Google Chrome, Firefox, and Safari (iOS) on mobile devices. We suggest keeping your browser up-to-date to ensure full functionality.
+
+Internet Explorer is **not supported**. [Use at your own discretion](https://github.com/ramp4-pcar4/ramp4-pcar4/assets/7585245/4ac2deb1-3ace-4950-a687-6f9588f347ab). 
+
+RAMP should still work on most other browsers, but we cannot promise support or fixes. However, if you notice any issues, please feel free to let us know.
+
 ## Local development
 
 ### Project Setup
