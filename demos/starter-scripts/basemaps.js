@@ -34,9 +34,6 @@ let config = {
                     }
                 ],
                 caption: {
-                    mapCoords: {
-                        formatter: 'WEB_MERCATOR'
-                    },
                     scaleBar: {
                         imperialScale: true
                     }

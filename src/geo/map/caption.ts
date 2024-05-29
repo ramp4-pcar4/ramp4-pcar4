@@ -45,14 +45,9 @@ export class MapCaptionAPI extends APIScope {
         }
 
         const mapCaptionStore = useMapCaptionStore(this.$vApp.$pinia);
-        mapCaptionStore.coords = {
-            disabled: false,
-            formattedString: 'LAT_LONG_DMS'
-        }; // default
-        mapCaptionStore.scale = {
-            disabled: false,
-            imperialScale: false
-        }; // default
+        mapCaptionStore.coords.disabled = false; // default
+        mapCaptionStore.scale.disabled = false; // default
+        mapCaptionStore.scale.imperialScale = false; // default
 
         // check if map coords exists, and has been disabled
         if (captionConfig.mapCoords) {
