@@ -21,6 +21,14 @@ Documentation Site with unpublished changes can be found [here](https://ramp4-pc
 
 Head to the [Releases](https://github.com/ramp4-pcar4/ramp4-pcar4/releases) page for version-specific official documentation sites.
 
+## Browser Support
+
+There is **full support** for modern versions of Chromium-based browsers (Google Chrome, Edge, Opera, etc.) and Firefox. We suggest keeping your browser up-to-date to ensure full functionality.
+
+Safari works well but may experience some sub-optimal UI behaviour. Please log any issues encountered.
+
+Internet Explorer has **limited support** and is not recommended.
+
 ## Local development
 
 ### Project Setup
