@@ -15,6 +15,12 @@ The previous version (RAMP 2 / RAMP 3) can be found [here](https://github.com/fg
 
 ![](https://byob.yarr.is/ramp4-pcar4/ramp4-pcar4/tsbadge) ![](https://byob.yarr.is/ramp4-pcar4/ramp4-pcar4/lintbadge)
 
+## Browser Support
+
+There is **full support** for modern versions of Chromium-based browsers (Google Chrome, Edge, etc.) and Firefox. Keep your browser up-to-date to ensure full functionality.
+
+Safari, Opera, and Internet Explorer have **limited support** and are not recommended.
+
 ## Documentation
 
 Documentation Site with unpublished changes can be found [here](https://ramp4-pcar4.github.io/ramp4-pcar4/main/docs/).
