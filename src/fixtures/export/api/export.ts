@@ -17,6 +17,17 @@ const GLOBAL_MARGIN = {
     LEFT: 40
 };
 
+type RenderCallback = (
+    canvas: fabric.StaticCanvas,
+    fabricObjects: Record<string, fabric.Object>,
+    options: {
+        panelWidth: number;
+        margin: typeof GLOBAL_MARGIN;
+        defaultWidth: number;
+        fabric: typeof fabric;
+    }
+) => Promise<void> | void;
+
 export class ExportAPI extends FixtureInstance {
     fcFabric: fabric.StaticCanvas | undefined;
     // download canvas will remain unscaled and only be used for download
@@ -26,6 +37,38 @@ export class ExportAPI extends FixtureInstance {
         runningHeight: 0,
         scale: 1
     };
+
+    // stores the custom render function if provided
+    customRendererFunc = null as RenderCallback | null;
+
+    /**
+     * Allows for a custom render callback function to be passed in to render the export canvas.
+     * The function should accept the blank ramp canvas as its first parameter and use that canvas to draw on. 
+     * The width of the canvas is already set to the panel width, so the function only needs to set the height.
+     * 
+     * Individual export elements like the map, or the legend can be accessed from the `fabricObjects` object as the second parameter.
+     * You can pick and chose which elements to add to the canvas, or modify them as needed. You can also add custom elements to the canvas.
+     * 
+     * Finally, the `options` object is passed in as the third parameter. This object contains useful information such as the panel width, the default margins, the default canvas width, and the fabric object itself.
+     * 
+     * Some canvas operations are asynchronous, so the function should return a promise if it needs to wait for the canvas to finish rendering. Otherwise returning void is fine.
+     *
+     * @param {RenderCallback} renderCallback
+     * @example myWatermarkingRenderer((canvas, fabricObjects, options) => {
+     *   const watermark = new fabric.Text('Watermark', { ... });
+     *   fabricObjects.map.addWithUpdate(watermark);
+     *   canvas.add(fabricObjects.map);
+     *   canvas.setHeight(1000);
+     * });
+     *
+     * rInstance.fixture.isLoaded('export').then(() => {
+     *   rInstance.fixture.get('export').customRenderer(myWatermarkingRenderer);
+     * });
+     * @memberof ExportAPI
+     */
+    customRenderer(renderCallback: RenderCallback): void {
+        this.customRendererFunc = renderCallback;
+    }
 
     /**
      * Returns `ExportConfig` section of the global config file.
@@ -86,6 +129,10 @@ export class ExportAPI extends FixtureInstance {
      */
     async make(canvas: HTMLCanvasElement, panelWidth: number): Promise<void> {
         const exportStore = useExportStore(this.$vApp.$pinia);
+
+        // stores the individual fabric objects for use with a custom render function
+        const selectedFabricObjects: Record<string, fabric.Object> = {};
+
         this.fcFabric = new fabric.StaticCanvas(canvas, {
             backgroundColor: '#fff'
         });
@@ -113,7 +160,6 @@ export class ExportAPI extends FixtureInstance {
         let fbLegend: fabric.Object | undefined;
         let fbFootnote: fabric.Object | undefined;
         let fbTimestamp: fabric.Object | undefined;
-        const selectedExportComponents: Array<fabric.Object> = [];
 
         if (selectedState.title && exportTitleFixture) {
             fbTitle = await exportTitleFixture.make({
@@ -125,7 +171,7 @@ export class ExportAPI extends FixtureInstance {
                 textAlign: 'center'
             });
             this.options.runningHeight += fbTitle.height! + 40;
-            selectedExportComponents.push(fbTitle);
+            selectedFabricObjects.title = fbTitle;
         }
 
         if (selectedState.map && exportMapFixture) {
@@ -140,7 +186,7 @@ export class ExportAPI extends FixtureInstance {
             }
 
             this.options.runningHeight += fbMap.height! + 40;
-            selectedExportComponents.push(fbMap);
+            selectedFabricObjects.map = fbMap;
         }
 
         // title should spread to length of canvas if map isn't rendered
@@ -160,7 +206,7 @@ export class ExportAPI extends FixtureInstance {
                 left: 0
             });
             this.options.runningHeight += fbScaleBar.height! + 40;
-            selectedExportComponents.push(fbScaleBar);
+            selectedFabricObjects.scaleBar = fbScaleBar;
 
             if (exportNorthArrowFixture) {
                 // keep it inline with the scale bar.
@@ -173,7 +219,7 @@ export class ExportAPI extends FixtureInstance {
                 fbNorthArrow.top! += fbNorthArrow.height! / 2 - 20;
                 fbNorthArrow.left! += -fbNorthArrow.width! * 2;
 
-                selectedExportComponents.push(fbNorthArrow);
+                selectedFabricObjects.northArrow = fbNorthArrow;
             }
         }
 
@@ -186,7 +232,7 @@ export class ExportAPI extends FixtureInstance {
             });
             fbLegend.top = this.options.runningHeight;
             this.options.runningHeight += fbLegend.height!;
-            selectedExportComponents.push(fbLegend);
+            selectedFabricObjects.legend = fbLegend;
         }
 
         if (selectedState.timestamp && exportTimestampFixture) {
@@ -195,7 +241,7 @@ export class ExportAPI extends FixtureInstance {
                 width: panelWidth
             });
             this.options.runningHeight += fbTimestamp.height!;
-            selectedExportComponents.push(fbTimestamp);
+            selectedFabricObjects.timestamp = fbTimestamp;
         }
 
         if (selectedState.footnote && exportFootnoteFixture) {
@@ -207,49 +253,78 @@ export class ExportAPI extends FixtureInstance {
             fbFootnote.left! += -fbFootnote.width! * 2;
 
             this.options.runningHeight += fbFootnote.height! + 20;
-            selectedExportComponents.push(fbFootnote);
+            selectedFabricObjects.footnote = fbFootnote;
         }
 
-        const fbGroup = new fabric.Group(selectedExportComponents, {
-            top: GLOBAL_MARGIN.TOP * this.options.scale,
-            left: GLOBAL_MARGIN.LEFT * this.options.scale
-        });
+        if (this.customRendererFunc) {
+            this.fcFabric.setWidth(panelWidth);
+            const options = {
+                panelWidth,
+                margin: GLOBAL_MARGIN,
+                defaultWidth: DEFAULT_WIDTH,
+                fabric: fabric
+            };
 
-        // clone items for download canvas
-        const fbGroupDownload: fabric.Group = await new Promise(resolve => {
-            fbGroup!.clone((g: fabric.Group) => {
-                resolve(g);
+            await this.customRendererFunc(
+                this.fcFabric,
+                selectedFabricObjects,
+                options
+            );
+
+            this.fcFabric.renderAll();
+
+            this.fcFabric.clone((clonedCanvas: fabric.StaticCanvas) => {
+                this.fcFabricDownload = clonedCanvas;
+                this.fcFabricDownload.setDimensions({
+                    width: this.fcFabric!?.getWidth()!,
+                    height: this.fcFabric!.getHeight()!
+                });
+                this.fcFabricDownload.renderAll();
             });
-        });
-        fbGroupDownload.top = GLOBAL_MARGIN.TOP;
-        fbGroupDownload.left = GLOBAL_MARGIN.LEFT;
-        this.fcFabricDownload.add(fbGroupDownload);
+        } else {
+            const fbGroup = new fabric.Group(
+                Object.values(selectedFabricObjects),
+                {
+                    top: GLOBAL_MARGIN.TOP * this.options.scale,
+                    left: GLOBAL_MARGIN.LEFT * this.options.scale
+                }
+            );
 
-        // scale down items for panel canvas
-        fbGroup.scale(this.options.scale);
-        this.fcFabric.add(fbGroup);
+            // clone items for download canvas
+            const fbGroupDownload: fabric.Group = await new Promise(resolve => {
+                fbGroup!.clone((g: fabric.Group) => {
+                    resolve(g);
+                });
+            });
+            fbGroupDownload.top = GLOBAL_MARGIN.TOP;
+            fbGroupDownload.left = GLOBAL_MARGIN.LEFT;
+            this.fcFabricDownload.add(fbGroupDownload);
+            // scale down items for panel canvas
+            fbGroup.scale(this.options.scale);
+            this.fcFabric.add(fbGroup);
 
-        this.fcFabric.setDimensions({
-            width: panelWidth,
-            height:
-                (this.options.runningHeight +
+            this.fcFabric.setDimensions({
+                width: panelWidth,
+                height:
+                    (this.options.runningHeight +
+                        GLOBAL_MARGIN.TOP +
+                        GLOBAL_MARGIN.BOTTOM) *
+                    this.options.scale
+            });
+            this.fcFabric.renderAll();
+
+            this.fcFabricDownload!.setDimensions({
+                width:
+                    (fbMap?.width! ?? DEFAULT_WIDTH) +
+                    GLOBAL_MARGIN.LEFT +
+                    GLOBAL_MARGIN.RIGHT,
+                height:
+                    this.options.runningHeight +
                     GLOBAL_MARGIN.TOP +
-                    GLOBAL_MARGIN.BOTTOM) *
-                this.options.scale
-        });
-        this.fcFabric.renderAll();
-
-        this.fcFabricDownload!.setDimensions({
-            width:
-                (fbMap?.width! ?? DEFAULT_WIDTH) +
-                GLOBAL_MARGIN.LEFT +
-                GLOBAL_MARGIN.RIGHT,
-            height:
-                this.options.runningHeight +
-                GLOBAL_MARGIN.TOP +
-                GLOBAL_MARGIN.BOTTOM
-        });
-        this.fcFabricDownload.renderAll();
+                    GLOBAL_MARGIN.BOTTOM
+            });
+            this.fcFabricDownload.renderAll();
+        }
     }
 
     export(): void {
