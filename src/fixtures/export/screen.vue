@@ -29,6 +29,7 @@
                 </button>
 
                 <export-settings
+                    v-if="!hasCustomRenderer"
                     :componentSelectedState="selectedComponents"
                     :onComponentToggle="make()"
                     class="ml-auto flex px-4 sm:px-8"
@@ -100,6 +101,10 @@ const selectedComponents = computed<any>(() => {
         );
     }
     return state;
+});
+
+const hasCustomRenderer = computed(() => {
+    return !!fixture.value?.customRendererFunc;
 });
 
 const make = debounce(300, () => {
