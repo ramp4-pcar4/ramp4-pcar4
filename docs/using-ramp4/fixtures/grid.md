@@ -75,6 +75,7 @@ Represented by two date input fields. The date filter works in the same fashion 
 Like other fixtures, the grid has multiple options that can be adjusted through the configuration file. Since the grid settings are layer specific, the configuration resides in the fixtures property of layer config objects.
 - `title: string`, renders a custom title above the grid.
 - `columns: Object[]`, an array that specifies how the columns of the grid are defined. Its configuration is defined under [column configuration](#column-configuration).
+- `columnMetadata: Object`, an object specifying options for the columns displayed on the grid
 - `search: boolean`, shows/hides the [global search bar](#global-search).
 - `searchFilter: string`, provides an initial filter in the global search bar
 - `showFilter: boolean`, shows/hides the [column filters](#show-hide-column-filters) on grid load
@@ -126,6 +127,42 @@ const config = {
             ... layer configurations
             fixtures: {
                 grid: {
+                    columns: [
+                        {
+                            field: 'station_id__id_station',
+                            title: 'Station ID',
+                            width: 500,
+                            filter: {
+                                type: 'string',
+                                value: 6020384,
+                                static: true
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
+```
+
+### columnMetadata Configuration
+
+The columnMetadata object for a grid has the following properties:
+- `exclusiveColumns: boolean`, specified whether to display only the specified columns of the grid, or all default columns
+
+An example of a datatable with the exclusiveColumns flag set
+
+```
+const config = {
+    layers: [
+        {
+            ... layer configurations
+            fixtures: {
+                grid: {
+                    columnMetadata: {
+                        exclusiveColumns: true
+                    },
                     columns: [
                         {
                             field: 'station_id__id_station',

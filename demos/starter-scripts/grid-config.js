@@ -67,6 +67,9 @@ let config = {
                         },
                         grid: {
                             title: 'Datatable for WFS features',
+                            columnMetadata: {
+                                exclusiveColumns: true
+                            },
                             columns: [
                                 {
                                     field: 'station_id__id_station',
