@@ -396,7 +396,8 @@ import {
     onBeforeMount,
     onBeforeUnmount,
     ref,
-    watch
+    watch,
+    toRaw
 } from 'vue';
 
 import {
@@ -591,6 +592,7 @@ const gridLayers = computed(() => {
             .filter(layer => layer !== undefined);
     } else return [];
 });
+
 const systemCols = ref<Set<string>>(new Set<string>());
 
 // manages fast incoming filter change events. Forces them to finish
@@ -1469,6 +1471,23 @@ const setUpColumns = () => {
     const fancyLayers: LayerInstance[] = gridLayers.value.filter(
         layer => layer && layer.supportsFeatures && layer.isLoaded
     ) as LayerInstance[];
+
+    const selectedColumns = toRaw(
+        gridStore.grids[props.gridId].state.state.columns
+    );
+
+    if (selectedColumns) {
+        const selectedColumnNames = selectedColumns.map(
+            column => column['field']
+        );
+
+        // use selectedColumnNames to filter out unwanted columns, but only if the appropriate flag is set
+        if (fancyLayers[0]?.config?.columnMetadata?.exclusiveColumns) {
+            fancyLayers[0].fields = fancyLayers[0].fields.filter(field =>
+                selectedColumnNames.includes(field.name)
+            );
+        }
+    }
 
     if (fancyLayers.length === 0) {
         // in the event of error'd layers, otherwise a blank datagrid will appear
