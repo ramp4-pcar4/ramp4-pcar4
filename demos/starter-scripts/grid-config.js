@@ -57,6 +57,9 @@ let config = {
                     url: 'https://api.weather.gc.ca//collections/ahccd-trends/items?measurement_type__type_mesure=total_precip&period__periode=Ann&offset=0&limit=1000&province__province=on',
                     xyInAttribs: true,
                     colour: '#FF5555',
+                    columnMetadata: {
+                        exclusiveColumns: true
+                    },
                     state: {
                         visibility: true
                     },
