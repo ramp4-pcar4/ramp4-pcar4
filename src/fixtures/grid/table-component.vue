@@ -591,6 +591,7 @@ const gridLayers = computed(() => {
             .filter(layer => layer !== undefined);
     } else return [];
 });
+
 const systemCols = ref<Set<string>>(new Set<string>());
 
 // manages fast incoming filter change events. Forces them to finish
@@ -1502,7 +1503,29 @@ const setUpColumns = () => {
     Promise.all(fancyLayers.map(l => l.loadPromise())).then(() => {
         const tableAttributePromises: Array<Promise<TabularAttributeSet>> =
             fancyLayers.map(fl => {
-                return markRaw(fl).getTabularAttributes();
+                return markRaw(fl)
+                    .getTabularAttributes()
+                    .then(tabularAttrSet => {
+                        const gridConfig = config?.value?.state?.state;
+
+                        if (gridConfig?.columns) {
+                            const selectedColumnNames = gridConfig.columns.map(
+                                column => column['field']
+                            );
+
+                            // use selectedColumnNames to filter out unwanted columns, but only if the appropriate flag is set
+                            if (gridConfig.columnMetadata?.exclusiveColumns) {
+                                tabularAttrSet.columns =
+                                    tabularAttrSet.columns.filter(column =>
+                                        selectedColumnNames.includes(
+                                            column.title
+                                        )
+                                    );
+                            }
+                        }
+
+                        return tabularAttrSet;
+                    });
             });
 
         Promise.all(tableAttributePromises)
