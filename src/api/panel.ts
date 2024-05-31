@@ -298,12 +298,13 @@ export class PanelAPI extends APIScope {
      * Moves the specifed visible panel to the left or right.
      *
      * @param {(string | PanelInstance)} value
+     * @param {"left" | "right"} direction the direction of movement, either "left" or "right".
      * @returns {PanelInstance | undefined} the panel instance if the panel is currently registered, undefined otherwise.
      * @memberof PanelAPI
      */
     move(
         value: string | PanelInstance,
-        direction: string
+        direction: "left" | "right"
     ): PanelInstance | undefined {
         const panel = this.get(value);
 
