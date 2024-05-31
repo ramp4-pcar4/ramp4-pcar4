@@ -14,6 +14,7 @@ import type {
     PanelConfig,
     PanelConfigRoute,
     PanelConfigScreens,
+    PanelDirection,
     PanelConfigStyle,
     AsyncComponentFactoryEh,
     AsyncComponentEh
@@ -298,10 +299,11 @@ export class PanelInstance extends APIScope {
      * Move this panel left or right in the stack.
      * This is a proxy to `InstanceAPI.panel.move(...)`.
      *
+     * @param {PanelDirection} direction the direction of movement, either "left" or "right".
      * @returns {this}
      * @memberof PanelInstance
      */
-    move(direction: string): this {
+    move(direction: PanelDirection): this {
         this.$iApi.panel.move(this, direction);
 
         return this;
