@@ -1,5 +1,9 @@
 import { APIScope, GlobalEvents, PanelInstance } from './internal';
-import { usePanelStore, type PanelConfigStyle } from '@/stores/panel';
+import {
+    usePanelStore,
+    type PanelConfigStyle,
+    type PanelDirection
+} from '@/stores/panel';
 import type { PanelConfig, PanelConfigRoute } from '@/stores/panel';
 
 import type { I18nComponentOptions } from '@/lang';
@@ -298,12 +302,13 @@ export class PanelAPI extends APIScope {
      * Moves the specifed visible panel to the left or right.
      *
      * @param {(string | PanelInstance)} value
+     * @param {PanelDirection} direction the direction of movement, either "left" or "right".
      * @returns {PanelInstance | undefined} the panel instance if the panel is currently registered, undefined otherwise.
      * @memberof PanelAPI
      */
     move(
         value: string | PanelInstance,
-        direction: string
+        direction: PanelDirection
     ): PanelInstance | undefined {
         const panel = this.get(value);
 
