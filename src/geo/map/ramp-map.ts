@@ -484,6 +484,12 @@ export class MapAPI extends CommonMapAPI {
                     .then(projPoint =>
                         this.zoomMapTo(projPoint, newScale, false)
                     );
+
+                // fire the basemap change event
+                this.$iApi.event.emit(GlobalEvents.MAP_BASEMAPCHANGE, {
+                    basemapId: basemapId,
+                    schemaChanged: schemaChanged
+                });
             });
         } else {
             // change the basemap
@@ -492,13 +498,13 @@ export class MapAPI extends CommonMapAPI {
                 'background.color',
                 new Colour(bm.backgroundColour).toESRI()
             );
-        }
 
-        // fire the basemap change event
-        this.$iApi.event.emit(GlobalEvents.MAP_BASEMAPCHANGE, {
-            basemapId: basemapId,
-            schemaChanged: schemaChanged
-        });
+            // fire the basemap change event
+            this.$iApi.event.emit(GlobalEvents.MAP_BASEMAPCHANGE, {
+                basemapId: basemapId,
+                schemaChanged: schemaChanged
+            });
+        }
 
         return schemaChanged;
     }
