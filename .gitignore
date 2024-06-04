@@ -67,3 +67,7 @@ dist/
 /.vs
 
 **/.vitepress/cache
+
+# Generated docs folders
+vite-docs
+ts-docs
