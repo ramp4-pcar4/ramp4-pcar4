@@ -62,7 +62,7 @@ Additionally, the `PanelInstance` Object has the following methods:
 * `open(value?: string | { screen: string; props?: object })` - opens the panel. If a screen is specified, that is the one that will be shown.
 * `close()` - closes the panel. This means that the panel is no longer in the stack, but its `PanelInstance` object is still accessible for future use.
 * `minimize()` - minimizes the panel.
-* `move(direction: string)` - moves the panel by one position in the specified direction (left or right), if possible.
+* `move(direction: 'left' | 'right')` - moves the panel by one position in the specified direction (left or right), if possible.
 * `remove()` - removes the panel from the stack as well as from the entire app. Unlike the `close()` method, the `PanelInstance` object no longer accessible.
 * `toggle(value?: boolean | { screen: string; props?: object; toggle?: boolean })` - toggle open/close panel if no value provided, force toggle panel if value specified (open if `toggle` is true, `close` if toggle is false), or toggle panel on specified screen if provided.
 * `toggleMinimize(value?: boolean | { screen: string; props?: object; toggle?: boolean })` - toggle panel's minimize state if no value provided, force toggle panel's minimize state if value specified, or toggle panel's minimize state on specified screen if provided.
@@ -362,7 +362,7 @@ The API provides the following methods:
 * `visible(): PanelInstance[]` - returns an array of all the panels that are currently visible.
 * `close(value: string | PanelInstance): PanelInstance` - closes the specified panel.
 * `minimize(value: string | PanelInstance): PanelInstance` - minimizes the specified panel. Note that the difference between this and closing is that minimizing will result in the temporary appbar buttons staying instead of going away.
-* `move(value: string | PanelInstance, direction: string): PanelInstance` - moves the specified panel one position in the specified direction, if possible. The `direction` parameter can take values of either "left" or "right".
+* `move(value: string | PanelInstance, direction: 'left' | 'right'): PanelInstance` - moves the specified panel one position in the specified direction, if possible. The `direction` parameter can take values of either "left" or "right".
 * `toggle(value: string | PanelInstance | PanelInstancePath, toggle?: boolean): PanelInstance` - toggles the panel open/closed. The optional `toggle` boolean can be used to force the panel to open/close (`true` for open, `false` for close).
 * `toggleMinimize(value: string | PanelInstance | PanelInstancePath, toggle?: boolean): PanelInstance` - same as `toggle`, but toggles between open and minimize instead of open and close.
 * `pin(value: string | PanelInstance, pin?: boolean): PanelInstance` -  pins/unpins/toggles (if no `pin` value provided) the pin status of the provided panel. When pinning, automatically unpins any previous pinned panel if exists.

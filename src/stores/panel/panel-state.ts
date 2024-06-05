@@ -121,6 +121,11 @@ export type PanelConfigStyle = { [key: string]: string };
 export type PanelConfigControls = { expand?: boolean };
 export type PanelAppbarButton = { icon: string; tooltip: string };
 
+/**
+ * All directions a panel may be moved.
+ */
+export type PanelDirection = 'left' | 'right';
+
 export interface PanelConfig {
     /**
      * A collection of panel screens to be displayed inside the panel.

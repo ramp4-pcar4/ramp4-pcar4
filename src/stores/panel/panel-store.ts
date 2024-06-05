@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import type { PanelInstance } from '@/api';
 import { DefPromise } from '@/geo/api';
+import type { PanelDirection } from './panel-state';
 
 export const usePanelStore = defineStore('panel', () => {
     const pinned = ref<PanelInstance | undefined>(undefined);
@@ -65,7 +66,7 @@ export const usePanelStore = defineStore('panel', () => {
         updateVisible();
     }
 
-    function movePanel(panel: PanelInstance, direction: string): void {
+    function movePanel(panel: PanelInstance, direction: PanelDirection): void {
         move(panel, direction);
         updateVisible();
     }
@@ -219,7 +220,7 @@ export const usePanelStore = defineStore('panel', () => {
         }
     }
 
-    function move(panel: PanelInstance, direction: string): void {
+    function move(panel: PanelInstance, direction: PanelDirection): void {
         //@ts-ignore
         const index = orderedItems.value.indexOf(panel);
         const delta = direction === 'right' ? 1 : -1;
