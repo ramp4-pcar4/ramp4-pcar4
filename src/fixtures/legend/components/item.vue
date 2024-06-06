@@ -4,7 +4,7 @@
         v-if="!legendItem.hidden"
         ref="el"
     >
-        <div class="relative">
+        <div class="relative h-44">
             <div
                 class="flex items-center hover:bg-gray-200 default-focus-style !p-5"
                 :class="[
