@@ -30,7 +30,6 @@
 
                 <export-settings
                     :componentSelectedState="selectedComponents"
-                    :onComponentToggle="make()"
                     class="ml-auto flex px-4 sm:px-8"
                 ></export-settings>
             </div>
@@ -45,7 +44,8 @@ import {
     inject,
     onBeforeUnmount,
     onMounted,
-    ref
+    ref,
+    watch
 } from 'vue';
 import type { PropType } from 'vue';
 import type { InstanceAPI, PanelInstance } from '@/api';
@@ -100,6 +100,11 @@ const selectedComponents = computed<any>(() => {
         );
     }
     return state;
+});
+
+// Listen for any changes to the settings, and refresh the image when they do change
+watch(selectedComponents, () => {
+    make();
 });
 
 const make = debounce(300, () => {
