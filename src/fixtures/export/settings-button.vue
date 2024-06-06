@@ -73,7 +73,6 @@ import { useExportStore } from './store';
 const { t } = useI18n();
 const panelStore = usePanelStore();
 const exportStore = useExportStore();
-const emit = defineEmits(['onComponentToggle']);
 
 defineProps({
     componentSelectedState: {
@@ -94,9 +93,6 @@ const toggleComponent = (component: any): void => {
     exportStore.toggleSelected({
         name: component.name
     });
-
-    // notify the parent that a component was toggled
-    emit('onComponentToggle');
 };
 </script>
 
