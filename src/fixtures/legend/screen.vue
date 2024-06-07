@@ -6,7 +6,16 @@
 
         <template #content>
             <legend-header />
-            <div v-focus-list>
+            <div
+                v-focus-list
+                :content="t('panels.controls.items')"
+                v-tippy="{
+                    trigger: 'manual',
+                    placement: 'top-end',
+                    maxWidth: 190
+                }"
+                ref="el"
+            >
                 <legend-item
                     v-for="item in children"
                     :legendItem="item"
@@ -18,7 +27,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, inject } from 'vue';
+import {
+    computed,
+    defineAsyncComponent,
+    inject,
+    onBeforeUnmount,
+    onMounted,
+    ref
+} from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import type { InstanceAPI, PanelInstance } from '@/api';
@@ -31,6 +47,33 @@ const legendItem = defineAsyncComponent(() => import('./components/item.vue'));
 
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
+const el = ref<Element>();
+
+onMounted(() => {
+    el.value?.addEventListener('blur', () => {
+        (el.value as any)._tippy.hide();
+    });
+
+    el.value?.addEventListener('keyup', (e: Event) => {
+        const evt = e as KeyboardEvent;
+        if (evt.key === 'Tab' && el.value?.matches(':focus')) {
+            (el.value as any)._tippy.show();
+        }
+    });
+});
+
+onBeforeUnmount(() => {
+    el.value?.removeEventListener('blur', () => {
+        (el.value as any)._tippy.hide();
+    });
+
+    el.value?.removeEventListener('keyup', (e: Event) => {
+        const evt = e as KeyboardEvent;
+        if (evt.key === 'Tab' && el.value?.matches(':focus')) {
+            (el.value as any)._tippy.show();
+        }
+    });
+});
 
 defineProps({
     panel: {
