@@ -102,7 +102,7 @@
                     animation: 'scale',
                     touch: ['hold', 200]
                 }"
-                :content="t('map.changeLanguage')"
+                :tooltip="t('map.changeLanguage')"
                 :ariaLabel="`${t('map.language.short')} - ${t(
                     'map.changeLanguage'
                 )}`"
