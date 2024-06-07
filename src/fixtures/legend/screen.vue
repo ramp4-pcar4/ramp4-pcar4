@@ -6,7 +6,15 @@
 
         <template #content>
             <legend-header />
-            <div v-focus-list>
+            <div
+                v-focus-list
+                :content="t('panels.controls.items')"
+                v-tippy="{
+                    trigger: 'manual',
+                    placement: 'top-end',
+                    maxWidth: 190
+                }"
+            >
                 <legend-item
                     v-for="item in children"
                     :legendItem="item"
