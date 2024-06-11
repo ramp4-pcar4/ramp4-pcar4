@@ -282,7 +282,8 @@ export class SymbologyAPI extends APIScope {
             .center(this.CONTAINER_CENTER, this.CONTAINER_CENTER)
             .fill(colour);
 
-        draw.text(name[0].toUpperCase()) // take the first letter
+        const textElement = draw
+            .text(name[0].toUpperCase()) // take the first letter
             .size(23)
             .fill('#fff')
             .attr({
@@ -290,6 +291,11 @@ export class SymbologyAPI extends APIScope {
                 'font-family': 'Roboto'
             })
             .center(this.CONTAINER_CENTER, this.CONTAINER_CENTER);
+
+        textElement.tspan(name[0].toUpperCase()).addClass('grid-icons').attr({
+            dy: '29.900000000000002',
+            x: '7.6875'
+        });
 
         return {
             name,
