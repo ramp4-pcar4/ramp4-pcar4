@@ -42,7 +42,7 @@ class AreasOfInterestFixture extends AreasOfInterestAPI {
             // console.log(`[fixture] ${this.id} removed`);
             unwatch();
 
-            if (this.$iApi.fixture.get('appbar')) {
+            if (this.$iApi.fixture.exists('appbar')) {
                 const appbarStore = useAppbarStore(this.$vApp.$pinia);
                 appbarStore.removeButton('areas-of-interest');
             }

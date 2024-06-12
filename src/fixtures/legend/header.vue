@@ -135,7 +135,7 @@ const toggleWizard = () => {
 
 const getWizardExists = (): boolean => {
     try {
-        return !!iApi.fixture.get('wizard');
+        return iApi.fixture.exists('wizard');
     } catch (e) {
         return false;
     }
@@ -147,7 +147,7 @@ const toggleLayerReorder = () => {
 
 const getLayerReorderExists = (): boolean => {
     try {
-        return !!iApi.fixture.get('layer-reorder');
+        return iApi.fixture.exists('layer-reorder');
     } catch (e) {
         return false;
     }

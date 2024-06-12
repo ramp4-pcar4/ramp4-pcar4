@@ -328,7 +328,7 @@ const hover = (t: EventTarget) => {
  */
 const getFixtureExists = (fixtureName: string): boolean => {
     try {
-        return !!iApi.fixture.get(fixtureName);
+        return iApi.fixture.exists(fixtureName);
     } catch (e) {
         return false;
     }

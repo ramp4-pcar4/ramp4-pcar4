@@ -729,7 +729,7 @@ const getLegendGraphic = (item: any): string | undefined => {
  */
 const getDatagridExists = (): boolean => {
     try {
-        return !!iApi.fixture.get('grid');
+        return iApi.fixture.exists('grid');
     } catch (e) {
         return false;
     }
