@@ -1,6 +1,6 @@
 key|enValue|enValid|frValue|frValid
 wizard.title|Import Layer|1|Importer un fichier|1
-wizard.upload.title|Upload data|1|Charger des données|1
+wizard.upload.title|Upload, data|1|Charger des données|1
 wizard.upload.or|or|1|ou|1
 wizard.upload.file.label|Upload a file|1|Télécharger un fichier|1
 wizard.upload.file.help|Drop or select a file to upload|1|Déposer ou sélectionner un fichier à télécharger|1
