@@ -1,6 +1,6 @@
-key,enValue,enValid,frValue,frValid
-help.title,Help,1,Aide,1
-help.search,Search Help,1,Aide à la recherche,1
-help.section.expand,Expand section,1,Développer une section,1
-help.section.collapse,Collapse section,1,Réduire une section,1
-help.noResults,Nothing is found. Please try a different search.,1,Aucun résultat. Veuillez essayer une autre recherche.,1
+key|enValue|enValid|frValue|frValid
+help.title|Help|1|Aide|1
+help.search|Search Help|1|Aide à la recherche|1
+help.section.expand|Expand section|1|Développer une section|1
+help.section.collapse|Collapse section|1|Réduire une section|1
+help.noResults|Nothing is found. Please try a different search.|1|Aucun résultat. Veuillez essayer une autre recherche.|1

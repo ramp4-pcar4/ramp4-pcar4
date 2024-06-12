@@ -19,7 +19,7 @@ export default function vueI18nPlugin(): Plugin {
             if (!/lang\.csv/.test(id)) return;
 
             const valueField = 'Value';
-            const res: CsvRows = dsvFormat(',').parse(
+            const res: CsvRows = dsvFormat('|').parse(
                 src
                     .replace('export default "', '')
                     .replace(/"$/, '')

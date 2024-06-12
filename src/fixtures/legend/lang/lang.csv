@@ -1,41 +1,41 @@
-key,enValue,enValid,frValue,frValid
-legend.title,Legend,1,Légende,1
-legend.header.addlayer,Add Layer,1,Ajouter une couche,1
-legend.header.reorderlayers,Reorder Layers,1,Réorganiser les couches,1
-legend.header.groups,Toggle Groups,1,Basculer les Groupes,1
-legend.header.groups.expand,Expand All,1,Élargir les groupes,1
-legend.header.groups.collapse,Collapse All,1,Réduire les groupes,1
-legend.header.visible,Toggle Visibility,1,Basculer la Visibilité,1
-legend.header.visible.show,Show All,1,Montrer tout,1
-legend.header.visible.hide,Hide All,1,Cacher tout,1
-legend.group.expand,Expand Group,1,Développer un groupe,1
-legend.group.collapse,Collapse Group,1,Réduire un groupe,1
-legend.visibility.showLayer,Show layer,1,Afficher la couche,1
-legend.visibility.hideLayer,Hide layer,1,Masquer la couche,1
-legend.visibility.showSymbol,Show symbol,1,Afficher le symbole,1
-legend.visibility.hideSymbol,Hide symbol,1,Masquer le symbole,1
-legend.visibility.showGroup,Show group,1,Afficher le groupe,1
-legend.visibility.hideGroup,Hide group,1,Masquer le groupe,1
-legend.symbology.expand,Expand legend,1,Développer la légende,1
-legend.symbology.hide,Hide legend,1,Masquer la légende,1
-legend.symbology.loading,Loading...,1,Chargement en cours...,1
-legend.layer.data,Show more data,1,Afficher plus de données,1
-legend.layer.data.only,Layer not on map,1,Couche non visualisable,1
-legend.layer.offscale,Layer out of scale,1,Couche hors de portée,1
-legend.layer.zoomToVisible,Zoom to visible scale,1,Zoom sur l'échelle visible,1
-legend.layer.options,More options,1,Plus d'options,1
-legend.layer.controls.metadata,Metadata,1,Métadonnées,1
-legend.layer.controls.settings,Settings,1,Paramètres,1
-legend.layer.controls.datatable,Datatable,1,Tableau de données,1
-legend.layer.controls.symbology,Legend,1,Légende,1
-legend.layer.controls.boundaryzoom,Zoom to Layer Boundary,1,Zoomer à la limite,1
-legend.layer.controls.cancel,Cancel,1,Annuler,1
-legend.layer.controls.remove,Remove,1,Retirer,1
-legend.layer.controls.reload,Reload,1,Recharger,1
-legend.layer.controls.reloadDisabled,Layer cannot be reloaded,1,Le calque ne peut pas être rechargé,0
-legend.alert.symbologyExpanded,Layer legend expanded,1,Légende de la couche développée,1
-legend.alert.symbologyCollapsed,Layer legend collapsed,1,Légende de la couche réduite,1
-legend.alert.groupExpanded,Legend group expanded,1,Groupe de légende développé,1
-legend.alert.groupCollapsed,Legend group collapsed,1,Groupe de légende réduit,1
-legend.alert.layerAdded,{name} layer added to legend,1,{name} couche ajoutée à la légende,1
-legend.alert.layerRemoved,{name} layer removed from legend,1,Couche {name} retiré de la légende,1
+key|enValue|enValid|frValue|frValid
+legend.title|Legend|1|Légende|1
+legend.header.addlayer|Add Layer|1|Ajouter une couche|1
+legend.header.reorderlayers|Reorder Layers|1|Réorganiser les couches|1
+legend.header.groups|Toggle Groups|1|Basculer les Groupes|1
+legend.header.groups.expand|Expand All|1|Élargir les groupes|1
+legend.header.groups.collapse|Collapse All|1|Réduire les groupes|1
+legend.header.visible|Toggle Visibility|1|Basculer la Visibilité|1
+legend.header.visible.show|Show All|1|Montrer tout|1
+legend.header.visible.hide|Hide All|1|Cacher tout|1
+legend.group.expand|Expand Group|1|Développer un groupe|1
+legend.group.collapse|Collapse Group|1|Réduire un groupe|1
+legend.visibility.showLayer|Show layer|1|Afficher la couche|1
+legend.visibility.hideLayer|Hide layer|1|Masquer la couche|1
+legend.visibility.showSymbol|Show symbol|1|Afficher le symbole|1
+legend.visibility.hideSymbol|Hide symbol|1|Masquer le symbole|1
+legend.visibility.showGroup|Show group|1|Afficher le groupe|1
+legend.visibility.hideGroup|Hide group|1|Masquer le groupe|1
+legend.symbology.expand|Expand legend|1|Développer la légende|1
+legend.symbology.hide|Hide legend|1|Masquer la légende|1
+legend.symbology.loading|Loading...|1|Chargement en cours...|1
+legend.layer.data|Show more data|1|Afficher plus de données|1
+legend.layer.data.only|Layer not on map|1|Couche non visualisable|1
+legend.layer.offscale|Layer out of scale|1|Couche hors de portée|1
+legend.layer.zoomToVisible|Zoom to visible scale|1|Zoom sur l'échelle visible|1
+legend.layer.options|More options|1|Plus d'options|1
+legend.layer.controls.metadata|Metadata|1|Métadonnées|1
+legend.layer.controls.settings|Settings|1|Paramètres|1
+legend.layer.controls.datatable|Datatable|1|Tableau de données|1
+legend.layer.controls.symbology|Legend|1|Légende|1
+legend.layer.controls.boundaryzoom|Zoom to Layer Boundary|1|Zoomer à la limite|1
+legend.layer.controls.cancel|Cancel|1|Annuler|1
+legend.layer.controls.remove|Remove|1|Retirer|1
+legend.layer.controls.reload|Reload|1|Recharger|1
+legend.layer.controls.reloadDisabled|Layer cannot be reloaded|1|Le calque ne peut pas être rechargé|0
+legend.alert.symbologyExpanded|Layer legend expanded|1|Légende de la couche développée|1
+legend.alert.symbologyCollapsed|Layer legend collapsed|1|Légende de la couche réduite|1
+legend.alert.groupExpanded|Legend group expanded|1|Groupe de légende développé|1
+legend.alert.groupCollapsed|Legend group collapsed|1|Groupe de légende réduit|1
+legend.alert.layerAdded|{name} layer added to legend|1|{name} couche ajoutée à la légende|1
+legend.alert.layerRemoved|{name} layer removed from legend|1|Couche {name} retiré de la légende|1
