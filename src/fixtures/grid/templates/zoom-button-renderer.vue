@@ -2,7 +2,7 @@
     <button
         v-if="isMapLayer"
         type="button"
-        class="flex items-center justify-center w-42 h-38"
+        class="flex items-center justify-center w-40 h-36"
         :content="
             t(`grid.cells.zoom${zoomStatus === 'none' ? '' : `.${zoomStatus}`}`)
         "

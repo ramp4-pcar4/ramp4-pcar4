@@ -65,7 +65,7 @@
                 :content="t(`grid.header.reorder.left`)"
                 v-tippy="{ placement: 'top' }"
                 @click="moveLeft()"
-                class="move-left opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
+                class="move-left opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default flex justify-center items-center"
                 tabindex="-1"
                 :disabled="!canMoveLeft"
             >
@@ -84,7 +84,7 @@
                 :content="t(`grid.header.reorder.right`)"
                 v-tippy="{ placement: 'top' }"
                 @click="moveRight()"
-                class="move-right opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
+                class="move-right opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default flex justify-center items-center"
                 tabindex="-1"
                 :disabled="!canMoveRight"
             >

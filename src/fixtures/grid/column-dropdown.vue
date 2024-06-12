@@ -14,9 +14,9 @@
                     height="24px"
                     width="24px"
                     preserveAspectRatio="xMidYMid meet"
-                    viewBox="0 0 24 24"
+                    viewBox="0 0 23 24"
                     focusable="false"
-                    class="inline mr-1 fill-current"
+                    class="inline fill-current"
                 >
                     <g id="format-list-checks_cache966">
                         <path
