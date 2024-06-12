@@ -718,9 +718,9 @@ export interface RampLodConfig {
 
 // Contains properties for compoents on the map caption bar
 export interface MapCaptionConfig {
-    mapCoords: { disabled?: boolean; formatter?: string };
-    scaleBar: { disabled?: boolean; imperialScale?: boolean };
-    langToggle: LangToggle;
+    mapCoords?: { disabled?: boolean; formatter?: string };
+    scaleBar?: { disabled?: boolean; imperialScale?: boolean };
+    langToggle?: LangToggle;
 }
 
 // actual ramp config is kinda wonky, split over lots of classes
