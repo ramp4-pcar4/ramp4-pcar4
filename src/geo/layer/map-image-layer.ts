@@ -409,17 +409,23 @@ export class MapImageLayer extends MapLayer {
             loadPromises.push(pLMD);
         });
 
-        // any sublayers not in our tree, we need to turn off.
+        // any sublayers lurking in the ESRI layer that are not in our set of sublayers,
+        // we need to deal with.
         this.esriLayer.allSublayers.forEach(s => {
-            // find sublayers that are not groups, and dont exist in our initilazation array
             if (
                 !s.sublayers &&
-                !leafsToInit.find(
-                    (sublayer: MapImageSublayer) => sublayer.layerIdx === s.id
-                )
+                !leafsToInit.find(sublayer => sublayer.layerIdx === s.id)
             ) {
+                // this sublayer is not a group, and doesn't exist in our initialization array.
+                // make sure it doesn't appear on the map
+
                 s.visible = false;
                 s.opacity = 0; // might be overkill
+            } else if (s.sublayers) {
+                // this sublayer is a group. make sure it's visible or else it
+                // can auto-hide any valid sublayers inside it
+
+                s.visible = true;
             }
         });
 
