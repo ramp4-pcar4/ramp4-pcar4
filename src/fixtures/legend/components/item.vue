@@ -252,6 +252,7 @@
                         }"
                         @mouseover.stop
                         @click.stop="reloadIfReady"
+                        :aria-label="t('legend.layer.controls.reload')"
                     >
                         <div class="flex p-8">
                             <svg
@@ -288,6 +289,11 @@
                         }"
                         @mouseover.stop
                         @click.stop="cancelOrRemoveLayer"
+                        :aria-label="
+                            legendItem.type === LegendType.Error
+                                ? t('legend.layer.controls.remove')
+                                : t('legend.layer.controls.cancel')
+                        "
                     >
                         <div class="flex p-8">
                             <svg
