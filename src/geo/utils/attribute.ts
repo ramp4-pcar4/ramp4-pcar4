@@ -8,6 +8,7 @@ import type {
     FieldDefinition,
     GetGraphicServiceDetails,
     RampLayerFieldInfoConfig,
+    RampLayerFieldInfoConfigFields,
     RampLayerFieldMetadataConfig,
     TabularAttributeSet
 } from '@/geo/api';
@@ -416,6 +417,27 @@ export class AttributeAPI extends APIScope {
     }
 
     /**
+     * Gets a fieldMetadata.fieldInfo attribute with the proper trimming, depending on
+     * the value of the .trim property.
+     *
+     * @param fieldInfo the fieldInfo object.
+     * @param attribute the attribute to be trimmed.
+     * @returns the value of the attribute with desired trimming.
+     */
+    getFieldWithProperTrimming(
+        fieldInfo: RampLayerFieldInfoConfig,
+        attribute: RampLayerFieldInfoConfigFields
+    ): string | undefined {
+        const value = fieldInfo[attribute];
+
+        if (fieldInfo.trim && value && typeof value === 'string') {
+            return value.trim();
+        }
+
+        return value;
+    }
+
+    /**
      * Will apply any field config metadata to a layer.
      * Should be used after loading process has populated .fields property of the layer
      *
@@ -433,6 +455,42 @@ export class AttributeAPI extends APIScope {
             layer.fieldList = '*';
             return;
         }
+
+        // Trim all trim-worthy attributes
+        fieldMetadata.fieldInfo.forEach((f, index) => {
+            const originalName = fieldMetadata.fieldInfo![index].name;
+
+            // UNDO: Remove
+            console.log(' Original Name: ', originalName);
+            console.log(
+                'Original Alias: ',
+                fieldMetadata.fieldInfo![index].alias
+            );
+
+            // Trim, if ordered
+            fieldMetadata.fieldInfo![index].name =
+                this.getFieldWithProperTrimming(f, 'name')!;
+            fieldMetadata.fieldInfo![index].alias =
+                this.getFieldWithProperTrimming(f, 'alias');
+
+            // UNDO: Remove
+            console.log(
+                '  Trimmed Name: ',
+                fieldMetadata.fieldInfo![index].name
+            );
+            console.log(
+                ' Trimmed Alias: ',
+                fieldMetadata.fieldInfo![index].alias
+            );
+
+            // Set name of corresponding layer to properly-trimmed version
+            const matchingLayer = layer.fields.find(
+                ff => ff.name === originalName
+            );
+            if (matchingLayer) {
+                matchingLayer.name = fieldMetadata.fieldInfo![index].name;
+            }
+        });
 
         // if order enforced, order the fields first before doing exclusive fields check
         if (
