@@ -584,6 +584,11 @@ export interface RampLayerFieldMetadataConfig {
     enforceOrder?: boolean; //default to false. if true, then order the fields in the same order as fieldInfo. if false, randomize ordering of field array
 }
 
+// object to support future properties, like label field, style
+export interface RampLabelsConfig {
+    visible?: boolean;
+}
+
 // i.e. a dynamic layer child
 export interface RampLayerMapImageSublayerConfig {
     // A+ name
@@ -591,7 +596,7 @@ export interface RampLayerMapImageSublayerConfig {
     name?: string;
     nameField?: string;
     state?: RampLayerStateConfig;
-    // following items need to be flushed out
+
     extent?: RampExtentConfig;
     controls?: Array<LayerControl>;
     disabledControls?: Array<LayerControl>;
@@ -600,7 +605,12 @@ export interface RampLayerMapImageSublayerConfig {
     initialFilteredQuery?: string;
     permanentFilteredQuery?: string;
     customRenderer?: any;
+    labels?: RampLabelsConfig;
     fixtures?: any; // layer-based fixture config
+
+    // the following don't exist on the actual config object, but are needed by the layer class
+    id: string;
+    layerType: LayerType;
 }
 
 // i.e. a wms layer child
@@ -655,6 +665,7 @@ export interface RampLayerConfig {
     caching?: boolean; // whether to preserve raw data in file and WFS layers
     rawData?: any; // used for static data, like geojson string, shapefile guts
     maxLoadTime?: number; // how long layer can load before error
+    labels?: RampLabelsConfig; // label config. for now only valid on MILSublayer but needs to be here due to inheritance fun
 }
 
 export interface RampExtentConfig {
@@ -734,4 +745,5 @@ export interface RampMapConfig {
     caption?: MapCaptionConfig;
     pointZoomScale?: number;
     mapMouseThrottle?: number;
+    labelsDefault?: RampLabelsConfig;
 }

@@ -105,10 +105,10 @@ export class LayerAPI extends APIScope {
     }
 
     /**
-     * Access an instantiated layer object.
+     * Access a registered layer object.
      *
      * @param {string} layerId layer id or uid of the layer
-     * @returns {LayerInstance | undefined} The layer instance with the given id. Returns undefined is layer is not found.
+     * @returns {LayerInstance | undefined} The layer instance with the given id. Returns undefined if layer is not found.
      */
     getLayer(layerId: string): LayerInstance | undefined {
         // since this would be a fairly common thing to want to do via the instance API,
@@ -118,17 +118,31 @@ export class LayerAPI extends APIScope {
         // TODO: make result non-reactive via toRaw ?
         //       is anything requiring layer reactivity?
 
-        let layer: LayerInstance | undefined;
+        return useLayerStore(this.$vApp.$pinia).getLayerByAny(layerId);
+    }
 
-        // test if param is layer id
-        const layerStore = useLayerStore(this.$vApp.$pinia);
-        layer = layerStore.getLayerByAny(layerId);
-        if (!layer) {
-            // test if layer is a string uid
-            layer = layerStore.getLayerByUid(layerId);
+    /**
+     * Access a registered sublayer object.
+     *
+     * @param {string} layerId layer id of the layer
+     * @param {number} index index of the sublayer
+     * @returns {LayerInstance | undefined} The sublayer instance matching the parameters. Returns undefined if sublayer is not found.
+     */
+    getSublayer(layerId: string, index: number): LayerInstance | undefined {
+        // find the parent
+        const parentLayer = useLayerStore(this.$vApp.$pinia).getLayerById(
+            layerId
+        );
+        if (
+            parentLayer &&
+            parentLayer.supportsSublayers &&
+            index < parentLayer.sublayers.length
+        ) {
+            // sublayers is a sparse array. if index is a non-existing slot, returns undefined which is correct
+            return parentLayer.sublayers[index];
+        } else {
+            return undefined;
         }
-
-        return layer;
     }
 
     /**

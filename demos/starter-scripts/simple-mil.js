@@ -263,8 +263,8 @@ let config = {
                 {
                     id: 'EcoGeo',
                     layerType: 'esri-map-image',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/',
-                    sublayers: [{ index: 6 }, { index: 8 }]
+                    url: 'https://services.sac-isc.gc.ca/geomatics/rest/services/ATRIS_PRD/GEO_ATRIS_E/MapServer',
+                    sublayers: [{ index: 1, labels: { visible: false } }]
                 }
             ],
             fixtures: {
@@ -273,11 +273,7 @@ let config = {
                         children: [
                             {
                                 layerId: 'EcoGeo',
-                                sublayerIndex: 6
-                            },
-                            {
-                                layerId: 'EcoGeo',
-                                sublayerIndex: 8
+                                sublayerIndex: 1
                             }
                         ]
                     }

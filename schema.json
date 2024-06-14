@@ -438,7 +438,7 @@
                 "sublayerIndex": {
                     "type": "integer",
                     "default": 0,
-                    "description": "Index of the 'sublayer' in the case of a map image layer."
+                    "description": "Index of the sublayer in the case of a Map Image Layer."
                 },
                 "layerControls": {
                     "$ref": "#/$defs/layerControls"
@@ -1126,6 +1126,9 @@
                 },
                 "fixtures": {
                     "$ref": "#/$defs/layerFixtureConfig"
+                },
+                "labels": {
+                    "$ref": "#/$defs/labels"
                 }
             },
             "required": ["index"],
@@ -2420,6 +2423,17 @@
             },
             "required": ["id", "lods"],
             "unevaluatedProperties": false
+        },
+        "labels": {
+            "type": "object",
+            "description": "Settings for labels on layers.",
+            "properties": {
+                "visible": {
+                    "type": "boolean",
+                    "description": "Sets visibility of labels. If not provided, default values are used."
+                }
+            },
+            "additionalProperties": false
         }
     },
     "properties": {
@@ -2794,6 +2808,10 @@
                     "default": 0,
                     "minimum": 0,
                     "description": "The amount of throttling (in milliseconds) to be used for the map mouse move event. A value of 0 means no throttle."
+                },
+                "labelsDefault": {
+                    "$ref": "#/$defs/labels",
+                    "description": "If provided, will override any service defaults. Will not override values on a layer config."
                 }
             },
             "required": ["tileSchemas", "baseMaps"],
