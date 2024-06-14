@@ -16,6 +16,7 @@ The sublayer also supports the following properties (see above for details). Som
 - `fieldMetadata` (feature only)
 - `fixtures`
 - `initialFilteredQuery` (feature only)
+- `labels` (see below)
 - `name`
 - `nameField` (feature only)
 - `state`
@@ -35,6 +36,34 @@ The sublayer also supports the following properties (see above for details). Som
         }
     ]
 }
+```
+
+### Labels
+
+Map Image Layers can include label text in their result, assuming the service is configured to support it. The visibility of these labels can be controlled via the `labels` option. If missing, the service default is used.
+
+```js
+{
+    sublayers: [
+        {
+            index: 5,
+            labels: {
+                visibile: false
+            }
+        }
+    ]
+}
+```
+
+There is also a map level override that can apply to all MIL Sublayers in the instance. It will take precedence over service defaults, but not over specific configuration on a sublayer object. This is primarily a shortcut to avoid adding definitions to multiple layer configs.
+
+```js
+{
+    map: {
+        labelsDefault: {
+            visible: false 
+        }
+    }
 ```
 
 ## WMS Sublayers

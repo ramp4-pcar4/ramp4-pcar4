@@ -257,6 +257,13 @@ myLayer.opacity = 0.6;
 myLayer.opacity; // 0.6
 ```
 
+Map Image Sublayers can also control the label visibility, assuming labels are defined on the host service.
+
+```js
+mySublayer.labelVisibility = true;
+mySublayer.labelVisibility; // true
+```
+
 ### Layer Metadata
 
 Get the Layer name (defined by configuration, and if not supplied, any server value that is present).
