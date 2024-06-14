@@ -1,4 +1,5 @@
 import { APIScope, GlobalEvents, PanelInstance } from './internal';
+import type { PanelStore } from '@/stores/panel';
 import {
     usePanelStore,
     type PanelConfigStyle,

@@ -47,7 +47,7 @@ export class MapCaptionAPI extends APIScope {
         const mapCaptionStore = useMapCaptionStore(this.$vApp.$pinia);
         mapCaptionStore.coords.disabled = false; // default
         mapCaptionStore.scale.disabled = false; // default
-        mapCaptionStore.scale.imperialScale = false; // default
+        mapCaptionStore.scale.isImperialScale = false; // default
 
         // check if map coords exists, and has been disabled
         if (captionConfig.mapCoords) {
@@ -100,7 +100,9 @@ export class MapCaptionAPI extends APIScope {
     updateAttribution(newAttribution: Attribution | undefined): void {
         // Default attribution
         const attribution: Attribution = {
-            text: { value: this.$iApi.$i18n.t(`caption.attributionDefaultText`) },
+            text: {
+                value: this.$iApi.$i18n.t(`caption.attributionDefaultText`)
+            },
             logo: {
                 altText: this.$iApi.$i18n.t(`caption.attributionLogoAltText`),
                 link: this.$iApi.$i18n.t(`caption.attributionLink`),
