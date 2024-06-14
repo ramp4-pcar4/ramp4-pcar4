@@ -2,6 +2,21 @@ import type { RampLayerConfig } from '@/geo/api';
 import type { LayerInstance } from '@/api/internal';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import type { Ref } from 'vue';
+
+interface LayerStore {
+    layers: Ref<[]>;
+    layerConfigs: Ref<RampLayerConfig[]>;
+    mapOrder: Ref<string[]>;
+    getLayerByUid: (uid: string) => LayerInstance | undefined;
+    getLayerById: (id: string) => LayerInstance | undefined;
+    getLayerByAny: (idOrUid: string) => LayerInstance | undefined;
+    addLayerConfig: (value: RampLayerConfig) => void;
+    addLayer: (value: LayerInstance, index: number | undefined) => void;
+    reorderLayer: (layer: LayerInstance, index: number) => void;
+    removeLayer: (value: LayerInstance) => void;
+    removeLayerConfig: (layerId: string) => void;
+}
 
 // searches layers and sublayers using BFS and returns the first layer to satisfy the given predicate.
 // Our initial array is just layers, this lets us crawl into sublayers before moving to the next layer.
@@ -175,5 +190,5 @@ export const useLayerStore = defineStore('layer', () => {
         removeLayer,
 
         removeLayerConfig
-    };
+    } as LayerStore;
 });
