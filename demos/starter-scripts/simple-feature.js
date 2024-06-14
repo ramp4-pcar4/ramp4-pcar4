@@ -6,6 +6,7 @@ let config = {
     configs: {
         en: {
             map: {
+                labelsDefault: { visible: false },
                 extentSets: [
                     {
                         id: 'EXT_ESRI_World_AuxMerc_3857',
@@ -261,14 +262,10 @@ let config = {
             },
             layers: [
                 {
-                    id: 'Nature',
-                    layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/6'
-                },
-                {
-                    id: 'Water',
-                    layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/8'
+                    id: 'EcoGeo',
+                    layerType: 'esri-map-image',
+                    url: 'https://services.sac-isc.gc.ca/geomatics/rest/services/ATRIS_PRD/GEO_ATRIS_E/MapServer',
+                    sublayers: [{ index: 1 }]
                 }
             ],
             fixtures: {
@@ -276,10 +273,7 @@ let config = {
                     root: {
                         children: [
                             {
-                                layerId: 'Nature'
-                            },
-                            {
-                                layerId: 'Water'
+                                layerId: 'EcoGeo'
                             }
                         ]
                     }

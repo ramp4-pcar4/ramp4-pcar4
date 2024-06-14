@@ -20,7 +20,7 @@ import {
     GeometryType,
     SpatialReference
 } from '@/geo/api';
-import type { RampMapConfig, ZoomEasing } from '@/geo/api';
+import type { RampLabelsConfig, RampMapConfig, ZoomEasing } from '@/geo/api';
 
 // Would ideally call this BaseMap, but that would get confused with Basemap.
 // Do not add any event emits or listeners that would be tied to a specific map
@@ -123,6 +123,13 @@ export class CommonMapAPI extends APIScope {
     }
 
     /**
+     * Any map labels defaulting
+     */
+    labelsDefault: RampLabelsConfig = {
+        visible: undefined
+    };
+
+    /**
      * Will generate the actual Map control objects and construct it on the page
      * @param {RampMapConfig} config the config for the map
      * @param {string | HTMLDivElement} targetDiv the div to be used for the map view
@@ -157,6 +164,10 @@ export class CommonMapAPI extends APIScope {
             });
             return bm;
         });
+
+        if (config.labelsDefault) {
+            this.labelsDefault.visible = config.labelsDefault.visible;
+        }
 
         const esriConfig: __esri.MapProperties = {};
 
