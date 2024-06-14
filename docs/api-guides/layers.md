@@ -196,7 +196,13 @@ The properties `layerState` and `isLoaded` can also be used to do a synchronous 
 A Layer or sublayer registered with the instance can be retrieved via the `getLayer` API using the Layer ID or the UID.
 
 ```js
-var myLayer = instanceApi.geo.layer.getLayer('fancyLayerId'));
+var myLayer = instanceApi.geo.layer.getLayer('fancyLayerId');
+```
+
+A sublayer can also be found using the parent LayerID and sublayer index. UIDs will not work on this call.
+
+```js
+var mySublayer = instanceApi.geo.layer.getSublayer('parentLayerId', 3);
 ```
 
 Arrays of layers in various states can also be requested.
@@ -255,6 +261,13 @@ myLayer.visibility; // false
 
 myLayer.opacity = 0.6;
 myLayer.opacity; // 0.6
+```
+
+Map Image Sublayers can also control the label visibility, assuming labels are defined on the host service.
+
+```js
+mySublayer.labelVisibility = true;
+mySublayer.labelVisibility; // true
 ```
 
 ### Layer Metadata
