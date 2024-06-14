@@ -2,6 +2,21 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import type { Notification } from './notification-state';
 import { NotificationGroup } from '@/api';
+import type { ComputedRef, Ref } from 'vue';
+
+export interface NotificationStore {
+    notificationStack: Ref<(Notification | NotificationGroup)[]>;
+    groups: Ref<{ [id: string]: NotificationGroup }>;
+    notificationNumber: ComputedRef<number>;
+    showNotification: (notification: Notification) => void;
+    removeNotification: (
+        notification: Notification | NotificationGroup
+    ) => void;
+    registerGroup: (group: NotificationGroup) => void;
+    addToGroup: (id: string, message: string) => void;
+    clearAll: () => void;
+    removeGroup: (group: NotificationGroup) => void;
+}
 
 export const useNotificationStore = defineStore('notification', () => {
     const notificationStack = ref<(Notification | NotificationGroup)[]>([]);
@@ -71,5 +86,5 @@ export const useNotificationStore = defineStore('notification', () => {
         registerGroup,
         addToGroup,
         clearAll
-    };
+    } as NotificationStore;
 });

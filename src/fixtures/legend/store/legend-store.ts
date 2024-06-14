@@ -4,6 +4,19 @@ import type { LegendItem } from './legend-item';
 import { SectionItem } from './section-item';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import type { Ref } from 'vue';
+
+interface LegendStore {
+    legendConfig: Ref<LegendConfig>;
+    children: Ref<[]>;
+    headerControls: Ref<string[]>;
+    addItem: (value: {
+        item: LegendItem;
+        parent: LegendItem | undefined;
+    }) => void;
+    removeItem: (item: LegendItem) => void;
+    replaceItem: (value: { oldItem: LegendItem; newItem: LegendItem }) => void;
+}
 
 // NOTE: Pinia and/or Typescript are dumb because when you provide a type like LegendItem, it does not save it as LegendItem.
 // Instead, it is saved as type { _uid: string, ...} i.e. it just saves it as an object with the properties.
@@ -96,5 +109,5 @@ export const useLegendStore = defineStore('legend', () => {
         addItem,
         removeItem,
         replaceItem
-    };
+    } as LegendStore;
 });

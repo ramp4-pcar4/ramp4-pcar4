@@ -11,25 +11,25 @@
 
         <span
             class="relative top-2 sm:top-1 ml-4 sm:ml-0 shrink-0"
-            v-if="!attribution?.logo.disabled"
+            v-if="!attribution?.logo!.disabled"
         >
             <a
                 class="pointer-events-auto cursor-pointer"
-                :href="attribution?.logo.link"
+                :href="attribution?.logo!.link"
                 target="_blank"
-                :aria-label="attribution?.logo.altText"
+                :aria-label="attribution?.logo!.altText"
             >
                 <img
                     class="object-contain h-18 sm:h-26"
-                    :src="attribution?.logo.value"
-                    :alt="attribution?.logo.altText"
+                    :src="attribution?.logo!.value"
+                    :alt="attribution?.logo!.altText"
                 />
             </a>
         </span>
 
         <span
             class="relative ml-10 top-2 text-sm sm:text-base"
-            v-if="!attribution?.text.disabled"
+            v-if="!attribution?.text!.disabled"
             v-truncate="{
                 options: {
                     placement: 'top',
@@ -39,7 +39,7 @@
                 }
             }"
         >
-            {{ attribution?.text.value }}
+            {{ attribution?.text!.value }}
         </span>
 
         <span class="flex-grow w-15"></span>
