@@ -26,7 +26,7 @@ map.language.curr,current,1,actuel,1
 map.export,export map,1,exporter la carte,1
 notifications.open,Open Notifications Panel,1,Ouvrir la fenêtre des notifications,1
 notifications.title,Notifications,1,Notifications,1
-notifications.empty,No new notifications.,1,Aucune nouvelle notification.,1
+notifications.empty,"No new, notifications.",1,"Aucune nouvelle, notification.",1
 notifications.controls.dismiss,Dismiss,1,Rejeter,1
 notifications.controls.expand,Expand,1,Développer,1
 notifications.controls.collapse,Collapse,1,Réduire,1
