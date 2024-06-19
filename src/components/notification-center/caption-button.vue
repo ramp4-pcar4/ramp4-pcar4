@@ -90,7 +90,7 @@ const clearAll = () => notificationStore.clearAll();
 
 <style lang="scss" scoped>
 .number {
-    background: red;
+    background: #e70404;
     font-size: 0.8em;
 }
 .notification-dropdown {

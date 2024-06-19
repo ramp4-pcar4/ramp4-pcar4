@@ -8,6 +8,9 @@
                 t(active ? 'panels.controls.unpin' : 'panels.controls.pin')
             "
             v-tippy="{ placement: 'bottom', hideOnClick: false }"
+            :aria-label="
+                t(active ? 'panels.controls.unpin' : 'panels.controls.pin')
+            "
         >
             <svg
                 class="fill-current w-16 h-16"
