@@ -474,11 +474,11 @@ let config = {
                 basemaps: [
                     {
                         id: 'baseNrCan',
-                        name: 'Carte de base du Canada ? transport (CBCT) avec ?tiquettes',
+                        name: 'Carte de base du Canada - transport (CBCT) avec étiquettes',
                         description:
-                            "La carte de base du Canada ? transport (CBCT) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et d?veloppeurs d'applications cartographiques en ligne.",
+                            "La carte de base du Canada - transport (CBCT) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
                         altText:
-                            'altText - La carte de base du Canada ? transport (CBCT)',
+                            'altText - La carte de base du Canada - transport (CBCT)',
                         layers: [
                             {
                                 id: 'CBCT',
@@ -512,11 +512,11 @@ let config = {
                     },
                     {
                         id: 'baseCBME_CBCE_HS_RO_3978',
-                        name: 'Carte de base du Canada - ?levation (CBCE)',
+                        name: 'Carte de base du Canada - élévation (CBCE)',
                         description:
-                            "La carte de base du Canada - ?levation (CBCE) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et d?veloppeurs d'applications cartographiques en ligne.",
+                            "La carte de base du Canada - élévation (CBCE) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
                         altText:
-                            'altText - La carte de base du Canada - ?levation (CBCE)',
+                            'altText - La carte de base du Canada - élévation (CBCE)',
                         layers: [
                             {
                                 id: 'CBME_CBCE_HS_RO_3978',
@@ -531,7 +531,7 @@ let config = {
                         id: 'baseCBMT_CBCT_GEOM_3978',
                         name: 'Carte de base du Canada - transport (CBCT)',
                         description:
-                            "La carte de base du Canada - transport (CBCT) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et d?veloppeurs d'applications cartographiques en ligne.",
+                            "La carte de base du Canada - transport (CBCT) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
                         altText:
                             'altText - La carte de base du Canada - transport (CBCT)',
                         layers: [
@@ -548,7 +548,7 @@ let config = {
                         id: 'baseEsriWorld',
                         name: 'Imagerie mondiale',
                         description:
-                            "L'imagerie mondiale fournit une imagerie satellitaire et a?rienne dans de nombreuses r?gions du monde avec une r?solution de 1 m?tres et moins et des images satellitaires de r?solution inf?rieure dans le monde entier.",
+                            "L'imagerie mondiale fournit une imagerie satellitaire et aérienne dans de nombreuses régions du monde avec une résolution de 1 mètres et moins et des images satellitaires de résolution inférieure dans le monde entier.",
                         altText: "altText - L'imagerie mondiale",
                         layers: [
                             {
@@ -564,7 +564,7 @@ let config = {
                         id: 'baseEsriPhysical',
                         name: 'Monde physique',
                         description:
-                            "La carte du monde physique repr?sente l'aspect physique naturel de la Terre ? 1.24 kilom?tres par pixel pour le monde et ? 500 m?tres pour les ?tats-Unis.",
+                            "La carte du monde physique représente l'aspect physique naturel de la Terre à 1.24 kilomètres par pixel pour le monde et à 500 mètres pour les États-Unis.",
                         altText: 'altText - La carte du monde physique',
                         layers: [
                             {
@@ -578,11 +578,11 @@ let config = {
                     },
                     {
                         id: 'baseEsriRelief',
-                        name: 'Monde en relief ombrag?',
+                        name: 'Monde en relief ombragé',
                         description:
-                            "La carte du monde en relief ombrag? repr?sente l'?l?vation de la surface de la terre comme un relief ombrag?. Cette carte est utilis?e comme couche de fond afin d'ajouter un relief ombrag? ? d'autres cartes SIG, comme la carte ArcGIS Online World Street Map.",
+                            "La carte du monde en relief ombragé représente l'élévation de la surface de la terre comme un relief ombragé. Cette carte est utilisée comme couche de fond afin d'ajouter un relief ombragé à d'autres cartes SIG, comme la carte ArcGIS Online World Street Map.",
                         altText:
-                            'altText - La carte du monde en relief ombrag?',
+                            'altText - La carte du monde en relief ombragé',
                         layers: [
                             {
                                 id: 'World_Shaded_Relief',
@@ -597,7 +597,7 @@ let config = {
                         id: 'baseEsriStreet',
                         name: 'Monde routier',
                         description:
-                            'La carte du monde routier pr?sente des donn?es au niveau des autoroutes pour le monde.',
+                            'La carte du monde routier présente des données au niveau des autoroutes pour le monde.',
                         altText: 'altText - La carte du monde routier',
                         layers: [
                             {
@@ -613,7 +613,7 @@ let config = {
                         id: 'baseEsriTerrain',
                         name: 'Monde terrain',
                         description:
-                            "La carte du monde terrain est con?ue pour ?tre utilis?e comme une carte de base par les professionnels du SIG pour superposer d'autres couches th?matiques comme la d?mographie ou la couverture terrestre.",
+                            "La carte du monde terrain est conçue pour être utilisée comme une carte de base par les professionnels du SIG pour superposer d'autres couches thématiques comme la démographie ou la couverture terrestre.",
                         altText: 'altText - La carte du monde terrain',
                         layers: [
                             {
@@ -629,7 +629,7 @@ let config = {
                         id: 'baseEsriTopo',
                         name: 'Monde topographique',
                         description:
-                            'La carte du monde topographique est con?ue pour ?tre utilis? comme une carte de base par les professionnels du SIG et comme une carte de r?f?rence par quiconque.',
+                            'La carte du monde topographique est conçue pour être utilisée comme une carte de base par les professionnels du SIG et comme une carte de référence par quiconque.',
                         altText: 'altText - La carte du monde topographique',
                         layers: [
                             {
@@ -654,7 +654,7 @@ let config = {
                     sublayers: [
                         {
                             index: 1,
-                            name: 'Recherche de mot cl?',
+                            name: 'Recherche de mot clé',
                             state: {
                                 opacity: 1,
                                 visibility: true
@@ -666,19 +666,19 @@ let config = {
                                 },
                                 columns: [
                                     {
-                                        data: 'Cat?gorie'
+                                        data: 'Catégorie'
                                     },
                                     {
                                         data: 'Type_de_destinataire'
                                     },
                                     {
-                                        data: 'Minist?re_organisme_soci?t?_d_?tat'
+                                        data: 'Ministère_organisme_société_d_état'
                                     },
                                     {
                                         data: 'Province_Territoire'
                                     },
                                     {
-                                        data: 'Municipalit?___Communaut?'
+                                        data: 'Municipalité___Communauté'
                                     },
                                     {
                                         data: 'Nom_de_programme'
@@ -693,16 +693,16 @@ let config = {
                                         data: 'Nom_du_destinataire_final'
                                     },
                                     {
-                                        data: 'Funding_date___Date_de_d?but_estim?e'
+                                        data: 'Funding_date___Date_de_début_estimée'
                                     },
                                     {
                                         data: 'Contribution_du_programme'
                                     },
                                     {
-                                        data: 'Co?t_total_estim?_du_projet'
+                                        data: 'Coût_total_estimé_du_projet'
                                     },
                                     {
-                                        data: 'informations_compl?mentaires'
+                                        data: 'informations_complémentaires'
                                     },
                                     {
                                         data: 'Icon',
@@ -724,7 +724,7 @@ let config = {
                     root: {
                         children: [
                             {
-                                name: 'Recherche de mot cl?',
+                                name: 'Recherche de mot clé',
                                 layerId: 'climateActionMap',
                                 symbologyExpanded: true,
                                 sublayerIndex: 1
