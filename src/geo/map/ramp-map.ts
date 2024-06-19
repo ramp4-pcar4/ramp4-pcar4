@@ -476,6 +476,12 @@ export class MapAPI extends CommonMapAPI {
             this.viewPromise.then(() => {
                 this.$iApi.event.emit(GlobalEvents.MAP_REFRESH_END);
 
+                // fire the basemap change event
+                this.$iApi.event.emit(GlobalEvents.MAP_BASEMAPCHANGE, {
+                    basemapId: basemapId,
+                    schemaChanged: schemaChanged
+                });
+
                 const newScale = this.findClosestScale(scale);
 
                 // go to equivalent extent in new projection
@@ -488,17 +494,19 @@ export class MapAPI extends CommonMapAPI {
         } else {
             // change the basemap
             this.applyBasemap(bm);
+
+            // When schema changes, the recreation of the view will also set the background colour.
             this.esriView.set(
                 'background.color',
                 new Colour(bm.backgroundColour).toESRI()
             );
-        }
 
-        // fire the basemap change event
-        this.$iApi.event.emit(GlobalEvents.MAP_BASEMAPCHANGE, {
-            basemapId: basemapId,
-            schemaChanged: schemaChanged
-        });
+            // fire the basemap change event
+            this.$iApi.event.emit(GlobalEvents.MAP_BASEMAPCHANGE, {
+                basemapId: basemapId,
+                schemaChanged: schemaChanged
+            });
+        }
 
         return schemaChanged;
     }
