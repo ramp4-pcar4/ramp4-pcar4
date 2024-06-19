@@ -39,7 +39,7 @@ export class FixtureAPI extends APIScope {
      * @returns {boolean} whether the fixture identified by 'id' exists
      * @memberof FixtureAPI
      */
-    exists(id: string) : boolean {
+    exists(id: string): boolean {
         return id in useFixtureStore(this.$vApp.$pinia).items;
     }
 
