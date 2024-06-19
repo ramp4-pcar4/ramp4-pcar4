@@ -137,6 +137,7 @@ There are two types of legend component objects for the legend fixture, each one
 Every node in the legend tree structure is an instance of a legend item. All legend items share these properties:
 - `name`: display name for legend item
 - `children`: list of child legend items
+- `multilineItems`: flag which, when set to True, increases the height of all legend options to allow for 2 lines of text (if necessary)
 - `hidden`: indicates if item (and its children) should be hidden from the legend
 - `expanded`: default expanded state of item
 - `exclusive`: indicates if toggling visibility should follow "exclusive" behavior
