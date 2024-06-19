@@ -30,7 +30,6 @@
 
                 <export-settings
                     :componentSelectedState="selectedComponents"
-                    :onComponentToggle="make()"
                     class="ml-auto flex px-4 sm:px-8"
                 ></export-settings>
             </div>
@@ -43,9 +42,11 @@ import {
     computed,
     getCurrentInstance,
     inject,
+    onBeforeMount,
     onBeforeUnmount,
     onMounted,
-    ref
+    ref,
+    watch
 } from 'vue';
 import type { PropType } from 'vue';
 import type { InstanceAPI, PanelInstance } from '@/api';
@@ -70,6 +71,7 @@ const exportStore = useExportStore();
 
 const fixture = ref<ExportAPI>();
 const resizeObserver = ref<ResizeObserver | undefined>(undefined);
+const watchers = ref<Array<Function>>([]);
 
 const el = computed<Element>(() => getCurrentInstance()?.proxy?.$el);
 const componentSelectedState = computed(
@@ -114,6 +116,16 @@ const make = debounce(300, () => {
     fixture.value.make(canvasElement, el.value.clientWidth);
 });
 
+onBeforeMount(() => {
+    // Set up watchers
+    watchers.value.push(
+        // Listen for any changes to the settings, and refresh the image when they do change
+        watch(selectedComponents, () => {
+            make();
+        })
+    );
+});
+
 onMounted(() => {
     fixture.value = iApi.fixture.get('export') as ExportAPI;
     resizeObserver.value = new ResizeObserver(() => {
@@ -125,6 +137,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
     // remove the resize observer
     resizeObserver.value!.disconnect();
+    // remove the watchers
+    watchers.value.forEach(unwatch => unwatch());
 });
 </script>
 
