@@ -23,7 +23,7 @@
                         : 'cursor-default'
                 ]"
                 @mouseover.stop="hover($event.currentTarget!)"
-                @mouseout.self="
+                @mouseout="
                     //@ts-ignore
                     mobileMode ? null : $event.currentTarget?._tippy?.hide(),
                         (hovered = false)
