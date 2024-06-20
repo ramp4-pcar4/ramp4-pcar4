@@ -120,7 +120,8 @@ let config = {
                                     {
                                         layerId: 'AirEmissions',
                                         name: 'Carbon monoxide emissions by facility',
-                                        sublayerIndex: 9
+                                        sublayerIndex: 9,
+                                        maxLines: 4 // SHOULD DO NOTHING. FOR TESTING, WILL BE REMOVED
                                     },
                                     {
                                         layerId: 'AirEmissions',
@@ -151,7 +152,8 @@ let config = {
                             },
                             { layerId: 'userOSM', name: 'Open Street Map' }
                         ]
-                    }
+                    },
+                    multilineItems: { enabled: false, maxLines: 4 } // maxLines should have no effect
                 },
                 appbar: {
                     items: ['legend']

@@ -625,10 +625,11 @@ let config = {
                             },
                             {
                                 name: 'Average sulphur dioxide concentrations at monitoring stations',
-                                layerId: 'AirAmbient_SO2'
+                                layerId: 'AirAmbient_SO2',
+                                maxLines: 2 // FOR TESTING, WILL BE REMOVED
                             },
                             {
-                                name: 'Average fine particulate matter concentrations at monitoring stations',
+                                name: 'ADD ADD ADD ADD Average fine particulate matter concentrations at monitoring stations',
                                 layerId: 'AirAmbient_AvgPM'
                             },
                             {

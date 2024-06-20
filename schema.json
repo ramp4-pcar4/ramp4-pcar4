@@ -364,6 +364,22 @@
                 },
                 "root": {
                     "$ref": "#/$defs/sectionItem"
+                },
+                "multilineItems": {
+                    "type": "object",
+                    "description": "Determines whether legend items should wrap using multiple lines if necessary. Only applies to layer items.",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "description": "Determines whether the multilineItems setting is enabled.",
+                            "default": true
+                        },
+                        "maxLines": {
+                            "type": "number",
+                            "description": "Determines the max number of lines a legend item can take up before truncating. Only applies if the legend property multilineItems.enabled is true. Only accepts integers 1-6, inclusive.",
+                            "default": 3
+                        }
+                    }
                 }
             },
             "required": ["root"],
@@ -469,6 +485,10 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Indicates if symbology stack is expand by default"
+                },
+                "maxLines": {
+                    "type": "number",
+                    "description": "Determines the max number of lines this legend layer item can take up before truncating. Only applies if the legend-level property multilineItems.enabled is true. Overrides the legend-level property multilineItems.maxLines, and defaults to it if no value is provided here. Only accepts integers 1-6, inclusive."
                 }
             },
             "required": ["layerId"],
