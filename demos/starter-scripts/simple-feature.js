@@ -133,6 +133,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                             }
                         ],
+                        backgroundColour: '#BFE8FE',
                         tileSchemaId:
                             'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },

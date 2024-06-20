@@ -40,6 +40,25 @@ export class GeoAPI extends APIScope {
         this.attributes = new AttributeAPI(iApi);
         this.query = new QueryAPI(iApi);
         this.symbology = new SymbologyAPI(iApi);
+
+        if (!Array.isArray(EsriConfig.request.interceptors)) {
+            EsriConfig.request.interceptors = [];
+        }
+
+        // This will stop tile services from blasting 404s when tiles don't exist.
+        // https://developers.arcgis.com/rest/services-reference/enterprise/map-tile/#request-parameters
+        // See issue #2231 for more context.
+        // If ESRI ever patches the bug described in that issue then we can probably remove this.
+        EsriConfig.request.interceptors.push({
+            before: prams => {
+                if (prams.url.includes('?blankTile=false')) {
+                    prams.url = prams.url.replace(
+                        '?blankTile=false',
+                        '?blankTile=true'
+                    );
+                }
+            }
+        });
     }
 
     /**
