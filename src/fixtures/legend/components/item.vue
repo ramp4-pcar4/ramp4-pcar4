@@ -20,7 +20,8 @@
                         getDatagridExists() &&
                         legendItem.type === LegendType.Item)
                         ? 'cursor-pointer'
-                        : 'cursor-default'
+                        : 'cursor-default',
+                    allowMultilineItems ? 'multilined' : 'singlelined'
                 ]"
                 @mouseover.stop="hover($event.currentTarget!)"
                 @mouseout="
@@ -67,7 +68,7 @@
             >
                 <!-- smiley face. very important that we migrate this -->
                 <div
-                    class="flex p-5"
+                    class="flex p-5 mr-[13px]"
                     v-if="legendItem.type !== LegendType.Item"
                 >
                     <svg
@@ -192,7 +193,26 @@
 
                 <!-- name or info section-->
                 <div
-                    v-if="legendItem instanceof LayerItem"
+                    v-if="
+                        legendItem instanceof LayerItem && allowMultilineItems
+                    "
+                    class="flex-1 pointer-events-none m-5"
+                    :class="`line-clamp-${itemMaxLines}`"
+                    v-truncate="{
+                        externalTrigger: true,
+                        noTruncateClass: true
+                    }"
+                >
+                    <span class="h-auto break-words text-ellipsis">{{
+                        legendItem.name ??
+                        (!legendItem?.layer?.name
+                            ? legendItem.layerId
+                            : legendItem.layer?.name)
+                    }}</span>
+                </div>
+                <!-- Version if multiline legend items is turned off -->
+                <div
+                    v-else-if="legendItem instanceof LayerItem"
                     class="flex-1 pointer-events-none p-5"
                     v-truncate="{ externalTrigger: true }"
                 >
@@ -267,6 +287,20 @@
                     </button>
                 </div>
 
+                <!-- options dropdown menu -->
+                <legend-options
+                    v-if="
+                        (legendItem.type === LegendType.Item ||
+                            (legendItem.type === LegendType.Placeholder &&
+                                allowMultilineItems)) &&
+                        legendItem instanceof LayerItem
+                    "
+                    :class="{
+                        invisible: legendItem.type === LegendType.Placeholder
+                    }"
+                    :legendItem="legendItem"
+                />
+
                 <!-- Button only appears for loading or errored LayerItems -->
                 <!-- Morphs depending on state. Cancel for loading, Remove for Errored -->
                 <div
@@ -295,7 +329,7 @@
                                 : t('legend.layer.controls.cancel')
                         "
                     >
-                        <div class="flex p-8">
+                        <div class="flex p-5">
                             <svg
                                 v-if="
                                     legendItem.type === LegendType.Placeholder
@@ -320,15 +354,6 @@
                         </div>
                     </button>
                 </div>
-
-                <!-- options dropdown menu -->
-                <legend-options
-                    v-if="
-                        legendItem.type === LegendType.Item &&
-                        legendItem instanceof LayerItem
-                    "
-                    :legendItem="legendItem"
-                />
 
                 <!-- offscale icon -->
                 <div
@@ -588,6 +613,7 @@ import Checkbox from './checkbox.vue';
 import LegendOptions from './legend-options.vue';
 import { usePanelStore } from '@/stores/panel';
 import { useI18n } from 'vue-i18n';
+import { useLegendStore } from '../store';
 
 // eslint doesn't recognize <symbology-stack> usage
 // eslint-disable-next-line
@@ -608,6 +634,10 @@ const props = defineProps({
         required: true
     }
 });
+
+const legendStore = useLegendStore();
+const allowMultilineItems = legendStore.multilineItems;
+const itemMaxLines = legendStore.itemMaxLines;
 
 const mobileMode = ref(panelStore.mobileView);
 const layerConfigs = computed(() => layerStore.layerConfigs);
@@ -967,11 +997,18 @@ if (props.legendItem instanceof LayerItem) {
 .rotate-180 {
     transform: rotate(-180deg);
 }
+
 @media (hover) {
-    .loaded-item {
+    .loaded-item.singlelined {
         @apply min-h-[39px];
         .options {
             @apply hidden;
+        }
+    }
+    .loaded-item.multilined {
+        @apply min-h-[39px];
+        .options {
+            @apply block;
         }
     }
     .loaded-item:hover {
@@ -985,10 +1022,62 @@ if (props.legendItem instanceof LayerItem) {
         @apply block;
     }
 }
+
 .non-loaded-item {
     @apply px-5 py-5 pb-10 pr-0 align-middle;
 }
 .disabled {
     @apply text-gray-400 cursor-default;
+}
+
+// Overriding Tailwind's line-clamp classes,
+// which occasionally fail or disappear for no reason
+
+// NOTE: The multiline legend items use the CSS line-clamp
+// property. If padding is used, it will start showing the
+// clamped/hidden text using the padding space, which can lead
+// to fragments of the clamped text showing up. In these cases,
+// refactor to use margin.
+
+.line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+}
+
+.line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.line-clamp-4 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+}
+
+.line-clamp-5 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+}
+
+.line-clamp-6 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
 }
 </style>
