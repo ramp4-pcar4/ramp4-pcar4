@@ -16,6 +16,7 @@ export const usePanelStore = defineStore('panel', () => {
     const orderedItems = ref<PanelInstance[]>([]);
     const teleported = ref<PanelInstance[]>([]);
     const visible = ref<PanelInstance[]>([]);
+    const opacity = ref<number>(1);
 
     /**
      * Returns `remainingWidth` from the state. Displays how much space is left for panels to be displayed on the map.
@@ -62,6 +63,7 @@ export const usePanelStore = defineStore('panel', () => {
     }
 
     function closePanel(panel: PanelInstance): void {
+        console.log(orderedItems);
         close(panel);
         updateVisible();
     }
@@ -88,6 +90,10 @@ export const usePanelStore = defineStore('panel', () => {
 
     function setMobileView(value: boolean): void {
         mobileView.value = value;
+    }
+
+    function setOpacity(value: number): void {
+        opacity.value = value;
     }
 
     function updateVisible(): void {
@@ -270,6 +276,7 @@ export const usePanelStore = defineStore('panel', () => {
         regPromises,
         orderedItems,
         pinned,
+        opacity,
         priority,
         visible,
         stackWidth,
@@ -286,6 +293,7 @@ export const usePanelStore = defineStore('panel', () => {
         removePanel,
         setStackWidth,
         setMobileView,
+        setOpacity,
         updateVisible,
         registerPanel,
         addRegPromise
