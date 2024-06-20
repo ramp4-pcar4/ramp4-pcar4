@@ -112,6 +112,9 @@ const config = {
 The following properties exist on the legend configuration object:
 
 - `panelWidth: number`, if a custom legend width is required you can do this here. Otherwise if left blank the legend will use the the default fixture width.
+- `multilineItems`, an object which determines whether legend items are allowed to wrap onto new lines if their text requires more space. Only applies to layer items. Contains two optional properties:
+    - `enabled: boolean`, which determines whether the above setting is enabled (defaults to true; if false, text will truncate at one line).
+    - `maxLines: number`, which determines the max number of lines a legend item can take up. Beyond this number, text will truncate and show a tooltip on hover. Defaults to `3`. Only allows integers `1`-`6` as values. Only applies if the legend property `multilineItems.enabled` is true.
 - `root: Object`, a tree-structured object that represents the layout for the legend. Top-level items can be added to the legend as a child of this object as such:
 
 ```
