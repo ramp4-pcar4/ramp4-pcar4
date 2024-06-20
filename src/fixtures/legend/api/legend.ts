@@ -26,6 +26,22 @@ export class LegendAPI extends FixtureInstance {
             return;
         }
 
+        useLegendStore(this.$vApp.$pinia).multilineItems =
+            legendConfig.multilineItems ?? true;
+
+        // line-clamp only supports values 1-6, and custom values i.e. line-clamp-[4] don't
+        // seem to work. So we limit it here.
+        const lineClampValues = [1, 2, 3, 4, 5, 6];
+        if (
+            !legendConfig.itemMaxLines ||
+            !lineClampValues.includes(legendConfig.itemMaxLines)
+        ) {
+            useLegendStore(this.$vApp.$pinia).itemMaxLines = 3;
+        } else {
+            useLegendStore(this.$vApp.$pinia).itemMaxLines =
+                legendConfig.itemMaxLines;
+        }
+
         this.handlePanelWidths(['legend']);
         this.handlePanelTeleports(['legend']);
 

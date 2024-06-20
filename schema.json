@@ -364,6 +364,16 @@
                 },
                 "root": {
                     "$ref": "#/$defs/sectionItem"
+                },
+                "multilineItems": {
+                    "type": "boolean",
+                    "description": "Determines whether legend items should wrap using multiple lines if necessary.",
+                    "default": true
+                },
+                "itemMaxLines": {
+                    "type": "number",
+                    "description": "Determines the max number of lines a legend item can take up before truncating. Only applies if the legend property `multilineItems` is true. Only accepts integers 1-6, inclusive.",
+                    "default": 3
                 }
             },
             "required": ["root"],
