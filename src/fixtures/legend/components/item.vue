@@ -193,15 +193,17 @@
                 <!-- name or info section-->
                 <div
                     v-if="legendItem instanceof LayerItem"
-                    class="flex-1 pointer-events-none p-5"
-                    v-truncate="{ externalTrigger: true }"
+                    class="flex-1 pointer-events-none p-5 overflow-hidden"
                 >
-                    <span>{{
-                        legendItem.name ??
-                        (!legendItem.layer || legendItem?.layer?.name === ''
-                            ? legendItem.layerId
-                            : legendItem.layer?.name)
-                    }}</span>
+                    <span
+                        class="overflow-hidden text-ellipsis h-auto break-words"
+                        >{{
+                            legendItem.name ??
+                            (!legendItem.layer || legendItem?.layer?.name === ''
+                                ? legendItem.layerId
+                                : legendItem.layer?.name)
+                        }}</span
+                    >
                 </div>
                 <div
                     v-else-if="legendItem instanceof SectionItem"
@@ -967,24 +969,14 @@ if (props.legendItem instanceof LayerItem) {
 .rotate-180 {
     transform: rotate(-180deg);
 }
-@media (hover) {
-    .loaded-item {
-        @apply min-h-[39px];
-        .options {
-            @apply hidden;
-        }
-    }
-    .loaded-item:hover {
-        .options {
-            @apply block;
-        }
-    }
-}
-.loaded-item:focus-within {
+
+.loaded-item {
+    @apply min-h-[39px];
     .options {
         @apply block;
     }
 }
+
 .non-loaded-item {
     @apply px-5 py-5 pb-10 pr-0 align-middle;
 }
