@@ -308,12 +308,18 @@ export class DataLayer extends CommonLayer {
         //      or a custom icon that looks like "data"
         //      or possibly allow layer config to override with custom svg
 
-        // return this.$iApi.geo.symbology.generatePlaceholderSymbology('D', '#2e8b57').svg;
+        // return this.$iApi.geo.symbology.generatePlaceholderSymbology('D', '#2e8b57').svgcode;
 
         // this is the result of the above call. Use until symbol is finalized
         // if we do use one of the .generateX methods, prob better to hardcode the result.
         // No reason to run the same logic for every data row.
-        return '<svg id="SvgjsSvg1012" width="32" height="32" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 32 32"><defs id="SvgjsDefs1013"></defs><rect id="SvgjsRect1014" width="28" height="28" x="2" y="2" fill="#2e8b57"></rect><text id="SvgjsText1015" font-family="Roboto" font-size="23" fill="#ffffff" font-weight="bold" x="7.6875" y="-6.40000057220459" svgjs:data="{&quot;leading&quot;:&quot;1.3&quot;}"><tspan id="SvgjsTspan1016" dy="29.900000000000002" x="7.6875" svgjs:data="{&quot;newLined&quot;:true}">D</tspan></text></svg>';
+        return '<svg id="SvgjsSvg1012" width="32" height="32" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" viewBox="0 0 32 32">\
+                      <defs id="SvgjsDefs1013"></defs>\
+                      <rect id="SvgjsRect1014" width="28"  height="28" x="2" y="2" fill="#2e8b57"></rect>\
+                      <text id="SvgjsText1015" font-family="Roboto" font-size="23" fill="#ffffff" font-weight="bold" x="7.6875" y="-6.40000057220459" svgjs:data="{&quot;leading&quot;:&quot;1.3&quot;}">\
+                          <tspan id="SvgjsTspan1016" class="grid-icons" dy="29.900000000000002" x="7.6875" svgjs:data="{&quot;newLined&quot;:true}">D</tspan>\
+                      </text>\
+                </svg>';
     }
 
     async getFilterOIDs(

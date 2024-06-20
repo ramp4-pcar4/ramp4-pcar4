@@ -58,6 +58,10 @@
         Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
 }
 
+.grid-icons {
+    font-family: 'Roboto' !important;
+}
+
 /* styling for rectangle when Shift+Left-click+Drag zooming */
 .ramp-styles .esri-zoom-box__container {
     position: absolute;
