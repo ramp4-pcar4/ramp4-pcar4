@@ -317,7 +317,10 @@ export class ClassBreaksRenderer extends BaseRenderer {
 
             // convert fields/values into sql clause
             if (!this.falseRenderer) {
-                su.definitionClause = `(${this.valField} > ${cbi.minValue} AND ${this.valField} <= ${cbi.maxValue})`;
+                su.definitionClause =
+                    cbi.minValue === 0
+                        ? `(${this.valField} >= ${cbi.minValue} AND ${this.valField} <= ${cbi.maxValue})`
+                        : `(${this.valField} > ${cbi.minValue} AND ${this.valField} <= ${cbi.maxValue})`;
             }
 
             this.symbolUnits.push(su);
@@ -357,6 +360,9 @@ export class ClassBreaksSymbolUnit extends BaseSymbolUnit {
         if (this.minValue === this.maxValue) {
             return this.maxValue === searchParams;
         }
-        return this.minValue < searchParams && this.maxValue >= searchParams;
+
+        return this.minValue === 0
+            ? this.minValue <= searchParams && this.maxValue >= searchParams
+            : this.minValue < searchParams && this.maxValue >= searchParams;
     }
 }
