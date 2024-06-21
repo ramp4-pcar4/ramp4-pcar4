@@ -304,29 +304,34 @@ export class ClassBreaksRenderer extends BaseRenderer {
         super(esriRenderer, layerFields, falseRenderer);
 
         this.valField = this.cleanFieldName(esriRenderer.field, layerFields);
-        esriRenderer.classBreakInfos.forEach((cbi: EsriClassBreakInfo) => {
-            // TODO see if it's possible to have an undefined min/max value that represents inf or -inf
+        esriRenderer.classBreakInfos.forEach(
+            (cbi: EsriClassBreakInfo, i: number) => {
+                // TODO see if it's possible to have an undefined min/max value that represents inf or -inf
+                const first = i === 0;
+                const su = new ClassBreaksSymbolUnit(
+                    this,
+                    cbi.minValue,
+                    cbi.maxValue,
+                    first
+                );
+                su.label = cbi.label || '';
+                su.symbol = cbi.symbol;
 
-            const su = new ClassBreaksSymbolUnit(
-                this,
-                cbi.minValue,
-                cbi.maxValue
-            );
-            su.label = cbi.label || '';
-            su.symbol = cbi.symbol;
+                // Convert fields/values into sql clause. First item has inclusive lower bound (see PR #2239)
+                if (!this.falseRenderer) {
+                    su.definitionClause = first
+                        ? `(${this.valField} >= ${cbi.minValue} AND ${this.valField} <= ${cbi.maxValue})`
+                        : `(${this.valField} > ${cbi.minValue} AND ${this.valField} <= ${cbi.maxValue})`;
+                }
 
-            // convert fields/values into sql clause
-            if (!this.falseRenderer) {
-                su.definitionClause = `(${this.valField} > ${cbi.minValue} AND ${this.valField} <= ${cbi.maxValue})`;
+                this.symbolUnits.push(su);
             }
-
-            this.symbolUnits.push(su);
-        });
+        );
 
         // do default last so we can collate the other SQL for the NOT
         // the 0 values will be ignored
         if (esriRenderer.defaultSymbol) {
-            const su = new ClassBreaksSymbolUnit(this, 0, 0);
+            const su = new ClassBreaksSymbolUnit(this, 0, 0, false);
             su.isDefault = true;
             su.label = esriRenderer.defaultLabel || '';
             su.symbol = esriRenderer.defaultSymbol;
@@ -342,14 +347,21 @@ export class ClassBreaksRenderer extends BaseRenderer {
 }
 
 export class ClassBreaksSymbolUnit extends BaseSymbolUnit {
-    minValue: number; // min is exclusive
-    maxValue: number; // max is inclusive
+    minValue: number; /** min is exclusive, unless first class break */
+    maxValue: number; /** max is inclusive */
+    firstBreak: boolean;
 
-    constructor(parent: BaseRenderer, minValue: number, maxValue: number) {
+    constructor(
+        parent: BaseRenderer,
+        minValue: number,
+        maxValue: number,
+        firstBreak: boolean
+    ) {
         super(parent);
 
         this.minValue = minValue;
         this.maxValue = maxValue;
+        this.firstBreak = firstBreak;
     }
 
     match(searchParams: any): boolean {
@@ -357,6 +369,9 @@ export class ClassBreaksSymbolUnit extends BaseSymbolUnit {
         if (this.minValue === this.maxValue) {
             return this.maxValue === searchParams;
         }
-        return this.minValue < searchParams && this.maxValue >= searchParams;
+
+        return this.firstBreak
+            ? this.minValue <= searchParams && this.maxValue >= searchParams
+            : this.minValue < searchParams && this.maxValue >= searchParams;
     }
 }
