@@ -317,7 +317,8 @@ let config = {
                                 layerId: 'CSV'
                             }
                         ]
-                    }
+                    },
+                    multilineItems: true
                 },
                 appbar: {
                     items: [

@@ -20,7 +20,8 @@
                         getDatagridExists() &&
                         legendItem.type === LegendType.Item)
                         ? 'cursor-pointer'
-                        : 'cursor-default'
+                        : 'cursor-default',
+                    allowMultilineItems ? 'multilined' : 'singlelined'
                 ]"
                 @mouseover.stop="hover($event.currentTarget!)"
                 @mouseout.self="
@@ -192,7 +193,9 @@
 
                 <!-- name or info section-->
                 <div
-                    v-if="legendItem instanceof LayerItem"
+                    v-if="
+                        legendItem instanceof LayerItem && allowMultilineItems
+                    "
                     class="flex-1 pointer-events-none p-5 overflow-hidden"
                 >
                     <span
@@ -204,6 +207,19 @@
                                 : legendItem.layer?.name)
                         }}</span
                     >
+                </div>
+                <!-- Version if multiline legend items is turned off -->
+                <div
+                    v-else-if="legendItem instanceof LayerItem"
+                    class="flex-1 pointer-events-none p-5"
+                    v-truncate="{ externalTrigger: true }"
+                >
+                    <span>{{
+                        legendItem.name ??
+                        (!legendItem.layer || legendItem?.layer?.name === ''
+                            ? legendItem.layerId
+                            : legendItem.layer?.name)
+                    }}</span>
                 </div>
                 <div
                     v-else-if="legendItem instanceof SectionItem"
@@ -590,6 +606,7 @@ import Checkbox from './checkbox.vue';
 import LegendOptions from './legend-options.vue';
 import { usePanelStore } from '@/stores/panel';
 import { useI18n } from 'vue-i18n';
+import { useLegendStore } from '../store';
 
 // eslint doesn't recognize <symbology-stack> usage
 // eslint-disable-next-line
@@ -610,6 +627,9 @@ const props = defineProps({
         required: true
     }
 });
+
+const legendStore = useLegendStore();
+const allowMultilineItems = legendStore.multilineItems;
 
 const mobileMode = ref(panelStore.mobileView);
 const layerConfigs = computed(() => layerStore.layerConfigs);
@@ -970,8 +990,26 @@ if (props.legendItem instanceof LayerItem) {
     transform: rotate(-180deg);
 }
 
-.loaded-item {
-    @apply min-h-[39px];
+@media (hover) {
+    .loaded-item.singlelined {
+        @apply min-h-[39px];
+        .options {
+            @apply hidden;
+        }
+    }
+    .loaded-item.multilined {
+        @apply min-h-[39px];
+        .options {
+            @apply block;
+        }
+    }
+    .loaded-item:hover {
+        .options {
+            @apply block;
+        }
+    }
+}
+.loaded-item:focus-within {
     .options {
         @apply block;
     }
