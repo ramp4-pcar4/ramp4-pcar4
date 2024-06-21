@@ -24,6 +24,7 @@ export default function vueI18nPlugin(): Plugin {
                     .replace('export default "', '')
                     .replace(/"$/, '')
                     .replace(/\\n/g, '\n')
+                    .replace(/\\"/g, '"')
             );
             // pick columns that have the value suffixes (they contain actual text);
             const locales = res.columns
