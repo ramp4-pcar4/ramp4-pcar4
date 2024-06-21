@@ -6,8 +6,13 @@ import {
     LayerType,
     SpatialReference
 } from '@/geo/api';
-import type { RampLayerConfig } from '@/geo/api';
+import type {
+    RampLayerConfig,
+    RampLayerMapImageSublayerConfig
+} from '@/geo/api';
 import { markRaw } from 'vue';
+
+const lblVizMsg = 'Accessed labelVisibility prior to layer being loaded';
 
 /**
  * A layer class which implements an ESRI Map Image Sublayer.
@@ -16,17 +21,17 @@ export class MapImageSublayer extends AttribLayer {
     tooltipField: string;
 
     constructor(
-        config: any,
+        config: RampLayerMapImageSublayerConfig,
         $iApi: InstanceAPI,
-        parent: MapImageLayer,
-        layerIdx = 0
+        parent: MapImageLayer
     ) {
-        super(config as RampLayerConfig, $iApi);
+        // unknown is to force a narrower interface into the more common layer interface.
+        super(config as unknown as RampLayerConfig, $iApi);
 
         this.layerType = LayerType.SUBLAYER;
         this.layerFormat = LayerFormat.MAPIMAGE;
         this.isSublayer = true;
-        this.layerIdx = layerIdx;
+        this.layerIdx = config.index;
         this.parentLayer = parent;
 
         this.dataFormat = DataFormat.ESRI_FEATURE; // this will get flipped to raster during the server metadata checks if needed
@@ -98,7 +103,16 @@ export class MapImageSublayer extends AttribLayer {
      * This is called after the parent layer is initiated
      */
     protected async onInitiate(): Promise<void> {
-        // For now we just set initiation state to initiated
+        // initiate gets called from the MapImageLayer.onLoadActions
+        // anything that needs to be set prior to the layer doing its initial draw should be done here.
+        // this.esriSublayer will be set by the time this call runs.
+
+        // see if any config stuff is overriding labels
+        const vizOverr = this.labelVizOverride();
+        if (vizOverr !== undefined) {
+            this.labelVisibility = vizOverr;
+        }
+
         this.initiationState = InitiationState.INITIATED; // hardcoding this one because we don't want event API to fire here
     }
 
@@ -277,5 +291,55 @@ export class MapImageSublayer extends AttribLayer {
      */
     updateFieldList(): void {
         this.attribs.attLoader.updateFieldList(this.fieldList);
+    }
+
+    /**
+     * Visibility of labels on this layer
+     */
+    get labelVisibility(): boolean {
+        if (this.esriSubLayer) {
+            return this.esriSubLayer.labelsVisible;
+        } else {
+            // should only happen if called prior to layer load.
+            // we have nothing in RAMP using this, its just for API respect
+            console.error(lblVizMsg);
+            return false;
+        }
+    }
+
+    set labelVisibility(val: boolean) {
+        if (this.esriSubLayer) {
+            this.esriSubLayer.labelsVisible = val;
+        } else {
+            // should only happen if called prior to layer load.
+            // the only call in RAMP core does that check. Message is just
+            // for API respect
+            console.error(lblVizMsg);
+        }
+    }
+
+    /**
+     * Does any config override calculating for label visibility.
+     *
+     * @private
+     * @returns {boolean | undefined} undefined if no overrides, otherwise the override value
+     */
+    protected labelVizOverride(): boolean | undefined {
+        // NOTE if we start getting label magic on other layers, migrate this method to MapLayer class
+
+        // layer specific config has first priority.
+        let val = this.origRampConfig.labels?.visible;
+        if (val !== undefined) {
+            return val;
+        }
+
+        // map level override has second priority
+        val = this.$iApi.geo.map.labelsDefault?.visible;
+        if (val !== undefined) {
+            return val;
+        }
+
+        // at this point, no config fun, so defer to service
+        return undefined;
     }
 }

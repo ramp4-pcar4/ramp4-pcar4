@@ -220,6 +220,7 @@ export class MapImageLayer extends MapLayer {
                     this._sublayers[sid] = new MapImageSublayer(
                         {
                             id: `${this.id}-${sid}`,
+                            index: sid,
                             // TODO: Revisit once issue #961 is implemented.
                             // See https://github.com/ramp4-pcar4/ramp4-pcar4/pull/1045#pullrequestreview-977116071
                             // ^ update: issue 961 seems to have nothing to do with this. The PR link implies this
@@ -228,40 +229,36 @@ export class MapImageLayer extends MapLayer {
                             //   below is handling things, but leaving this here for now incase someone wants to
                             //   dig deeper (or a problem arises)
                             layerType: LayerType.SUBLAYER,
-                            name: subConfigs[sid]?.name,
+                            name: subC?.name,
                             // If the state isn't defined, use the same state as the parent.
-                            state: subConfigs[sid]?.state ?? {
+                            state: subC?.state ?? {
                                 opacity: this.opacity,
                                 visibility: this.visibility,
                                 hovertips: this.hovertips,
                                 identify: this.identify
                             },
-                            extent: subConfigs[sid]?.extent,
-                            controls: subConfigs[sid]?.controls,
-                            disabledControls: subConfigs[sid]?.disabledControls,
-                            initialFilteredQuery:
-                                subConfigs[sid]?.initialFilteredQuery,
+                            extent: subC?.extent,
+                            controls: subC?.controls,
+                            disabledControls: subC?.disabledControls,
+                            initialFilteredQuery: subC?.initialFilteredQuery,
                             permanentFilteredQuery:
-                                subConfigs[sid]?.permanentFilteredQuery
+                                subC?.permanentFilteredQuery,
+                            labels: subC?.labels
                         },
                         this.$iApi,
-                        this,
-                        sid
+                        this
                     );
                 }
 
-                const _sublayer: MapImageSublayer = this._sublayers[
-                    sid
-                ] as MapImageSublayer;
+                const _sublayer = this._sublayers[sid] as MapImageSublayer;
 
                 if (_sublayer.isRemoved) {
                     return; // no need to initialize a removed sublayer
                 }
 
-                const lName = (subC ? subC.name : '') || subLayer.title || ''; // config if exists, else server, else none
-                (_sublayer as MapImageSublayer).name = lName;
+                _sublayer.name = subC?.name || subLayer.title || ''; // config if exists, else server, else none
 
-                leafsToInit.push(_sublayer as MapImageSublayer);
+                leafsToInit.push(_sublayer);
 
                 // check if parent's children have already been initialized
                 if (
