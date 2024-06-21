@@ -6,4 +6,5 @@ export interface LegendConfig {
     root: { name: string; children: Array<any> };
     headerControls: Array<string>;
     panelWidth: PanelWidthObject | number;
+    multilineItems?: boolean;
 }

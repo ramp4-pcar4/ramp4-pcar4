@@ -364,6 +364,11 @@
                 },
                 "root": {
                     "$ref": "#/$defs/sectionItem"
+                },
+                "multilineItems": {
+                    "type": "boolean",
+                    "description": "Determines whether legend items should wrap using multiple lines if necessary.",
+                    "default": true
                 }
             },
             "required": ["root"],

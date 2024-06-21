@@ -29,6 +29,7 @@ export const useLegendStore = defineStore('legend', () => {
     const legendConfig = ref<LegendConfig>();
     const children = ref<LegendItem[]>([]);
     const headerControls = ref<string[]>([]);
+    const multilineItems = ref<Boolean>(true);
 
     function addItem(value: {
         item: LegendItem;
@@ -104,6 +105,7 @@ export const useLegendStore = defineStore('legend', () => {
 
     return {
         legendConfig,
+        multilineItems,
         children,
         headerControls,
         addItem,
