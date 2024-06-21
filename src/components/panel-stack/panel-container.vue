@@ -50,7 +50,7 @@ onMounted(() => {
 });
 
 const animateTransition = (
-    el: HTMLElement,
+    el: Element,
     done: () => void,
     value: number[]
 ): void => {
@@ -69,11 +69,11 @@ const animateTransition = (
     });
 };
 
-const enter = (el: HTMLElement, done: () => void): void => {
+const enter = (el: Element, done: () => void): void => {
     animateTransition(el, done, [0, 1]);
 };
 
-const beforeLeave = (el: HTMLElement): void => {
+const beforeLeave = (el: Element): void => {
     // this will also trigger when the loading component is transitioning out; in such cases skip executing this function
     if (el.classList.contains('screen-spinner')) {
         return;
@@ -91,7 +91,7 @@ const beforeLeave = (el: HTMLElement): void => {
         );
 };
 
-const leave = (el: HTMLElement, done: () => void): void => {
+const leave = (el: Element, done: () => void): void => {
     animateTransition(el, done, [0, 1]);
 };
 </script>

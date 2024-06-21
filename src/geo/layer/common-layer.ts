@@ -469,7 +469,7 @@ export class CommonLayer extends LayerInstance {
     protected startTimer(type: TimerType): void {
         this.stopTimer(type); // reset the timer if a timing is already in progress.
         if (this.expectedTime[type] > 0) {
-            this.timers[type] = setTimeout(
+            this.timers[type] = window.setTimeout(
                 () =>
                     this.$iApi.notify.show(
                         NotificationType.WARNING,

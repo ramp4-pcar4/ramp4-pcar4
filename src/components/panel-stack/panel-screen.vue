@@ -86,6 +86,7 @@ import {
     onMounted,
     ref
 } from 'vue';
+import type { PanelDirection } from '@/stores/panel';
 import type { PropType } from 'vue';
 import { usePanelStore } from '@/stores/panel';
 import { useI18n } from 'vue-i18n';
@@ -126,7 +127,7 @@ const mobileView = computed(() => panelStore.mobileView);
 const reorderable = computed(() => panelStore.reorderable);
 
 const checkMode = () => !mobileView.value && !props.panel.teleport;
-const move = (direction: string) => {
+const move = (direction: PanelDirection) => {
     props.panel.move(direction);
     if (direction === 'left') {
         // needed to preserve focus on correct panel

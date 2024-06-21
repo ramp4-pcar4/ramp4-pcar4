@@ -10,7 +10,8 @@
         "lib": ["DOM", "DOM.Iterable", "ES2020"],
         "pretty": true,
         "declaration": true,
-        "declarationDir": "./dist/ts"
+        "declarationDir": "./dist/ts",
+        "types": ["node"]
     },
 
     "typedocOptions": {
@@ -31,7 +32,6 @@
         "githubPages": true,
         "cleanOutputDir": true,
         "exclude": [
-            "**/*/store/*.ts",
             "**/*/index.ts",
             "**/tests",
             "**/api/internal.ts",

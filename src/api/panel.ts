@@ -1,9 +1,6 @@
 import { APIScope, GlobalEvents, PanelInstance } from './internal';
-import {
-    usePanelStore,
-    type PanelConfigStyle,
-    type PanelDirection
-} from '@/stores/panel';
+import type { PanelConfigStyle, PanelDirection } from '@/stores/panel';
+import { usePanelStore } from '@/stores/panel';
 import type { PanelConfig, PanelConfigRoute } from '@/stores/panel';
 
 import type { I18nComponentOptions } from '@/lang';

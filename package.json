@@ -97,7 +97,7 @@
         "@types/lodash": "^4.14.149",
         "@types/lodash.clonedeep": "^4.5.7",
         "@types/marked": "^4.0.1",
-        "@types/node": "^16.11.26",
+        "@types/node": "^17.0.29",
         "@types/proj4": "^2.5.2",
         "@types/throttle-debounce": "~2.1.0",
         "@vitejs/plugin-vue": "^4.0.0",
