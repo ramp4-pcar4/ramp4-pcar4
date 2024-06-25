@@ -68,7 +68,7 @@
             >
                 <!-- smiley face. very important that we migrate this -->
                 <div
-                    class="flex p-5"
+                    class="flex p-5 mr-[13px]"
                     v-if="legendItem.type !== LegendType.Item"
                 >
                     <svg
@@ -202,7 +202,7 @@
                         class="overflow-hidden text-ellipsis h-auto break-words"
                         >{{
                             legendItem.name ??
-                            (!legendItem.layer || legendItem?.layer?.name === ''
+                            (!legendItem?.layer?.name
                                 ? legendItem.layerId
                                 : legendItem.layer?.name)
                         }}</span
@@ -285,6 +285,18 @@
                     </button>
                 </div>
 
+                <!-- options dropdown menu -->
+                <legend-options
+                    v-if="
+                        (legendItem.type === LegendType.Item || (legendItem.type === LegendType.Placeholder && allowMultilineItems)) &&
+                        legendItem instanceof LayerItem
+                    "
+                    :class="{
+                        invisible: legendItem.type === LegendType.Placeholder
+                    }"
+                    :legendItem="legendItem"
+                />
+
                 <!-- Button only appears for loading or errored LayerItems -->
                 <!-- Morphs depending on state. Cancel for loading, Remove for Errored -->
                 <div
@@ -313,7 +325,7 @@
                                 : t('legend.layer.controls.cancel')
                         "
                     >
-                        <div class="flex p-8">
+                        <div class="flex p-5">
                             <svg
                                 v-if="
                                     legendItem.type === LegendType.Placeholder
@@ -338,15 +350,6 @@
                         </div>
                     </button>
                 </div>
-
-                <!-- options dropdown menu -->
-                <legend-options
-                    v-if="
-                        legendItem.type === LegendType.Item &&
-                        legendItem instanceof LayerItem
-                    "
-                    :legendItem="legendItem"
-                />
 
                 <!-- offscale icon -->
                 <div
