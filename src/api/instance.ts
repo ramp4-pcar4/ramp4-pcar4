@@ -152,6 +152,27 @@ export class InstanceAPI {
         }
 
         this.initialize(configs, options);
+        this.panel.registerHTML(
+            '<img src="../../../public/earth.jpg">',
+            'panel3',
+            'new',
+            undefined,
+            {
+                i18n: {
+                    messages: {
+                        en: {
+                            new: 'New Panel'
+                        },
+                        fr: {
+                            new: '[FR] sdsdNew Panel'
+                        }
+                    }
+                }
+            }
+        );
+        console.log('panel opened');
+        console.log('panel3');
+        this.panel.open('panel3');
     }
 
     /**
@@ -162,6 +183,8 @@ export class InstanceAPI {
      * @param {RampOptions | undefined} options startup options for this R4MP instance
      */
     private initialize(configs?: RampConfigs, options?: RampOptions): void {
+        console.log('CONFIG TO INITIALIZE');
+        console.log(configs);
         const configStore = useConfigStore(this.$vApp.$pinia);
         const panelStore = usePanelStore(this.$vApp.$pinia);
         const maptipStore = useMaptipStore(this.$vApp.$pinia);
@@ -237,6 +260,8 @@ export class InstanceAPI {
             }, 100);
 
             if (langConfig.panels) {
+                // console.log('panels of config in initialization');
+                // console.log(langConfig.panels);
                 // open and pin appropiate panels on startup
                 // TODO: Note that certain panels like grid, settings, etc. need to get data for a specific layer.
                 // Because different fixtures get this data in different ways (some use LayerInstance, some uid, some custom config),
@@ -330,6 +355,8 @@ export class InstanceAPI {
             instanceStore.started = true;
             this.event.emit(GlobalEvents.MAP_START);
         }
+        // console.log('starting fixtures in instance initialization');
+        // console.log(configs?.startingFixtures);
 
         // use strict check against false, as missing properties have default value of true.
         // run the default setup functions unless flags have been set to false.
@@ -362,6 +389,8 @@ export class InstanceAPI {
         // remove all fixtures
         // get list of all fixture ids currently added
         const addedFixtures: Array<string> = Object.keys(fixtureStore.items);
+        console.log('fixtures being removed on reload');
+        console.log(addedFixtures);
         // remove each fixture
         addedFixtures.forEach((id: string) => {
             // check if the fixture exists first otherwise it will error
@@ -576,6 +605,10 @@ export class InstanceAPI {
         }
         const configStore = useConfigStore(this.$vApp.$pinia);
         const langs = configStore.registeredLangs;
+        console.log('current config');
+        console.log(langs[this.$i18n.locale.value]);
+        console.log('new config');
+        console.log(langs[language]);
 
         // prevent full map reload if the new language uses the same config
         if (langs[language] === langs[this.$i18n.locale.value]) {
@@ -587,6 +620,8 @@ export class InstanceAPI {
 
         const activeConfig = this.getConfig();
         this.event.emit(GlobalEvents.CONFIG_CHANGE, activeConfig);
+        console.log('currently active config');
+        console.log(activeConfig);
 
         // reload the map to apply new config
         this.reload();

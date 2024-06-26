@@ -46,6 +46,7 @@ panels.controls.items,Use the arrow keys to navigate the items,1,Utilisez les to
 panels.alert.open,{name} panel opened,1,Fenêtre {name} ouverte,1
 panels.alert.close,{name} panel closed,1,Fenêtre {name} fermée,1
 panels.alert.minimize,{name} panel minimized,1,Fenêtre {name} réduite,1
+panels.html,HTML Panel,1,Panneau HTML,0
 layer.error,{id} failed to load,1,Échec du chargement de {id},1
 layer.longload,{id} is taking longer than expected to load,1,Le chargement de {id} met plus de temps que prévu,1
 layer.longdraw,{id} is taking longer than expected to draw,1,{id} prend plus de temps que prévu à extraire,1

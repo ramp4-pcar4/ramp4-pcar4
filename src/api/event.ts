@@ -674,7 +674,7 @@ export class EventAPI extends APIScope {
         let zeHandler: Function;
         switch (handlerName) {
             case DefEH.CONFIG_CHANGE_UPDATES_MAP_ATTRIBS:
-                // update any basemap attribution in the map caption when the config changes (likely langauge switch)
+                // update any basemap attribution in the map caption when the config changes (likely language switch)
                 zeHandler = (payload: RampConfig) => {
                     const currentBasemapConfig: RampBasemapConfig | undefined =
                         payload.map.basemaps.find(
@@ -686,7 +686,32 @@ export class EventAPI extends APIScope {
                     this.$iApi.geo.map.caption.updateAttribution(
                         currentBasemapConfig?.attribution
                     );
+                    console.log('testing event!');
+                    this.$iApi.panel.toggle('panel3');
+                    this.$iApi.panel.remove('panel3');
+                    const newPanel = this.$iApi.panel.registerHTML(
+                        '<img src="../../../public/earth.jpg">',
+                        'panel3',
+                        'panel.html',
+                        undefined,
+                        {
+                            i18n: {
+                                messages: {
+                                    en: {
+                                        new: 'New Panel again'
+                                    },
+                                    fr: {
+                                        new: '[FR] New Panel again'
+                                    }
+                                }
+                            }
+                        }
+                    );
+                    console.log('panel after language change');
+                    console.log(newPanel);
+                    this.$iApi.panel.open('panel3');
                 };
+
                 this.$iApi.event.on(
                     GlobalEvents.CONFIG_CHANGE,
                     zeHandler,
