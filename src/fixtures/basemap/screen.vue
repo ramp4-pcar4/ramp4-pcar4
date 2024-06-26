@@ -56,7 +56,6 @@ import { useConfigStore } from '@/stores/config';
 
 const { t } = useI18n();
 const configStore = useConfigStore();
-
 defineProps({
     panel: {
         type: Object as PropType<PanelInstance>

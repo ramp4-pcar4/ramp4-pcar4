@@ -129,7 +129,7 @@ export class FixtureAPI extends APIScope {
             if (fixture?.persist && typeof fixture?.removed === 'function') {
                 // call the `removed` life hook if available
                 fixture.removed();
-            } else if (!!fixture) {
+            } else if (fixture) {
                 this.remove(id);
             }
         });
