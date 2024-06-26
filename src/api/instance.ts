@@ -156,6 +156,25 @@ export class InstanceAPI {
         }
 
         this.initialize(true, configs, options);
+
+        const panel = this.panel.registerHTML(
+            {
+                en: `<div> This is a new panel in html </div>`,
+                fr: `<div> Ceci est un nouveau panneau en HTML </div>`
+            },
+            'panel3',
+            'new.title',
+            undefined,
+            {
+                i18n: {
+                    messages: {
+                        en: { 'new.title': 'English' },
+                        fr: { 'new.title': 'French' }
+                    }
+                }
+            }
+        );
+        this.panel.open(panel);
     }
 
     /**

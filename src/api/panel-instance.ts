@@ -49,7 +49,7 @@ export class PanelInstance extends APIScope {
      */
     private readonly loadedScreens: string[] = [];
 
-    readonly alertName: string;
+    alertName: string;
 
     /**
      * The config for the element to render the panel screen in (instead of its usual spot in the panel stack).
@@ -81,17 +81,29 @@ export class PanelInstance extends APIScope {
      */
     registerScreen(id: string): void {
         const screen = this.screens[id];
-
         let payload: AsyncComponentFactoryEh | Component;
 
-        // the `screen` value can be either a `string` component file path, an component `object`, a component constructor function, or an `AsynComponentFunction`
+        // the `screen` value can be either a `string` component file path, an component `object`, a component constructor function, an `HTMLElement`, or an `AsynComponentFunction`
         // - `object` or `VueConstructor` => use as is as all the component code is already loaded
+        // - `HTMLElement` => use it to create a component object
         // - `string` => load fixture file, pass as `component` in `AsyncComponentFactory` function
         // - `AsyncComponentFunction` => execute as it returns a promise, pass the output as `component` in `AsyncComponentFactory` function
         // https://vuejs.org/v2/guide/components-dynamic-async.html#Handling-Loading-State
         if (isComponentOptions(screen) || isVueConstructor(screen)) {
             payload = screen;
             this.loadedScreens.push(id); // mark this screen immediately as loaded
+        } else if (screen instanceof HTMLElement) {
+            payload = {
+                template: `<panel-screen :panel="this">
+                            <template #header>
+                                ${this.$iApi.$i18n.t(this.alertName)}
+                            </template>
+
+                            <template #content>
+                                ${screen.outerHTML}
+                            </template>
+                         </panel-screen>`
+            };
         } else {
             let asyncComponent: Promise<AsyncComponentEh>;
 
