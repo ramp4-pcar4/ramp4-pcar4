@@ -1,4 +1,5 @@
-import type { ComponentPublicInstance, ComponentOptions, App } from 'vue';
+import type { App, ComponentOptions, ComponentPublicInstance } from 'vue';
+import type { HTMLScreen } from '../stores/panel/panel-state.ts';
 import type { InstanceAPI } from './internal';
 
 /**
@@ -100,6 +101,20 @@ export function isComponentOptions(value: any): value is ComponentOptions {
         typeof value === 'object' &&
         !value.functional &&
         names.some(name => value[name] !== undefined)
+    );
+}
+
+/**
+ * Checks if the provided value is of type `HTMLScreen` (see `panel-state.ts`)
+ *
+ * @param {(HTMLScreen | any)} value
+ * @returns {value is HTMLScreen}
+ */
+export function isHTMLScreen(value: any): value is HTMLScreen {
+    return (
+        typeof value === 'object' &&
+        value.en instanceof HTMLElement &&
+        value.fr instanceof HTMLElement
     );
 }
 
