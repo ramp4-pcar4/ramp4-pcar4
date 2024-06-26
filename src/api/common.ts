@@ -103,6 +103,14 @@ export function isComponentOptions(value: any): value is ComponentOptions {
     );
 }
 
+export function isHTMLScreen(value: any): boolean {
+    return (
+        typeof value === 'object' &&
+        value.en instanceof HTMLElement &&
+        value.fr instanceof HTMLElement
+    );
+}
+
 /**
  * Checks if the provided value is a dynamically imported `*.vue` file.
  *
