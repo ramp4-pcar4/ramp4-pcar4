@@ -104,6 +104,11 @@ export type AsyncComponentFactoryEh = () => {
     timeout?: number;
 };
 
+export type HTMLScreen = {
+    en: HTMLElement;
+    fr: HTMLElement;
+};
+
 /**
  * - `string`: a path to the screen component relative to the fixtures home folder
  * - `VueConstructor`: a regular Vue constructor function
@@ -114,7 +119,8 @@ export type PanelConfigScreens = {
         | string
         | AsyncComponentFunctionEh
         | ComponentOptions<any>
-        | ComponentPublicInstance<any>;
+        | ComponentPublicInstance<any>
+        | HTMLScreen;
 };
 export type PanelConfigRoute = { screen: string; props?: object };
 export type PanelConfigStyle = { [key: string]: string };

@@ -1,4 +1,4 @@
-import type { ComponentPublicInstance, ComponentOptions, App } from 'vue';
+import type { App, ComponentOptions, ComponentPublicInstance } from 'vue';
 import type { InstanceAPI } from './internal';
 
 /**
@@ -100,6 +100,14 @@ export function isComponentOptions(value: any): value is ComponentOptions {
         typeof value === 'object' &&
         !value.functional &&
         names.some(name => value[name] !== undefined)
+    );
+}
+
+export function isHTMLScreen(value: any): boolean {
+    return (
+        typeof value === 'object' &&
+        value.en instanceof HTMLElement &&
+        value.fr instanceof HTMLElement
     );
 }
 
