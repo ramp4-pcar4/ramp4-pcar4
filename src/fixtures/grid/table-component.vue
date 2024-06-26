@@ -372,6 +372,7 @@
             v-show="!isLoadingGrid && !isErrorGrid"
             class="ag-theme-material flex-grow"
             enableCellTextSelection="true"
+            accentedSort="true"
             :gridOptions="agGridOptions"
             :columnDefs="columnDefs"
             :rowData="rowData"
