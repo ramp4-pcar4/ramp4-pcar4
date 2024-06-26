@@ -1953,6 +1953,9 @@
                     "default": "",
                     "description": "Title of the datatable."
                 },
+                "columnMetadata": {
+                    "$ref": "#/$defs/columnMetadata"
+                },
                 "columns": {
                     "type": "array",
                     "description": "An array to specify how the columns (properties) of the table are defined. If a column is not present in the array, it will be shown using default values. If the property is not defined, all layer attributes will be shown using default values.",
@@ -2072,6 +2075,17 @@
                 }
             },
             "unevaluatedProperties": false
+        },
+        "columnMetadata": {
+            "type": "object",
+            "description": "Specifies options for the columns of a layer's data grid",
+            "properties": {
+                "exclusiveColumns": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "If true, only the specified columns in the grid are availible. Otherwise, all columns are availible."
+                }
+            }
         },
         "filter": {
             "type": "object",
