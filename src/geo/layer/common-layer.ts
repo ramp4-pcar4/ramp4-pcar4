@@ -42,7 +42,12 @@ const enum TimerType {
  */
 export class CommonLayer extends LayerInstance {
     // common layer properties
+
+    /**
+     * Tracks load and draw elapsed time
+     */
     timers: {
+        // TODO when implementing #1491, look into converting this type to LayerTimes
         draw: number | undefined;
         load: number | undefined;
     };
@@ -66,8 +71,12 @@ export class CommonLayer extends LayerInstance {
         this.dataFormat = DataFormat.UNKNOWN;
         this.layerType = LayerType.UNKNOWN;
         this.layerFormat = LayerFormat.UNKNOWN;
-        this.expectedTime.draw = rampConfig.expectedDrawTime ?? 10000;
-        this.expectedTime.load = rampConfig.expectedLoadTime ?? 4000;
+
+        const defaultTimes = $iApi.geo.map.layerDefaultTimes;
+        this.expectedTime.draw =
+            rampConfig.expectedDrawTime ?? defaultTimes.draw;
+        this.expectedTime.load =
+            rampConfig.expectedLoadTime ?? defaultTimes.draw;
         this.timers = {
             draw: undefined,
             load: undefined
@@ -490,6 +499,7 @@ export class CommonLayer extends LayerInstance {
     protected stopTimer(type: TimerType): void {
         if (this.timers[type]) {
             clearTimeout(this.timers[type]);
+            this.timers[type] = undefined;
         }
     }
 }
