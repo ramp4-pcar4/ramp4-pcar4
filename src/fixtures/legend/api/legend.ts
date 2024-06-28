@@ -612,20 +612,27 @@ export class LegendAPI extends FixtureInstance {
      * @returns {boolean} returns true if item was removed, false otherwise
      */
     private _deleteItem(item: LegendItem): boolean {
-        // Need this check for now because LegendItem does not completely encapsulate the item and section classes
-        if (item.children.length > 0) {
-            item.children.forEach((child: LegendItem) => {
-                child.parent = item.parent;
-                this._insertItem(child, item.parent);
-            });
-        }
-        // unhook layer item listeners
-        if (item instanceof LayerItem) {
-            item.handlers.forEach(handler => this.$iApi.event.off(handler));
-        }
+        const store = useLegendStore(this.$vApp.$pinia);
+        const removeItemAndDescendants = (itemToRemove: LegendItem) => {
+            // Recursively remove all children first
+            if (itemToRemove.children.length > 0) {
+                itemToRemove.children.forEach((child: LegendItem) => {
+                    removeItemAndDescendants(child);
+                });
+            }
 
-        // remove item from store
-        useLegendStore(this.$vApp.$pinia).removeItem(item);
+            // unhook layer item listeners
+            if (itemToRemove instanceof LayerItem) {
+                itemToRemove.handlers.forEach(handler =>
+                    this.$iApi.event.off(handler)
+                );
+            }
+
+            // remove item from store
+            store.removeItem(itemToRemove);
+        };
+
+        removeItemAndDescendants(item);
 
         return true;
     }
