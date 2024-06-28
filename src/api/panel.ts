@@ -8,6 +8,62 @@ import type { I18nComponentOptions } from '@/lang';
 export class PanelAPI extends APIScope {
     panelStore = usePanelStore(this.$vApp.$pinia);
 
+    /** Updates the content of a specific screen of a panel, using HTML content
+     *
+     * @param {PanelInstance} panel The `PanelInstance` object corresponding to the panel whose content is to be updated.
+     * @param {string | HTMLElement} html HTML content, represented as an HTMLElement object or a string.
+     * @param {string} [id] id of the screen to be updated. If not provided, it is assumed that there is only one screen in the panel.
+     * @memberof PanelAPI
+     */
+    updateHTML(
+        panel: PanelInstance,
+        html: string | HTMLElement,
+        id?: string
+    ): void {
+        // An html-based panel should have only one screen
+        const screen = id ? panel.screens[id] : Object.values(panel.screens)[0];
+        if (screen instanceof HTMLElement) {
+            screen.innerHTML =
+                html instanceof HTMLElement ? html.outerHTML : html;
+        }
+    }
+
+    /** Registers HTML content as a `PanelInstance` object and returns it.
+     * When the panel is registered, all its screens are added to the Vue as components right away.
+     *
+     * @param {string | HTMLElement} html HTML content, represented as an HTMLElement object or a string.
+     * @param {string} id Used as the id of the PanelConfig object passed to `register()` as well as the id of the (individual) screen registered for the panel.
+     * @param {PanelConfigStyle} [styles] The styles to apply to the panel. If none provided, the default panel styling will be used.
+     * @param {string} [alertName] Translation key (or string) to use in panel screen reader alerts. If none provided, a default will be used.
+     * @param {PanelRegistrationOptions} [options] a set of options that will apply to all the panel in the set
+     * @returns {PanelInstance} The `PanelInstance` object corresponding to the panel that was created.
+     * @memberof PanelAPI
+     */
+    registerHTML(
+        html: string | HTMLElement,
+        id: string,
+        style?: PanelConfigStyle,
+        alertName?: string,
+        options?: PanelRegistrationOptions
+    ): PanelInstance {
+        if (typeof html === 'string') {
+            const newHtml = document.createElement('div');
+            newHtml.innerHTML = html;
+            html = newHtml;
+        }
+
+        const panelConfig: PanelConfigSet = {};
+        panelConfig[id] = {
+            screens: {},
+            style: style ?? {
+                width: '350px'
+            },
+            alertName: alertName ?? 'panels.html'
+        };
+        panelConfig[id].screens[id] = html;
+        const panel = this.register(panelConfig, options);
+        return panel as unknown as PanelInstance;
+    }
     /**
      * Registers a provided panel object and returns the resulting `PanelInstance` objects.
      * When the panel is registered, all its screens are added to the Vue as components right away.
@@ -41,7 +97,6 @@ export class PanelAPI extends APIScope {
         const panelConfigs = isPanelConfigPair(value)
             ? { [value.id]: value.config }
             : value;
-
         if (options) {
             const i18n = options.i18n || {};
             const $i18n = this.$iApi.$i18n;
@@ -450,7 +505,6 @@ export class PanelAPI extends APIScope {
         route: PanelConfigRoute
     ): PanelInstance | undefined {
         const panel = this.get(value);
-
         // attempting to show screen on non-existent panel, do nothing
         if (!panel) {
             return panel;

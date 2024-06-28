@@ -36,6 +36,37 @@ class LegendFixture extends LegendAPI {
             }
         );
 
+        const htmlPanel1 = this.$iApi.panel.registerHTML(
+            '<div> creating a panel with styling </div>',
+            'panel1',
+            { width: '250px', height: '100px', background: 'orange' }
+        );
+        this.$iApi.panel.open('panel1');
+
+        const x = document.createElement('h1');
+        x.innerHTML = 'HELLO';
+        const htmlPanel2 = this.$iApi.panel.registerHTML(
+            x,
+            'panel2',
+            undefined,
+            'panel #2'
+        );
+        this.$iApi.panel.updateHTML(
+            htmlPanel2,
+            '<div> updating panel with an id</div>',
+            htmlPanel2.id
+        );
+        this.$iApi.panel.open('panel2');
+
+        const htmlPanel3 = this.$iApi.panel.registerHTML(
+            '<img src="earth.jpg">',
+            'panel3',
+            undefined,
+            'lang-en',
+            { i18n: { messages } }
+        );
+        this.$iApi.panel.open('panel3');
+
         // parse legend section of config and store information in legend store
         // here we create a copy of the config because the config parser will mutate the layer ids in the config
         this._parseConfig(
