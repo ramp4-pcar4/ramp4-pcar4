@@ -26,6 +26,8 @@ export class LegendAPI extends FixtureInstance {
             return;
         }
 
+        useLegendStore(this.$vApp.$pinia).multilineItems = legendConfig.multilineItems ?? true;
+
         this.handlePanelWidths(['legend']);
         this.handlePanelTeleports(['legend']);
 

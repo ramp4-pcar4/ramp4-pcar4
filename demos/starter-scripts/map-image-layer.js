@@ -151,7 +151,8 @@ let config = {
                             },
                             { layerId: 'userOSM', name: 'Open Street Map' }
                         ]
-                    }
+                    },
+                    multilineItems: false
                 },
                 appbar: {
                     items: ['legend']
