@@ -448,7 +448,7 @@
                         legendItem.layerRedrawing &&
                         legendItem.visibility)
                 "
-                class="flex-1 h-3"
+                class="h-3 w-full absolute bottom-0"
             >
                 <div class="progress-line"></div>
             </div>
