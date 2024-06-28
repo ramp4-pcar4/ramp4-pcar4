@@ -21,7 +21,7 @@
                     }}
                 </div>
                 <div
-                    class="px-8 mb-10 truncate"
+                    class="px-8 mb-10 flex-grow text-wrap border-t border-b border-gray-600 overflow-y-auto"
                     v-if="
                         searchVal &&
                         searchResults.length === 0 &&
