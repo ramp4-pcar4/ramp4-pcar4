@@ -92,7 +92,7 @@ Specifies the mime type of the result when running an identify (i.e. a `GetFeatu
 
 Specifies additional attribute field information that will override the default values of the layer. Here we can specify custom field name aliases, and can instruct the layer to only use a subset of the available fields.
 
-- `fieldInfo`: An array that contians objects having valid field names and a custom field alias. If using the `exclusiveFields` option, the alias can be left blank to use the field as-is. Field names are case sensitive.
+- `fieldInfo`: An array that contians objects having valid field names, a custom field alias, and optionally a `trim` property to determine if preceding/trailing whitespaces should be removed for these. If using the `exclusiveFields` option, the alias can be left blank to use the field as-is. Field names are case sensitive.
 - `exclusiveFields`: A boolean, if true, only fields in the `fieldInfo` array will be used in the layer.
 - `enforceOrder`: A boolean, if true, the order of the fields in the `fieldInfo` array will be enforced when the grid is displayed. If not all fields are specified in the `fieldInfo` array and the `exclusiveFields` option is not used or is false, then only the specified columns will be displayed in order, followed by the rest of the columns in the order as it appears in the source.
 
@@ -108,7 +108,8 @@ Note that if the system requires additional fields that are missing in the `excl
             },
             {
                 name: "addr",
-                alias: "Address"
+                alias: "Address",
+                trim: true
             }
         ],
         exclusiveFields: true,
