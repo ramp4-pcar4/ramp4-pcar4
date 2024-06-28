@@ -25,6 +25,7 @@ import type {
     FieldDefinition,
     GetGraphicParams,
     IdentifyParameters,
+    LayerTimes,
     LegendSymbology,
     TabularAttributeSet
 } from '@/geo/api';
@@ -139,10 +140,7 @@ export class LayerInstance extends APIScope {
     /**
      * Object that contains values for the expected draw/response time.
      */
-    expectedTime: {
-        draw: number;
-        load: number;
-    };
+    expectedTime: LayerTimes;
 
     /**
      * If the layer has Sublayers

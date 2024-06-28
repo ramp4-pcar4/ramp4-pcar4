@@ -42,6 +42,10 @@ let config = {
                     }
                 },
                 mapMouseThrottle: 200,
+                layerTimeDefault: {
+                    expectedLoadTime: 500,
+                    expectedDrawTime: 500
+                },
                 lodSets: [
                     {
                         id: 'LOD_NRCAN_Lambert_3978',

@@ -809,13 +809,11 @@
                 },
                 "expectedDrawTime": {
                     "type": "number",
-                    "default": 10000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to draw' notification is shown for any drawing layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "expectedLoadTime": {
                     "type": "number",
-                    "default": 4000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to load' notification is shown for any loading layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "maxLoadTime": {
                     "type": "number",
@@ -885,13 +883,11 @@
                 },
                 "expectedDrawTime": {
                     "type": "number",
-                    "default": 10000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to draw' notification is shown for any drawing layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "expectedLoadTime": {
                     "type": "number",
-                    "default": 4000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to load' notification is shown for any loading layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "maxLoadTime": {
                     "type": "number",
@@ -962,13 +958,11 @@
                 },
                 "expectedDrawTime": {
                     "type": "number",
-                    "default": 10000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to draw' notification is shown for any drawing layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "expectedLoadTime": {
                     "type": "number",
-                    "default": 4000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to load' notification is shown for any loading layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "maxLoadTime": {
                     "type": "number",
@@ -1169,13 +1163,11 @@
                 },
                 "expectedDrawTime": {
                     "type": "number",
-                    "default": 10000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to draw' notification is shown for any drawing layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "expectedLoadTime": {
                     "type": "number",
-                    "default": 4000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to load' notification is shown for any loading layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "maxLoadTime": {
                     "type": "number",
@@ -1294,13 +1286,11 @@
                 },
                 "expectedDrawTime": {
                     "type": "number",
-                    "default": 10000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to draw' notification is shown for any drawing layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "expectedLoadTime": {
                     "type": "number",
-                    "default": 4000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to load' notification is shown for any loading layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "maxLoadTime": {
                     "type": "number",
@@ -1422,8 +1412,7 @@
                 },
                 "expectedLoadTime": {
                     "type": "number",
-                    "default": 4000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to load' notification is shown for any loading layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "maxLoadTime": {
                     "type": "number",
@@ -1514,13 +1503,11 @@
                 },
                 "expectedDrawTime": {
                     "type": "number",
-                    "default": 10000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to draw' notification is shown for any drawing layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "expectedLoadTime": {
                     "type": "number",
-                    "default": 4000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to load' notification is shown for any loading layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "maxLoadTime": {
                     "type": "number",
@@ -1634,13 +1621,11 @@
                 },
                 "expectedDrawTime": {
                     "type": "number",
-                    "default": 10000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to draw' notification is shown for any drawing layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "expectedLoadTime": {
                     "type": "number",
-                    "default": 4000,
-                    "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications."
+                    "description": "The time span (in milliseconds) after which a 'slow to load' notification is shown for any loading layer. Zero will disable notifications. If missing, will use the map default."
                 },
                 "maxLoadTime": {
                     "type": "number",
@@ -2826,6 +2811,22 @@
                 "labelsDefault": {
                     "$ref": "#/$defs/labels",
                     "description": "If provided, will override any service defaults. Will not override values on a layer config."
+                },
+                "layerTimeDefault": {
+                    "type": "object",
+                    "description": "Instance defaults for layer timers.",
+                    "properties": {
+                        "expectedDrawTime": {
+                            "type": "number",
+                            "default": 10000,
+                            "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications. Values on individual layer configs will override."
+                        },
+                        "expectedLoadTime": {
+                            "type": "number",
+                            "default": 10000,
+                            "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications. Values on individual layer configs will override."
+                        }
+                    }
                 }
             },
             "required": ["tileSchemas", "baseMaps"],
