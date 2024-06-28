@@ -1,0 +1,58 @@
+.disabled[data-v-a8020274] {
+    cursor: default;
+    --tw-text-opacity: 1;
+    color: rgb(156 163 175 / var(--tw-text-opacity))
+}:hover > .symbol-0[data-v-7bc13719] {
+  transform: rotate(-10deg);
+  transform-origin: bottom center;
+}
+:hover > .symbol-2[data-v-7bc13719] {
+  transform: rotate(10deg);
+  transform-origin: bottom center;
+}
+.ramp-styles.animation-enabled .symbol-0[data-v-7bc13719] {
+  transition-duration: 0.2s;
+}
+.ramp-styles.animation-enabled .symbol-2[data-v-7bc13719] {
+  transition-duration: 0.2s;
+}.legend-group[data-v-a3788bab] {
+  transition: max-height 0.7s ease-in;
+}
+.expand-toggle[data-v-a3788bab] {
+  transition: transform 0.3s cubic-bezier(0.35, 0, 0.25, 1);
+}
+.rotate-180[data-v-a3788bab] {
+  transform: rotate(-180deg);
+}
+@media (hover) {
+.loaded-item.singlelined[data-v-a3788bab] {
+    min-height: 39px;
+}
+.loaded-item.singlelined .options[data-v-a3788bab] {
+    display: none;
+}
+.loaded-item.multilined[data-v-a3788bab] {
+    min-height: 39px;
+}
+.loaded-item.multilined .options[data-v-a3788bab] {
+    display: block;
+}
+.loaded-item:hover .options[data-v-a3788bab] {
+    display: block;
+}
+}
+.loaded-item:focus-within .options[data-v-a3788bab] {
+  display: block;
+}
+.non-loaded-item[data-v-a3788bab] {
+  padding-left: 5px;
+  padding-top: 5px;
+  padding-bottom: 10px;
+  padding-right: 0px;
+  vertical-align: middle;
+}
+.disabled[data-v-a3788bab] {
+  cursor: default;
+  --tw-text-opacity: 1;
+  color: rgb(156 163 175 / var(--tw-text-opacity));
+}
