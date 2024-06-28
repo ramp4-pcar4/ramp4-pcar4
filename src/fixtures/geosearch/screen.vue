@@ -21,7 +21,7 @@
                     }}
                 </div>
                 <div
-                    class="px-8 mb-10 truncate"
+                    class="px-8 mb-10 py-8 flex-grow text-wrap border-y border-gray-600 overflow-y-auto"
                     v-if="
                         searchVal &&
                         searchResults.length === 0 &&
@@ -51,10 +51,15 @@
                             @click="zoomIn(result)"
                             v-focus-item="'show-truncate'"
                             style="border-bottom: 1px solid lightgray"
+                            truncate-trigger
                         >
-                            <div class="rv-result-description px-8" v-truncate>
+                            <div class="rv-result-description px-8">
                                 <div
-                                    class="flex-1 text-left truncate font-bold"
+                                    class="flex-1 text-left truncate font-bold leading-tight"
+                                    v-truncate="{
+                                        externalTrigger: true,
+                                        options: { placement: 'top-start' }
+                                    }"
                                 >
                                     <span
                                         v-html="
@@ -78,12 +83,14 @@
                                                   result.location.province.abbr
                                         }}</span
                                     >
-                                </div>
-                                <div
-                                    class="flex-1 text-left truncate text-sm"
-                                    v-if="result.type"
-                                >
-                                    {{ result.type }}
+                                    <span v-if="result.type" class="hidden"
+                                        >;
+                                    </span>
+                                    <span
+                                        v-if="result.type"
+                                        class="text-sm font-normal"
+                                        ><br />{{ result.type }}</span
+                                    >
                                 </div>
                             </div>
                         </button>
