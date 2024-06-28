@@ -2,6 +2,18 @@
     <div
         class="absolute top-0 left-0 bottom-28 flex flex-col w-40 pointer-events-auto appbar z-50 sm:z-20 bg-black-75 sm:w-64 sm:bottom-38"
         v-focus-list
+        :content="t('panels.controls.items')"
+        v-tippy="{
+            trigger: 'manual',
+            placement: 'top-end',
+            popperOptions: {
+                placement: 'top',
+                modifiers: [
+                    { name: 'preventOverflow', options: { altAxis: true } },
+                    { name: 'flip', options: { fallbackPlacements: ['top'] } }
+                ]
+            }
+        }"
         ref="el"
     >
         <template v-for="(subArray, index) in items">
@@ -110,6 +122,7 @@ import {
     nextTick,
     onBeforeMount,
     onBeforeUnmount,
+    onMounted,
     onUpdated,
     ref
 } from 'vue';
@@ -121,6 +134,7 @@ import NotificationsAppbarButton from '@/components/notification-center/appbar-b
 import AboutRampDropdown from '@/components/about-ramp/about-ramp-dropdown.vue';
 import { usePanelStore } from '@/stores/panel';
 import { useAppbarStore } from './store';
+import { useI18n } from 'vue-i18n';
 
 const panelStore = usePanelStore();
 const appbarStore = useAppbarStore();
@@ -129,13 +143,30 @@ const items = computed<any>(() => appbarStore.visible);
 const temporaryItems = computed<string[] | undefined>(
     () => appbarStore.temporary
 );
-
+const { t } = useI18n();
 const overflow = ref(false);
 const overflowFlags = ref<{
     [key: string]: boolean;
 }>({});
 
 const el = ref<Element>();
+
+const blurEvent = () => {
+    (el.value as any)._tippy.hide();
+};
+
+const keyupEvent = (e: Event) => {
+    const evt = e as KeyboardEvent;
+    if (evt.key === 'Tab' && el.value?.matches(':focus')) {
+        (el.value as any)._tippy.show();
+    }
+};
+
+onMounted(() => {
+    el.value?.addEventListener('blur', blurEvent);
+
+    el.value?.addEventListener('keyup', keyupEvent);
+});
 
 onBeforeMount(() => {
     const instance = getCurrentInstance();
@@ -145,6 +176,10 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
     const instance = getCurrentInstance();
     window.removeEventListener('resize', () => instance?.proxy?.$forceUpdate());
+
+    el.value?.removeEventListener('blur', blurEvent);
+
+    el.value?.removeEventListener('keyup', keyupEvent);
 });
 
 onUpdated(() => {

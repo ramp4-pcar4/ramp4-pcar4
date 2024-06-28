@@ -1,7 +1,13 @@
 <template>
     <!-- Yes Notifications -->
     <div>
-        <ul v-if="notificationStack.length > 0" v-focus-list>
+        <ul
+            v-if="notificationStack.length > 0"
+            v-focus-list
+            :content="t('panels.controls.items')"
+            v-tippy="{ trigger: 'manual', placement: 'top-start' }"
+            ref="el"
+        >
             <template
                 v-for="(notification, index) in notificationStack"
                 :key="notification.message + index"
@@ -34,13 +40,37 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useNotificationStore } from '@/stores/notification';
 import NotificationItem from './notification-item.vue';
 
 const notificationStore = useNotificationStore();
 const { t } = useI18n();
+const el = ref<Element>();
+
+const blurEvent = () => {
+    (el.value as any)._tippy.hide();
+};
+
+const keyupEvent = (e: Event) => {
+    const evt = e as KeyboardEvent;
+    if (evt.key === 'Tab' && el.value?.matches(':focus')) {
+        (el.value as any)._tippy.show();
+    }
+};
+
+onMounted(() => {
+    el.value?.addEventListener('blur', blurEvent);
+
+    el.value?.addEventListener('keyup', keyupEvent);
+});
+
+onBeforeUnmount(() => {
+    el.value?.removeEventListener('blur', blurEvent);
+
+    el.value?.removeEventListener('keyup', keyupEvent);
+});
 
 const notificationStack = computed(() => notificationStore.notificationStack);
 </script>

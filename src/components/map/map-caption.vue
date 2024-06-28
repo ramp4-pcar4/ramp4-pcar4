@@ -95,14 +95,7 @@
                 class="flex-shrink-0 pointer-events-auto focus:outline-none px-4 mr-4 relative top-2"
                 position="top-end"
                 v-if="!langtoggle?.disabled"
-                v-tippy="{
-                    delay: [300, 0],
-                    placement: 'top-end',
-                    theme: 'ramp4',
-                    animation: 'scale',
-                    touch: ['hold', 200]
-                }"
-                :content="t('map.changeLanguage')"
+                :tooltip="t('map.changeLanguage')"
                 :ariaLabel="`${t('map.language.short')} - ${t(
                     'map.changeLanguage'
                 )}`"
