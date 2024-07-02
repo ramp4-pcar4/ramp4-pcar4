@@ -57,7 +57,7 @@
             class="appbar-item h-48"
         ></default-button>
 
-        <more-button id="more" v-show="overflow">
+        <more-button id="more" v-show="overflow" :numItems="numberOverflow">
             <template v-slot:default>
                 <template v-for="(subArray, index) in items" :key="index">
                     <template v-for="(item, index2) in subArray">
@@ -138,6 +138,7 @@ import { useI18n } from 'vue-i18n';
 
 const panelStore = usePanelStore();
 const appbarStore = useAppbarStore();
+const numberOverflow = ref(0);
 
 const items = computed<any>(() => appbarStore.visible);
 const temporaryItems = computed<string[] | undefined>(
@@ -206,7 +207,12 @@ onUpdated(() => {
                         key = cl.slice(11);
                     }
                 });
-                if (key) overflowFlags.value[key] = true;
+                if (key) {
+                    overflowFlags.value[key] = true;
+                    if (!(key as String).includes('divider')) {
+                        numberOverflow.value++;
+                    }
+                }
                 if (!overflow.value) overflow.value = true;
             } else if (bottom !== 0) {
                 break;
@@ -236,7 +242,12 @@ onUpdated(() => {
                             key = cl.slice(11);
                         }
                     });
-                    if (key) overflowFlags.value[key] = false;
+                    if (key) {
+                        overflowFlags.value[key] = false;
+                        if (!(key as String).includes('divider')) {
+                            numberOverflow.value--;
+                        }
+                    }
                     moreBottom += 48;
                     buttonsRemaining -= 1;
                     index += 1;
@@ -249,8 +260,12 @@ onUpdated(() => {
         }
         // clean up flags for items that were removed.
         Object.keys(overflowFlags.value).forEach((key: string) => {
-            if (!element.querySelector(`.identifier-${key}`))
+            if (!element.querySelector(`.identifier-${key}`)) {
                 delete overflowFlags.value[key];
+                if (!key.includes('divider')) {
+                    numberOverflow.value--;
+                }
+            }
         });
     });
 });
