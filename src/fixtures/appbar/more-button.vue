@@ -1,5 +1,6 @@
 <template>
     <div class="appbar-item relative inset-x-0 w-full text-center" ref="el">
+        <!-- this is for appbar overflow button  -->
         <button
             type="button"
             class="text-gray-400 w-full h-48 focus:outline-none hover:text-white"
@@ -20,6 +21,7 @@
                 />
             </svg>
         </button>
+        <!-- this is for appbar overflow menu  -->
         <div
             v-show="open"
             id="dropdown"
@@ -72,12 +74,13 @@ const popperSetUp = () => {
         requires: ['maxSize'],
         fn({ state }: { state: State }) {
             // The `maxSize` modifier provides this data
-            const { width, height } = state.modifiersData.maxSize;
+            const { width } = state.modifiersData.maxSize;
+            const viewportHeight = window.innerHeight;
 
             state.styles.popper = {
                 ...state.styles.popper,
                 maxWidth: `${width}px`,
-                maxHeight: `${Math.max(80, height) - 38}px`
+                maxHeight: `${viewportHeight - 45}px`
             };
 
             state.styles.popper.overflowY = 'auto';
@@ -103,11 +106,12 @@ const popperSetUp = () => {
                     {
                         name: 'offset',
                         options: {
-                            offset: [0, 5]
+                            offset: [200, 5]
                         }
                     }
                 ],
-                ...props.popperOptions
+                ...props.popperOptions,
+                strategy: 'fixed'
             }
         );
     }
