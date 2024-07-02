@@ -1,5 +1,6 @@
 <template>
     <div class="appbar-item relative inset-x-0 w-full text-center" ref="el">
+        <!-- this is for appbar overflow button  -->
         <button
             type="button"
             class="text-gray-400 w-full h-48 focus:outline-none hover:text-white"
@@ -21,6 +22,7 @@
                 />
             </svg>
         </button>
+        <!-- this is for appbar overflow menu  -->
         <div
             v-show="open"
             id="dropdown"
@@ -33,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
+import { inject, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { InstanceAPI } from '@/api/internal';
 
@@ -54,17 +56,48 @@ const props = defineProps({
         default() {
             return {};
         }
+    },
+    numItems: {
+        type: Number,
+        default: 1
+    },
+
+    renderWatch: {
+        type: Number,
+        default: 0
     }
 });
+const emit = defineEmits(['updateParent']);
+
+function updateParent() {
+    emit('updateParent');
+}
 
 const open = ref(false);
-
+const numRenders = ref(0);
 const el = ref<Element>();
 const dropdownTrigger = ref<Element>();
 const dropdown = ref<HTMLElement>();
 
+function rerender() {
+    updateParent();
+    nextTick(() => {
+        popperSetUp();
+        open.value = !open.value;
+    });
+}
+
+watch(
+    () => props.renderWatch,
+    () => {
+        rerender();
+    }
+);
+
 const popperSetUp = () => {
     open.value = !open.value;
+
+    const innerShell = iApi.$vApp.$el.querySelector('.inner-shell');
 
     const applyMaxSize = {
         name: 'applyMaxSize',
@@ -73,21 +106,31 @@ const popperSetUp = () => {
         requires: ['maxSize'],
         fn({ state }: { state: State }) {
             // The `maxSize` modifier provides this data
-            const { width, height } = state.modifiersData.maxSize;
+            const { width } = state.modifiersData.maxSize;
 
             state.styles.popper = {
                 ...state.styles.popper,
                 maxWidth: `${width}px`,
-                maxHeight: `${Math.max(80, height) - 38}px`
+                maxHeight: `${innerShell.offsetHeight - 45}px`
             };
+
+            const realHeight = Math.min(
+                props.numItems <= 0 ? 0 : 55 + 44 * (props.numItems - 1),
+                innerShell.offsetHeight - 45
+            );
+
+            state.styles.popper.height = `${realHeight}px`;
+            if (dropdown?.value?.offsetHeight) {
+                dropdown.value.style.height = `${realHeight}px`;
+            }
 
             state.styles.popper.overflowY = 'auto';
             state.styles.popper.overflowX = 'hidden';
         }
     };
 
-    const innerShell = iApi.$vApp.$el.querySelector('.inner-shell');
     if (dropdownTrigger.value && dropdown.value) {
+        numRenders.value++;
         createPopper(
             dropdownTrigger.value as Element,
             dropdown.value as HTMLElement,
@@ -106,12 +149,22 @@ const popperSetUp = () => {
                         options: {
                             offset: [0, 5]
                         }
+                    },
+                    {
+                        name: 'preventOverflow',
+                        enabled: true,
+                        options: {
+                            boundary: innerShell
+                        }
                     }
                 ],
                 ...props.popperOptions
             }
         );
     }
+
+    // if this is the first time the popper is being rendered, re-render it
+    if (numRenders.value === 1) rerender();
 };
 
 onMounted(() => {
@@ -142,6 +195,10 @@ onBeforeUnmount(() => {
         },
         { capture: true }
     );
+});
+
+defineExpose({
+    rerender
 });
 </script>
 
