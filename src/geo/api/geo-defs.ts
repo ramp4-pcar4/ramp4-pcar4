@@ -327,6 +327,20 @@ export interface MapMove {
     moveTime: number;
 }
 
+export interface LayerTimes {
+    /**
+     * Expected time to draw
+     */
+    draw: number;
+
+    /**
+     * Expected time to load
+     */
+    load: number;
+
+    // TODO pr for #1491 will add 'fail' here
+}
+
 // needs to align to esri values for GoToOptions2D.easing
 export type ZoomEasing =
     | 'linear'
@@ -746,4 +760,8 @@ export interface RampMapConfig {
     pointZoomScale?: number;
     mapMouseThrottle?: number;
     labelsDefault?: RampLabelsConfig;
+    layerTimeDefault?: {
+        expectedDrawTime?: number;
+        expectedLoadTime?: number;
+    };
 }

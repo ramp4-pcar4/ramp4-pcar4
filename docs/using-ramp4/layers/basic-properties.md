@@ -48,7 +48,7 @@ Generally speaking, this config option is useful when there is a small list of c
 
 *integer*, only applies to [map layers](./additional-layer-sections.md#layer-abilities)
 
-Defines a time limit, in milliseconds, for the expected time it would take for the layer to draw itself (i.e. the fetching and processing of data to render the layer in the current extent). If the limit is exceeded, a notification will be issued in the app. If missing, a default of 10 seconds will be used. Setting to `0` will disable the notification.
+Defines a time limit, in milliseconds, for the expected time it would take for the layer to draw itself (i.e. the fetching and processing of data to render the layer in the current extent). If the limit is exceeded, a notification will be issued in the app. If missing, the map level configuration will be used. This defaults to 10000 (10 seconds). Setting to `0` will disable the notification.
 
 ```js
 {
@@ -60,7 +60,7 @@ Defines a time limit, in milliseconds, for the expected time it would take for t
 
 *integer*
 
-Defines a time limit, in milliseconds, for the expected time it would take for the layer load (i.e. establishing contact with a server, the fetching of metadata, the downloading of data for file or WFS type layers). If the limit is exceeded, a notification will be issued in the app. If missing, a default of 4 seconds will be used. Setting to `0` will disable the notification.
+Defines a time limit, in milliseconds, for the expected time it would take for the layer load (i.e. establishing contact with a server, the fetching of metadata, the downloading of data for file or WFS type layers). If the limit is exceeded, a notification will be issued in the app. If missing, the map level configuration will be used. This defaults to 10000 (10 seconds). Setting to `0` will disable the notification.
 
 ```js
 {

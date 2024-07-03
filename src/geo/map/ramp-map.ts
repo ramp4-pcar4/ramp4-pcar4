@@ -11,6 +11,7 @@ import {
 import type { IdentifyResult, MapIdentifyResult } from '@/api/internal';
 
 import {
+    Colour,
     CoreFilter,
     DefPromise,
     Extent,
@@ -25,6 +26,7 @@ import {
 import type {
     GraphicHitResult,
     IdentifyParameters,
+    LayerTimes,
     MapClick,
     RampBasemapConfig,
     RampExtentSetConfig,
@@ -43,7 +45,6 @@ import { MapCaptionAPI } from './caption';
 import { markRaw, toRaw } from 'vue';
 import { useConfigStore } from '@/stores/config';
 import { debounce, throttle } from 'throttle-debounce';
-import { Colour } from '@/geo/api';
 
 export class MapAPI extends CommonMapAPI {
     // API for managing the maptip
@@ -57,6 +58,15 @@ export class MapAPI extends CommonMapAPI {
      * @private
      */
     private mapMouseThrottle: number;
+
+    /**
+     * Map wide defaults for layer times. Layers can override.
+     */
+    layerDefaultTimes: LayerTimes = {
+        // DEV NOTE these values get updated in createMap(). Using 0 here to avoid having defaults in two spots.
+        draw: 0,
+        load: 0
+    };
 
     /**
      * @constructor
@@ -79,6 +89,11 @@ export class MapAPI extends CommonMapAPI {
         this.setMapMouseThrottle(config.mapMouseThrottle ?? 0);
         this.trackFirstBasemap = true; // we do this here (in this class) to prevent the overview map from tracking
         super.createMap(config, targetDiv);
+
+        this.layerDefaultTimes.draw =
+            config.layerTimeDefault?.expectedDrawTime ?? 10000;
+        this.layerDefaultTimes.load =
+            config.layerTimeDefault?.expectedLoadTime ?? 10000;
 
         this.viewPromise.then(() => {
             // Timing issues beginning at ESRI v4.26 make us need to wait until the initial view gets created.
