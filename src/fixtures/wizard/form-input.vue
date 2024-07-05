@@ -71,6 +71,8 @@
                         :open-direction="'bottom'"
                         :max-height="300"
                         :limit="4"
+                        :disableFuzzyMatching="true"
+                        :searchable="searchable"
                         :childrenIgnoreDisabled="true"
                         :placeholder="t('wizard.configure.sublayers.select')"
                         :noResultsText="t('wizard.configure.sublayers.results')"
@@ -95,6 +97,7 @@
                                 {{ truncateVal(node.label) }}
                             </label>
                         </template>
+
                         <template
                             v-slot:[optionLabel]="{ node, labelClassName }"
                         >
@@ -427,6 +430,18 @@ onBeforeUnmount(() => {
 
 :deep(.vue-treeselect__input:focus) {
     @apply ring-transparent pl-0 #{!important};
+}
+
+:deep(.vue-treeselect__input) {
+    padding-left: 0px;
+}
+
+:deep(.vue-treeselect__input-container) {
+    width: 260px;
+}
+
+:deep(.vue-treeselect__sizer) {
+    width: 260px;
 }
 
 .error-border {
