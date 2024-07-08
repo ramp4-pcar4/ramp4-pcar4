@@ -54,7 +54,10 @@
                 <div class="w-full text-sm" v-truncate>
                     {{
                         t('grid.filters.label.info', {
-                            range: `${filterInfo.firstRow} - ${filterInfo.lastRow}`,
+                            range:
+                                filterInfo.visibleRows !== 0
+                                    ? `${filterInfo.firstRow} - ${filterInfo.lastRow}`
+                                    : '0',
                             total: filterInfo.visibleRows
                         })
                     }}
@@ -369,11 +372,14 @@
 
         <!-- main grid component -->
         <ag-grid-vue
+            v-if="showGrid"
             v-show="!isLoadingGrid && !isErrorGrid"
             class="ag-theme-material flex-grow"
             enableCellTextSelection="true"
             accentedSort="true"
-            :localeText="gridLocale"
+            :localeText="
+                locale === 'en' ? AG_GRID_LOCALE_EN : AG_GRID_LOCALE_FR
+            "
             :gridOptions="agGridOptions"
             :columnDefs="columnDefs"
             :rowData="rowData"
@@ -444,7 +450,10 @@ import CellRendererV from './templates/cell-renderer.vue';
 import { CoreFilter, FieldType } from '@/geo/api';
 
 // grid locales
-import { AG_GRID_LOCALE_EN, AG_GRID_LOCALE_FR } from '@ag-grid-community/locale';
+import {
+    AG_GRID_LOCALE_EN,
+    AG_GRID_LOCALE_FR
+} from '@ag-grid-community/locale';
 
 import { debounce } from 'throttle-debounce';
 import type { RowNode } from 'ag-grid-community';
@@ -544,8 +553,7 @@ const panelStore = usePanelStore();
 const mobileView = computed(() => panelStore.mobileView);
 const pinned = ref<Boolean>(!mobileView.value);
 const el = ref<HTMLElement>();
-const { t } = useI18n();
-const i18nLocale = useI18n();
+const { t, locale } = useI18n();
 const forceUpdate = () => getCurrentInstance()?.proxy?.$forceUpdate();
 
 const props = defineProps({
@@ -565,10 +573,10 @@ const config = ref<GridConfig>({
     state: new TableStateManager(),
     fieldMap: {}
 });
+const showGrid = ref(true);
 const agGridApi = ref<GridApi>(new GridApi());
 const agGridOptions = ref();
 const frameworkComponents = ref();
-const gridLocale = i18nLocale.locale.value === 'en' ? AG_GRID_LOCALE_EN : AG_GRID_LOCALE_FR;
 const isLoadingGrid = ref<boolean>(false);
 const isErrorGrid = ref<boolean>(false);
 const loadedRecordCount = ref<Array<number>>([]);
@@ -1854,6 +1862,17 @@ onBeforeMount(() => {
             iApi.$i18n.t(`layer.filterwarning`)
         );
     }
+
+    // ag-grid does not update automatically when language/locale is changed,
+    // so we force it to update here
+    watchers.value.push(
+        watch(locale, () => {
+            showGrid.value = false;
+            setTimeout(() => {
+                showGrid.value = true;
+            }, 10);
+        })
+    );
 
     watchers.value.push(
         watch(filtersStatus, newStatus => {
