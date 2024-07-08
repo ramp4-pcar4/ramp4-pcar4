@@ -22,7 +22,11 @@
                         :results="layerResults"
                         v-if="!noResults"
                     ></ResultList>
-                    <div class="ml-42 text-center" v-else>
+                    <div
+                        class="text-center"
+                        :class="{ 'ml-42': layerResults.length > 1 }"
+                        v-else
+                    >
                         {{ t('details.layers.results.empty') }}
                     </div>
                 </div>
