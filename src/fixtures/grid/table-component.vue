@@ -373,6 +373,7 @@
             class="ag-theme-material flex-grow"
             enableCellTextSelection="true"
             accentedSort="true"
+            :localeText="gridLocale"
             :gridOptions="agGridOptions"
             :columnDefs="columnDefs"
             :rowData="rowData"
@@ -441,6 +442,9 @@ import ZoomButtonRendererV from './templates/zoom-button-renderer.vue';
 import CustomButtonRendererV from './templates/custom-button-renderer.vue';
 import CellRendererV from './templates/cell-renderer.vue';
 import { CoreFilter, FieldType } from '@/geo/api';
+
+// grid locales
+import { AG_GRID_LOCALE_EN, AG_GRID_LOCALE_FR } from '@ag-grid-community/locale';
 
 import { debounce } from 'throttle-debounce';
 import type { RowNode } from 'ag-grid-community';
@@ -541,6 +545,7 @@ const mobileView = computed(() => panelStore.mobileView);
 const pinned = ref<Boolean>(!mobileView.value);
 const el = ref<HTMLElement>();
 const { t } = useI18n();
+const i18nLocale = useI18n();
 const forceUpdate = () => getCurrentInstance()?.proxy?.$forceUpdate();
 
 const props = defineProps({
@@ -563,6 +568,7 @@ const config = ref<GridConfig>({
 const agGridApi = ref<GridApi>(new GridApi());
 const agGridOptions = ref();
 const frameworkComponents = ref();
+const gridLocale = i18nLocale.locale.value === 'en' ? AG_GRID_LOCALE_EN : AG_GRID_LOCALE_FR;
 const isLoadingGrid = ref<boolean>(false);
 const isErrorGrid = ref<boolean>(false);
 const loadedRecordCount = ref<Array<number>>([]);
