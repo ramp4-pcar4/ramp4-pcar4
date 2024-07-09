@@ -32,7 +32,11 @@ const geosearchStore = useGeosearchStore();
 const panelStore = usePanelStore();
 
 const searchVal = computed(() => geosearchStore.searchVal);
-const setSearchTerm = (value: string) => geosearchStore.setSearchTerm(value);
+const setSearchTerm = (value: string) => {
+    geosearchStore.setSearchTerm(value);
+    geosearchStore.setSearchRegex(value);
+};
+
 const onSearchTermChange = debounce(500, (searchTerm: string) => {
     setSearchTerm(searchTerm);
 });
