@@ -195,6 +195,8 @@
                                 filtersStatus !== 'disabled' &&
                                     toggleFiltersToMap()
                             "
+                            role="button"
+                            :aria-label="t('grid.label.filters.apply')"
                         >
                             <div class="md-icon-small inline items-start">
                                 <svg
@@ -230,6 +232,8 @@
                             href="javascript:;"
                             class="flex leading-snug items-center w-256 hover:text-black"
                             @click="toggleShowFilters()"
+                            role="button"
+                            :aria-label="t('grid.label.filters.show')"
                         >
                             <div class="md-icon-small inline items-start">
                                 <svg
@@ -272,6 +276,8 @@
                                 filtersStatus !== 'disabled' &&
                                     toggleFilterByExtent()
                             "
+                            role="button"
+                            :aria-label="t('grid.filters.label.extent')"
                         >
                             <div class="md-icon-small inline items-start">
                                 <svg
@@ -283,7 +289,7 @@
                                         d="M 4 10 Z M 2 2 L 19.9888 2 L 20 2 L 20 2.0112 L 20 4 L 19.9207 4 L 13 10.9207 L 13 22.909 L 9 18.909 L 9 10.906 L 2.0941 4 L 2 4 L 2 2 Z M 24 13 L 21 14 L 18 13 L 15 14 V 22 L 18 21 l 3 1 l 3 -1 z M 21 21 l -3 -1 V 14 l 3 1.055 z"
                                     />
                                 </svg>
-                                {{ t('grid.filters.extent') }}
+                                {{ t('grid.filters.label.extent') }}
                                 <svg
                                     height="18"
                                     width="18"
@@ -307,6 +313,8 @@
                             class="flex leading-snug items-center w-256"
                             :class="{ hover: 'text-black' }"
                             @click="togglePinned()"
+                            role="button"
+                            :aria-label="t('grid.label.pinColumns')"
                         >
                             <svg
                                 v-if="pinned"
@@ -328,7 +336,7 @@
                                     d="M18 1.5c2.9 0 5.25 2.35 5.25 5.25v3.75a.75.75 0 01-1.5 0V6.75a3.75 3.75 0 10-7.5 0v3a3 3 0 013 3v6.75a3 3 0 01-3 3H3.75a3 3 0 01-3-3v-6.75a3 3 0 013-3h9v-3c0-2.9 2.35-5.25 5.25-5.25z"
                                 />
                             </svg>
-                            {{ t('grid.pinColumns') }}
+                            {{ t('grid.label.pinColumns') }}
                             <svg
                                 height="18"
                                 width="18"
@@ -348,6 +356,8 @@
                             class="flex leading-snug items-center w-256"
                             :class="{ hover: 'text-black' }"
                             @click="exportData()"
+                            role="button"
+                            :aria-label="t('grid.label.export')"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -360,7 +370,7 @@
                                     ></path>
                                 </g>
                             </svg>
-                            {{ t('grid.export') }}
+                            {{ t('grid.label.export') }}
                         </a>
                     </dropdown-menu>
                 </div>

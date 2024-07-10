@@ -9,6 +9,7 @@
             @click="onClickFunction()"
             v-focus-item
             :content="tooltip"
+            :aria-label="typeof tooltip === 'string' ? tooltip : ''"
             v-tippy="{ placement: 'left' }"
         >
             <slot></slot>
