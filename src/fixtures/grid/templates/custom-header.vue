@@ -12,6 +12,7 @@
                 type="button"
                 @click="onSortRequested($event)"
                 :content="t(`grid.header.sort.${sort}`)"
+                :aria-label="t(`grid.header.sort.${sort}`)"
                 v-tippy="{ placement: 'top', hideOnClick: false }"
                 class="customHeaderLabel hover:bg-gray-300 font-bold p-8 max-w-full"
                 role="columnheader"
@@ -62,7 +63,8 @@
             </span>
             <button
                 type="button"
-                :content="t(`grid.header.reorder.left`)"
+                :content="t('grid.header.reorder.left')"
+                :aria-label="t('grid.header.reorder.left')"
                 v-tippy="{ placement: 'top' }"
                 @click="moveLeft()"
                 class="move-left opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default flex justify-center items-center"
@@ -81,7 +83,8 @@
             </button>
             <button
                 type="button"
-                :content="t(`grid.header.reorder.right`)"
+                :content="t('grid.header.reorder.right')"
+                :aria-label="t('grid.header.reorder.right')"
                 v-tippy="{ placement: 'top' }"
                 @click="moveRight()"
                 class="move-right opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default flex justify-center items-center"

@@ -6,9 +6,9 @@ grid.splash.loading,Loading data...,1,Chargement des données...,1
 grid.splash.building,Building table...,1,Création du tableau...,1
 grid.splash.cancel,Cancel,1,Annuler,1
 grid.clearAll,Clear search and filters,1,Effacer la recherche et les filtres,1
-grid.pinColumns,Pin columns,1,Épingler les colonnes,1
-grid.export,Export,1,Exporter,1
 grid.layer.loading,The layer is loading...,1,La couche est en cours de téléchargement...,1
+grid.label.pinColumns,Pin columns,1,Épingler les colonnes,1
+grid.label.export,Export,1,Exporter,1
 grid.label.columns,Hide columns,1,Masquer les colonnes,1
 grid.label.copied,Copied,1,Copié,1
 grid.label.copy,Press ctrl + c or double click to copy,1,Appuyez sur Ctrl + C ou double-cliquez pour copier,1
