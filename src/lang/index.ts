@@ -36,6 +36,7 @@ const numberFormats = {
 };
 
 export function i18n(): I18n<{}, {}, {}, string, false> {
+    // @ts-ignore
     return createI18n({
         legacy: false,
         // get the language of the page from the root `html` node

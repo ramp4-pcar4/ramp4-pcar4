@@ -74,7 +74,9 @@ export class ProjectionAPI {
         const urnRegex = /urn:ogc:def:crs:EPSG::(\d+)/;
         const epsgRegex = /EPSG:(\d+)/;
         const matcher: RegExpMatchArray =
-            String(code).match(urnRegex) || String(code).match(epsgRegex) || [];
+            String(code).match(urnRegex) ||
+            String(code).match(epsgRegex) ||
+            ([] as unknown as RegExpMatchArray);
 
         if (matcher.length < 2) {
             throw new Error('Invalid code provided.');
