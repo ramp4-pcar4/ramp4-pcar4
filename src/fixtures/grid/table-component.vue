@@ -1468,8 +1468,8 @@ const filtersStatus = computed<'disabled' | 'partial' | 'enabled'>(() => {
     return unmodifiableExists && filterableExists
         ? 'partial' // we have an unmodifiable map layer and we also have >= 1 layer that can be filtered, so overall filtering is partial
         : filterableExists
-        ? 'enabled' // we have >= 1 layer that can be filtered, anything with filtering disabled is a data layer which is not on the map anyways, so overall filtering is enabled
-        : 'disabled'; // no layers that can be filtered, so disable filtering
+          ? 'enabled' // we have >= 1 layer that can be filtered, anything with filtering disabled is a data layer which is not on the map anyways, so overall filtering is enabled
+          : 'disabled'; // no layers that can be filtered, so disable filtering
 });
 
 /**

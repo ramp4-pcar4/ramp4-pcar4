@@ -66,7 +66,7 @@ export class MapnavAPI extends FixtureInstance {
         ];
 
         // get the ordered list of items and see if any of them are registered
-        this.mapnavStore.order.forEach(id => {
+        this.mapnavStore.order.forEach((id: string) => {
             // can't check if the nav button component is registered
             // so we make the assumption that it will always have the `-nav-button` prefix
 
