@@ -204,12 +204,14 @@ export class DetailsAPI extends FixtureInstance {
      * @memberof DetailsAPI
      */
     _validateItems() {
-        Object.values(this.detailsStore.properties).forEach(item => {
-            if (item.template in this.$vApp.$options.components!) {
-                this.detailsStore.properties[item.id].componentId =
-                    item.template;
+        Object.values<DetailsConfigItem>(this.detailsStore.properties).forEach(
+            item => {
+                if (item.template in this.$vApp.$options.components!) {
+                    this.detailsStore.properties[item.id].componentId =
+                        item.template;
+                }
             }
-        });
+        );
     }
 
     /**

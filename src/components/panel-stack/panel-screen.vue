@@ -86,9 +86,8 @@ import {
     onMounted,
     ref
 } from 'vue';
-import type { PanelDirection } from '@/stores/panel';
 import type { PropType } from 'vue';
-import { usePanelStore } from '@/stores/panel';
+import { usePanelStore, type PanelDirection } from '@/stores/panel';
 import { useI18n } from 'vue-i18n';
 import { useAppbarStore } from '@/fixtures/appbar/store';
 
