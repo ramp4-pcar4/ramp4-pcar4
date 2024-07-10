@@ -6,6 +6,7 @@
             @click="popperSetUp()"
             v-focus-item
             :content="t('appbar.more')"
+            :aria-label="t('appbar.more')"
             v-tippy="{ placement: 'right-end' }"
             ref="dropdownTrigger"
         >

@@ -8,6 +8,7 @@
                 'text-gray-300': !active
             }"
             :content="t('panels.controls.moveRight')"
+            :aria-label="t('panels.controls.moveRight')"
             v-tippy="{
                 placement: 'bottom',
                 theme: 'ramp4',
@@ -18,7 +19,6 @@
                 class="fill-current w-16 h-16"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="4 4 16 16"
-                :aria-label="t('panels.controls.moveRight')"
             >
                 <path
                     d="M 8.59 16.34 L 13.17 11.75 L 8.59 7.16 L 10 5.75 L 16 11.75 L 10 17.75 Z"

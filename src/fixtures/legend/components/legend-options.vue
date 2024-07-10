@@ -29,6 +29,8 @@
                         !getFixtureExists('metadata')
                 }"
                 @click="toggleMetadata"
+                role="button"
+                :aria-label="t('legend.layer.controls.metadata')"
             >
                 <svg
                     class="inline-block fill-current w-18 h-18 mr-10"
@@ -50,6 +52,8 @@
                         !getFixtureExists('settings')
                 }"
                 @click="toggleSettings"
+                role="button"
+                :aria-label="t('legend.layer.controls.settings')"
             >
                 <svg
                     class="inline-block fill-current w-18 h-18 mr-10"
@@ -73,6 +77,8 @@
                         !getFixtureExists('grid')
                 }"
                 @click="toggleGrid"
+                role="button"
+                :aria-label="t('legend.layer.controls.datatable')"
             >
                 <svg
                     class="inline-block fill-current w-18 h-18 mr-10"
@@ -92,6 +98,8 @@
                     disabled: !legendItem!.layerControlAvailable(LayerControl.Symbology)
                 }"
                 @click="toggleSymbology"
+                role="button"
+                :aria-label="t('legend.layer.controls.symbology')"
             >
                 <svg
                     class="inline-block fill-current w-18 h-18 mr-10"
@@ -111,6 +119,8 @@
                     disabled: !legendItem!.layerControlAvailable(LayerControl.BoundaryZoom)
                 }"
                 @click="zoomToLayerBoundary"
+                role="button"
+                :aria-label="t('legend.layer.controls.boundaryzoom')"
             >
                 <svg
                     class="inline-block fill-current w-18 h-18 mr-10"
@@ -132,6 +142,8 @@
                     disabled: !legendItem!.layerControlAvailable(LayerControl.Remove)
                 }"
                 @click="removeLayer"
+                role="button"
+                :aria-label="t('legend.layer.controls.remove')"
             >
                 <svg
                     class="inline-block fill-current w-18 h-18 mr-10"
@@ -167,6 +179,8 @@
                     aria: 'describedby'
                 }"
                 @click="reloadLayer"
+                role="button"
+                :aria-label="t('legend.layer.controls.reload')"
             >
                 <svg
                     class="inline-block fill-current w-18 h-18 mr-10"
