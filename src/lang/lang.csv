@@ -42,6 +42,7 @@ panels.controls.expand,Expand,1,Développer,1
 panels.controls.collapse,Collapse,1,Réduire,1
 panels.controls.moveRight,Move Right,1,Aller à droite,1
 panels.controls.moveLeft,Move Left,1,Aller à gauche,1
+panels.controls.items,Use the arrow keys to navigate the items,1,Utilisez les touches fléchées pour naviguer entre les éléments,0
 panels.alert.open,{name} panel opened,1,Fenêtre {name} ouverte,1
 panels.alert.close,{name} panel closed,1,Fenêtre {name} fermée,1
 panels.alert.minimize,{name} panel minimized,1,Fenêtre {name} réduite,1
