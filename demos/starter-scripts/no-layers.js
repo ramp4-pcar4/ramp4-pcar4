@@ -275,14 +275,32 @@ let config = {
                 ],
                 initialBasemapId: 'baseNrCan'
             },
-            layers: [],
+            layers: [
+                {
+                    id: 'WaterQuantity',
+                    name: 'Water Quantity',
+                    state: {
+                        opacity: 1,
+                        visibility: true
+                    },
+                    fixtures: {
+                        details: {
+                            template: 'Water-Quantity-Template'
+                        },
+                        settings: {
+                            controls: ['visibility', 'opacity']
+                        }
+                    },
+                    layerType: 'esri-feature',
+                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/1'
+                }
+            ],
             fixtures: {
                 legend: {
                     root: {
                         children: [
                             {
-                                infoType: 'text',
-                                content: 'I start with no layers'
+                                layerId: 'WaterQuantity'
                             }
                         ]
                     }
@@ -573,7 +591,7 @@ let config = {
                         children: [
                             {
                                 infoType: 'text',
-                                content: 'Bonjour, I start with no layers'
+                                content: 'I start with no layers'
                             }
                         ]
                     }
@@ -624,6 +642,81 @@ const rInstance = createInstance(
     config,
     options
 );
+
+rInstance.$element.component('Water-Quantity-Template', {
+    props: ['identifyData'],
+    template: `
+        <div style="align-items: center; justify-content: center; font-size: 14px; font-family: Arial, sans-serif;">
+            <div v-html="renderHeader()" />
+            <div v-html="createSection('Station ID', 'StationID')" />
+            <div v-html="createSection('Province', 'E_Province')" />
+            <div v-html="createSection('Report Year', 'Report_Year')" />
+            <div v-if="this.identifyData.loaded">
+                <div style="display: flex; flex-direction: row; color: #a0aec0; font-weight: bold; padding-top: 5px;">
+                    <div style="flex: 1 1 0%; width: 100%;">
+                        Latitude
+                    </div>
+                    <div style="flex: 1 1 0%; width: 100%;">
+                        Longitude
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: row;">
+                    <div style="flex: 1 1 0%; width: 100%;">
+                        {{this.identifyData.data['Latitude']}}
+                    </div>
+                    <div style="flex: 1 1 0%; width: 100%;">
+                        {{this.identifyData.data['Longitude']}}
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; padding-top: 5px; color: #4299e1;">
+                    <span style="font-weight: bold; color: #a0aec0;">Links</span>
+                    <span v-html="this.identifyData.data['E_DetailPageURL']"></span>
+                    <span v-html="this.identifyData.data['E_URL_Historical']"></span>
+                    <span v-html="this.identifyData.data['E_URL_RealTime']"></span>
+                </div>
+            </div>
+        </div>
+    `,
+    methods: {
+        renderHeader() {
+            if (!this.identifyData.loaded) {
+                return `
+                <span style="display: flex; font-size: 20px; background-color: #e21e5e; color: white; padding: 4px; text-align: center;">
+                    Loading...
+                </span>
+                `;
+            } else if (this.identifyData.data['Symbol'] === '3') {
+                return `
+                    <span style="display: flex; font-size: 20px; background-color: #e53e3e; color: white; padding: 4px; text-align: center;">
+                        ${this.identifyData.data['StationName']}
+                    </span>
+                `;
+            } else {
+                return `
+                    <span style="display: flex; font-size: 20px; background-color: #3182ce; color: white; padding: 4px; text-align: center;">
+                        ${this.identifyData.data['StationName']}
+                    </span>
+                `;
+            }
+        },
+        createSection(title, id) {
+            var val = this.identifyData.loaded
+                ? this.identifyData.data[id]
+                : 'Loading...';
+
+            return `
+            <div style="display: flex; flex-direction: column; padding-top: 5px;">
+                <span style="color: #a0aec0; font-weight: bold;">
+                    ${title}
+                </span>
+                <span>
+                    ${val}
+                </span>
+            </div>
+            `;
+        }
+    }
+});
 
 // add export fixtures
 rInstance.fixture.add('export');
