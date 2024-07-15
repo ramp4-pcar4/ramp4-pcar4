@@ -7,4 +7,5 @@ export interface LegendConfig {
     headerControls: Array<string>;
     panelWidth: PanelWidthObject | number;
     multilineItems?: boolean;
+    itemMaxLines?: number;
 }

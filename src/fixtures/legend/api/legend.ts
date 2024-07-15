@@ -26,7 +26,12 @@ export class LegendAPI extends FixtureInstance {
             return;
         }
 
-        useLegendStore(this.$vApp.$pinia).multilineItems = legendConfig.multilineItems ?? true;
+        useLegendStore(this.$vApp.$pinia).multilineItems =
+            legendConfig.multilineItems ?? true;
+        useLegendStore(this.$vApp.$pinia).itemMaxLines =
+            legendConfig.itemMaxLines
+                ? Math.floor(legendConfig.itemMaxLines)
+                : 3;
 
         this.handlePanelWidths(['legend']);
         this.handlePanelTeleports(['legend']);

@@ -196,10 +196,14 @@
                     v-if="
                         legendItem instanceof LayerItem && allowMultilineItems
                     "
-                    class="flex-1 pointer-events-none p-5 overflow-hidden"
+                    class="flex-1 pointer-events-none p-5"
                 >
                     <span
-                        class="overflow-hidden text-ellipsis h-auto break-words"
+                        :class="['h-auto', 'break-words', 'text-ellipsis', 'line-clamp-' + itemMaxLines]"
+                        v-truncate="{
+                            externalTrigger: true,
+                            noTruncateClass: true
+                        }"
                         >{{
                             legendItem.name ??
                             (!legendItem?.layer?.name
@@ -288,7 +292,9 @@
                 <!-- options dropdown menu -->
                 <legend-options
                     v-if="
-                        (legendItem.type === LegendType.Item || (legendItem.type === LegendType.Placeholder && allowMultilineItems)) &&
+                        (legendItem.type === LegendType.Item ||
+                            (legendItem.type === LegendType.Placeholder &&
+                                allowMultilineItems)) &&
                         legendItem instanceof LayerItem
                     "
                     :class="{
@@ -633,6 +639,7 @@ const props = defineProps({
 
 const legendStore = useLegendStore();
 const allowMultilineItems = legendStore.multilineItems;
+const itemMaxLines = legendStore.itemMaxLines;
 
 const mobileMode = ref(panelStore.mobileView);
 const layerConfigs = computed(() => layerStore.layerConfigs);
