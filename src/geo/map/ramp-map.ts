@@ -474,7 +474,7 @@ export class MapAPI extends CommonMapAPI {
 
         if (schemaChanged) {
             // destroy the map view
-            // reset the view promise and created flag before firing the event
+            // reset the view promise and created flag before firing the event.
 
             // store extent prior to reprojection
             const center = this.getExtent().center();
