@@ -46,6 +46,7 @@ import EsriSymbol from '@arcgis/core/symbols/Symbol';
 import { fromJSON as EsriSymbolFromJson } from '@arcgis/core/symbols/support/jsonUtils';
 import EsriFeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
 import EsriMapView from '@arcgis/core/views/MapView';
+import EsriColorBackground from '@arcgis/core/webmap/background/ColorBackground';
 
 // sorted by name
 export {
@@ -53,6 +54,7 @@ export {
     EsriClassBreakInfo,
     EsriClassBreaksRenderer,
     EsriColour,
+    EsriColorBackground,
     EsriConfig,
     EsriExtent,
     EsriFeatureFilter,
