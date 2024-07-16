@@ -76,6 +76,7 @@
                         :childrenIgnoreDisabled="true"
                         :placeholder="t('wizard.configure.sublayers.select')"
                         :noResultsText="t('wizard.configure.sublayers.results')"
+                        :clearAllText="t('wizard.configure.sublayers.clearAll')"
                         @select="
                             $nextTick(() => {
                                 handleSelection();
