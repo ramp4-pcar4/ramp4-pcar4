@@ -118,6 +118,26 @@ const r2config = {
         },
         layers: [
             {
+                "id": "0",
+                "name": "Electric Transmission Line",
+                "layerType": "esriFeature",
+                "table": {
+                    "columns": [
+                        {
+                            "data": "OBJECTID",
+                            "filter": {
+                                "type": "number",
+                                "value": "0,20"
+                            }
+                        }
+                    ],
+                    "search": {
+                        "enabled": false
+                    }
+                },
+                "url": "https://geoappext.nrcan.gc.ca/arcgis/rest/services/NACEI/energy_infrastructure_of_north_america_en/MapServer/1"
+            },
+            {
                 id: 'MercuryReleases',
                 layerType: 'esriFeature',
                 controls: ['remove'],
