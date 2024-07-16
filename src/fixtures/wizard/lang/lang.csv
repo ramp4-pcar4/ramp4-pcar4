@@ -38,6 +38,7 @@ wizard.configure.sublayers.label,Layers,1,Couches,1
 wizard.configure.sublayers.results,No results,1,Aucun résultat,1
 wizard.configure.sublayers.search,Search layers,1,Rechercher des couches,1
 wizard.configure.sublayers.select,Select layer(s),1,Sélectionner les couches,1
+wizard.configure.sublayers.clearAll,Clear all,1,Tout effacer,0
 wizard.configure.sublayers.nested,Nested,1,Imbriquées,1
 wizard.configure.colour.label,Colour,1,Couleur,1
 wizard.configure.colour.hue,Hue,1,Teinte,1
