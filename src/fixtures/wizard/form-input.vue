@@ -71,6 +71,8 @@
                         :open-direction="'bottom'"
                         :max-height="300"
                         :limit="4"
+                        :disableFuzzyMatching="true"
+                        :searchable="searchable"
                         :childrenIgnoreDisabled="true"
                         :placeholder="t('wizard.configure.sublayers.select')"
                         :noResultsText="t('wizard.configure.sublayers.results')"
@@ -95,6 +97,7 @@
                                 {{ truncateVal(node.label) }}
                             </label>
                         </template>
+
                         <template
                             v-slot:[optionLabel]="{ node, labelClassName }"
                         >
@@ -301,7 +304,7 @@ const resizeObserver = ref<ResizeObserver | undefined>(undefined);
 
 if (props.defaultOption && props.modelValue === '' && props.options.length) {
     // regex to guess closest default value for lat/long fields
-    // eslint has beef with the following line for unknown reasons
+    // eslint has beef with the following line for unknown reasons.
     // eslint-disable-next-line
     let defaultValue = props.options[0].value;
     if (props.name === 'latField') {
@@ -427,6 +430,34 @@ onBeforeUnmount(() => {
 
 :deep(.vue-treeselect__input:focus) {
     @apply ring-transparent pl-0 #{!important};
+}
+
+:deep(.vue-treeselect__multi-value) {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+:deep(.vue-treeselect__input-container) {
+    flex: 1;
+    display: flex;
+    min-width: 50%;
+}
+
+:deep(.vue-treeselect__input) {
+    padding-left: 0px;
+    flex: 1;
+}
+
+:deep(.vue-treeselect__sizer) {
+    flex: 1;
+}
+
+:deep(.vue-treeselect__x-container) {
+    padding-left: 10px;
+}
+
+:deep(.vue-treeselect__multi-value-item-container) {
+    padding-right: 5px;
 }
 
 .error-border {
