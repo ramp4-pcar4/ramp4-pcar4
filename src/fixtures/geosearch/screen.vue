@@ -154,7 +154,7 @@ const zoomIn = (result: any) => {
 const highlightSearchTerm = (name: string, province: any) => {
     // wrap matched search term in results inside span with styling
     const highlightedResult = name.replace(
-        new RegExp(`${searchVal.value}`, 'gi'),
+        new RegExp(`${geosearchStore.searchRegex}`, 'gi'),
         match => '<span class="font-bold text-blue-600">' + match + '</span>'
     );
     // add comma to new highlighted result if a province/location is provided

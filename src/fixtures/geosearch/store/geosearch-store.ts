@@ -48,6 +48,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
     });
     const resultsVisible = ref<boolean>(false);
     const searchVal = ref<string>('');
+    const searchRegex = ref<string>('');
     const lastSearchVal = ref<string>('');
     const searchResults = ref<Array<any>>([]);
     const savedResults = ref<Array<any>>([]);
@@ -204,6 +205,65 @@ export const useGeosearchStore = defineStore('geosearch', () => {
     }
 
     /**
+     * Update the regex that search result items use for determining what to highlight
+     * (accounting for character accents).
+     *
+     *
+     * @function setSearchRegex
+     * @param {string} searchTerm current geosearch search value term
+     */
+    function setSearchRegex(searchTerm: string): void {
+        // List of all character accents
+        // (NOTE: probably not a comprehensive list, add more as encountered)
+        const accentedChars: { [key: string]: string } = {
+            a: 'àáâãäåāăąǎȁȃȧạảấầẩẫậắằẳẵặ',
+            b: 'ḃɓḅḇ',
+            c: 'çćĉċč',
+            d: 'ďḋḍḏḑḓ',
+            e: 'èéêëēĕėęěȅȇẹẻẽếềểễệ',
+            f: 'ƒḟ',
+            g: 'ĝğġģǧǵḡ',
+            h: 'ĥȟḣḥḧḩḫẖ',
+            i: 'ìíîïĩīĭįıȉȋịỉĩ',
+            j: 'ĵǰɉ',
+            k: 'ķĸƙḳḵ',
+            l: 'ĺļľŀłḷḹḻḽ',
+            m: 'ḿṁṃ',
+            n: 'ñńņňŉŋǹṅṇṉṋ',
+            o: 'òóôõöōŏőơǒǫǭȍȏȯọỏốồổỗộớờởỡợ',
+            p: 'ṕṗ',
+            r: 'ŕŗřȑȓṛṝṟ',
+            s: 'śŝşšșṡṣṥṧṩ',
+            t: 'ţťŧțṫṭṯṱẗ',
+            u: 'ùúûüũūŭůűųưǔǖǘǚǜȕȗụủứừửữự',
+            v: 'ṽṿ',
+            w: 'ẁẃŵẅẇẉẋ',
+            x: 'ẋẍ',
+            y: 'ỳýŷÿỹȳẏẙỵỷỹ',
+            z: 'źżžẑẓẕ'
+        };
+
+        // Strip out all accents first, to make life easier
+        // For highlighting purposes, we want to treat accented characters as normal ones & vice versa
+        searchTerm = searchTerm
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
+
+        searchRegex.value = Array.from(searchTerm)
+            .map(c => {
+                // If character has accents, add them as equivalent replacements to the regex
+                if (Object.keys(accentedChars).includes(c)) {
+                    return '[' + c + accentedChars[c] + ']';
+                }
+
+                // Escape special regex characters (like ']'), so the string isn't broken
+                return c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            })
+            .join('');
+    }
+
+    /**
      * Toggle map extent filter.
      *
      * @function setMapExtent
@@ -235,6 +295,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
         queryParams,
         resultsVisible,
         searchVal,
+        searchRegex,
         lastSearchVal,
         searchResults,
         savedResults,
@@ -247,6 +308,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
         setProvince,
         setType,
         setSearchTerm,
+        setSearchRegex,
         setMapExtent
     };
 });
