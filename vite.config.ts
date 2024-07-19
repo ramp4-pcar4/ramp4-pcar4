@@ -43,7 +43,7 @@ const baseConfig = {
         }
     },
     server: {
-        open: '/demos/index-samples.html',
+        open: '/demos/enhanced-samples.html',
         https: true
     }
 } as Record<string, any>;
@@ -117,6 +117,8 @@ function testBuildConfig() {
                     multi: '/index-multi.html',
                     e2e: '/index-e2e.html',
                     wet: '/index-wet.html',
+                    enhancedSamples: '/enhanced-samples.html',
+                    enhancedAll: '/enhanced-all.html',
                     samples: '/index-samples.html',
                     all: '/index-all.html',
                     form: '/index-form.html',
