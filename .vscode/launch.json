@@ -5,7 +5,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome",
-            "url": "https://localhost:5173/demos/index-samples.html", // If your vite server launches at 127.0.0.1, update the url to 127.0.0.1:5173.
+            "url": "https://localhost:5173/demos/enhanced-samples.html", // If your vite server launches at 127.0.0.1, update the url to 127.0.0.1:5173.
             "webRoot": "${workspaceFolder}/src",
             "sourceMapPathOverrides": {
                 "webpack:///src/*": "$(webRoot)/*"
