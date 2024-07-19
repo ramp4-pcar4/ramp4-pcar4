@@ -44,8 +44,8 @@ npm ci
 ```sh
 npm run dev
 ```
-
-Open `https://localhost:5173/demos/index-samples.html` in your browser.
+Current Samples: `https://localhost:5173/demos/enhanced-samples.html`.
+Legacy Samples: `https://localhost:5173/demos/index-samples.html`.
 
 #### Serve via `http`
 
@@ -123,6 +123,6 @@ During build, the `public` folder contents are placed into the `dist` folder.
 
 ### Demo Builds
 
-The demos of the most recent build are available at https://ramp4-pcar4.github.io/ramp4-pcar4/main/demos/index-all.html.
+The demos of the most recent build are available at https://ramp4-pcar4.github.io/ramp4-pcar4/main/demos/enhanced-all.html.
 
 Demo builds are automatically generated for pull requests if you are a member of the [ramp4-pcar4 organization](https://github.com/orgs/ramp4-pcar4/people) and have your visibility set to public.
