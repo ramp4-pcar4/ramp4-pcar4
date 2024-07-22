@@ -920,7 +920,7 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
                 r4layer.fixtures.grid.columns = [];
                 r2layer.table.columns.forEach((r2tableColumn: any) => {
                     const r4tableColumn: any = {
-                        name: r2tableColumn.data
+                        field: r2tableColumn.data
                     };
                     if (r2tableColumn.title) {
                         r4tableColumn.title = r2tableColumn.title;
