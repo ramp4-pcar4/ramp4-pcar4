@@ -69,7 +69,11 @@ export class DetailsAPI extends FixtureInstance {
      * @memberof DetailsAPI
      */
     toggleFeature(
-        featureData: { data: any; uid: string; format: IdentifyResultFormat },
+        featureData: {
+            data: any;
+            uid: string;
+            format: IdentifyResultFormat;
+        },
         open: boolean | undefined
     ): void {
         const panel = this.$iApi.panel.get('details-panel');
@@ -104,6 +108,9 @@ export class DetailsAPI extends FixtureInstance {
         }
 
         // at this point, we are showing the payload
+
+        // Indicate this request for the details panel comes from a grid item
+        this.detailsStore.origin = 'grid';
 
         this.detailsStore.currentFeatureId = currFeatureId;
 

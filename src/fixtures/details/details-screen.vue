@@ -1,7 +1,12 @@
 <template>
     <panel-screen :panel="panel">
         <template #header>
-            {{ t('details.layers.title') }}
+            {{
+                // Show different titles based on what requested the panel
+                detailsStore.origin === 'grid'
+                    ? t('details.layers.title.gridOrigin')
+                    : t('details.layers.title.identifyOrigin')
+            }}
         </template>
 
         <template #content>
@@ -29,7 +34,11 @@
                         ]"
                         v-else
                     >
-                        {{ t('details.layers.results.empty') }}
+                        {{
+                            layerResults.length >= 1
+                                ? t('details.layers.results.empty')
+                                : t('details.layers.results.empty.noLayers')
+                        }}
                     </div>
                 </div>
             </div>

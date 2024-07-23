@@ -45,6 +45,7 @@ import { MapCaptionAPI } from './caption';
 import { markRaw, toRaw } from 'vue';
 import { useConfigStore } from '@/stores/config';
 import { debounce, throttle } from 'throttle-debounce';
+import { useDetailsStore } from '@/fixtures/details/store';
 
 export class MapAPI extends CommonMapAPI {
     // API for managing the maptip
@@ -1256,6 +1257,9 @@ export class MapAPI extends CommonMapAPI {
         const layers = this.$iApi.geo.layer
             .allLayersOnMap(false)
             .filter(l => l.canIdentify());
+
+        // Indicate this request for the details panel comes from clicking on the map
+        useDetailsStore().origin = 'identify';
 
         let mapClick: MapClick;
         if (targetPoint instanceof Point) {
