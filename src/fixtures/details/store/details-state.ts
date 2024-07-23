@@ -2,6 +2,13 @@ import type { PanelWidthObject } from '@/api';
 
 export type DetailsItemSet = { [name: string]: DetailsItemInstance };
 
+/**
+ * Types of requests for the details panel. Currently, consists of requests
+ * from the toggle events, such as the grid (details for a single item) and 
+ * requests from a map click (details for all items at a point).
+ */
+export type DetailsRequestOrigin = 'toggleEvent' | 'identify';
+
 export interface DetailsConfig {
     /**
      * The dictionary of default templates indexed by identify result format with value as the template component id.
