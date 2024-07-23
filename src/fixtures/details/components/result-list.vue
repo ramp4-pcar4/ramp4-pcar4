@@ -8,6 +8,8 @@
         <h1
             class="layerName w-full flex-grow p-5 pb-8 font-bold truncate"
             v-if="layerExists"
+            v-truncate="{ options: { placement: 'top-start' } }"
+            v-focus-list
         >
             {{ layerName }}
         </h1>
@@ -117,8 +119,8 @@
                     v-else
                 ></ResultItem>
             </div>
-            <div class="ml-42 text-center" v-else>
-                {{ t('details.layers.results.empty') }}
+            <div class="text-center" v-else>
+                {{ t('details.layers.results.empty.currentLayer') }}
             </div>
         </div>
         <!-- layer does not exist anymore, show no data text -->
