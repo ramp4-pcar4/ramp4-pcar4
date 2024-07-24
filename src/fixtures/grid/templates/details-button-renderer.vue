@@ -66,6 +66,7 @@ const openDetails = async () => {
 
     // grid only supports esri features at the moment, so we hardcode that format.
     // use force-open flag.
+
     iApi.event.emit(
         GlobalEvents.DETAILS_TOGGLE,
         {
