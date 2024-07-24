@@ -555,23 +555,32 @@ export class FileUtils extends APIScope {
         configPackage.geometryType =
             this.$iApi.geo.geom.geoJsonGeomTypeToEsriGeomType(geoJsonGeomType);
 
-        // set proper SR on the geometeries
+        const validFields = configPackage.fields.map(
+            esriField => esriField.name
+        );
+
+        // set proper SR on the geometeries, remove any excluded attribute fields
         for (let i = 0; i < esriJson.length; i++) {
             const gr = esriJson[i];
             gr.geometry.spatialReference = fancySR;
             gr.geometry.type = configPackage.geometryType;
 
-            // TEMPORARY hunt any complex datatypes and replace with a string
-            // TODO figure out how to actually handle arrays or objects as attribute values
             Object.keys(gr.attributes).forEach(attName => {
-                if (
-                    (Array.isArray(gr.attributes[attName]) ||
-                        typeof gr.attributes[attName] === 'object') &&
-                    gr.attributes[attName] != null
-                ) {
-                    gr.attributes[attName] = JSON.stringify(
-                        gr.attributes[attName]
-                    );
+                if (validFields.includes(attName)) {
+                    // TEMPORARY hunt any complex datatypes and replace with a string
+                    // TODO figure out how to actually handle arrays or objects as attribute values
+                    if (
+                        (Array.isArray(gr.attributes[attName]) ||
+                            typeof gr.attributes[attName] === 'object') &&
+                        gr.attributes[attName] != null
+                    ) {
+                        gr.attributes[attName] = JSON.stringify(
+                            gr.attributes[attName]
+                        );
+                    }
+                } else {
+                    // field was excluded, remove it
+                    delete gr.attributes[attName];
                 }
             });
         }
