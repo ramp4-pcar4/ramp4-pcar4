@@ -248,11 +248,29 @@ export class ExportAPI extends FixtureInstance {
 
         if (selectedState.footnote && exportFootnoteFixture) {
             fbFootnote = await exportFootnoteFixture.make({
-                top: this.options.runningHeight,
+                top: this.options.runningHeight - 2.5, // Magic number prevents weird vertical offset between timestamp/footer
                 left: panelWidth / this.options.scale + 40
             });
 
-            fbFootnote.left! += -fbFootnote.width! * 2;
+            // Extra width to prevent slight overlaps between timestamp and footnote
+            const BUFFER = 30;
+
+            // Detect if the footnote overlaps with the timestamp
+            // If they overlap, put footnote on next line; else keep side-by-side
+            if (
+                panelWidth -
+                    (
+                        selectedFabricObjects.timestamp as fabric.Textbox
+                    ).getMinWidth() <=
+                (fbFootnote as fabric.Textbox).getMinWidth() + BUFFER
+            ) {
+                fbFootnote.top! += 40;
+                fbFootnote.left! = 0;
+                fbFootnote.originX! = 'left';
+                this.options.runningHeight += 20;
+            } else {
+                fbFootnote.left! += -fbFootnote.width! * 2;
+            }
 
             this.options.runningHeight += fbFootnote.height! + 20;
             selectedFabricObjects.footnote = fbFootnote;
