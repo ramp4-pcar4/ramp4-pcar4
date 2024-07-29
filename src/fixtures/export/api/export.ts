@@ -239,16 +239,20 @@ export class ExportAPI extends FixtureInstance {
 
         if (selectedState.timestamp && exportTimestampFixture) {
             fbTimestamp = await exportTimestampFixture.make({
-                top: this.options.runningHeight + 20,
+                top: this.options.runningHeight + 40,
                 width: panelWidth
             });
-            this.options.runningHeight += fbTimestamp.height!;
+
+            this.options.runningHeight +=
+                !selectedState.footnote || !exportFootnoteFixture
+                    ? fbTimestamp.height! + 40
+                    : fbTimestamp.height! + 20;
             selectedFabricObjects.timestamp = fbTimestamp;
         }
 
         if (selectedState.footnote && exportFootnoteFixture) {
             fbFootnote = await exportFootnoteFixture.make({
-                top: this.options.runningHeight - 2.5, // Magic number prevents weird vertical offset between timestamp/footer
+                top: this.options.runningHeight - 2.5, // Magic number 2.5 prevents weird vertical offset between timestamp/footer
                 left: panelWidth / this.options.scale + 40
             });
 
@@ -258,21 +262,30 @@ export class ExportAPI extends FixtureInstance {
             // Detect if the footnote overlaps with the timestamp
             // If they overlap, put footnote on next line; else keep side-by-side
             if (
+                selectedState.timestamp &&
+                exportTimestampFixture &&
                 panelWidth -
                     (
                         selectedFabricObjects.timestamp as fabric.Textbox
                     ).getMinWidth() <=
-                (fbFootnote as fabric.Textbox).getMinWidth() + BUFFER
+                    (fbFootnote as fabric.Textbox).getMinWidth() + BUFFER
             ) {
-                fbFootnote.top! += 40;
                 fbFootnote.left! = 0;
                 fbFootnote.originX! = 'left';
                 this.options.runningHeight += 20;
-            } else {
+            } else if (selectedState.timestamp && exportTimestampFixture) {
+                // CASE: Both timestamp and footnote exist, but they don't overlap
+
                 fbFootnote.left! += -fbFootnote.width! * 2;
+            } else {
+                // CASE: Timestamp doesn't exist
+
+                fbFootnote.top! += 20;
+                fbFootnote.left! += -fbFootnote.width! * 2;
+                this.options.runningHeight += 20;
             }
 
-            this.options.runningHeight += fbFootnote.height! + 20;
+            this.options.runningHeight += fbFootnote.height!;
             selectedFabricObjects.footnote = fbFootnote;
         }
 
