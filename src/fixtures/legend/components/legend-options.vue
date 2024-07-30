@@ -25,8 +25,9 @@
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
-                        !legendItem!.layerControlAvailable(LayerControl.Metadata) ||
-                        !getFixtureExists('metadata')
+                        !legendItem!.layerControlAvailable(
+                            LayerControl.Metadata
+                        ) || !getFixtureExists('metadata')
                 }"
                 @click="toggleMetadata"
                 role="button"
@@ -48,8 +49,9 @@
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
-                        !legendItem!.layerControlAvailable(LayerControl.Settings) ||
-                        !getFixtureExists('settings')
+                        !legendItem!.layerControlAvailable(
+                            LayerControl.Settings
+                        ) || !getFixtureExists('settings')
                 }"
                 @click="toggleSettings"
                 role="button"
@@ -73,8 +75,9 @@
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
                     disabled:
-                        !legendItem!.layerControlAvailable(LayerControl.Datatable) ||
-                        !getFixtureExists('grid')
+                        !legendItem!.layerControlAvailable(
+                            LayerControl.Datatable
+                        ) || !getFixtureExists('grid')
                 }"
                 @click="toggleGrid"
                 role="button"
@@ -95,7 +98,9 @@
                 href="javascript:;"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem!.layerControlAvailable(LayerControl.Symbology)
+                    disabled: !legendItem!.layerControlAvailable(
+                        LayerControl.Symbology
+                    )
                 }"
                 @click="toggleSymbology"
                 role="button"
@@ -116,7 +121,9 @@
                 href="javascript:;"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem!.layerControlAvailable(LayerControl.BoundaryZoom)
+                    disabled: !legendItem!.layerControlAvailable(
+                        LayerControl.BoundaryZoom
+                    )
                 }"
                 @click="zoomToLayerBoundary"
                 role="button"
@@ -139,7 +146,9 @@
                 href="javascript:;"
                 class="flex leading-snug items-center text-left w-auto"
                 :class="{
-                    disabled: !legendItem!.layerControlAvailable(LayerControl.Remove)
+                    disabled: !legendItem!.layerControlAvailable(
+                        LayerControl.Remove
+                    )
                 }"
                 @click="removeLayer"
                 role="button"

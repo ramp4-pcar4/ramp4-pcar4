@@ -131,6 +131,15 @@ const itemData = () => {
         }
     });
 
+    for (const [key] of Object.entries(displayMetadata)) {
+        // only replace html special chars if string represents plain text
+        if (iApi!.ui.isPlainText(displayMetadata[key].value)) {
+            displayMetadata[key].value = iApi!.ui.escapeHtml(
+                displayMetadata[key].value
+            );
+        }
+    }
+
     return displayMetadata;
 };
 
