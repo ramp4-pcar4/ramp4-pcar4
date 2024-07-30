@@ -215,6 +215,47 @@ const activeGreedy = computed<number>(() => detailsStore.activeGreedy);
 const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(
     () => detailsStore.properties
 );
+
+/**
+ * Return the string with all special html chars replaced by their corresponding entities
+ */
+const escapeHtml = (content: string) => {
+    const specialChars = {
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    // @ts-ignore
+    return content.replace(/[<>"']/g, m => specialChars[m]);
+};
+
+/**
+ * Return whether the string contains valid html content (i.e. a html element with opening and closing tags)
+ */
+const containsValidHtml = (content: string) => {
+    // Define a regular expression to match HTML elements with both opening and closing tags
+    const tagPattern = /<(\w+)([^>]*)>(.*?)<\/\1>/;
+
+    // Test if the string contains at least one valid HTML element
+    return tagPattern.test(content);
+};
+
+/**
+ * Return whether the string represents an object or array
+ */
+const representsObject = (content: string) => {
+    const tagPattern = /^(?:\[\s*(?:[\s\S]*?)\s*\]|\{\s*(?:[\s\S]*?)\s*\})$/;
+    return tagPattern.test(content);
+};
+
+/**
+ * Return whether the string should be interpreted as plain text
+ */
+const isPlainText = (content: string) => {
+    return !containsValidHtml(content) && !representsObject(content);
+};
+
 /**
  * Return the LayerInstance that cooresponds with the UID provided in props.
  */
@@ -257,10 +298,30 @@ const layerName = computed<string>(() => {
  * If there are no results, returns an empty array.
  */
 const getLayerIdentifyItems = () => {
+    // for each data item, access the data key, then check if there is a 'name'/'nom' key within it. if so,
+    // call escapeHTML opn it
     const results = props.results.find((layerResult: IdentifyResult) => {
         return layerResult.uid === props.uid;
     });
-    return results ? results.items : [];
+
+    if (results) {
+        for (let i = 0; i < results.items.length; i++) {
+            for (const [key] of Object.entries(results.items[i].data)) {
+                // only replace html special chars if string represents plain text
+                if (
+                    typeof results.items[i].data[key] === 'string' &&
+                    isPlainText(results.items[i].data[key])
+                ) {
+                    results.items[i].data[key] = escapeHtml(
+                        results.items[i].data[key]
+                    );
+                }
+            }
+        }
+        return results.items;
+    }
+
+    return [];
 };
 
 /**

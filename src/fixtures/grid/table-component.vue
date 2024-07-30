@@ -469,6 +469,7 @@ import { debounce } from 'throttle-debounce';
 import type { RowNode } from 'ag-grid-community';
 import { ColumnApi, GridApi } from 'ag-grid-community';
 import { useI18n } from 'vue-i18n';
+import { merge } from 'lodash';
 
 // to prevent lint complaining about regex expressions
 /* eslint no-useless-escape: 0 */
@@ -622,6 +623,43 @@ const systemCols = ref<Set<string>>(new Set<string>());
 // manages fast incoming filter change events. Forces them to finish
 // in order to avoid race conditions
 const filterQueue = ref<Array<DefPromise>>([]);
+
+/**
+ * Return the string with all special html chars replaced by their corresponding entities
+ */
+const escapeHtml = (content: string) => {
+    const specialChars = {
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    // @ts-ignore
+    return content.replace(/[<>"']/g, m => specialChars[m]);
+};
+
+function containsValidHtml(content: string) {
+    // Define a regular expression to match HTML elements with both opening and closing tags
+    const tagPattern = /<(\w+)([^>]*)>(.*?)<\/\1>/;
+
+    // Test if the string contains at least one valid HTML element
+    return tagPattern.test(content);
+}
+
+/**
+ * Return whether the string represents an object or array
+ */
+const representsObject = (content: string) => {
+    const tagPattern = /^(?:\[\s*(?:[\s\S]*?)\s*\]|\{\s*(?:[\s\S]*?)\s*\})$/;
+    return tagPattern.test(content);
+};
+
+/**
+ * Return whether the string should be interpreted as plain text
+ */
+const isPlainText = (content: string) => {
+    return !containsValidHtml(content) && !representsObject(content);
+};
 
 const onGridReady = (params: any) => {
     agGridApi.value = params.api;
@@ -1617,6 +1655,21 @@ const setUpColumns = () => {
                             return row;
                         })
                     );
+                    for (let i = 0; i < mergedTableAttrs.rows.length; i++) {
+                        for (const [key] of Object.entries(
+                            mergedTableAttrs.rows[i]
+                        )) {
+                            if (
+                                typeof mergedTableAttrs.rows[i][key] ===
+                                    'string' &&
+                                isPlainText(mergedTableAttrs.rows[i][key])
+                            ) {
+                                mergedTableAttrs.rows[i][key] = escapeHtml(
+                                    mergedTableAttrs.rows[i][key]
+                                );
+                            }
+                        }
+                    }
 
                     mergedTableAttrs.fields = mergedTableAttrs.fields.concat(
                         ta.fields.map(field => {
@@ -1795,7 +1848,8 @@ const setUpColumns = () => {
                 // the grid is now ready to be displayed
                 isLoadingGrid.value = false;
             })
-            .catch(() => {
+            .catch(e => {
+                console.error(e);
                 isErrorGrid.value = true;
                 isLoadingGrid.value = false;
             });
