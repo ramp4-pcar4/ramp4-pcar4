@@ -91,6 +91,8 @@ export class InstanceAPI {
         formatNumber: (num: number) => string;
         scrollToInstance: boolean;
         suppressNumberLocalization: boolean;
+        escapeHtml: (content: string) => string;
+        isPlainText: (content: string) => boolean;
     };
     startRequired: boolean = false;
 
@@ -130,7 +132,9 @@ export class InstanceAPI {
             getZoomIcon: () => '',
             formatNumber: () => '',
             scrollToInstance: false,
-            suppressNumberLocalization: false
+            suppressNumberLocalization: false,
+            escapeHtml: () => '',
+            isPlainText: () => true
         };
         this.notify = new NotificationAPI(this);
 
@@ -313,6 +317,30 @@ export class InstanceAPI {
                 return this.ui.suppressNumberLocalization
                     ? num.toString()
                     : this.$i18n.n(num, 'number');
+            };
+
+            /**
+             * Return the string with all special html chars replaced by their corresponding entities
+             */
+            this.ui.escapeHtml = (content: string) => {
+                const specialChars = {
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                };
+                // @ts-ignore
+                return content.replace(/[<>"']/g, m => specialChars[m]);
+            };
+
+            /**
+             * Return whether the string should be interpreted as plain text
+             */
+            this.ui.isPlainText = (content: string) => {
+                return (
+                    !this.containsValidHtml(content) &&
+                    !this.representsObject(content)
+                );
             };
         }
 
@@ -697,6 +725,26 @@ export class InstanceAPI {
         } else if (instanceStore.started) {
             console.warn('start has already been called');
         }
+    }
+
+    /**
+     * Return whether the string contains valid html content (i.e. a html element with opening and closing tags)
+     */
+    containsValidHtml(content: string): boolean {
+        // Define a regular expression to match HTML elements with both opening and closing tags
+        const tagPattern = /<(\w+)([^>]*)>(.*?)<\/\1>/;
+
+        // Test if the string contains at least one valid HTML element
+        return tagPattern.test(content);
+    }
+
+    /**
+     * Return whether the string represents an object or array
+     */
+    representsObject(content: string): boolean {
+        const tagPattern =
+            /^(?:\[\s*(?:[\s\S]*?)\s*\]|\{\s*(?:[\s\S]*?)\s*\})$/;
+        return tagPattern.test(content);
     }
 }
 
