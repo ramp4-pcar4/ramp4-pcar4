@@ -217,6 +217,7 @@ const activeGreedy = computed<number>(() => detailsStore.activeGreedy);
 const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(
     () => detailsStore.properties
 );
+
 /**
  * Return the LayerInstance that cooresponds with the UID provided in props.
  */
@@ -262,6 +263,7 @@ const getLayerIdentifyItems = () => {
     const results = props.results.find((layerResult: IdentifyResult) => {
         return layerResult.uid === props.uid;
     });
+
     return results ? results.items : [];
 };
 

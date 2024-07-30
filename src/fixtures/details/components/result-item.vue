@@ -22,8 +22,8 @@
                 class="itemName pl-3 text-left flex-grow truncate"
                 :content="itemName"
                 v-tippy="{ placement: 'right' }"
-                >{{ makeHtmlLink(itemName) }}</span
-            >
+                v-html="makeHtmlLink(itemName)"
+            ></span>
 
             <!-- zoom icon -->
             <span class="zoomButton text-center p-3"
@@ -45,7 +45,12 @@
                         )
                     "
                     ref="zoomButton"
-                    @click="(e: MouseEvent) => { e.stopPropagation(); zoomToFeature() }"
+                    @click="
+                        (e: MouseEvent) => {
+                            e.stopPropagation();
+                            zoomToFeature();
+                        }
+                    "
                     class="text-gray-600 w-24 h-24 p-2 flex justify-center items-center"
                     v-if="isMapLayer"
                 >
@@ -176,9 +181,17 @@ const isMapLayer = computed<Boolean>(() => {
  */
 const itemName = computed<string>(() => {
     const nameField = getLayerInfo()?.nameField;
-    return nameField && props.data.loaded
-        ? props.data.data[nameField]
-        : iApi.$i18n.t('details.items.title');
+    let returnValue =
+        nameField && props.data.loaded
+            ? props.data.data[nameField]
+            : iApi.$i18n.t('details.items.title');
+
+    // only replace html special chars if string represents plain text
+    if (iApi!.ui.isPlainText(returnValue)) {
+        returnValue = iApi!.ui.escapeHtml(returnValue);
+    }
+
+    return returnValue;
 });
 
 // make links look like links and work like links
