@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia';
-import type { DetailsItemInstance } from './details-state';
+import type {
+    DetailsItemInstance,
+    DetailsRequestOrigin
+} from './details-state';
 import type { IdentifyResult, LayerInstance } from '@/api';
 import { ref } from 'vue';
 
@@ -44,6 +47,11 @@ export const useDetailsStore = defineStore('details', () => {
      */
     const hilightToggle = ref<boolean>(true);
 
+    /**
+     * The source of the last details panel opening call. Can be 'grid' or 'identify'.
+     */
+    const origin = ref<DetailsRequestOrigin>();
+
     function removeLayer(layer: LayerInstance) {
         // check if this layer's results are in the payload
         const idx = payload.value.findIndex(res => res.uid === layer.uid);
@@ -66,6 +74,7 @@ export const useDetailsStore = defineStore('details', () => {
         activeGreedy,
         lastHilight,
         hilightToggle,
+        origin,
         removeLayer,
         addConfigProperty
     };

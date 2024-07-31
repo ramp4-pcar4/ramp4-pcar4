@@ -36,6 +36,11 @@ export class DetailsAPI extends FixtureInstance {
         // Save the provided identify result in the store.
         this.detailsStore.payload = payload;
 
+        const panel = this.$iApi.panel.get('details-panel');
+        // Indicate this request for the details panel comes from clicking on the map
+        this.detailsStore.origin = 'identify';
+        panel.button.tooltip = 'details.layers.title.identifyOrigin';
+
         // Check to see if each layer has a fixture config in the store.
         payload.forEach(p => {
             const layer: LayerInstance | undefined = (this as any).$iApi
@@ -69,7 +74,11 @@ export class DetailsAPI extends FixtureInstance {
      * @memberof DetailsAPI
      */
     toggleFeature(
-        featureData: { data: any; uid: string; format: IdentifyResultFormat },
+        featureData: {
+            data: any;
+            uid: string;
+            format: IdentifyResultFormat;
+        },
         open: boolean | undefined
     ): void {
         const panel = this.$iApi.panel.get('details-panel');
@@ -104,6 +113,11 @@ export class DetailsAPI extends FixtureInstance {
         }
 
         // at this point, we are showing the payload
+
+        // Indicate this request for the details panel comes from a grid item
+        this.detailsStore.origin = 'toggleEvent';
+
+        panel.button.tooltip = 'details.layers.title.gridOrigin';
 
         this.detailsStore.currentFeatureId = currFeatureId;
 
