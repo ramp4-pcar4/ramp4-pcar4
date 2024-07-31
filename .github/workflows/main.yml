@@ -30,32 +30,32 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                node-version: latest
-                cache: 'npm'
+                  node-version: '22.5.1'
+                  cache: 'npm'
 
             - name: Try to restore node_modules folder from cache
               id: cache-node-modules
               uses: actions/cache@v4
               with:
-                path: ./node_modules
-                key: npm-${{ hashFiles('./package-lock.json') }}
+                  path: ./node_modules
+                  key: npm-${{ hashFiles('./package-lock.json') }}
 
             - name: Otherwise install npm dependencies
               if: steps.cache-node-modules.outputs.cache-hit != 'true'
               run: npm ci
-            
+
             - name: Update package.json version if necessary
               if: startsWith(github.ref, 'refs/tags/v')
               run: |
-                TAG_VERSION=${GITHUB_REF#refs/tags/v}
-                PACKAGE_VERSION=$(node -p "require('./package.json').version")
-                if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
-                    npm version --allow-same-version --no-git-tag-version $TAG_VERSION
-                    echo "::warning::Tag version ($TAG_VERSION) did not match package.json version ($PACKAGE_VERSION). Updated package.json to $TAG_VERSION."
-                else
-                    echo "::info::Tag version ($TAG_VERSION) matches package.json version ($PACKAGE_VERSION)."
-                fi
-  
+                  TAG_VERSION=${GITHUB_REF#refs/tags/v}
+                  PACKAGE_VERSION=$(node -p "require('./package.json').version")
+                  if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
+                      npm version --allow-same-version --no-git-tag-version $TAG_VERSION
+                      echo "::warning::Tag version ($TAG_VERSION) did not match package.json version ($PACKAGE_VERSION). Updated package.json to $TAG_VERSION."
+                  else
+                      echo "::info::Tag version ($TAG_VERSION) matches package.json version ($PACKAGE_VERSION)."
+                  fi
+
             - name: Build the files!
               run: npm run build
               env:
