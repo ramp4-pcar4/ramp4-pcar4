@@ -219,7 +219,7 @@ export class FileLayer extends AttribLayer {
             this.origRampConfig.fieldMetadata
         );
 
-        this.attribs.attLoader.updateFieldList(this.fieldList);
+        this.attribs.attLoader.updateFieldsToTrim(this.getFieldsToTrim());
 
         this.featureCount = this.esriLayer?.source.length || 0;
 
@@ -426,7 +426,8 @@ export class FileLayer extends AttribLayer {
             sourceGraphics: l.source,
             oidField: this.oidField,
             attribs: '*', // * as default. layer loader may update after processing config overrides
-            batchSize: -1
+            batchSize: -1,
+            fieldsToTrim: [] // fields already trimmed at layer initiation
         };
         this.attribs.attLoader = new FileLayerAttributeLoader(
             this.$iApi,

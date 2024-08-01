@@ -266,7 +266,7 @@ let config = {
                     layerType: 'esri-feature',
                     url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/6',
                     fieldMetadata: {
-                        fieldInfo: [{ name: 'Name' }, { name: 'Description' }],
+                        fieldInfo: [{ name: 'Name', trim: true }, { name: 'Description', }],
                         exclusiveFields: true
                     }
                 },

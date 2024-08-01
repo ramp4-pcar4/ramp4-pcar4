@@ -389,6 +389,7 @@ export class MapImageLayer extends MapLayer {
                     if (miSL.supportsFeatures) {
                         // ensure our massaged field lists get updated inside the sublayer
                         miSL.updateFieldList();
+                        miSL.updateFieldsToTrim();
 
                         // return request promise to get feature count (will block loaded event)
                         return this.$iApi.geo.layer
