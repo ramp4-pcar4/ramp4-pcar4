@@ -586,6 +586,25 @@ export class FileUtils extends APIScope {
             });
         }
 
+        // Determine which fields to trim
+        const trimFields =
+            options.fieldMetadata?.fieldInfo &&
+            options.fieldMetadata?.fieldInfo.length > 0
+                ? options.fieldMetadata.fieldInfo
+                      .filter(fi => fi.trim && validFields.includes(fi.name))
+                      .map(fi => fi.name)
+                : [];
+
+        // Trim the field string values
+        trimFields.forEach(trimName => {
+            for (let i = 0; i < esriJson.length; i++) {
+                const attr = esriJson[i].attributes;
+                if (typeof attr[trimName] === 'string') {
+                    attr[trimName] = attr[trimName].trim();
+                }
+            }
+        });
+
         configPackage.source = <any>esriJson;
         configPackage.spatialReference = fancySR;
         configPackage.id = layerId;
