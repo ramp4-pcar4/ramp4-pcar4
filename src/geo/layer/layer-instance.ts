@@ -108,6 +108,11 @@ export class LayerInstance extends APIScope {
     supportsFeatures: boolean;
 
     /**
+     * Which feature attributes should be trimmed.
+     */
+    attributesToTrim: Array<string>;
+
+    /**
      * If the layer type can exist on the map
      */
     mapLayer: boolean;
@@ -265,6 +270,7 @@ export class LayerInstance extends APIScope {
         this.supportsIdentify = false; // this is updated by subclasses as they will know the real deal.
         this.identifyMode = LayerIdentifyMode.NONE;
         this.supportsFeatures = false;
+        this.attributesToTrim = [''];
         this.mapLayer = true;
         this.featureCount = 0;
         this.fields = [];

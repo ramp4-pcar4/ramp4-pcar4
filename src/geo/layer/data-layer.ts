@@ -149,7 +149,8 @@ export class DataLayer extends CommonLayer {
             };
             this.attribs.attLoader = new DataLayerAttributeLoader(
                 this.$iApi,
-                loadData
+                loadData,
+                this
             );
 
             // trigger the attribute load. this will be synchronous, but is a promise to meet convention.

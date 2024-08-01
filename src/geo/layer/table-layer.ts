@@ -103,7 +103,8 @@ export class TableLayer extends DataLayer {
                 };
                 this.attribs.attLoader = new ArcServerAttributeLoader(
                     this.$iApi,
-                    loadData
+                    loadData,
+                    this
                 );
                 this.attribs.quickCache = new QuickCache(this.geomType);
             });
@@ -155,7 +156,8 @@ export class TableLayer extends DataLayer {
             };
 
             const webFeat = await this.$iApi.geo.attributes.loadSingleFeature(
-                serviceParams
+                serviceParams,
+                this
             );
 
             this.attribs.quickCache.setAttribs(objectId, webFeat.attributes);
