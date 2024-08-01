@@ -55,10 +55,12 @@ export class AttributeAPI extends APIScope {
      *
      * @param details defines the parameters for what to load
      * @param controller the controller which provides asyncronous hooks into the load, including loaded count and ability to abort
+     * @param layer the current layer instance
      */
     private async arcGisBatchLoad(
         details: AttributeLoaderDetails,
-        controller: AsynchAttribController
+        controller: AsynchAttribController,
+        layer: LayerInstance
     ): Promise<Array<any>> {
         if (controller.loadAbortFlag) {
             // stop that stop that
@@ -107,7 +109,28 @@ export class AttributeAPI extends APIScope {
             );
         }
 
-        const feats: Array<any> = serviceResult.data.features;
+        let feats: Array<any> = serviceResult.data.features;
+
+        // FOR TESTING, WILL BE REMOVED
+        // Add some spaces at beginning and end of all string attributes
+        feats = feats.map(feat => {
+            feat.attributes = Object.fromEntries(
+                Object.entries(feat.attributes).map(attr => {
+                    if (typeof attr[1] === 'string') {
+                        attr[1] = '   ' + attr[1] + '   ';
+                    }
+
+                    return [attr[0], attr[1]];
+                })
+            ) as Attributes;
+
+            return feat;
+        });
+
+        // FOR TESTING, WILL BE REMOVED
+        let originalFeats = JSON.parse(JSON.stringify(feats));
+        console.log('FEATURE ATTRIBUTES BEFORE', originalFeats);
+
         const len = feats.length;
 
         if (len > 0) {
@@ -129,9 +152,17 @@ export class AttributeAPI extends APIScope {
                 // max id becomes last object id in the current batch
 
                 details.maxId = feats[len - 1].attributes[details.oidField];
+
+                // Trim values in current batch
+                feats = this.trimFeatureSetAttributes(
+                    feats,
+                    layer.attributesToTrim
+                );
+
                 const futureFeats = await this.arcGisBatchLoad(
                     details,
-                    controller
+                    controller,
+                    layer
                 );
                 // take our current batch, append on everything the recursive call loaded, and return
                 // return empty list if aborted
@@ -139,8 +170,18 @@ export class AttributeAPI extends APIScope {
                     ? []
                     : feats.concat(futureFeats);
             } else {
+                // Trim this lonely batch
+                feats = this.trimFeatureSetAttributes(
+                    feats,
+                    layer.attributesToTrim
+                );
+
                 // done thanks
                 // return empty list if aborted
+
+                // FOR TESTING, WILL BE REMOVED
+                console.log('FEATURE ATTRIBUTES AFTER', feats);
+
                 return controller.loadAbortFlag ? [] : feats;
             }
         } else {
@@ -154,17 +195,20 @@ export class AttributeAPI extends APIScope {
      *
      * @param details defines the parameters for what to load
      * @param controller the controller which provides asyncronous hooks into the load, including loaded count and ability to abort
+     * @param layer the current layer instance
      */
     async loadArcGisServerAttributes(
         details: AttributeLoaderDetails,
-        controller: AsynchAttribController
+        controller: AsynchAttribController,
+        layer: LayerInstance
     ): Promise<AttributeSet> {
         details.maxId = -1;
         details.batchSize = -1;
 
         const serverResult: Array<any> = await this.arcGisBatchLoad(
             details,
-            controller
+            controller,
+            layer
         );
 
         // hoist the attributes from the .attributes property
@@ -185,10 +229,12 @@ export class AttributeAPI extends APIScope {
      *
      * @param details defines the parameters for what to load
      * @param controller the controller which provides asyncronous hooks into the load, including loaded count and ability to abort
+     * @param layer the current layer instance
      */
     async loadGraphicsAttributes(
         details: AttributeLoaderDetails,
-        controller: AsynchAttribController
+        controller: AsynchAttribController,
+        layer: LayerInstance
     ): Promise<AttributeSet> {
         if (!details.sourceGraphics) {
             throw new Error(
@@ -223,10 +269,36 @@ export class AttributeAPI extends APIScope {
             }
         );
 
+        let attributes = pluckedAttributes.toArray();
+
+        // FOR TESTING, WILL BE REMOVED
+        attributes = attributes.map(feat => {
+            const attributes = feat;
+
+            const trimmedAttributes = Object.entries(attributes).map(attr => {
+                if (typeof attr[1] === 'string') {
+                    attr[1] = '     ' + attr[1] + '     ';
+                }
+
+                return [attr[0], attr[1]];
+            });
+
+            feat = Object.fromEntries(trimmedAttributes) as Attributes;
+
+            return feat;
+        });
+
+        console.log('BEFORE', attributes);
         const attSet: AttributeSet = {
-            features: pluckedAttributes.toArray(),
+            features: this.trimFeatureSetAttributes(
+                attributes,
+                layer.attributesToTrim
+            ),
             oidIndex: {}
         };
+
+        console.log('AFTER', attSet.features);
+
         this.oidIndexer(attSet, details.oidField);
 
         controller.loadIsDone = true;
@@ -241,10 +313,12 @@ export class AttributeAPI extends APIScope {
      *
      * @param details defines the parameters for what to load
      * @param controller the controller which provides asyncronous hooks into the load, including loaded count and ability to abort
+     * @param layer the current layer instance
      */
     async loadCompactJsonAttributes(
         details: AttributeLoaderDetails,
-        controller: AsynchAttribController
+        controller: AsynchAttribController,
+        layer: LayerInstance
     ): Promise<AttributeSet> {
         if (!details.sourceDataJson) {
             throw new Error(
@@ -259,7 +333,12 @@ export class AttributeAPI extends APIScope {
             details.sourceDataJson.data.map(attRow => {
                 const attNugget: any = {};
                 attRow.forEach((val: any, i: number) => {
-                    attNugget[fields[i]] = val;
+                    // Can just trim the values directly here
+                    attNugget[fields[i]] =
+                        typeof val === 'string' &&
+                        layer.attributesToTrim.includes(fields[i])
+                            ? val.trim()
+                            : val;
                 });
 
                 return attNugget;
@@ -286,7 +365,8 @@ export class AttributeAPI extends APIScope {
     }
 
     async loadSingleFeature(
-        details: GetGraphicServiceDetails
+        details: GetGraphicServiceDetails,
+        layer: LayerInstance
     ): Promise<Graphic> {
         const params: __esri.RequestOptions = {
             query: {
@@ -341,8 +421,13 @@ export class AttributeAPI extends APIScope {
 
         const feats: Array<any> = serviceResult.data.features;
         if (feats.length > 0) {
-            const feat = feats[0];
+            let feat = feats[0];
             let geom: BaseGeometry;
+
+            feat = this.trimFeatureSetAttributes(
+                [feat],
+                layer.attributesToTrim
+            )[0];
 
             if (details.includeGeometry) {
                 // server result omits spatial reference
@@ -364,6 +449,45 @@ export class AttributeAPI extends APIScope {
                 `Could not locate feature ${details.oid} for layer ${details.serviceUrl}`
             )
         );
+    }
+
+    /**
+     * Trims the desired attribute values for a feature set's attribute groups.
+     * @param features The featureset to be trimmed.
+     * @param attributesToTrim Array of string names of the attributes to be trimmed.
+     * @returns The featureset, trimmed.
+     */
+    trimFeatureSetAttributes(
+        features: Array<any>,
+        attributesToTrim: Array<string>
+    ): Array<any> {
+        const trimmedFeatures = features.map(feat => {
+            // Different layer types have different featureset object shapes
+            // E.g. OGC WFS layers don't have the 'attributes' object labelled as such
+            const attributes = feat.attributes ?? feat;
+
+            const trimmedAttributes = Object.entries(attributes).map(attr => {
+                if (
+                    typeof attr[1] === 'string' &&
+                    attributesToTrim.includes(attr[0])
+                ) {
+                    return [attr[0], attr[1].trim()];
+                }
+
+                return [attr[0], attr[1]];
+            });
+
+            if (feat.attributes) {
+                feat.attributes = Object.fromEntries(
+                    trimmedAttributes
+                ) as Attributes;
+            } else {
+                feat = Object.fromEntries(trimmedAttributes) as Attributes;
+            }
+            return feat;
+        });
+
+        return trimmedFeatures;
     }
 
     /**
@@ -433,6 +557,11 @@ export class AttributeAPI extends APIScope {
             layer.fieldList = '*';
             return;
         }
+
+        // List of properties that should be trimmed (have trim = true)
+        layer.attributesToTrim = fieldMetadata.fieldInfo
+            .filter(elem => elem.trim)
+            .map(elem => elem.name);
 
         // if order enforced, order the fields first before doing exclusive fields check
         if (
@@ -739,12 +868,18 @@ export class AttributeLoaderBase extends APIScope {
     protected aac: AsynchAttribController;
     protected loadPromise: Promise<AttributeSet> | undefined;
     protected details: AttributeLoaderDetails;
+    protected layer: LayerInstance;
     tabularAttributesCache: Promise<TabularAttributeSet> | undefined;
 
-    protected constructor(iApi: InstanceAPI, details: AttributeLoaderDetails) {
+    protected constructor(
+        iApi: InstanceAPI,
+        details: AttributeLoaderDetails,
+        layer: LayerInstance
+    ) {
         super(iApi);
         this.aac = new AsynchAttribController();
         this.details = details;
+        this.layer = layer;
     }
 
     /**
@@ -815,14 +950,19 @@ export class AttributeLoaderBase extends APIScope {
  * @internal
  */
 export class ArcServerAttributeLoader extends AttributeLoaderBase {
-    constructor(iApi: InstanceAPI, details: AttributeLoaderDetails) {
-        super(iApi, details);
+    constructor(
+        iApi: InstanceAPI,
+        details: AttributeLoaderDetails,
+        layer: LayerInstance
+    ) {
+        super(iApi, details, layer);
     }
 
     protected loadPromiseGenerator(): Promise<AttributeSet> {
         return this.$iApi.geo.attributes.loadArcGisServerAttributes(
             this.details,
-            this.aac
+            this.aac,
+            this.layer
         );
     }
 }
@@ -833,14 +973,19 @@ export class ArcServerAttributeLoader extends AttributeLoaderBase {
  * @internal
  */
 export class FileLayerAttributeLoader extends AttributeLoaderBase {
-    constructor(iApi: InstanceAPI, details: AttributeLoaderDetails) {
-        super(iApi, details);
+    constructor(
+        iApi: InstanceAPI,
+        details: AttributeLoaderDetails,
+        layer: LayerInstance
+    ) {
+        super(iApi, details, layer);
     }
 
     protected loadPromiseGenerator(): Promise<AttributeSet> {
         return this.$iApi.geo.attributes.loadGraphicsAttributes(
             this.details,
-            this.aac
+            this.aac,
+            this.layer
         );
     }
 }
@@ -851,14 +996,19 @@ export class FileLayerAttributeLoader extends AttributeLoaderBase {
  * @internal
  */
 export class DataLayerAttributeLoader extends AttributeLoaderBase {
-    constructor(iApi: InstanceAPI, details: AttributeLoaderDetails) {
-        super(iApi, details);
+    constructor(
+        iApi: InstanceAPI,
+        details: AttributeLoaderDetails,
+        layer: LayerInstance
+    ) {
+        super(iApi, details, layer);
     }
 
     protected loadPromiseGenerator(): Promise<AttributeSet> {
         return this.$iApi.geo.attributes.loadCompactJsonAttributes(
             this.details,
-            this.aac
+            this.aac,
+            this.layer
         );
     }
 }

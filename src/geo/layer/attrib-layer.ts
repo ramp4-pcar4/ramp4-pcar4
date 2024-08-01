@@ -181,7 +181,8 @@ export class AttribLayer extends MapLayer {
             };
             this.attribs.attLoader = new ArcServerAttributeLoader(
                 this.$iApi,
-                loadData
+                loadData,
+                this
             );
 
             /* See https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-FeatureLayer.html#title
@@ -374,7 +375,7 @@ export class AttribLayer extends MapLayer {
             }
 
             const webFeat = await this.$iApi.geo.attributes.loadSingleFeature(
-                serviceParams
+                serviceParams, this
             );
             if (needWebGeom) {
                 // save our result in the cache
