@@ -145,7 +145,8 @@ export class DataLayer extends CommonLayer {
                 batchSize: -1, // mandatory to avoid easy bugs in server process; not used here
                 sourceDataJson: realJson,
                 oidField: this.oidField,
-                attribs: '*' // even required?
+                attribs: '*', // even required?
+                fieldsToTrim: this.getFieldsToTrim()
             };
             this.attribs.attLoader = new DataLayerAttributeLoader(
                 this.$iApi,

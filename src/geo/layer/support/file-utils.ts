@@ -585,6 +585,46 @@ export class FileUtils extends APIScope {
             });
         }
 
+        // FOR TESTING, WILL BE REMOVED
+        for (let i = 0; i < esriJson.length; i++) {
+            const attr = esriJson[i].attributes;
+
+            Object.keys(attr).forEach(trimName => {
+                if (typeof attr[trimName] === 'string') {
+                    attr[trimName] = '    ' + attr[trimName] + '     ';
+                }
+            });
+        }
+        console.log(
+            'FILE-BASED BEFORE TRIM:',
+            JSON.parse(JSON.stringify(esriJson))
+        );
+
+        // Determine which fields to trim
+        const trimFields =
+            options.fieldMetadata?.fieldInfo &&
+            options.fieldMetadata?.fieldInfo.length > 0
+                ? options.fieldMetadata.fieldInfo
+                      .filter(fi => fi.trim && validFields.includes(fi.name))
+                      .map(fi => fi.name)
+                : [];
+
+        // Trim the field string values
+        trimFields.forEach(trimName => {
+            for (let i = 0; i < esriJson.length; i++) {
+                const attr = esriJson[i].attributes;
+                if (typeof attr[trimName] === 'string') {
+                    attr[trimName] = attr[trimName].trim();
+                }
+            }
+        });
+
+        // FOR TESTING, WILL BE REMOVED
+        console.log(
+            'FILE-BASED AFTER TRIM:',
+            JSON.parse(JSON.stringify(esriJson))
+        );
+
         configPackage.source = <any>esriJson;
         configPackage.spatialReference = fancySR;
         configPackage.id = layerId;
