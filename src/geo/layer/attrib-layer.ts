@@ -260,6 +260,18 @@ export class AttribLayer extends MapLayer {
     }
 
     /**
+     * Gets the fields whose values should be trimmed.
+     * @returns An array containing the field names.
+     */
+    getFieldsToTrim(): Array<string> {
+        return this.fields
+            .filter(field => {
+                return field.trim;
+            })
+            .map(field => field.name);
+    }
+
+    /**
      * Invokes the process to get the full set of attribute values for the layer,
      * formatted in a tabular format. Additional data properties are also included.
      * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
@@ -363,7 +375,8 @@ export class AttribLayer extends MapLayer {
                 oid: objectId,
                 serviceUrl: this.serviceUrl,
                 includeGeometry: needWebGeom,
-                attribs: this.fieldList
+                attribs: this.fieldList,
+                fieldsToTrim: this.getFieldsToTrim()
             };
 
             if (needWebGeom) {

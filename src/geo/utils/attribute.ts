@@ -30,6 +30,7 @@ export interface AttributeLoaderDetails {
     batchSize: number; // calculated maximum amount of attributes that can be downloaded in a single request
     oidField: string; // attribute name of the OID field
     permanentFilter?: string; // SQL to restrict the attributes to download
+    fieldsToTrim?: Array<string>; // All string fields whose values should be trimmed
 }
 
 /**
@@ -55,6 +56,7 @@ export class AttributeAPI extends APIScope {
      *
      * @param details defines the parameters for what to load
      * @param controller the controller which provides asyncronous hooks into the load, including loaded count and ability to abort
+     * @param layer the current layer instance
      */
     private async arcGisBatchLoad(
         details: AttributeLoaderDetails,
@@ -107,7 +109,28 @@ export class AttributeAPI extends APIScope {
             );
         }
 
-        const feats: Array<any> = serviceResult.data.features;
+        let feats: Array<any> = serviceResult.data.features;
+
+        // FOR TESTING, WILL BE REMOVED
+        // Add some spaces at beginning and end of all string attributes
+        feats = feats.map(feat => {
+            feat.attributes = Object.fromEntries(
+                Object.entries(feat.attributes).map(attr => {
+                    if (typeof attr[1] === 'string') {
+                        attr[1] = '   ' + attr[1] + '   ';
+                    }
+
+                    return [attr[0], attr[1]];
+                })
+            ) as Attributes;
+
+            return feat;
+        });
+
+        // FOR TESTING, WILL BE REMOVED
+        let originalFeats = JSON.parse(JSON.stringify(feats));
+        console.log('FEATURE ATTRIBUTES BEFORE', originalFeats);
+
         const len = feats.length;
 
         if (len > 0) {
@@ -124,11 +147,18 @@ export class AttributeAPI extends APIScope {
                 moreDataToLoad = len >= details.batchSize;
             }
 
+            // Trim values in current batch
+            feats = this.trimFeatureSetAttributes(
+                feats,
+                details.fieldsToTrim ?? []
+            );
+
             if (moreDataToLoad) {
                 // call the service again for the next batch of data.
                 // max id becomes last object id in the current batch
 
                 details.maxId = feats[len - 1].attributes[details.oidField];
+
                 const futureFeats = await this.arcGisBatchLoad(
                     details,
                     controller
@@ -141,6 +171,10 @@ export class AttributeAPI extends APIScope {
             } else {
                 // done thanks
                 // return empty list if aborted
+
+                // FOR TESTING, WILL BE REMOVED
+                console.log('FEATURE ATTRIBUTES AFTER', feats);
+
                 return controller.loadAbortFlag ? [] : feats;
             }
         } else {
@@ -154,6 +188,7 @@ export class AttributeAPI extends APIScope {
      *
      * @param details defines the parameters for what to load
      * @param controller the controller which provides asyncronous hooks into the load, including loaded count and ability to abort
+     * @param layer the current layer instance
      */
     async loadArcGisServerAttributes(
         details: AttributeLoaderDetails,
@@ -185,6 +220,7 @@ export class AttributeAPI extends APIScope {
      *
      * @param details defines the parameters for what to load
      * @param controller the controller which provides asyncronous hooks into the load, including loaded count and ability to abort
+     * @param layer the current layer instance
      */
     async loadGraphicsAttributes(
         details: AttributeLoaderDetails,
@@ -215,10 +251,39 @@ export class AttributeAPI extends APIScope {
             g => toRaw(g).attributes
         );
 
+        let attributes = pluckedAttributes.toArray();
+
+        // FOR TESTING, WILL BE REMOVED
+        attributes = attributes.map(feat => {
+            const attributes = feat;
+
+            const trimmedAttributes = Object.entries(attributes).map(attr => {
+                if (typeof attr[1] === 'string') {
+                    attr[1] = '     ' + attr[1] + '     ';
+                }
+
+                return [attr[0], attr[1]];
+            });
+
+            feat = Object.fromEntries(trimmedAttributes) as Attributes;
+
+            return feat;
+        });
+
+        // FOR TESTING, WILL BE REMOVED
+        console.log('BEFORE', JSON.parse(JSON.stringify(attributes)));
+
         const attSet: AttributeSet = {
-            features: pluckedAttributes.toArray(),
+            features: this.trimFeatureSetAttributes(
+                attributes,
+                details.fieldsToTrim ?? []
+            ),
             oidIndex: {}
         };
+
+        // FOR TESTING, WILL BE REMOVED
+        console.log('AFTER', JSON.parse(JSON.stringify(attSet.features)));
+
         this.oidIndexer(attSet, details.oidField);
 
         controller.loadIsDone = true;
@@ -233,6 +298,7 @@ export class AttributeAPI extends APIScope {
      *
      * @param details defines the parameters for what to load
      * @param controller the controller which provides asyncronous hooks into the load, including loaded count and ability to abort
+     * @param layer the current layer instance
      */
     async loadCompactJsonAttributes(
         details: AttributeLoaderDetails,
@@ -246,12 +312,19 @@ export class AttributeAPI extends APIScope {
 
         const fields = details.sourceDataJson.fields;
 
+        const fieldsToTrim = details.fieldsToTrim ?? [];
+
         // TODO is there a more efficient way to translate from compact json to attribute objects? Do we care?
         const rampAttributes: Array<Attributes> =
             details.sourceDataJson.data.map(attRow => {
                 const attNugget: any = {};
                 attRow.forEach((val: any, i: number) => {
-                    attNugget[fields[i]] = val;
+                    // Can just trim the values directly here
+                    attNugget[fields[i]] =
+                        typeof val === 'string' &&
+                        fieldsToTrim.includes(fields[i])
+                            ? val.trim()
+                            : val;
                 });
 
                 return attNugget;
@@ -333,8 +406,12 @@ export class AttributeAPI extends APIScope {
 
         const feats: Array<any> = serviceResult.data.features;
         if (feats.length > 0) {
-            const feat = feats[0];
             let geom: BaseGeometry;
+
+            let feat = this.trimFeatureSetAttributes(
+                [feats[0]],
+                details.fieldsToTrim ?? []
+            )[0];
 
             if (details.includeGeometry) {
                 // server result omits spatial reference
@@ -356,6 +433,38 @@ export class AttributeAPI extends APIScope {
                 `Could not locate feature ${details.oid} for layer ${details.serviceUrl}`
             )
         );
+    }
+
+    /**
+     * Trims the desired attribute values for a feature set's attribute groups.
+     * @param features The featureset to be trimmed.
+     * @param fieldsToTrim Array of string names of the attributes to be trimmed.
+     * @returns The featureset, trimmed.
+     */
+    trimFeatureSetAttributes(
+        features: Array<any>,
+        fieldsToTrim: Array<string>
+    ): Array<any> {
+        let updatedFeatures = features;
+
+        // For each attribute (column) to be trimmed, trim all fields in that column
+        fieldsToTrim.forEach(attrToTrim => {
+            updatedFeatures = updatedFeatures.map(feat => {
+                // Different layer types have different featureset object shapes
+                // E.g. OGC WFS layers don't have the 'attributes' object labelled as such
+                const attributes = feat.attributes ?? feat;
+
+                const currentValue = attributes[attrToTrim];
+
+                // Only trim if value is a string
+                if (typeof currentValue === 'string') {
+                    attributes[attrToTrim] = currentValue.trim();
+                }
+
+                return feat;
+            });
+        });
+        return updatedFeatures;
     }
 
     /**
@@ -425,6 +534,19 @@ export class AttributeAPI extends APIScope {
             layer.fieldList = '*';
             return;
         }
+
+        // Find the fields that should be trimmed (have trim = true)...
+        let fieldsToTrim = fieldMetadata.fieldInfo
+            .filter(elem => elem.trim)
+            .map(elem => elem.name);
+
+        // ...and set their trim properties on the layer
+        layer.fields = layer.fields.map(field => {
+            if (fieldsToTrim.includes(field.name)) {
+                field.trim = true;
+            }
+            return field;
+        });
 
         // if order enforced, order the fields first before doing exclusive fields check
         if (
@@ -747,6 +869,10 @@ export class AttributeLoaderBase extends APIScope {
      */
     updateFieldList(newList: string): void {
         this.details.attribs = newList;
+    }
+
+    updateFieldsToTrim(newFieldsToTrim: Array<string>): void {
+        this.details.fieldsToTrim = newFieldsToTrim;
     }
 
     getAttribs(): Promise<AttributeSet> {
