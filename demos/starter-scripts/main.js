@@ -301,7 +301,7 @@ let config = {
                             { name: 'station_id__id_station' },
                             { name: 'province__province' },
                             { name: 'identifier__identifiant' },
-                            { name: 'year_range__annees' }
+                            { name: 'year_range__annees', trim: true }
                         ],
                         exclusiveFields: false,
                         enforceOrder: true
