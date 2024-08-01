@@ -576,6 +576,7 @@ export interface RampLayerStateConfig {
 export interface RampLayerFieldInfoConfig {
     name: string;
     alias?: string;
+    trim?: boolean;
 }
 
 export interface RampLayerFieldMetadataConfig {

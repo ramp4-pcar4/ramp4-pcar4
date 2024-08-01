@@ -430,7 +430,8 @@ export class FileLayer extends AttribLayer {
         };
         this.attribs.attLoader = new FileLayerAttributeLoader(
             this.$iApi,
-            loadData
+            loadData,
+            this
         );
     }
 
