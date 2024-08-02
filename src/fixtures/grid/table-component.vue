@@ -638,6 +638,26 @@ const onGridReady = (params: any) => {
         columnApi.value.autoSizeAllColumns();
     }
 
+    const addAriaLabels = () => {
+        const checkboxInputs = document.querySelectorAll(
+            '.ag-input-field-input.ag-checkbox-input'
+        );
+        checkboxInputs.forEach((input, index) => {
+            const allColumns = columnApi.value.getAllDisplayedColumns();
+            const column = allColumns[index].getColDef();
+
+            input.setAttribute(
+                'aria-label',
+                column.headerName ?? 'Special Column'
+            );
+        });
+    };
+
+    // Initial load
+    addAriaLabels();
+
+    agGridApi.value.addEventListener('rowDataChanged', addAriaLabels);
+
     // listen for layer filter and visibility events and update grid appropriately
     handlers.value.push(
         iApi.event.on(
