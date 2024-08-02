@@ -8,6 +8,7 @@
                     type="file"
                     name="file"
                     accept=".geojson,.json,.csv,.zip"
+                    :aria-label="props.ariaLabel"
                     @input="
                         event => {
                             handleUpload(event);
@@ -32,7 +33,7 @@
                     </svg>
                 </div>
             </div>
-            <div class="text-gray-400 text-xs mb-1">{{ help }}</div>
+            <div class="text-gray-500 text-xs mb-1">{{ help }}</div>
         </div>
         <div v-else-if="type === 'url'">
             <label class="text-base font-bold">{{ label }}</label>
@@ -42,6 +43,7 @@
                     type="url"
                     name="url"
                     :value="modelValue"
+                    :aria-label="props.ariaLabel"
                     @change="valid ? (urlError = false) : (urlError = true)"
                     @input="
                         event => {
@@ -62,61 +64,69 @@
             <label class="text-base font-bold">{{ label }}</label>
             <div class="relative mb-0.5" data-type="select">
                 <div v-if="multiple">
-                    <treeselect
-                        v-model="selected"
-                        :multiple="true"
-                        :options="options"
-                        :default-expand-level="1"
-                        :always-open="true"
-                        :open-direction="'bottom'"
-                        :max-height="300"
-                        :limit="4"
-                        :disableFuzzyMatching="true"
-                        :searchable="searchable"
-                        :childrenIgnoreDisabled="true"
-                        :placeholder="t('wizard.configure.sublayers.select')"
-                        :noResultsText="t('wizard.configure.sublayers.results')"
-                        :clearAllText="t('wizard.configure.sublayers.clearAll')"
-                        @select="
-                            $nextTick(() => {
-                                handleSelection();
-                            })
-                        "
-                        @deselect="
-                            $nextTick(() => {
-                                handleSelection();
-                            })
-                        "
-                        @open="
-                            $nextTick(() => {
-                                observeHeight();
-                            })
-                        "
-                    >
-                        <template v-slot:[valueLabel]="{ node }">
-                            <label>
-                                {{ truncateVal(node.label) }}
-                            </label>
-                        </template>
-
-                        <template
-                            v-slot:[optionLabel]="{ node, labelClassName }"
+                    <div ref="treeWrapper">
+                        <treeselect
+                            v-model="selected"
+                            :multiple="true"
+                            :options="options"
+                            :default-expand-level="1"
+                            :always-open="true"
+                            :open-direction="'bottom'"
+                            :max-height="300"
+                            :limit="4"
+                            :disableFuzzyMatching="true"
+                            :searchable="searchable"
+                            :childrenIgnoreDisabled="true"
+                            :placeholder="
+                                t('wizard.configure.sublayers.select')
+                            "
+                            :noResultsText="
+                                t('wizard.configure.sublayers.results')
+                            "
+                            :clearAllText="
+                                t('wizard.configure.sublayers.clearAll')
+                            "
+                            @select="
+                                $nextTick(() => {
+                                    handleSelection();
+                                })
+                            "
+                            @deselect="
+                                $nextTick(() => {
+                                    handleSelection();
+                                })
+                            "
+                            @open="
+                                $nextTick(() => {
+                                    observeHeight();
+                                })
+                            "
                         >
-                            <label
-                                :class="labelClassName"
-                                v-truncate="{
-                                    options: {
-                                        placement: 'top',
-                                        hideOnClick: false,
-                                        theme: 'ramp4',
-                                        animation: 'scale'
-                                    }
-                                }"
+                            <template v-slot:[valueLabel]="{ node }">
+                                <label>
+                                    {{ truncateVal(node.label) }}
+                                </label>
+                            </template>
+
+                            <template
+                                v-slot:[optionLabel]="{ node, labelClassName }"
                             >
-                                {{ node.label }}
-                            </label>
-                        </template>
-                    </treeselect>
+                                <label
+                                    :class="labelClassName"
+                                    v-truncate="{
+                                        options: {
+                                            placement: 'top',
+                                            hideOnClick: false,
+                                            theme: 'ramp4',
+                                            animation: 'scale'
+                                        }
+                                    }"
+                                >
+                                    {{ node.label }}
+                                </label>
+                            </template>
+                        </treeselect>
+                    </div>
                     <div
                         v-if="validation && sublayersError"
                         class="text-red-900 text-xs"
@@ -131,6 +141,7 @@
                         :size="size"
                         :value="modelValue"
                         @input="handleServiceSelection(size, $event)"
+                        :aria-label="props.ariaLabel"
                     >
                         <option
                             class="p-6"
@@ -162,6 +173,7 @@
                 type="checkbox"
                 name="nested"
                 :checked="true"
+                :aria-label="props.ariaLabel"
                 @change="
                     event => {
                         handleNestedChecked(event);
@@ -178,6 +190,7 @@
                     :class="{ 'error-border': !valid && !modelValue }"
                     type="text"
                     :value="modelValue"
+                    :aria-label="props.ariaLabel"
                     @change="valid ? (nameError = false) : (nameError = true)"
                     @input="
                         event => {
@@ -195,7 +208,7 @@
 
 <script setup lang="ts">
 import type { InstanceAPI } from '@/api';
-import { inject, onBeforeUnmount, ref } from 'vue';
+import { inject, onBeforeUnmount, reactive, ref, watch } from 'vue';
 import type { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Treeselect from '@ramp4-pcar4/vue3-treeselect';
@@ -290,6 +303,10 @@ const props = defineProps({
     },
     validationMessages: {
         type: Object as PropType<ValidationMsgs>
+    },
+    ariaLabel: {
+        type: String,
+        default: false
     }
 });
 
@@ -302,6 +319,8 @@ const selected = ref([...props.selectedValues]);
 const valueLabel = ref('value-label');
 const optionLabel = ref('option-label');
 const resizeObserver = ref<ResizeObserver | undefined>(undefined);
+const treeWrapper = ref<HTMLElement | null>(null);
+const watchers = reactive<Array<Function>>([]);
 
 if (props.defaultOption && props.modelValue === '' && props.options.length) {
     // regex to guess closest default value for lat/long fields
@@ -402,8 +421,9 @@ function observeHeight() {
 
 const setHeight = () => {
     // calculates height of tree selector
-    const menuHeight = iApi!.$vApp.$el.querySelector('.vue-treeselect__menu')
-        ?.clientHeight!;
+    const menuHeight = iApi!.$vApp.$el.querySelector(
+        '.vue-treeselect__menu'
+    )?.clientHeight!;
 
     const selectHeight = iApi!.$vApp.$el.querySelector(
         '.vue-treeselect__control'
@@ -412,9 +432,31 @@ const setHeight = () => {
     el.value.style.height = `${menuHeight + selectHeight + 30}px`;
 };
 
+watchers.push(
+    watch(treeWrapper, newValue => {
+        if (newValue) {
+            addAriaLabel();
+        }
+    })
+);
+
+const addAriaLabel = () => {
+    if (treeWrapper.value) {
+        const input = treeWrapper.value.querySelector('input[type="text"]');
+        if (input) {
+            input.setAttribute(
+                'aria-label',
+                t('wizard.configure.sublayers.select')
+            );
+        }
+    }
+};
+
 onBeforeUnmount(() => {
     // remove the resize observer
     resizeObserver.value!.disconnect();
+
+    watchers.forEach(unwatch => unwatch());
 });
 </script>
 
@@ -459,6 +501,10 @@ onBeforeUnmount(() => {
 
 :deep(.vue-treeselect__multi-value-item-container) {
     padding-right: 5px;
+}
+
+:deep(.vue-treeselect__placeholder) {
+    color: black;
 }
 
 .error-border {
