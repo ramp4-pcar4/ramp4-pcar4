@@ -20,10 +20,11 @@
                         getDatagridExists() &&
                         legendItem.type === LegendType.Item)
                         ? 'cursor-pointer'
-                        : 'cursor-default'
+                        : 'cursor-default',
+                    allowMultilineItems ? 'multilined' : 'singlelined'
                 ]"
                 @mouseover.stop="hover($event.currentTarget!)"
-                @mouseout="
+                @mouseout.self="
                     //@ts-ignore
                     mobileMode ? null : $event.currentTarget?._tippy?.hide(),
                         (hovered = false)
@@ -67,7 +68,7 @@
             >
                 <!-- smiley face. very important that we migrate this -->
                 <div
-                    class="flex p-5"
+                    class="flex p-5 mr-[13px]"
                     v-if="legendItem.type !== LegendType.Item"
                 >
                     <svg
@@ -192,7 +193,21 @@
 
                 <!-- name or info section-->
                 <div
-                    v-if="legendItem instanceof LayerItem"
+                    v-if="
+                        legendItem instanceof LayerItem && allowMultilineItems
+                    "
+                    class="flex-1 pointer-events-none p-5 flex items-center"
+                    style="height: 58px; overflow: hidden"
+                >
+                    <span class="line-clamp-2 h-auto text-ellipsis">{{
+                        legendItem.name ??
+                        (!legendItem?.layer?.name
+                            ? legendItem.layerId
+                            : legendItem.layer?.name)
+                    }}</span>
+                </div>
+                <div
+                    v-else-if="legendItem instanceof LayerItem"
                     class="flex-1 pointer-events-none p-5"
                     v-truncate="{ externalTrigger: true }"
                 >
@@ -203,6 +218,7 @@
                             : legendItem.layer?.name)
                     }}</span>
                 </div>
+
                 <div
                     v-else-if="legendItem instanceof SectionItem"
                     class="flex-1"
@@ -588,6 +604,7 @@ import Checkbox from './checkbox.vue';
 import LegendOptions from './legend-options.vue';
 import { usePanelStore } from '@/stores/panel';
 import { useI18n } from 'vue-i18n';
+import { useLegendStore } from '../store';
 
 // eslint doesn't recognize <symbology-stack> usage
 // eslint-disable-next-line
@@ -598,6 +615,7 @@ import type { LegendItem } from '../store/legend-item';
 
 const layerStore = useLayerStore();
 const panelStore = usePanelStore();
+const legendStore = useLegendStore();
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 const el = ref();
@@ -614,6 +632,7 @@ const layerConfigs = computed(() => layerStore.layerConfigs);
 const symbologyStack = ref<Array<LegendSymbology>>([]); // ref instead of reactive to maintain reactivity after promise
 const symbologyStackLoaded = ref<boolean>(false);
 const hovered = ref(false);
+const allowMultilineItems = legendStore?.multilineItems;
 
 /**
  * Get the type of layer
@@ -968,10 +987,16 @@ if (props.legendItem instanceof LayerItem) {
     transform: rotate(-180deg);
 }
 @media (hover) {
-    .loaded-item {
+    .loaded-item.singlelined {
         @apply min-h-[39px];
         .options {
             @apply hidden;
+        }
+    }
+    .loaded-item.multilined {
+        @apply min-h-[39px];
+        .options {
+            @apply block;
         }
     }
     .loaded-item:hover {

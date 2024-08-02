@@ -412,7 +412,7 @@ let config = {
                                 children: [
                                     {
                                         layerId: 'OilFacility',
-                                        name: 'Oil Sands Facility Locations',
+                                        name: 'Oil Sands Facility Locationsdsadasdfnklgdfhgjhdgfdgkljfdglkjfdlgjfdjgfdgj',
                                         disabledLayerControls: ['visibility'],
                                         coverIcon:
                                             'https://cdn-icons-png.flaticon.com/512/3129/3129632.png'
@@ -500,7 +500,8 @@ let config = {
                                     }
                                 ]
                             }
-                        ]
+                        ],
+                        multilineItems: true
                     }
                 },
                 appbar: {
