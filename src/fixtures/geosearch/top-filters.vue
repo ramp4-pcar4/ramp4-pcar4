@@ -8,6 +8,7 @@
             <select
                 class="border-b border-b-gray-600 w-full h-full py-0 cursor-pointer"
                 :value="queryParams.province"
+                :aria-label="t('geosearch.filters.province')"
                 v-on:change="
                     setProvince({
                         province: ($event.target as HTMLSelectElement).value
@@ -31,6 +32,7 @@
             <select
                 class="border-b border-b-gray-600 w-full h-full py-0 cursor-pointer max-w-150"
                 :value="queryParams.type"
+                :aria-label="t('geosearch.filters.type')"
                 v-on:change="
                     setType({
                         type: ($event.target as HTMLSelectElement).value
@@ -47,7 +49,7 @@
             </select>
             <button
                 type="button"
-                class="text-gray-500 w-1/8 h-24 pl-8 pr-16 sm:pr-8 hover:text-black disabled:cursor-default disabled:text-gray-300"
+                class="text-gray-500 w-1/8 h-24 pl-8 pr-16 sm:pr-8 hover:text-black disabled:cursor-default disabled:text-gray-400"
                 :disabled="!queryParams.type && !queryParams.province"
                 v-on:click="clearFilters"
                 :content="t('geosearch.filters.clear')"

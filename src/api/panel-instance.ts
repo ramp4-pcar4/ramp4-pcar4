@@ -259,7 +259,7 @@ export class PanelInstance extends APIScope {
     }
 
     /**
-     * true iff the panel is currently visible
+     * true if the panel is currently visible
      *
      * @readonly
      * @type {boolean}
