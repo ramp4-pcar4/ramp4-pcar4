@@ -126,14 +126,16 @@ export const usePanelStore = defineStore('panel', () => {
         // TODO: update when panel width system is in place
         let remainingWidth = stackWidth.value;
         const nowVisible: PanelInstance[] = [];
+        const defaultWidth = 350;
+        const panelMargin = 12;
 
         // add panels until theres no space in the stack
         for (let i = orderedItems.value.length - 1; i >= 0; i--) {
-            let panelWidth = orderedItems.value[i].width || 350;
+            let panelWidth = orderedItems.value[i].width || defaultWidth;
 
             // if not in mobile view, all panels have a 12px margin to the right
             if (!mobileView.value) {
-                panelWidth += 12;
+                panelWidth += panelMargin;
             } else {
                 // if in mobile view, a single panel will take up the whole view
                 panelWidth = remainingWidth;
@@ -162,14 +164,15 @@ export const usePanelStore = defineStore('panel', () => {
             for (
                 let i = 0;
                 i < nowVisible.length - 1 &&
-                remainingWidth < (pinned.value.width || 350);
+                remainingWidth <
+                    (pinned.value.width || defaultWidth) + panelMargin;
                 i++
             ) {
                 lastElement = nowVisible.shift()!;
-                remainingWidth += lastElement.width || 350;
+                remainingWidth += lastElement.width || defaultWidth;
             }
 
-            if (remainingWidth >= (pinned.value.width || 350)) {
+            if (remainingWidth >= (pinned.value.width || defaultWidth)) {
                 // if theres room insert pinned element
                 //@ts-ignore
                 nowVisible.unshift(pinned.value);
