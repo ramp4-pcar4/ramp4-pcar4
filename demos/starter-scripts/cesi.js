@@ -679,7 +679,8 @@ let config = {
                                 sublayerIndex: 10
                             }
                         ]
-                    }
+                    },
+                    itemMaxLines: 2
                 },
                 appbar: {
                     items: ['legend', 'geosearch', 'basemap', 'export']

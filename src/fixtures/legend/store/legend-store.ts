@@ -10,6 +10,8 @@ interface LegendStore {
     legendConfig: Ref<LegendConfig>;
     children: Ref<[]>;
     headerControls: Ref<string[]>;
+    multilineItems: Ref<boolean>;
+    itemMaxLines: Ref<number>;
     addItem: (value: {
         item: LegendItem;
         parent: LegendItem | undefined;
@@ -29,6 +31,8 @@ export const useLegendStore = defineStore('legend', () => {
     const legendConfig = ref<LegendConfig>();
     const children = ref<LegendItem[]>([]);
     const headerControls = ref<string[]>([]);
+    const multilineItems = ref<boolean>(true);
+    const itemMaxLines = ref<number>(3);
 
     function addItem(value: {
         item: LegendItem;
@@ -104,6 +108,8 @@ export const useLegendStore = defineStore('legend', () => {
 
     return {
         legendConfig,
+        multilineItems,
+        itemMaxLines,
         children,
         headerControls,
         addItem,

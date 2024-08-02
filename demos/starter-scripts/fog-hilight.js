@@ -628,7 +628,7 @@ let config = {
                                 layerId: 'AirAmbient_SO2'
                             },
                             {
-                                name: 'Average fine particulate matter concentrations at monitoring stations',
+                                name: 'ADD ADD ADD ADD Average fine particulate matter concentrations at monitoring stations',
                                 layerId: 'AirAmbient_AvgPM'
                             },
                             {
