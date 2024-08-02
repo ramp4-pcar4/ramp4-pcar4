@@ -212,15 +212,7 @@ export class AttributeAPI extends APIScope {
         // never part of the layer.
 
         const pluckedAttributes = details.sourceGraphics.map(
-            (g: __esri.Graphic) => {
-                // TODO we may need to strip off attributes here based on what we decide to do.
-                //      there is no network traffic advantage for files (all data is already loaded).
-                //      but we may need to do it for stuff like populating a grid with reduced columns.
-                //      if we do this, we may need to clone the attribute objects then remove properties;
-                //      we don't want to mess with the original source in the layer.
-                // If we do a stripping, use details.attribs as the source for what to keep.
-                return toRaw(g).attributes;
-            }
+            g => toRaw(g).attributes
         );
 
         const attSet: AttributeSet = {

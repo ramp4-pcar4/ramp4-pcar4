@@ -57,56 +57,81 @@ const findAndDelete = (
     if (field) delete helper[field.name];
 };
 
-// clone identifyData and remove unwanted data
+/**
+ * Constructs and returns a metadata mapping of what we actually want to display.
+ * Key: field name
+ * Value: object with these props
+ * - value (formatted)
+ * - alias (display text for field. See aliases.name below)
+ * - type (field data type)
+ */
 const itemData = () => {
-    const helper: any = {};
-    Object.assign(helper, props.identifyData.data);
+    const clonePayload = Object.assign({}, props.identifyData.data);
 
     // Remove any fields of type geometry
-    findAndDelete(props.fields, 'type', 'geometry', helper);
+    findAndDelete(props.fields, 'type', 'geometry', clonePayload);
 
     if (!iApi?.ui.exposeOids) {
         // check global oid flag
-        findAndDelete(props.fields, 'type', 'oid', helper);
+        findAndDelete(props.fields, 'type', 'oid', clonePayload);
     }
 
     if (!iApi?.ui.exposeMeasurements) {
         // check global measurements flag
-        findAndDelete(props.fields, 'name', 'shape_length', helper);
-        findAndDelete(props.fields, 'name', 'shape_area', helper);
+        findAndDelete(props.fields, 'name', 'shape_length', clonePayload);
+        findAndDelete(props.fields, 'name', 'shape_area', clonePayload);
     }
 
-    let aliases: any = {};
+    /**
+     * Builds up a mapping of all LAYER field names --> data about field
+     * - name (display name. Priority order: detail fixture config alias, layer alias, layer field)
+     * - type (field data type)
+     * - visible (if should be displayed; detail fixture config option)
+     */
+    const fieldsMetadata: any = {};
     props.fields.forEach(field => {
         // Check to see if this field is being overwritten in the fixture config.
         const checkField = props.fixtureFields?.find(
-            (item: DetailsFieldItem) => field.name == item.field
+            item => field.name === item.field
         );
 
-        aliases[field.name] = {
+        fieldsMetadata[field.name] = {
             name: checkField?.alias || field.alias || field.name,
             type: field.type,
             visible: checkField?.visible ?? true
         }; // use the key name if alias is not defined. Default visibility to true if it's not defined.
     });
 
-    Object.keys(helper).map(key => {
-        helper[key] = {
-            value:
-                typeof helper[key] === 'number'
-                    ? iApi?.ui.formatNumber(helper[key])
-                    : helper[key],
-            alias: aliases[key].name || key, // use the key name if alias is undefined
-            type: aliases[key].type
-        };
+    /**
+     * Builds up a mapping of valid PAYLOAD attribute field names --> data about that attribute
+     * - value (formatted)
+     * - alias (display text for field. See aliases.name below)
+     * - type (field data type)
+     *
+     * Invalid fields are: ones the system is hiding, and ones that don't exist on the layer
+     */
+    const displayMetadata: any = {};
 
-        // If the field is set to invisible, don't display it.
-        if (!aliases[key].visible) {
-            delete helper[key];
+    // we iterate on the clone since that is what had the field removals.
+    Object.keys(clonePayload).forEach(key => {
+        const fieldMD = fieldsMetadata[key];
+        if (fieldMD && fieldMD.visible) {
+            // field exists in layer, and should be shown
+
+            const cloneValue = clonePayload[key];
+
+            displayMetadata[key] = {
+                value:
+                    typeof cloneValue === 'number'
+                        ? iApi?.ui.formatNumber(cloneValue)
+                        : cloneValue,
+                alias: fieldMD.name,
+                type: fieldMD.type
+            };
         }
     });
 
-    return helper;
+    return displayMetadata;
 };
 
 // render value based on type
