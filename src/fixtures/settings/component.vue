@@ -4,6 +4,7 @@
         :icon="icons[icon]"
         :name="name"
         :config="config"
+        :aria-label="ariaLabel"
     />
 </template>
 
@@ -33,6 +34,10 @@ defineProps({
         type: String as PropType<
             'visibility' | 'opacity' | 'box' | 'location' | 'refresh'
         >,
+        required: true
+    },
+    ariaLabel: {
+        type: String,
         required: true
     }
 });

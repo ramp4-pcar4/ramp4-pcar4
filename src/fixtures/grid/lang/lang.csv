@@ -12,6 +12,7 @@ grid.label.export,Export,1,Exporter,1
 grid.label.columns,Hide columns,1,Masquer les colonnes,1
 grid.label.copied,Copied,1,Copié,1
 grid.label.copy,Press ctrl + c or double click to copy,1,Appuyez sur Ctrl + C ou double-cliquez pour copier,1
+grid.label.specialColumn,Special Column,0,Colonne spéciale,0
 grid.label.filters.show,Show filters,1,Afficher les filtres,1
 grid.label.filters.hide,Hide filters,1,Masquer les filtres,1
 grid.label.filters.apply,Apply filters to map,1,Appliquer les filtres à la carte,1
