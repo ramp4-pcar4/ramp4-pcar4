@@ -8,6 +8,75 @@ import type { I18nComponentOptions } from '@/lang';
 export class PanelAPI extends APIScope {
     panelStore = usePanelStore(this.$vApp.$pinia);
 
+    /** Updates the content of a specific HTML-based screen of a panel, using HTML content
+     *
+     * @param {PanelInstance} panel The `PanelInstance` object corresponding to the panel whose content is to be updated.
+     * @param {string | HTMLElement} html HTML content, represented as an HTMLElement object or a string.
+     * @param {string} [id] id of the screen to be updated. If not provided, it will update the first screen in the panel
+     * @memberof PanelAPI
+     */
+    updateHTML(
+        panel: PanelInstance,
+        html: string | HTMLElement,
+        id?: string
+    ): void {
+        // An html-based panel should have only one screen
+        const screen = id ? panel.screens[id] : Object.values(panel.screens)[0];
+        if (screen instanceof HTMLElement) {
+            screen.innerHTML =
+                html instanceof HTMLElement ? html.outerHTML : html;
+        } else {
+            console.error('Screen must be an HTML object');
+        }
+    }
+
+    /** Registers a new panel containing a screen of HTML content and returns the PanelInstance
+     *
+     * @param {string | HTMLElement} html HTML content, represented as an HTMLElement object or a string.
+     * @param {string} id id of the panel
+     * @param {PanelConfigStyle} [styles] The styles to apply to the panel. If none provided, the default panel styling will be used.
+     * @param {string} [alertName] Translation key (or string) to use in panel screen reader alerts. If none provided, a default will be used.
+     * @param {PanelRegistrationOptions} [options] a set of options that will apply to the panel
+     * @returns {PanelInstance} The `PanelInstance` object corresponding to the panel that was created.
+     * @memberof PanelAPI
+     */
+    registerHTML(
+        html: string | HTMLElement,
+        id: string,
+        alertName: string,
+        style?: PanelConfigStyle,
+        options?: PanelRegistrationOptions
+    ): PanelInstance {
+        const existingPanel = this.get(id);
+        if (existingPanel) {
+            console.error('panel already exist');
+            return existingPanel;
+        }
+
+        if (typeof html === 'string') {
+            const newHtml = document.createElement('div');
+            newHtml.innerHTML = html;
+            html = newHtml;
+        }
+
+        const panelConfig: PanelConfigSet = {};
+        panelConfig[id] = {
+            screens: {},
+            style: style ?? {
+                width: '350px'
+            },
+            alertName: alertName
+        };
+        panelConfig[id].screens[id] = html;
+        const panel: PanelInstance = this.register(
+            panelConfig,
+            options
+        ) as unknown as PanelInstance;
+        console.log('PANEL CREATED');
+        console.log(panel);
+
+        return panel;
+    }
     /**
      * Registers a provided panel object and returns the resulting `PanelInstance` objects.
      * When the panel is registered, all its screens are added to the Vue as components right away.
@@ -41,8 +110,9 @@ export class PanelAPI extends APIScope {
         const panelConfigs = isPanelConfigPair(value)
             ? { [value.id]: value.config }
             : value;
-
         if (options) {
+            console.log('register options');
+            console.log(options);
             const i18n = options.i18n || {};
             const $i18n = this.$iApi.$i18n;
 
@@ -73,7 +143,7 @@ export class PanelAPI extends APIScope {
 
         // return either a single panel or a set of panels, depending on the function input
         if (panels.length === 1) {
-            return panels[0];
+            return panels[0] as PanelInstance;
         } else {
             return panels.reduce<PanelInstanceSet>((map, panel) => {
                 map[panel.id] = panel;
@@ -113,6 +183,7 @@ export class PanelAPI extends APIScope {
 
         // attempting to remove non-existent panel, do nothing
         if (!panel) {
+            console.log('panel doesnt exist');
             return;
         }
 
@@ -241,6 +312,7 @@ export class PanelAPI extends APIScope {
 
         // attempting to close a non-existing panel, do nothing
         if (!panel) {
+            console.log('panel doesnt exist');
             return panel;
         }
 
@@ -450,7 +522,6 @@ export class PanelAPI extends APIScope {
         route: PanelConfigRoute
     ): PanelInstance | undefined {
         const panel = this.get(value);
-
         // attempting to show screen on non-existent panel, do nothing
         if (!panel) {
             return panel;

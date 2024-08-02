@@ -114,7 +114,8 @@ export type PanelConfigScreens = {
         | string
         | AsyncComponentFunctionEh
         | ComponentOptions<any>
-        | ComponentPublicInstance<any>;
+        | ComponentPublicInstance<any>
+        | HTMLElement;
 };
 export type PanelConfigRoute = { screen: string; props?: object };
 export type PanelConfigStyle = { [key: string]: string };
