@@ -23,7 +23,7 @@
                 <div
                     class="px-8 mb-10 py-8 flex-grow text-wrap border-y border-gray-600 overflow-y-auto"
                     v-if="
-                        searchVal &&
+                        cleanedSearchVal &&
                         searchResults.length === 0 &&
                         !loadingResults
                     "
@@ -31,7 +31,7 @@
                     <span class="relative h-48"
                         >{{ t('geosearch.noResults')
                         }}<span class="font-bold text-blue-600"
-                            >"{{ searchVal }}"</span
+                            >"{{ cleanedSearchVal }}"</span
                         ></span
                     >
                 </div>
@@ -126,7 +126,9 @@ defineProps({
     }
 });
 
-const searchVal = computed<string>(() => geosearchStore.searchVal);
+const cleanedSearchVal = computed<string>(() =>
+    geosearchStore.searchVal.replace(/["!*$+?^{}()|[\]\\]/g, '').trim()
+);
 const searchResults = computed<Array<any>>(() => geosearchStore.searchResults);
 const loadingResults = computed<boolean>(() => geosearchStore.loadingResults);
 const failedServices = computed<string[]>(() => geosearchStore.failedServices);

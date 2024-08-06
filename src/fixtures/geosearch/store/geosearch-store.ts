@@ -108,15 +108,20 @@ export const useGeosearchStore = defineStore('geosearch', () => {
     function runQuery(forceReRun?: boolean): void {
         // set loading flag to true and turn off when reach return
         loadingResults.value = true;
-        // when no search value is specified
-        if (!searchVal.value) {
+        // Replace bad characters with empty string because the default geocratis service
+        // returns rubbish results if any of these characters are used, so we ignore them.
+        const cleanedSearchVal = searchVal.value
+            .replace(/["!*$+?^{}()|[\]\\]/g, '')
+            .trim();
+        if (!cleanedSearchVal) {
             searchResults.value = [];
             savedResults.value = [];
             loadingResults.value = false;
         } else {
             // run new query if different search term is entered
             if (
-                (searchVal.value && searchVal.value !== lastSearchVal.value) ||
+                (cleanedSearchVal &&
+                    cleanedSearchVal !== lastSearchVal.value) ||
                 forceReRun
             ) {
                 // watch for provinces and types to finish loading
@@ -127,11 +132,11 @@ export const useGeosearchStore = defineStore('geosearch', () => {
                     ) {
                         clearInterval(watcher);
                         GSservice.value
-                            .query(`${searchVal.value}*`)
+                            .query(`${cleanedSearchVal}*`)
                             .then((data: any) => {
                                 failedServices.value = data.failedServs;
                                 // store data for current search term
-                                lastSearchVal.value = searchVal.value;
+                                lastSearchVal.value = cleanedSearchVal;
                                 savedResults.value = data.results;
 
                                 // replace old saved results
@@ -198,7 +203,9 @@ export const useGeosearchStore = defineStore('geosearch', () => {
      * @param   {string}    searchTerm  current geosearch search value term
      */
     function setSearchTerm(searchTerm: string): void {
-        lastSearchVal.value = searchVal.value;
+        lastSearchVal.value = searchVal.value
+            .replace(/["!*$+?^{}()|[\]\\]/g, '')
+            .trim();
         searchVal.value = searchTerm;
         // run query after search term changes
         runQuery();
@@ -257,8 +264,12 @@ export const useGeosearchStore = defineStore('geosearch', () => {
                     return '[' + c + accentedChars[c] + ']';
                 }
 
-                // Escape special regex characters (like ']'), so the string isn't broken
-                return c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                // Replace bad characters with empty string
+                // Escape special regex characters (like '.'), so the string isn't broken
+                return c
+                    .replace(/["$!*+?^{}()|[\]\\]/g, '')
+                    .replace(/[.\\]/g, '\\$&')
+                    .trim();
             })
             .join('');
     }
