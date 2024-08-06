@@ -11,8 +11,8 @@
                     legendItem.type === LegendType.Item
                         ? 'loaded-item'
                         : legendItem.type === LegendType.Error
-                        ? 'non-loaded-item bg-red-200'
-                        : 'non-loaded-item',
+                          ? 'non-loaded-item bg-red-200'
+                          : 'non-loaded-item',
                     (isGroup && controlAvailable(LegendControl.Expand)) ||
                     (!isGroup &&
                         legendItem instanceof LayerItem &&
@@ -52,11 +52,11 @@
                                   : 'legend.group.expand'
                           )
                         : legendItem instanceof LayerItem &&
-                          legendItem.type === LegendType.Item &&
-                          controlAvailable(LayerControl.Datatable) &&
-                          getDatagridExists()
-                        ? t('legend.layer.data')
-                        : ''
+                            legendItem.type === LegendType.Item &&
+                            controlAvailable(LayerControl.Datatable) &&
+                            getDatagridExists()
+                          ? t('legend.layer.data')
+                          : ''
                 "
                 v-tippy="{
                     placement: 'top-start',

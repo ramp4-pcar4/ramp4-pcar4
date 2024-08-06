@@ -79,6 +79,17 @@ function onShow(instance: any) {
     }
 }
 
+const escapeHtml = (content: string) => {
+    const specialChars = {
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    // @ts-ignore
+    return content.replace(/[<>"']/g, m => specialChars[m]);
+};
+
 /**
  * Applies hyperlinks to any URLs in the provided content.
  *
@@ -89,8 +100,8 @@ function linkifyContent(content: string | null): TippyContent {
     if (content === null) {
         return '';
     }
-
-    return <TippyContent>linkifyHtml(content, {
+    const escapedContent = escapeHtml(content);
+    return <TippyContent>linkifyHtml(escapedContent, {
         target: '_blank',
         validate: {
             url: (value: string) => /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
