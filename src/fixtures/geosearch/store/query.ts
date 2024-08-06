@@ -352,24 +352,44 @@ export class AddressQuery extends Query {
         super(config, query);
         this.resultType = 'address';
 
-        this.onComplete = new Promise(resolve => {
-            this.locateByQuery()
-                .then(lr => {
-                    this.featureResults = this.locateToResult(lr);
-                    this.search().then(r => {
-                        this.results = r;
-                        resolve(this);
+        // check for bad chars and return empty list if the default service is being used
+        // we do this because the default geonames/geolocate service returns rubbish when any of these characters are being used
+        // we assume that the geocratis service is being used
+        const badChars = [
+            '%5B', // [
+            '%5D', // ]
+            '%22', // "
+            '%5E', // ^
+            '!',
+            '(',
+            ')',
+            '%2B', // +
+            '%3F' // ?
+        ];
+        if (badChars.some(bc => this.query?.includes(bc))) {
+            this.featureResults = [];
+            this.results = [];
+            this.onComplete = Promise.resolve(this);
+        } else {
+            this.onComplete = new Promise(resolve => {
+                this.locateByQuery()
+                    .then(lr => {
+                        this.featureResults = this.locateToResult(lr);
+                        this.search().then(r => {
+                            this.results = r;
+                            resolve(this);
+                        });
+                    })
+                    .catch(() => {
+                        this.failedServs.push('geolocation');
+                        console.error('Address service failed');
+                        this.search().then(r => {
+                            this.results = r;
+                            resolve(this);
+                        });
                     });
-                })
-                .catch(() => {
-                    this.failedServs.push('geolocation');
-                    console.error('Address service failed');
-                    this.search().then(r => {
-                        this.results = r;
-                        resolve(this);
-                    });
-                });
-        });
+            });
+        }
     }
 
     locateToResult(lrl: LocateResponseList): AddressResultList {

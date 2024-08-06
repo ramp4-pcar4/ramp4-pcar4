@@ -109,7 +109,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
         // set loading flag to true and turn off when reach return
         loadingResults.value = true;
         // when no search value is specified
-        if (!searchVal.value) {
+        if (!searchVal.value.trim()) {
             searchResults.value = [];
             savedResults.value = [];
             loadingResults.value = false;

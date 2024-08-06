@@ -23,7 +23,7 @@
                 <div
                     class="px-8 mb-10 py-8 flex-grow text-wrap border-y border-gray-600 overflow-y-auto"
                     v-if="
-                        searchVal &&
+                        searchVal.trim() &&
                         searchResults.length === 0 &&
                         !loadingResults
                     "
