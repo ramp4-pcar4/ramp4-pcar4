@@ -108,8 +108,10 @@ export const useGeosearchStore = defineStore('geosearch', () => {
     function runQuery(forceReRun?: boolean): void {
         // set loading flag to true and turn off when reach return
         loadingResults.value = true;
-        // when no search value is specified
-        if (!searchVal.value) {
+        // when no search value is specified or only bad characters are specified, return empty list
+        // we do this because the default geonames/geolocate service returns rubbish when any of these characters are being used
+        // this relies on the assumption that the geocratis service is being used
+        if (!searchVal.value.replace(/["!*+?^{}()|[\]\\]/g, ' ').trim()) {
             searchResults.value = [];
             savedResults.value = [];
             loadingResults.value = false;
