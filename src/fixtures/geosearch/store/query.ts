@@ -59,6 +59,26 @@ export class Query {
     }
 
     search(): Promise<NameResultList> {
+        // check for bad chars and return empty list if the default service is being used
+        // we do this because the default geonames service returns rubbish when any of these characters are being used
+        const badChars = [
+            '%5B', // [
+            '%5D', // ]
+            '%22', // "
+            '%5E', // ^
+            '!',
+            '(',
+            ')',
+            '%2B', // +
+            '%3F' // ?
+        ];
+        if (
+            this.config.geoNameUrl ===
+                `https://geogratis.gc.ca/services/geoname/${this.config.language}/geonames.json` &&
+            badChars.some(bc => this.query?.includes(bc))
+        ) {
+            return Promise.resolve([]);
+        }
         return (<Promise<IRawNameResult>>this.jsonRequest(this.getUrl()))
             .then(r => this.normalizeNameItems(r.items))
             .catch(() => {
