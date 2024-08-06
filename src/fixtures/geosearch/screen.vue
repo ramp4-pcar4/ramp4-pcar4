@@ -4,7 +4,29 @@
 
         <template #content>
             <div class="flex flex-col h-full">
-                <geosearch-bar></geosearch-bar>
+                <div class="flex items-center mb-8">
+                    <geosearch-bar></geosearch-bar>
+                    <div
+                        v-if="badChars"
+                        :content="t('geosearch.badChars', { chars: badChars })"
+                        focus-icon
+                        v-tippy
+                    >
+                        <svg
+                            data-slot="icon"
+                            fill="none"
+                            stroke-width="1.5"
+                            viewBox="0 0 24 24"
+                            class="w-18 h-18 stroke-gray-600"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+                            ></path>
+                        </svg>
+                    </div>
+                </div>
                 <geosearch-top-filters></geosearch-top-filters>
                 <loading-bar
                     class="flex-none"
@@ -23,7 +45,7 @@
                 <div
                     class="px-8 mb-10 py-8 flex-grow text-wrap border-y border-gray-600 overflow-y-auto"
                     v-if="
-                        searchVal &&
+                        cleanedSearchVal &&
                         searchResults.length === 0 &&
                         !loadingResults
                     "
@@ -31,7 +53,7 @@
                     <span class="relative h-48"
                         >{{ t('geosearch.noResults')
                         }}<span class="font-bold text-blue-600"
-                            >"{{ searchVal }}"</span
+                            >"{{ cleanedSearchVal }}"</span
                         ></span
                     >
                 </div>
@@ -126,10 +148,17 @@ defineProps({
     }
 });
 
-const searchVal = computed<string>(() => geosearchStore.searchVal);
+const cleanedSearchVal = computed<string>(() =>
+    geosearchStore.searchVal.replace(/["!*$+?^{}()|[\]\\]/g, '').trim()
+);
 const searchResults = computed<Array<any>>(() => geosearchStore.searchResults);
 const loadingResults = computed<boolean>(() => geosearchStore.loadingResults);
 const failedServices = computed<string[]>(() => geosearchStore.failedServices);
+const badChars = computed<string>(() =>
+    ['"', '$', '!', '*', '+', '?', '^', '{', '}', '(', ');', '|', '[', ']']
+        .filter(bc => geosearchStore.searchVal.includes(bc))
+        .join('')
+);
 
 // zoom in to a clicked result
 const zoomIn = (result: any) => {

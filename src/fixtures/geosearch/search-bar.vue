@@ -1,5 +1,5 @@
 <template>
-    <div class="rv-geosearch-bar h-26 mb-8 mx-8">
+    <div class="rv-geosearch-bar grow h-26 mx-8">
         <input
             type="search"
             class="border-b w-full text-base py-8 outline-none focus:shadow-outline border-gray-600 h-full min-w-0"
