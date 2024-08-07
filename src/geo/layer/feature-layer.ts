@@ -138,6 +138,7 @@ export class FeatureLayer extends AttribLayer {
                 this.origRampConfig.fieldMetadata
             );
             this.attribs.attLoader.updateFieldList(this.fieldList);
+            this.attribs.attLoader.updateFieldsToTrim(this.getFieldsToTrim());
         });
 
         const pFC = this.$iApi.geo.layer

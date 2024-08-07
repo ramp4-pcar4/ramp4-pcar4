@@ -372,6 +372,7 @@ export interface FieldDefinition {
     alias?: string;
     type: string;
     length?: number;
+    trim?: boolean;
 }
 
 export interface TabularAttributeSet {
@@ -432,6 +433,7 @@ export interface GetGraphicServiceDetails {
     mapSR?: string; // stringified spatial reference of the map
     geometryPrecision?: number; // number of decimal places to keep in result geometry
     oid: number; // oid of the feature to find
+    fieldsToTrim?: Array<string>; // list of fields to trim
 }
 
 export interface DiscreteGraphicResult {
@@ -590,6 +592,7 @@ export interface RampLayerStateConfig {
 export interface RampLayerFieldInfoConfig {
     name: string;
     alias?: string;
+    trim?: boolean;
 }
 
 export interface RampLayerFieldMetadataConfig {

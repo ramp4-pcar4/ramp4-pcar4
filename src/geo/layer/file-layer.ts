@@ -220,6 +220,7 @@ export class FileLayer extends AttribLayer {
         );
 
         this.attribs.attLoader.updateFieldList(this.fieldList);
+        this.attribs.attLoader.updateFieldsToTrim(this.getFieldsToTrim());
 
         this.featureCount = this.esriLayer?.source.length || 0;
 
