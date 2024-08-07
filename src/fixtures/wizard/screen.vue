@@ -20,6 +20,7 @@
                             :label="t('wizard.upload.file.label')"
                             :help="t('wizard.upload.file.help')"
                             @upload="updateFile"
+                            :aria-label="t('wizard.upload.file.label')"
                         />
                         <span class="block text-center mb-10">or</span>
 
@@ -35,6 +36,7 @@
                                 required: t('wizard.upload.url.error.required'),
                                 invalid: t('wizard.upload.url.error.url')
                             }"
+                            :aria-label="t('wizard.upload.url.label')"
                         />
                         <wizard-form-footer
                             @submit="onUploadContinue"
@@ -111,6 +113,7 @@
                                 }${' ' + t('wizard.format.warn.vpn') + '.'}`
                             }"
                             @keydown.stop
+                            :aria-label="t('wizard.format.type.service')"
                         />
                         <wizard-form-footer
                             @submit="onSelectContinue"
@@ -145,6 +148,7 @@
                             v-model="layerInfo.config.name"
                             @link="updateLayerName"
                             :label="t('wizard.configure.name.label')"
+                            :aria-label="t('wizard.configure.name.label')"
                             :validation="true"
                             :validation-messages="{
                                 required: t(
@@ -160,6 +164,7 @@
                             name="nameField"
                             v-model="layerInfo.config.nameField"
                             :label="t('wizard.configure.nameField.label')"
+                            :aria-label="t('wizard.configure.nameField.label')"
                             :defaultOption="true"
                             :options="fieldOptions()"
                         />
@@ -173,6 +178,9 @@
                             name="tooltipField"
                             v-model="layerInfo.config.tooltipField"
                             :label="t('wizard.configure.tooltipField.label')"
+                            :aria-label="
+                                t('wizard.configure.tooltipField.label')
+                            "
                             :options="fieldOptions()"
                         />
                         <wizard-input
@@ -182,6 +190,7 @@
                             v-model="layerInfo.config.latField"
                             :defaultOption="true"
                             :label="t('wizard.configure.latField.label')"
+                            :aria-label="t('wizard.configure.latField.label')"
                             :options="latLonOptions('lat')"
                         />
                         <wizard-input
@@ -193,6 +202,7 @@
                             v-model="layerInfo.config.longField"
                             :defaultOption="true"
                             :label="t('wizard.configure.longField.label')"
+                            :aria-label="t('wizard.configure.longField.label')"
                             :options="latLonOptions('lon')"
                         />
                         <!-- For map image layers -->
@@ -206,6 +216,9 @@
                                 name="nested"
                                 @nested="updateNested"
                                 :label="t('wizard.configure.sublayers.nested')"
+                                :aria-label="
+                                    t('wizard.configure.sublayers.nested')
+                                "
                             />
                             <wizard-input
                                 type="select"
@@ -214,6 +227,9 @@
                                 v-model="layerInfo.config.sublayers"
                                 @select="updateSublayers"
                                 :label="t('wizard.configure.sublayers.label')"
+                                :aria-label="
+                                    t('wizard.configure.sublayers.label')
+                                "
                                 :options="layerInfo.layers!"
                                 :selectedValues="selectedValues"
                                 :sublayerOptions="sublayerOptions"

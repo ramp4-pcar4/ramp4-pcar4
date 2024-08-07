@@ -4,7 +4,7 @@
             <!-- step number -->
             <div
                 v-if="!done()"
-                class="w-24 h-24 bg-gray-400 rounded-full flex justify-center items-center text-white text-xs font-semibold"
+                class="w-24 h-24 bg-gray-500 rounded-full flex justify-center items-center text-white text-xs font-semibold"
                 :class="{ 'bg-blue-500': active }"
             >
                 {{ index + 1 }}

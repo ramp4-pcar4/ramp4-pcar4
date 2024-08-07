@@ -26,6 +26,7 @@
                             value: visibilityModel,
                             disabled: !controlAvailable(LayerControl.Visibility)
                         }"
+                        :ariaLabel="t('settings.label.visibility')"
                     />
 
                     <div class="rv-settings-divider"></div>
@@ -40,6 +41,7 @@
                             value: opacityModel,
                             disabled: !controlAvailable(LayerControl.Opacity)
                         }"
+                        :ariaLabel="t('settings.label.opacity')"
                     ></settings-component>
 
                     <div class="rv-settings-divider"></div>
@@ -78,6 +80,7 @@
                             value: identifyModel,
                             disabled: !controlAvailable(LayerControl.Identify)
                         }"
+                        :ariaLabel="t('settings.label.identify')"
                     ></settings-component>
 
                     <div class="rv-settings-divider"></div>
@@ -233,8 +236,8 @@ const controlAvailable = (control: LayerControl): boolean => {
     return settingsConfig?.disabledControls?.includes(control)
         ? false
         : settingsConfig?.controls
-        ? settingsConfig?.controls?.includes(control)
-        : true;
+          ? settingsConfig?.controls?.includes(control)
+          : true;
 };
 
 /**
