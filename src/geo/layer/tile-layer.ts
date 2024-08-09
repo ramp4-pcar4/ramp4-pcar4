@@ -41,20 +41,18 @@ export class TileLayer extends MapLayer {
         return esriConfig;
     }
 
-    /**
-     * Triggers when the layer loads.
-     *
-     * @function onLoadActions
-     */
-    onLoadActions(): Array<Promise<void>> {
+    protected onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
+        const startTime = Date.now();
 
         this.layerTree.name = this.name;
 
         const legendPromise = this.$iApi.geo.symbology
             .mapServerToLocalLegend(this.origRampConfig.url!)
             .then(legArray => {
-                this.legend = legArray;
+                if (startTime > this.lastCancel) {
+                    this.legend = legArray;
+                }
             });
 
         loadPromises.push(legendPromise);

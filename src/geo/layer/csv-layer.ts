@@ -16,6 +16,7 @@ export class CsvLayer extends FileLayer {
         }
 
         let csvData: string; // contents of the file, encoded in UTF8
+        const startTime = Date.now();
 
         if (
             this.origRampConfig.rawData &&
@@ -32,15 +33,18 @@ export class CsvLayer extends FileLayer {
             throw new Error('Csv file config contains no raw data or url');
         }
 
-        // convert csv to geojson, store in property for FileLayer to consume.
-        this.sourceGeoJson = await this.$iApi.geo.layer.files.csvToGeoJson(
-            csvData,
-            {
+        if (startTime > this.lastCancel) {
+            // convert csv to geojson, store in property for FileLayer to consume.
+
+            const gj = await this.$iApi.geo.layer.files.csvToGeoJson(csvData, {
                 latfield: this.origRampConfig.latField,
                 lonfield: this.origRampConfig.longField
-            }
-        );
+            });
 
-        await super.onInitiate();
+            if (startTime > this.lastCancel) {
+                this.sourceGeoJson = gj;
+                await super.onInitiate();
+            }
+        }
     }
 }

@@ -71,11 +71,6 @@ export class CommonGraphicLayer extends MapLayer {
         return this.esriLayer?.graphics.find((g: any) => g.id === graphicId);
     }
 
-    protected notLoadedErr(): void {
-        console.error('Attempted to manipulate the layer before it was loaded');
-        console.trace();
-    }
-
     /** Returns a copy of the graphics in the layer. */
     get graphics(): Array<Graphic> {
         return this._graphics.slice();
@@ -89,7 +84,7 @@ export class CommonGraphicLayer extends MapLayer {
      * @returns {Promise} resolves when graphics have been added
      */
     async addGraphic(graphics: Graphic | Array<Graphic>): Promise<void> {
-        if (!this.esriLayer) {
+        if (!this.layerExists) {
             this.noLayerErr();
             return;
         }
@@ -133,7 +128,7 @@ export class CommonGraphicLayer extends MapLayer {
         });
 
         // TODO raise event?
-        this.esriLayer.addMany(esriGraphics);
+        this.esriLayer!.addMany(esriGraphics);
     }
 
     /**
@@ -142,13 +137,13 @@ export class CommonGraphicLayer extends MapLayer {
      * @param {Graphic | string | Array<Graphic | string>} graphics Valid formats: A Graphic object, a graphic ID in string form, or an array of Graphic objects and/or graphic ID strings
      */
     removeGraphic(graphics?: Array<string | Graphic> | string | Graphic): void {
-        if (!this.esriLayer) {
+        if (!this.layerExists) {
             this.noLayerErr();
             return;
         }
         if (typeof graphics === 'undefined') {
             // TODO remove hover stuff once supported
-            this.esriLayer.removeAll();
+            this.esriLayer!.removeAll();
             this._graphics = [];
             // TODO raise event?
             return;

@@ -407,8 +407,17 @@ export class LegendItem extends APIScope {
      * Sets legend item to an error state
      */
     error() {
-        this._type = LegendType.Error;
-        this._loadPromise.rejectMe();
-        this.checkVisibilityRules();
+        // there are many routes that call .error(), easy to have one action trigger a few.
+        // Load updaters, layer status event handlers, manual cancels.
+        // Only do the logic if the block isn't already in the error state
+        if (this._type !== LegendType.Error) {
+            this._type = LegendType.Error;
+
+            // just to silence console about unhandled rejections.
+            this._loadPromise.getPromise().catch(() => {});
+
+            this._loadPromise.rejectMe();
+            this.checkVisibilityRules();
+        }
     }
 }

@@ -1,5 +1,7 @@
 # Guide for devs on how layer classes hang together
 
+## Inheritance Chain
+
 LayerInstance: RAMP's internal "base class" for layers. Any code dealing with generic layers should use this class.
 
 ~ CommonLayer: The generic class for layers that are implemented inside RAMP core.
@@ -30,10 +32,41 @@ LayerInstance: RAMP's internal "base class" for layers. Any code dealing with ge
 
 ~ ~ ~ ~ ~ ShapefileLayer: Handles layers populated by a zipped shapefile.
 
+~ ~ ~ CommonGraphicLayer: The generic class for Graphic layers.
+
+~ ~ ~ ~ GraphicLayer: Handles basic client-side Graphic layer.
+
 ~ ~ DataLayer: The generic class for layers that do not have a layer on the map.
 
-~ ~ ~ CsvDataLayer: Handles data layers populated by a CSV file.
+~ ~ ~ CsvDataLayer: Handles data layers populated by a CSV file. (Not created yet)
 
 ~ ~ ~ JsonDataLayer: Handles data layers populated by a Compact Json dataset
 
 ~ ~ ~ TableLayer: Handles data layers populated by an ArcGIS Table
+
+## Initiation Chain
+
+Useful for figuring out where to put checkpoints for "cancel load" kickouts.
+This chain is the `onInitiate()` calls. They tend to go backwards (subclass --> superclass) with the exception of MapLayer calling CommonLayer as an early step.
+
+~ CommonLayer: Just saftey checks.
+
+~ ~ MapLayer: Just wires up layer events, sets statuses.
+
+~ ~ ~ FeatureLayer, MapImageLayer, WMSLayer, TileLayer, ImageryLayer, GraphicLayer: Generates ESRI layer.
+
+~ ~ ~ FileLayer: Converts GeoJSON to EsriJSON. Blocks, but only for projection validation
+
+~ ~ ~ ~ GeoJsonLayer, CsvLayer, ShapefileLayer: Gets data, converts to GeoJSON. Blocks if file is server based. Some converters block but processing is local.
+
+~ ~ ~ ~ WfsLayer: Blocks as it downloads GeoJSON.
+
+~  MapImageSublayer: Just sets status.
+
+~ DataLayer: Just data setup, local processing.
+
+~ ~ JsonDataLayer: Gets data. Blocks if file is server based.
+
+~ TableLayer: Does nothing.
+
+~ AttributeLayer, CommonGraphicLayer: No method. Drills through to superclass.

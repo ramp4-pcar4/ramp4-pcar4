@@ -78,7 +78,8 @@ export class LayerInstance extends APIScope {
     drawState: DrawState;
 
     /**
-     * Index of the layer. Aligns to index of arcgis server, or defaults to 0 on other layers
+     * Index of the layer. Aligns to index of arcgis server source, or defaults to 0 on other layers.
+     * Map Image Layers and layers that do not support attributes have a value of -1
      */
     layerIdx: number;
 
@@ -143,6 +144,12 @@ export class LayerInstance extends APIScope {
     expectedTime: LayerTimes;
 
     /**
+     * Timecode value for the start of most recent cancel request.
+     * Used to avoid races between async things returning after layers cancel or reload.
+     */
+    lastCancel: number;
+
+    /**
      * If the layer has Sublayers
      */
     supportsSublayers: boolean;
@@ -196,11 +203,6 @@ export class LayerInstance extends APIScope {
      * Legend symbols of the layer
      */
     legend: Array<LegendSymbology>;
-
-    /**
-     * How long layer can load for before error (milliseconds)
-     */
-    maxLoadTime: number;
 
     /**
      *  The internal ESRI API layer
@@ -282,8 +284,8 @@ export class LayerInstance extends APIScope {
         this.geomType = GeometryType.UNKNOWN;
         this.legend = [];
         this._sublayers = [];
-        this.expectedTime = { draw: 0, load: 0 };
-        this.maxLoadTime = 0;
+        this.expectedTime = { draw: 0, load: 0, fail: 0 };
+        this.lastCancel = 0;
         this.canModifyLayer = true;
         this.canReload = true;
         this.url = '';
@@ -318,6 +320,18 @@ export class LayerInstance extends APIScope {
     }
 
     /**
+     * Cancels an in-progress initialize or load of the layer and places it in an Error state.
+     * Has no effect on a layer that is loaded, has been terminated, or never initiazed.
+     */
+    cancelLoad(): void {}
+
+    /**
+     * If layer is map bound, and has an esri layer in the esri map, remove it from esri map.
+     * Typically should only be called by RAMP internals.
+     */
+    removeEsriLayer(): void {}
+
+    /**
      * Provides a promise that resolves when the layer has finished loading. If accessing layer properties that
      * depend on the layer being loaded, wait on this promise before accessing them.
      *
@@ -331,8 +345,10 @@ export class LayerInstance extends APIScope {
     /**
      * Indicates if the layer is in a state that is makes sense to interact with.
      * I.e. False if layer has not done it's initial load, or is in error state.
+     * Acts as a handy shortcut to inspecting the layerState.
      *
-     * @returns {Boolean} true if layer is in an interactive state
+     * @method isLoaded
+     * @returns {Boolean} true if layer is loaded
      */
     get isLoaded(): boolean {
         return false;
@@ -519,13 +535,11 @@ export class LayerInstance extends APIScope {
 
     /**
      * Requests that an attribute load request be aborted. Useful when encountering a massive dataset or a runaway process.
-     *
      */
     abortAttributeLoad(): void {}
 
     /**
      * Requests that any downloaded attribute sets or cached geometry be removed from memory. The next requests will pull from the server again.
-     *
      */
     clearFeatureCache(): void {}
 
@@ -567,6 +581,9 @@ export class LayerInstance extends APIScope {
      * Gets information on a graphic in the most efficient way possible. Options object properties:
      * - getGeom ; a boolean to indicate if the result should include graphic geometry
      * - getAttribs ; a boolean to indicate if the result should include graphic attributes
+     * - getStyle ; a boolean to indicate if the result should graphical styling information
+     *
+     * All option properties are optional and default to false
      *
      * @param {Integer} objectId the object id of the graphic to find
      * @param {Object} options options object for the request, see above
@@ -688,14 +705,17 @@ export class LayerInstance extends APIScope {
     /**
      * Initiates actions after layer load error.
      * Should generally only be called internally by the RAMP core.
+     * @param {boolean} [genuineError=true] Flag to detect error setting due to manual cancellation. Only genuine errors will raise notifications.
      */
-    onError(): void {}
+    onError(genuineError: boolean = true): void {}
 
     /**
      * Updates layer load state and raises events.
      * Should generally only be called internally by the RAMP core.
+     * @param {LayerState} newState load state the layer is entering
+     * @param {Boolean} [userCancel=false] optional flag to indicate if an error state was intentional due to a user cancel request
      */
-    updateLayerState(newState: LayerState): void {}
+    updateLayerState(newState: LayerState, userCancel: boolean = false): void {}
 
     /**
      * Updates layer draw state and raises events.

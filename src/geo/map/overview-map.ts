@@ -188,8 +188,10 @@ export class OverviewMapAPI extends CommonMapAPI {
         }
 
         this.overviewGraphicLayer.removeGraphic();
-        await this.overviewGraphicLayer.terminate();
         this.esriMap.remove(this.overviewGraphicLayer.esriLayer);
+
+        // This removes the reference to .esriLayer so must happen after the esriMap.remove()
+        await this.overviewGraphicLayer.terminate();
     }
 
     /**

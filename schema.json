@@ -817,8 +817,8 @@
                 },
                 "maxLoadTime": {
                     "type": "number",
-                    "default": 20000,
-                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
+                    "default": 0,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will defer to the map default."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -891,8 +891,8 @@
                 },
                 "maxLoadTime": {
                     "type": "number",
-                    "default": 20000,
-                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
+                    "default": 0,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will defer to the map default."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -966,8 +966,8 @@
                 },
                 "maxLoadTime": {
                     "type": "number",
-                    "default": 20000,
-                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
+                    "default": 0,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will defer to the map default."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -1171,8 +1171,8 @@
                 },
                 "maxLoadTime": {
                     "type": "number",
-                    "default": 20000,
-                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
+                    "default": 0,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will defer to the map default."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -1294,8 +1294,8 @@
                 },
                 "maxLoadTime": {
                     "type": "number",
-                    "default": 20000,
-                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
+                    "default": 0,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will defer to the map default."
                 },
                 "layerType": {
                     "type": "string",
@@ -1416,8 +1416,8 @@
                 },
                 "maxLoadTime": {
                     "type": "number",
-                    "default": 20000,
-                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
+                    "default": 0,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will defer to the map default."
                 },
                 "layerType": {
                     "type": "string",
@@ -1511,8 +1511,8 @@
                 },
                 "maxLoadTime": {
                     "type": "number",
-                    "default": 20000,
-                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
+                    "default": 0,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will defer to the map default."
                 },
                 "colour": {
                     "type": "string",
@@ -1629,8 +1629,8 @@
                 },
                 "maxLoadTime": {
                     "type": "number",
-                    "default": 20000,
-                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will allow the layer to load forever"
+                    "default": 0,
+                    "description": "The time span (in milliseconds) a layer can load for before entering the 'error' state. Zero will defer to the map default."
                 },
                 "metadata": {
                     "$ref": "#/$defs/layerMetadata"
@@ -2568,7 +2568,7 @@
                             "enum": ["glow", "lift", "fog", "none"]
                         },
                         "options": {
-                            "description": "Options for the selected hilight mode.",
+                            "description": "Options for the selected hilight mode. The below schema is for fog mode. In glow mode, the options object should conform to an ESRI MapView HighlightOptions type.",
                             "type": "object",
                             "properties": {
                                 "onOpacity": {
@@ -2825,6 +2825,11 @@
                             "type": "number",
                             "default": 10000,
                             "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications. Values on individual layer configs will override."
+                        },
+                        "maxLoadTime": {
+                            "type": "number",
+                            "description": "Time limit (in milliseconds) to wait for any added layer to load. Layer errors if time exceeds. Value must be greater than 0.",
+                            "default": 90000
                         }
                     }
                 }

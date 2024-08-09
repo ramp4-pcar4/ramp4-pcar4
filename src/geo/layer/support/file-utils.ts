@@ -567,8 +567,9 @@ export class FileUtils extends APIScope {
 
             Object.keys(gr.attributes).forEach(attName => {
                 if (validFields.includes(attName)) {
-                    // TEMPORARY hunt any complex datatypes and replace with a string
-                    // TODO figure out how to actually handle arrays or objects as attribute values
+                    // if we encounter any complex datatypes (objects, arrays),
+                    // stringify them. Any custom template can re-parse them if they need
+                    // the original structure.
                     if (
                         (Array.isArray(gr.attributes[attName]) ||
                             typeof gr.attributes[attName] === 'object') &&

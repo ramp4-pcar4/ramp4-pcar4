@@ -127,23 +127,20 @@ export class MapImageLayer extends MapLayer {
         return esriConfig;
     }
 
-    /**
-     * Triggers when the layer loads.
-     *
-     * @function onLoadActions
-     */
-    onLoadActions(): Array<Promise<void>> {
+    protected onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        if (!this.esriLayer) {
+        if (!this.layerExists) {
             this.noLayerErr();
             return loadPromises;
         }
 
+        const startTime = Date.now();
+
         this.layerTree.name = this.name;
 
         // throw error for FeatureServer added as MIL, has no export map function
-        if (!this.esriLayer.capabilities.exportMap) {
+        if (!this.esriLayer!.capabilities.exportMap) {
             this.$iApi.notify.show(
                 NotificationType.WARNING,
                 this.$iApi.$i18n.t('layer.noexportmap', {
@@ -156,11 +153,11 @@ export class MapImageLayer extends MapLayer {
             );
         }
         this.isDynamic =
-            this.esriLayer.capabilities.exportMap.supportsDynamicLayers;
+            this.esriLayer!.capabilities.exportMap.supportsDynamicLayers;
 
         this.extent =
             this.extent ??
-            Extent.fromESRI(this.esriLayer.fullExtent, this.id + '_extent');
+            Extent.fromESRI(this.esriLayer!.fullExtent, this.id + '_extent');
 
         const findSublayer = (targetIndex: number): __esri.Sublayer => {
             const finder = this.esriLayer?.allSublayers.find(s => {
@@ -321,7 +318,7 @@ export class MapImageLayer extends MapLayer {
 
             // the sublayer needs to be re-fetched because the initial sublayer was marked as "raw"
             miSL.fetchEsriSublayer(this);
-            miSL.initiate();
+            const leafInitProm = miSL.initiate();
 
             // setting custom renderer here (if one is provided)
             const hasCustRed =
@@ -338,7 +335,15 @@ export class MapImageLayer extends MapLayer {
                         ? { customRenderer: miSL.esriSubLayer?.renderer }
                         : {}
                 )
-                .then(() => {
+                .then(async () => {
+                    if (startTime < this.lastCancel) {
+                        // cancelled, kickout.
+                        return;
+                    }
+
+                    // this will be instant. use await just to avoid any thread hopping trickery. no need for additional cancel check
+                    await leafInitProm;
+
                     // apply any updates that were in the configuration snippets
                     const subC = subConfigs[miSL.layerIdx];
                     if (subC) {
@@ -350,13 +355,13 @@ export class MapImageLayer extends MapLayer {
                         // The order in that case is sublayer config -> parent config -> server -> true.
                         miSL.visibility = miSL.isRemoved
                             ? false
-                            : subC.state?.visibility ??
+                            : (subC.state?.visibility ??
                               (this.origState.visibility
-                                  ? miSL._serverVisibility ??
-                                    this.origState.visibility
-                                  : this.origState.visibility ??
-                                    miSL._serverVisibility) ??
-                              true;
+                                  ? (miSL._serverVisibility ??
+                                    this.origState.visibility)
+                                  : (this.origState.visibility ??
+                                    miSL._serverVisibility)) ??
+                              true);
                         miSL.opacity =
                             subC.state?.opacity ?? this.origState.opacity ?? 1;
                         miSL.nameField = subC.nameField || miSL.nameField || '';
@@ -397,10 +402,12 @@ export class MapImageLayer extends MapLayer {
                                 miSL.getSqlFilter(CoreFilter.PERMANENT)
                             )
                             .then(count => {
-                                miSL.featureCount = count;
+                                if (startTime > this.lastCancel) {
+                                    miSL.featureCount = count;
+                                }
                             });
                     } else {
-                        return Promise.resolve();
+                        return;
                     }
                 });
             loadPromises.push(pLMD);
@@ -408,7 +415,7 @@ export class MapImageLayer extends MapLayer {
 
         // any sublayers lurking in the ESRI layer that are not in our set of sublayers,
         // we need to deal with.
-        this.esriLayer.allSublayers.forEach(s => {
+        this.esriLayer!.allSublayers.forEach(s => {
             if (
                 !s.sublayers &&
                 !leafsToInit.find(sublayer => sublayer.layerIdx === s.id)
@@ -432,10 +439,12 @@ export class MapImageLayer extends MapLayer {
         return loadPromises;
     }
 
-    updateLayerState(newState: LayerState): void {
+    updateLayerState(newState: LayerState, userCancel: boolean = false): void {
         // force any sublayers to also update their state and raise events
-        super.updateLayerState(newState);
-        this.sublayers.forEach(sublayer => sublayer.updateLayerState(newState));
+        super.updateLayerState(newState, userCancel);
+        this.sublayers.forEach(sublayer =>
+            sublayer.updateLayerState(newState, userCancel)
+        );
     }
 
     updateDrawState(newState: DrawState): void {

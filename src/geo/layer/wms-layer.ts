@@ -114,12 +114,7 @@ export class WmsLayer extends MapLayer {
         return esriConfig;
     }
 
-    /**
-     * Triggers when the layer loads.
-     *
-     * @function onLoadActions
-     */
-    onLoadActions(): Array<Promise<void>> {
+    protected onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
         this.layerTree.name = this.name;
@@ -150,8 +145,8 @@ export class WmsLayer extends MapLayer {
             });
             return anySlVis;
         };
-        if (this.esriLayer) {
-            crawlSublayers(this.esriLayer.sublayers);
+        if (this.layerExists) {
+            crawlSublayers(this.esriLayer!.sublayers);
         } else {
             this.noLayerErr();
         }
@@ -281,17 +276,21 @@ export class WmsLayer extends MapLayer {
      * @param {String} value value of the key
      * @param {Boolean} forceRefresh show the new fancy version of the layer or not
      */
-    setCustomParameter(key: string, value: string, forceRefresh = true): void {
-        if (!this.esriLayer) {
-            this.noLayerErr();
-        } else {
-            if (!this.esriLayer.customLayerParameters) {
-                this.esriLayer.customLayerParameters = {};
+    setCustomParameter(
+        key: string,
+        value: string,
+        forceRefresh: boolean = true
+    ): void {
+        if (this.layerExists) {
+            if (!this.esriLayer!.customLayerParameters) {
+                this.esriLayer!.customLayerParameters = {};
             }
-            this.esriLayer.customLayerParameters[key] = value;
+            this.esriLayer!.customLayerParameters[key] = value;
             if (forceRefresh) {
-                this.esriLayer.refresh();
+                this.esriLayer!.refresh();
             }
+        } else {
+            this.noLayerErr();
         }
     }
 
@@ -442,14 +441,14 @@ export class WmsLayer extends MapLayer {
     getLegendUrls(layerList: Array<any>): Array<string> {
         // TODO needs robust testing once something is using it
 
-        if (!this.esriLayer) {
+        if (!this.layerExists) {
             this.noLayerErr();
             return [];
         }
 
         const slMap = new Map();
         // .allSublayers is a flat collection of all sublayers
-        this.esriLayer.allSublayers.forEach((sl: any) => {
+        this.esriLayer!.allSublayers.forEach((sl: any) => {
             if (sl.visible) {
                 // NOTE: currently, the ESRI WMSLayer constructor does not seem to be building a legendUrl using the correct style parameter.
                 // this is a temp fix until we figure out what is going wrong there. See #603.
@@ -534,6 +533,7 @@ export class WmsLayer extends MapLayer {
      * @function loadSymbology
      */
     loadSymbology(): void {
+        const startTime = Date.now();
         const configSublayers = this.config.sublayers;
         const legendArray = this.getLegendUrls(
             configSublayers.map((sublayer: any) => {
@@ -557,9 +557,11 @@ export class WmsLayer extends MapLayer {
                 drawPromise: this.$iApi.geo.symbology
                     .generateWMSSymbology(imageUri)
                     .then((data: any) => {
-                        symbologyItem.svgcode = data.svgcode;
-                        symbologyItem.imgHeight = data.imgHeight;
-                        symbologyItem.imgWidth = data.imgWidth;
+                        if (startTime > this.lastCancel) {
+                            symbologyItem.svgcode = data.svgcode;
+                            symbologyItem.imgHeight = data.imgHeight;
+                            symbologyItem.imgWidth = data.imgWidth;
+                        }
                     })
             };
             return symbologyItem;

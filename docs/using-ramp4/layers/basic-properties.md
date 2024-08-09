@@ -94,7 +94,7 @@ The object structure matches the ArcGIS Server [2D Envelope](https://developers.
 
 *integer*
 
-Defines a time limit, in milliseconds, for the max amount of time it would take for the layer load (i.e. establishing contact with a server, the fetching of metadata, the downloading of data for file or WFS type layers). If the limit is exceeded, the layer will stop loading and produce an error. If missing, a default of 20 seconds will be used. Setting to `0` will allow the layer to load forever.
+Defines a time limit, in milliseconds, for the max amount of time it would take for the layer load (i.e. establishing contact with a server, the fetching of metadata, the downloading of data for file or WFS type layers). If the limit is exceeded, the layer will stop loading and produce an error. The value must be greater than 0. If 0 or missing, the map level configuration will be used. This defaults to 90000 (90 seconds).
 
 ```js
 {
