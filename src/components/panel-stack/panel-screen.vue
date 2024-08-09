@@ -13,6 +13,7 @@
                 ]
             }
         }"
+        truncate-trigger
         ref="el"
     >
         <header
@@ -27,7 +28,12 @@
                 @click="panel.close()"
             ></back>
 
-            <h2 class="flex-grow text-lg py-16 pl-8 min-w-0" v-truncate>
+            <h2
+                class="flex-grow text-lg py-16 pl-8 min-w-0"
+                v-truncate="{
+                    externalTrigger: true
+                }"
+            >
                 <slot name="header"></slot>
             </h2>
 

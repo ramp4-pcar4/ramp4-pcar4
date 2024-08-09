@@ -90,10 +90,13 @@ function linkifyContent(content: string | null): TippyContent {
         return '';
     }
 
-    return <TippyContent>linkifyHtml(content, {
+    let res = linkifyHtml(content, {
         target: '_blank',
         validate: {
             url: (value: string) => /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
         }
     });
+    res = `<div style='word-break: break-word;'> ${res} </div>`;
+
+    return <TippyContent>res;
 }
