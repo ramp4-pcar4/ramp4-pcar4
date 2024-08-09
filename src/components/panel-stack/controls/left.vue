@@ -1,5 +1,5 @@
 <template>
-    <div class="relative" tabindex="-1">
+    <div class="relative">
         <button
             type="button"
             class="p-8 move-left"
