@@ -27,7 +27,11 @@
                 @click="panel.close()"
             ></back>
 
-            <h2 class="flex-grow text-lg py-16 pl-8 min-w-0" v-truncate>
+            <h2
+                class="flex-grow text-lg py-16 pl-8 min-w-0"
+                v-truncate
+                focus-icon
+            >
                 <slot name="header"></slot>
             </h2>
 
