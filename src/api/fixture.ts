@@ -34,12 +34,12 @@ export class FixtureAPI extends APIScope {
 
     /**
      * Returns whether a given fixture exists.
-     * 
+     *
      * @param {string} id the fixture ID to be checked
      * @returns {boolean} whether the fixture identified by 'id' exists
      * @memberof FixtureAPI
      */
-    exists(id: string) : boolean {
+    exists(id: string): boolean {
         return id in useFixtureStore(this.$vApp.$pinia).items;
     }
 
@@ -52,7 +52,11 @@ export class FixtureAPI extends APIScope {
      * @memberof FixtureAPI
      */
     // TODO: implement overload to add a list of features
-    async add(id: string, constructor?: IFixtureBase): Promise<FixtureBase> {
+    async add(
+        id: string,
+        constructor?: IFixtureBase,
+        persist?: boolean
+    ): Promise<FixtureBase> {
         let fixture: FixtureBase;
 
         // if the fixture already exist, do nothing and just return it
@@ -80,7 +84,7 @@ export class FixtureAPI extends APIScope {
             fixture = new instanceConstructor(id, this.$iApi);
         }
 
-        useFixtureStore(this.$vApp.$pinia).addFixture(fixture);
+        useFixtureStore(this.$vApp.$pinia).addFixture(fixture, persist);
 
         this.$iApi.event.emit(GlobalEvents.FIXTURE_ADDED, fixture);
 
@@ -113,6 +117,47 @@ export class FixtureAPI extends APIScope {
 
         this.$iApi.event.emit(GlobalEvents.FIXTURE_REMOVED, fixture);
         return fixture;
+    }
+
+    /**
+     * Remove every fixture whose persist flag is set to false from the R4MP instance.
+     * For all other fixtures, simply call their removed hook.
+     */
+    flush(): void {
+        const fixtureStore = useFixtureStore(this.$vApp.$pinia);
+        const fixtureIds = Object.keys(fixtureStore.items);
+        fixtureIds.forEach((id: string) => {
+            if (
+                fixtureStore.persistFlags[id] &&
+                typeof fixtureStore.items[id].removed === 'function'
+            ) {
+                // call the `removed` life hook if available
+                fixtureStore.items[id].removed();
+            } else if (!fixtureStore.persistFlags[id] && this.exists(id)) {
+                this.remove(id);
+            }
+        });
+    }
+
+    /**
+     * Restores every remaining fixture by calling its added/initialized hooks.
+     */
+    restore(): void {
+        const fixtureStore = useFixtureStore(this.$vApp.$pinia);
+        const fixtureIds = Object.keys(fixtureStore.items);
+        fixtureIds.forEach((id: string) => {
+            const fixture = fixtureStore.items[id];
+            // call the `added` life hook if available
+            if (typeof fixture.added === 'function') {
+                fixture.added();
+            }
+            if (
+                this.$iApi.geo.map.created &&
+                typeof fixture.initialized === 'function'
+            ) {
+                fixture.initialized();
+            }
+        });
     }
 
     /**

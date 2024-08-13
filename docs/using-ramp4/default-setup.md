@@ -24,6 +24,7 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | FILTER_CHANGE<br>'filter/change'                   | FilterEventParam object                                        | A filter has changed                             |
 | FIXTURE_ADDED<br>'fixture/added'                   | FixtureInstance object                                         | A fixture has been added                         |
 | FIXTURE_REMOVED<br>'fixture/removed'               | FixtureInstance object                                         | A fixture has been removed                       |
+| LANG_CHANGE<br>'lang/change'                       | _old_: old language, _new_: new language                       | The language was changed                         |
 | LAYER_DRAWSTATECHANGE<br>'layer/drawstatechange'   | _state_: new value, layer: LayerInstance object                | The layer draw state changed                     |
 | LAYER_INITIATIONSTATECHANGE<br>'layer/initiationStatechange' | _state_: new value, layer: LayerInstance object      | The layer layer state changed |
 | LAYER_LAYERSTATECHANGE<br>'layer/layerstatechange' | _state_: new value, layer: LayerInstance object                | The layer load state changed |                     |
