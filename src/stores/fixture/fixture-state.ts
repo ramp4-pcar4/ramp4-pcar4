@@ -10,6 +10,14 @@ export interface FixtureBase {
     id: string;
 
     /**
+     * Indicates whether to keep the fixture when the language changes. Defaults to true.
+     *
+     * @type {boolean}
+     * @memberof Fixture
+     */
+    persist: boolean;
+
+    /**
      * [Optional] Called synchronously when the fixture is added to R4MP.
      *
      * @memberof Fixture

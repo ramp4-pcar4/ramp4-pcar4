@@ -93,6 +93,7 @@ export class InstanceAPI {
         suppressNumberLocalization: boolean;
     };
     startRequired: boolean = false;
+    private _eventsOn: boolean = false; // internal tracker that indicates whether default event handlers are on.
 
     /**
      * The instance of Vue R4MP application controlled by this InstanceAPI.
@@ -151,17 +152,22 @@ export class InstanceAPI {
             });
         }
 
-        this.initialize(configs, options);
+        this.initialize(true, configs, options);
     }
 
     /**
      * Initializes a Vue R4MP instance with the given config and options
      *
      * @private
+     * @param {boolean} first whether this is the first time initialize is being called for this R4MP instance
      * @param {RampConfigs | undefined} configs language-keyed R4MP config
      * @param {RampOptions | undefined} options startup options for this R4MP instance
      */
-    private initialize(configs?: RampConfigs, options?: RampOptions): void {
+    private initialize(
+        first: boolean,
+        configs?: RampConfigs,
+        options?: RampOptions
+    ): void {
         const configStore = useConfigStore(this.$vApp.$pinia);
         const panelStore = usePanelStore(this.$vApp.$pinia);
         const maptipStore = useMaptipStore(this.$vApp.$pinia);
@@ -335,13 +341,17 @@ export class InstanceAPI {
         // run the default setup functions unless flags have been set to false.
         // override the loadDefaultFixtures flag if startingFixtures is provided
         if (
-            !(options.loadDefaultFixtures === false) ||
-            configs?.startingFixtures !== undefined
+            first &&
+            (options.loadDefaultFixtures !== false ||
+                configs?.startingFixtures !== undefined)
         ) {
             this.fixture.addDefaultFixtures(configs?.startingFixtures);
+        } else if (!first) {
+            this.fixture.restore();
         }
-        if (!(options.loadDefaultEvents === false)) {
+        if (options.loadDefaultEvents !== false && !this._eventsOn) {
             this.event.addDefaultEvents();
+            this._eventsOn = true;
         }
     }
 
@@ -359,16 +369,26 @@ export class InstanceAPI {
         const layerStore = useLayerStore(this.$vApp.$pinia);
         const gridStore = useGridStore(this.$vApp.$pinia);
 
-        // remove all fixtures
-        // get list of all fixture ids currently added
-        const addedFixtures: Array<string> = Object.keys(fixtureStore.items);
-        // remove each fixture
-        addedFixtures.forEach((id: string) => {
-            // check if the fixture exists first otherwise it will error
-            if (this.fixture.exists(id)) {
-                this.fixture.remove(id);
-            }
-        });
+        // if a user provides their own config, we pretend that RAMP is initializing for the first time
+        const first = !!configs;
+
+        if (first) {
+            // remove all fixtures
+            // get list of all fixture ids currently added
+            const addedFixtures: Array<string> = Object.keys(
+                fixtureStore.items
+            );
+            // remove each fixture
+            addedFixtures.forEach((id: string) => {
+                // check if the fixture exists first otherwise it will error
+                if (this.fixture.exists(id)) {
+                    this.fixture.remove(id);
+                }
+            });
+        } else {
+            // remove all fixtures which we do not want to persist, otherwise just call the removed hook
+            this.fixture.flush();
+        }
 
         // remove all grids
         // get list of all grid ids currently added
@@ -388,8 +408,11 @@ export class InstanceAPI {
         // reset the layer store
         layerStore.$reset();
 
-        // remove all event handlers
-        this.event.offAll();
+        // remove all default event handlers if new config wants them off
+        if (options?.loadDefaultEvents === false) {
+            this.event.removeDefaultEvents();
+            this._eventsOn = false;
+        }
 
         // if configs is not provided, use the current configs
         if (configs === undefined) {
@@ -409,7 +432,7 @@ export class InstanceAPI {
         this.geo.map.maptip.clear();
 
         // re-initalize ramp
-        this.initialize(configs, options);
+        this.initialize(first, configs, options);
     }
 
     /**
@@ -577,19 +600,21 @@ export class InstanceAPI {
         const configStore = useConfigStore(this.$vApp.$pinia);
         const langs = configStore.registeredLangs;
 
-        // prevent full map reload if the new language uses the same config
-        if (langs[language] === langs[this.$i18n.locale.value]) {
-            this.$i18n.locale.value = language;
-            return;
-        }
-
+        const old = this.$i18n.locale.value;
         this.$i18n.locale.value = language;
 
         const activeConfig = this.getConfig();
-        this.event.emit(GlobalEvents.CONFIG_CHANGE, activeConfig);
 
-        // reload the map to apply new config
-        this.reload();
+        // reload the map and emit event if configs are different
+        if (langs[old] !== langs[language]) {
+            this.event.emit(GlobalEvents.CONFIG_CHANGE, activeConfig);
+            this.reload();
+        }
+
+        this.event.emit(GlobalEvents.LANG_CHANGE, {
+            oldLang: old,
+            newLang: language
+        });
     }
 
     /**
