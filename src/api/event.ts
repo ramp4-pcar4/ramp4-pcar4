@@ -94,6 +94,12 @@ export enum GlobalEvents {
     HELP_TOGGLE = 'help/toggle',
 
     /**
+     * Fires when the language of the app changes.
+     * Payload: `({ oldLang: string, newLang: string })`
+     */
+    LANG_CHANGE = 'lang/change',
+
+    /**
      * Fires when the drawing state of a layer changes.
      * Payload: `({ layer: LayerInstance, state: string })`
      */
@@ -341,10 +347,9 @@ export enum GlobalEvents {
 }
 
 // Default Event Handler Names
-// IMPORTANT: if changing the enum values, be sure to update the documentation to reflect it.
-//            after v4.0.0 release, best to never edit them unless no other alternative,
+// IMPORTANT: These values are part of the public API, best to never edit them unless no other alternative,
 //            as it will be a breaking change to API usage.
-const enum DefEH {
+enum DefEH {
     CONFIG_CHANGE_UPDATES_MAP_ATTRIBS = 'ramp_config_change_updates_map_attribs',
     LAYER_ERROR_UPDATES_LEGEND = 'ramp_layer_error_updates_legend',
     LAYER_REGISTER_BINDS_LEGEND = 'ramp_layer_register_binds_legend',
@@ -545,6 +550,15 @@ export class EventAPI extends APIScope {
     }
 
     /**
+     * Removes all default event handlers.
+     */
+    removeDefaultEvents(): void {
+        Object.values(DefEH).forEach((handlerName: string) => {
+            this.off(handlerName);
+        });
+    }
+
+    /**
      * Triggers an event.
      *
      * @param {string} event the name of the event
@@ -618,44 +632,7 @@ export class EventAPI extends APIScope {
             eventHandlerNames.length === 0
         ) {
             // use all the default event handlers
-
-            eventHandlerNames = [
-                DefEH.CONFIG_CHANGE_UPDATES_MAP_ATTRIBS,
-                DefEH.LAYER_ERROR_UPDATES_LEGEND,
-                DefEH.LAYER_REGISTER_BINDS_LEGEND,
-                DefEH.LAYER_RELOAD_END_BINDS_LEGEND,
-                DefEH.LAYER_RELOAD_START_UPDATES_LEGEND,
-                DefEH.LAYER_REMOVE_UPDATES_DETAILS,
-                DefEH.LAYER_REMOVE_CHECKS_GRID,
-                DefEH.LAYER_REMOVE_UPDATES_LEGEND,
-                DefEH.LAYER_USERADD_UPDATES_LEGEND,
-                DefEH.MAP_BASEMAP_CHECKS_TILE_PROJ,
-                DefEH.MAP_BASEMAP_UPDATES_MAP_ATTRIBS,
-                DefEH.MAP_BLUR_UPDATES_KEY_HANDLER,
-                DefEH.MAP_CLICK_RUNS_IDENTIFY,
-                DefEH.MAP_CREATED_INITIALIZES_FIXTURES,
-                DefEH.MAP_CREATED_UPDATES_MAP_ATTRIBS,
-                DefEH.MAP_EXTENT_UPDATES_MAPTIP,
-                DefEH.MAP_GRAPHICHIT_CREATES_MAPTIP,
-                DefEH.MAP_IDENTIFY_OPENS_IDENTIFY_RESULTS,
-                DefEH.MAP_KEYDOWN_UPDATES_COORDS,
-                DefEH.MAP_KEYDOWN_UPDATES_KEY_HANDLER,
-                DefEH.MAP_KEYUP_UPDATES_KEY_HANDLER,
-                DefEH.MAP_MOUSE_UPDATES_COORDS,
-                DefEH.MAP_MOUSE_UPDATES_MAPTIP,
-                DefEH.MAP_MOUSELEAVE_REMOVES_MAPTIP,
-                DefEH.MAP_RESIZE_UPDATES_SCALEBAR,
-                DefEH.MAP_SCALE_UPDATES_SCALEBAR,
-                DefEH.PANEL_CLOSE_UPDATES_APPBAR,
-                DefEH.PANEL_OPEN_UPDATES_APPBAR,
-                DefEH.TOGGLE_DETAILS,
-                DefEH.TOGGLE_GRID,
-                DefEH.TOGGLE_HELP,
-                DefEH.TOGGLE_METADATA,
-                DefEH.TOGGLE_REORDER,
-                DefEH.TOGGLE_SETTINGS,
-                DefEH.TOGGLE_WIZARD
-            ];
+            eventHandlerNames = Object.values(DefEH);
         }
 
         // add all the requested default event handlers.
