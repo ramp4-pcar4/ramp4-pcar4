@@ -34,12 +34,12 @@ export class FixtureAPI extends APIScope {
 
     /**
      * Returns whether a given fixture exists.
-     * 
+     *
      * @param {string} id the fixture ID to be checked
      * @returns {boolean} whether the fixture identified by 'id' exists
      * @memberof FixtureAPI
      */
-    exists(id: string) : boolean {
+    exists(id: string): boolean {
         return id in useFixtureStore(this.$vApp.$pinia).items;
     }
 
@@ -113,6 +113,49 @@ export class FixtureAPI extends APIScope {
 
         this.$iApi.event.emit(GlobalEvents.FIXTURE_REMOVED, fixture);
         return fixture;
+    }
+
+    // See https://github.com/ramp4-pcar4/ramp4-pcar4/issues/2296#issuecomment-2262964384 for background of flush and restore.
+
+    /**
+     * Remove every fixture whose persist flag is set to false from the R4MP instance.
+     * For all other fixtures, simply call their removed hook.
+     */
+    flush(): void {
+        const fixtureStore = useFixtureStore(this.$vApp.$pinia);
+        const fixtureIds = Object.keys(fixtureStore.items);
+        fixtureIds.forEach((id: string) => {
+            const fixture = this.get(id);
+            if (fixture?.persist && typeof fixture?.removed === 'function') {
+                // call the `removed` life hook if available
+                fixture.removed();
+            } else if (!!fixture) {
+                this.remove(id);
+            }
+        });
+    }
+
+    /**
+     * Restores every remaining fixture by calling its added/initialized hooks.
+     */
+    restore(): void {
+        // See https://github.com/ramp4-pcar4/ramp4-pcar4/issues/2296#issuecomment-2262964384 for background
+        // on why this was done.
+        const fixtureStore = useFixtureStore(this.$vApp.$pinia);
+        const fixtureIds = Object.keys(fixtureStore.items);
+        fixtureIds.forEach((id: string) => {
+            const fixture = fixtureStore.items[id];
+            // call the `added` life hook if available
+            if (typeof fixture.added === 'function') {
+                fixture.added();
+            }
+            if (
+                this.$iApi.geo.map.created &&
+                typeof fixture.initialized === 'function'
+            ) {
+                fixture.initialized();
+            }
+        });
     }
 
     /**
@@ -249,15 +292,16 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      * @memberof FixtureInstance
      */
     static updateBaseToInstance(
-        value: FixtureBase,
+        rawFixture: FixtureBase,
         id: string,
         $iApi: InstanceAPI
     ): FixtureInstance {
         const instance = new FixtureInstance(id, $iApi);
 
-        Object.defineProperties(value, {
+        Object.defineProperties(rawFixture, {
             id: { value: id },
             $iApi: { value: $iApi },
+            persist: { value: rawFixture.persist ?? true },
             $vApp: {
                 get() {
                     return instance.$vApp;
@@ -273,7 +317,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
             mount: { value: instance.mount }
         });
 
-        return value as FixtureInstance;
+        return rawFixture as FixtureInstance;
     }
 
     /**
@@ -283,6 +327,14 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      * @memberof FixtureInstance
      */
     readonly id: string;
+
+    /**
+     * Indicates whether to keep the fixture when the language changes. Defaults to true.
+     *
+     * @type {boolean}
+     * @memberof FixtureInstance
+     */
+    persist: boolean;
 
     /**
      * Creates an instance of FixtureInstance.
@@ -295,6 +347,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
         super(iApi);
 
         this.id = id;
+        this.persist = true;
     }
 
     /**

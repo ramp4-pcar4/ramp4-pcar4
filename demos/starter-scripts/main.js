@@ -911,7 +911,7 @@ let config = {
                             }
                         },
                         {
-                            title: 'CN Tower',
+                            title: 'CN Tower French',
                             thumbnail:
                                 'https://upload.wikimedia.org/wikipedia/commons/9/9c/Toronto_-_ON_-_CN_Tower_Turmkorb.jpg',
                             description:
@@ -955,6 +955,11 @@ const rInstance = createInstance(
 //     rInstance.panel.pin('legend');
 // });
 
+rInstance.fixture.isLoaded('basemap').then(() => {
+    const bm = rInstance.fixture.get('basemap');
+    bm.persist = false;
+});
+
 rInstance.$element.component('WFSLayer-Custom', {
     props: ['identifyData'],
     template: `
@@ -966,7 +971,9 @@ rInstance.$element.component('WFSLayer-Custom', {
 });
 
 // add export fixtures
-rInstance.fixture.add('export');
+rInstance.fixture.add('export').then(xportFixture => {
+    xportFixture.persist = false;
+});
 
 // add areas of interest fixture
 rInstance.fixture.add('areas-of-interest');
