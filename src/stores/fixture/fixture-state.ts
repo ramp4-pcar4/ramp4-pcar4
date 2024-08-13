@@ -10,6 +10,15 @@ export interface FixtureBase {
     id: string;
 
     /**
+     * Indicates whether to keep the fixture when the language changes and the other language has a different config. Defaults to true.
+     * With a mono-config setup, the fixture will be kept on language change, regardless of the value of the flag.
+     *
+     * @type {boolean}
+     * @memberof Fixture
+     */
+    persist: boolean;
+
+    /**
      * [Optional] Called synchronously when the fixture is added to R4MP.
      *
      * @memberof Fixture

@@ -4,6 +4,16 @@ This covers various ways to create fixtures.
 
 ## Interface
 
+The fixture interface has one optional property: `persist`. This indicates whether the fixture should remain in the instance upon language change (where the other language has a different config). Defaults to `true`. Note that with a mono-config setup, the fixture will remain in the instance on language change, regardless of the value of the flag.
+Here is a code snippet that shows how to use this property:
+```JS
+rInstance.fixture.isLoaded('basemap').then(() => {
+    const bm = rInstance.fixture.get('basemap');
+    bm.persist = false;
+});
+rInstance.setLanguage('fr') // basemap fixture will be removed
+``` 
+
 The fixture interface has three methods, all optional. They take no parameters and return no value. If a custom fixture implements them, the RAMP instance will run them at the appropriate time.
 
 - `added()` is run when the fixture has been added to the RAMP instance
