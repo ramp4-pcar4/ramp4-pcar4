@@ -24,10 +24,11 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | FILTER_CHANGE<br>'filter/change'                   | FilterEventParam object                                        | A filter has changed                             |
 | FIXTURE_ADDED<br>'fixture/added'                   | FixtureInstance object                                         | A fixture has been added                         |
 | FIXTURE_REMOVED<br>'fixture/removed'               | FixtureInstance object                                         | A fixture has been removed                       |
-| LAYER_DRAWSTATECHANGE<br>'layer/drawstatechange'   | _state_: new value, _layer_: LayerInstance object                | The layer draw state changed                     |
-| LAYER_INITIATIONSTATECHANGE<br>'layer/initiationStatechange' | _state_: new value, _layer_: LayerInstance object      | The layer layer state changed |
-| LAYER_LAYERSTATECHANGE<br>'layer/layerstatechange' | _state_: new value, _layer_: LayerInstance object, _userCancel_: boolean                | The layer load state changed |                     |
-| LAYER_OPACITYCHANGE<br>'layer/opacitychange'       | _opacity_: new value, _layer_: LayerInstance object              | The layer opacity changed                        |
+| LANG_CHANGE<br>'lang/change'                       | _oldLang_: old language, _newLang_: new language               | The language was changed                         |
+| LAYER_DRAWSTATECHANGE<br>'layer/drawstatechange'   | _state_: new value, layer: LayerInstance object                | The layer draw state changed                     |
+| LAYER_INITIATIONSTATECHANGE<br>'layer/initiationStatechange' | _state_: new value, layer: LayerInstance object      | The layer layer state changed |
+| LAYER_LAYERSTATECHANGE<br>'layer/layerstatechange' | _state_: new value, layer: LayerInstance object                | The layer load state changed |                     |
+| LAYER_OPACITYCHANGE<br>'layer/opacitychange'       | _opacity_: new value, layer: LayerInstance object              | The layer opacity changed                        |
 | LAYER_REGISTERED<br>'layer/registered'             | LayerInstance object                                           | The layer was registered with the instance                   |
 | LAYER_RELOAD_END<br>'layer/reloadend'              | LayerInstance object                                           | The layer finished reloading                     |
 | LAYER_RELOAD_START<br>'layer/reloadstart'          | LayerInstance object                                           | The layer started reloading                      |
