@@ -186,7 +186,7 @@ const itemName = computed<string>(() => {
             ? props.data.data[nameField]
             : iApi.$i18n.t('details.items.title');
 
-    // only replace html special chars if string represents plain text
+    // only replace html special chars if string represents plain text.
     if (iApi!.ui.isPlainText(returnValue)) {
         returnValue = iApi!.ui.escapeHtml(returnValue);
     }
