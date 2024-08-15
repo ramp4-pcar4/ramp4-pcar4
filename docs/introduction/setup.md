@@ -2,7 +2,7 @@
 
 ## Project Setup
 
-Download the latest [Node version](https://nodejs.org/en/download/), currently `v18.3.0` or later.
+Download [Node v22.5.1](https://nodejs.org/en/blog/release/v22.5.1).
 
 ```sh
 npm ci
