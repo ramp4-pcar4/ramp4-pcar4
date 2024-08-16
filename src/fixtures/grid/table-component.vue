@@ -1637,6 +1637,22 @@ const setUpColumns = () => {
                             return row;
                         })
                     );
+                    for (let i = 0; i < mergedTableAttrs.rows.length; i++) {
+                        for (const [key] of Object.entries(
+                            mergedTableAttrs.rows[i]
+                        )) {
+                            if (
+                                iApi.ui.isPlainText(
+                                    mergedTableAttrs.rows[i][key]
+                                )
+                            ) {
+                                mergedTableAttrs.rows[i][key] =
+                                    iApi.ui.escapeHtml(
+                                        mergedTableAttrs.rows[i][key]
+                                    );
+                            }
+                        }
+                    }
 
                     mergedTableAttrs.fields = mergedTableAttrs.fields.concat(
                         ta.fields.map(field => {
@@ -1815,7 +1831,8 @@ const setUpColumns = () => {
                 // the grid is now ready to be displayed
                 isLoadingGrid.value = false;
             })
-            .catch(() => {
+            .catch(e => {
+                console.error(e);
                 isErrorGrid.value = true;
                 isLoadingGrid.value = false;
             });
