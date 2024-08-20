@@ -31,7 +31,7 @@ jobs:
                   fi
 
             ## Delete the PR demo from gh-pages when the PR is closed
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
               with:
                   ref: 'gh-pages'
 
@@ -40,6 +40,11 @@ jobs:
               run: |
                   git config --global user.email "miles.petrov@ec.gc.ca"
                   git config --global user.name "Miles Petrov"
-                  git rm -r ${{ github.head_ref }}/*
+                  git pull --ff-only origin gh-pages
+                  if [ -d "${{ github.head_ref }}" ]; then
+                    git rm -r "${{ github.head_ref }}/*" || true
+                  else
+                    echo "Directory ${{ github.head_ref }} does not exist or contains invalid characters."
+                  fi
                   git commit -a -m 'Delete PR demo ${{ github.head_ref }}'
-                  git push origin HEAD:gh-pages
+                  git push -f origin HEAD:gh-pages
