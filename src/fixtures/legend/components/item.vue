@@ -59,7 +59,7 @@
                           : ''
                 "
                 v-tippy="{
-                    placement: 'top-start',
+                    placement: 'bottom-start',
                     trigger: 'manual focus',
                     aria: 'describedby'
                 }"
@@ -141,7 +141,7 @@
                                 : t('legend.symbology.expand')
                         "
                         v-tippy="{
-                            placement: 'top-start'
+                            placement: 'bottom-start'
                         }"
                     >
                         <symbology-stack
@@ -190,19 +190,202 @@
                     </svg>
                 </div>
 
-                <!-- name or info section-->
                 <div
+                    class="flex flex-1 flex-col p-5"
                     v-if="legendItem instanceof LayerItem"
-                    class="flex-1 pointer-events-none p-5"
-                    v-truncate="{ externalTrigger: true }"
+                    v-truncate
                 >
-                    <span>{{
-                        legendItem.name ??
-                        (!legendItem.layer || legendItem?.layer?.name === ''
-                            ? legendItem.layerId
-                            : legendItem.layer?.name)
-                    }}</span>
+                    <!-- name or info section-->
+                    <div class="pointer-events-none">
+                        <div
+                            class="flex-auto pointer-events-none p-5 truncate"
+                            v-truncate="{
+                                externalTrigger: true,
+                                noTruncateClass: true
+                            }"
+                        >
+                            <span>{{
+                                legendItem.name ??
+                                (!legendItem.layer ||
+                                legendItem?.layer?.name === ''
+                                    ? legendItem.layerId
+                                    : legendItem.layer?.name)
+                            }}</span>
+                        </div>
+                    </div>
+                    <!-- Mini-icons -->
+                    <div
+                        v-if="legendItem.type !== LegendType.Placeholder"
+                        class="ml-5 flex-none text-[11px] flex flex-row gap-2 mt-[-5px] flex-wrap w-fit"
+                        v-focus-list="'horizontal'"
+                        @mouseover.stop
+                    >
+                        <LayerTypeIcon
+                            v-focus-item
+                            :layerType="legendItem.layer?.layerType"
+                            :featureCount="legendItem.layer?.featureCount"
+                            @keypress.stop
+                            @click.stop
+                        />
+                        <!-- Datatable availability -->
+                        <!-- Clicking this icon will open the datatable, unlike the others -->
+                        <MiniIcon
+                            v-focus-item
+                            label=""
+                            content="Datatable available (click to view)"
+                            v-if="
+                                legendItem instanceof LayerItem &&
+                                controlAvailable(LayerControl.Datatable) &&
+                                getDatagridExists() &&
+                                legendItem.type === LegendType.Item
+                            "
+                        >
+                            <!-- No attribution required -->
+                            <svg
+                                class="fill-gray-800"
+                                version="1.1"
+                                id="Layer_1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                x="0px"
+                                y="0px"
+                                viewBox="0 0 122.88 108.01"
+                                height="13px"
+                                width="13px"
+                                style="enable-background: new 0 0 122.88 108.01"
+                                xml:space="preserve"
+                            >
+                                <g>
+                                    <path
+                                        class="st0"
+                                        fill-rule="evenodd"
+                                        clip-rule="evenodd"
+                                        d="M16.35,0h90.19c8.99,0,16.35,7.36,16.35,16.35v75.32c0,8.99-7.36,16.35-16.35,16.35H16.35 C7.36,108.01,0,100.66,0,91.67V16.35C0,7.36,7.36,0,16.35,0L16.35,0z M64.64,77.54h49.62v21.2H64.64V77.54L64.64,77.54z M8.02,77.54h49.62v21.2H8.02V77.54L8.02,77.54z M8.02,21.13h49.62v21.2H8.02V21.13L8.02,21.13z M8.02,49.34h49.62v21.2H8.02V49.34 L8.02,49.34z M64.64,21.13h49.62v21.2H64.64V21.13L64.64,21.13z M64.64,49.34h49.62v21.2H64.64V49.34L64.64,49.34z"
+                                    />
+                                </g>
+                            </svg>
+                        </MiniIcon>
+                        <!-- Identify availability -->
+                        <!-- Show 'not available' when identify disabled, hide icon altogether if layer disabled -->
+                        <MiniIcon
+                            v-focus-item
+                            v-if="legendItem._visibility"
+                            label=""
+                            :content="
+                                legendItem.layer?.canIdentify()
+                                    ? 'Identify available (click map)'
+                                    : 'Identify disabled or unavailable'
+                            "
+                            @keypress.stop
+                            @click.stop
+                        >
+                            <!-- No attribution required -->
+                            <svg
+                                :class="[
+                                    legendItem.layer?.canIdentify()
+                                        ? 'fill-gray-800'
+                                        : 'fill-red-500'
+                                ]"
+                                version="1.1"
+                                id="Layer_1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                x="0px"
+                                y="0px"
+                                width="12px"
+                                height="12px"
+                                viewBox="0 0 122.879 119.799"
+                                enable-background="new 0 0 122.879 119.799"
+                                xml:space="preserve"
+                            >
+                                <g>
+                                    <path
+                                        d="M49.988,0h0.016v0.007C63.803,0.011,76.298,5.608,85.34,14.652c9.027,9.031,14.619,21.515,14.628,35.303h0.007v0.033v0.04 h-0.007c-0.005,5.557-0.917,10.905-2.594,15.892c-0.281,0.837-0.575,1.641-0.877,2.409v0.007c-1.446,3.66-3.315,7.12-5.547,10.307 l29.082,26.139l0.018,0.016l0.157,0.146l0.011,0.011c1.642,1.563,2.536,3.656,2.649,5.78c0.11,2.1-0.543,4.248-1.979,5.971 l-0.011,0.016l-0.175,0.203l-0.035,0.035l-0.146,0.16l-0.016,0.021c-1.565,1.642-3.654,2.534-5.78,2.646 c-2.097,0.111-4.247-0.54-5.971-1.978l-0.015-0.011l-0.204-0.175l-0.029-0.024L78.761,90.865c-0.88,0.62-1.778,1.209-2.687,1.765 c-1.233,0.755-2.51,1.466-3.813,2.115c-6.699,3.342-14.269,5.222-22.272,5.222v0.007h-0.016v-0.007 c-13.799-0.004-26.296-5.601-35.338-14.645C5.605,76.291,0.016,63.805,0.007,50.021H0v-0.033v-0.016h0.007 c0.004-13.799,5.601-26.296,14.645-35.338C23.683,5.608,36.167,0.016,49.955,0.007V0H49.988L49.988,0z M50.004,11.21v0.007h-0.016 h-0.033V11.21c-10.686,0.007-20.372,4.35-27.384,11.359C15.56,29.578,11.213,39.274,11.21,49.973h0.007v0.016v0.033H11.21 c0.007,10.686,4.347,20.367,11.359,27.381c7.009,7.012,16.705,11.359,27.403,11.361v-0.007h0.016h0.033v0.007 c10.686-0.007,20.368-4.348,27.382-11.359c7.011-7.009,11.358-16.702,11.36-27.4h-0.006v-0.016v-0.033h0.006 c-0.006-10.686-4.35-20.372-11.358-27.384C70.396,15.56,60.703,11.213,50.004,11.21L50.004,11.21z"
+                                    />
+                                </g>
+                            </svg>
+
+                            <svg
+                                v-if="!legendItem.layer?.canIdentify()"
+                                version="1.1"
+                                id="Layer_1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                x="0px"
+                                y="0px"
+                                width="12px"
+                                height="12px"
+                                viewBox="0 0 122.879 122.879"
+                                enable-background="new 0 0 122.879 122.879"
+                                xml:space="preserve"
+                            >
+                                <g>
+                                    <path
+                                        fill="#FF4141"
+                                        d="M61.44,0c16.96,0,32.328,6.882,43.453,17.986c11.104,11.125,17.986,26.494,17.986,43.453 c0,16.961-6.883,32.328-17.986,43.453C93.769,115.998,78.4,122.879,61.44,122.879c-16.96,0-32.329-6.881-43.454-17.986 C6.882,93.768,0,78.4,0,61.439C0,44.48,6.882,29.111,17.986,17.986C29.112,6.882,44.48,0,61.44,0L61.44,0z M73.452,39.152 c2.75-2.792,7.221-2.805,9.986-0.026c2.764,2.776,2.775,7.292,0.027,10.083L71.4,61.445l12.077,12.25 c2.728,2.77,2.689,7.256-0.081,10.021c-2.772,2.766-7.229,2.758-9.954-0.012L61.445,71.541L49.428,83.729 c-2.75,2.793-7.22,2.805-9.985,0.025c-2.763-2.775-2.776-7.291-0.026-10.082L51.48,61.435l-12.078-12.25 c-2.726-2.769-2.689-7.256,0.082-10.022c2.772-2.765,7.229-2.758,9.954,0.013L61.435,51.34L73.452,39.152L73.452,39.152z M96.899,25.98C87.826,16.907,75.29,11.296,61.44,11.296c-13.851,0-26.387,5.611-35.46,14.685 c-9.073,9.073-14.684,21.609-14.684,35.459s5.611,26.387,14.684,35.459c9.073,9.074,21.609,14.686,35.46,14.686 c13.85,0,26.386-5.611,35.459-14.686c9.073-9.072,14.684-21.609,14.684-35.459S105.973,35.054,96.899,25.98L96.899,25.98z"
+                                    />
+                                </g>
+                            </svg>
+                        </MiniIcon>
+                        <!-- Icon for user-added layers -->
+                        <MiniIcon
+                            v-focus-item
+                            label="User"
+                            content="User-added layer (will not save across sessions)"
+                            v-if="legendItem.layer?.userAdded"
+                            @keypress.stop
+                            @click.stop
+                        >
+                            <!-- No attribution required -->
+                            <svg
+                                version="1.1"
+                                id="Layer_1"
+                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink"
+                                x="0px"
+                                y="0px"
+                                height="12px"
+                                width="12px"
+                                class="fill-green-600"
+                                viewBox="0 0 122.88 121.42"
+                                style="enable-background: new 0 0 122.88 121.42"
+                                xml:space="preserve"
+                            >
+                                <g>
+                                    <path
+                                        fill-rule="evenodd"
+                                        clip-rule="evenodd"
+                                        class="st0"
+                                        d="M0,121.42l0-19.63c10.5-4.67,42.65-13.56,44.16-26.41c0.34-2.9-6.5-13.96-8.07-19.26 c-3.36-5.35-4.56-13.85-0.89-19.5c1.46-2.25,0.84-10.44,0.84-13.53c0-30.77,53.92-30.78,53.92,0c0,3.89-0.9,11.04,1.22,14.1 c3.54,5.12,1.71,14.19-1.27,18.93c-1.91,5.57-9.18,16.11-8.56,19.26c2.31,11.74,32.13,19.63,41.52,23.8l0,22.23L0,121.42L0,121.42z"
+                                    />
+                                </g>
+                            </svg>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                shape-rendering="geometricPrecision"
+                                text-rendering="geometricPrecision"
+                                image-rendering="optimizeQuality"
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                viewBox="0 0 512 511.99"
+                                width="12px"
+                                height="12px"
+                                class="fill-green-600"
+                            >
+                                <path
+                                    fill="#00AB42"
+                                    fill-rule="nonzero"
+                                    d="M256 0c70.68 0 134.68 28.67 181.01 74.99 46.32 46.32 74.99 110.32 74.99 181S483.33 390.68 437.01 437c-46.33 46.33-110.33 74.99-181.01 74.99-70.68 0-134.68-28.66-181.01-74.99C28.67 390.68 0 326.67 0 255.99c0-70.68 28.67-134.68 74.99-181C121.32 28.67 185.32 0 256 0z"
+                                />
+                                <path
+                                    fill="#fff"
+                                    d="M234.68 130.59h42.64c10.11 0 18.38 8.29 18.38 18.39v67.32h67.32c10.11 0 18.38 8.33 18.38 18.38v42.63c0 10.09-8.3 18.38-18.38 18.38H295.7v67.32c0 10.1-8.28 18.39-18.38 18.39h-42.64c-10.1 0-18.38-8.27-18.38-18.39v-67.32h-67.32c-10.08 0-18.38-8.26-18.38-18.38v-42.63c0-10.12 8.27-18.38 18.38-18.38h67.32v-67.32c0-10.12 8.27-18.39 18.38-18.39z"
+                                />
+                            </svg>
+                        </MiniIcon>
+                    </div>
                 </div>
+
                 <div
                     v-else-if="legendItem instanceof SectionItem"
                     class="flex-1"
@@ -582,7 +765,18 @@ import { useLayerStore } from '@/stores/layer';
 import to from 'await-to-js';
 import { marked } from 'marked';
 import type { PropType } from 'vue';
-import { toRaw, computed, inject, ref, watch } from 'vue';
+import {
+    toRaw,
+    computed,
+    inject,
+    ref,
+    watch,
+    reactive,
+    onBeforeMount,
+    onBeforeUnmount,
+    onMounted,
+    getCurrentInstance
+} from 'vue';
 import { LayerItem } from '../store/layer-item';
 import { LegendControl, LegendType } from '../store/legend-item';
 import { InfoType, SectionItem } from '../store/section-item';
@@ -594,6 +788,12 @@ import { useI18n } from 'vue-i18n';
 // eslint doesn't recognize <symbology-stack> usage
 // eslint-disable-next-line
 import SymbologyStack from './symbology-stack.vue';
+
+// eslint-disable-next-line
+import MiniIcon from './mini-icon.vue';
+
+// eslint-disable-next-line
+import LayerTypeIcon from './layertype-icon.vue';
 
 import type { LegendAPI } from '../api/legend';
 import type { LegendItem } from '../store/legend-item';
