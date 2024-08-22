@@ -763,18 +763,7 @@ import { useLayerStore } from '@/stores/layer';
 import to from 'await-to-js';
 import { marked } from 'marked';
 import type { PropType } from 'vue';
-import {
-    toRaw,
-    computed,
-    inject,
-    ref,
-    watch,
-    reactive,
-    onBeforeMount,
-    onBeforeUnmount,
-    onMounted,
-    getCurrentInstance
-} from 'vue';
+import { computed, inject, ref, toRaw, watch } from 'vue';
 import { LayerItem } from '../store/layer-item';
 import { LegendControl, LegendType } from '../store/legend-item';
 import { InfoType, SectionItem } from '../store/section-item';

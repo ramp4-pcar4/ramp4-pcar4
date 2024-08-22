@@ -1,8 +1,6 @@
 <template>
     <MiniIcon
-        :label="
-            featureCount && featureCount !== 0 ? featureCount.toString() : ''
-        "
+        :label="featureCount ? featureCount.toString() : ''"
         :content="layerData[0] + featCountText"
         v-tippy="{ placement: 'bottom-start' }"
     >
@@ -14,6 +12,9 @@
 import { LayerType } from '@/geo/api';
 import { computed, type PropType } from 'vue';
 import MiniIcon from './mini-icon.vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
     layerType: { type: String as PropType<LayerType>, required: true },
@@ -21,7 +22,9 @@ const props = defineProps({
 });
 
 const featCountText = computed(() =>
-    props.featureCount ? ` (${props.featureCount} features)` : ''
+    props.featureCount
+        ? ` (${t('legend.layer.features.count', props.featureCount)})`
+        : ''
 );
 
 /** 
@@ -52,7 +55,7 @@ const layerData = computed(() => {
     switch (props.layerType) {
         case LayerType.FEATURE:
             return [
-                'ESRI Feature Layer',
+                t('legend.layer.type.ESRIFeature'),
                 `<svg
                     version="1.1"
                     id="Layer_1"
@@ -78,7 +81,7 @@ const layerData = computed(() => {
             ];
         case LayerType.MAPIMAGE:
             return [
-                'ESRI Map Image Layer',
+                t('legend.layer.type.ESRIMapImage'),
                 `<svg 
                     version="1.1" 
                     width="12px" 
@@ -99,7 +102,7 @@ const layerData = computed(() => {
             ];
         case LayerType.TILE:
             return [
-                'ESRI Tile Layer',
+                t('legend.layer.type.ESRITile'),
                 `<svg 
                     xmlns="http://www.w3.org/2000/svg" 
                     width="12px"
@@ -116,7 +119,7 @@ const layerData = computed(() => {
             ];
         case LayerType.IMAGERY:
             return [
-                'ESRI Image Service',
+                t('legend.layer.type.ESRIImagery'),
                 `<svg 
                     version="1.1" 
                     width="12px" 
@@ -137,7 +140,7 @@ const layerData = computed(() => {
             ];
         case LayerType.GRAPHIC:
             return [
-                'ESRI Graphic Layer',
+                t('legend.layer.type.ESRIGraphic'),
                 `<svg 
                     version="1.1" 
                     xmlns="http://www.w3.org/2000/svg" 
@@ -160,7 +163,7 @@ const layerData = computed(() => {
             ];
         case LayerType.WFS:
             return [
-                'OGC WFS 3.0 Layer',
+                t('legend.layer.type.wfs'),
                 `<svg 
                     version="1.1" 
                     width="12px" 
@@ -181,7 +184,7 @@ const layerData = computed(() => {
             ];
         case LayerType.WMS:
             return [
-                'OGC WMS Layer',
+                t('legend.layer.type.wms'),
                 `<svg 
                     version="1.1" 
                     width="12px" 
@@ -202,7 +205,7 @@ const layerData = computed(() => {
             ];
         case LayerType.GEOJSON:
             return [
-                'GeoJSON Layer',
+                t('legend.layer.type.geoJson'),
                 `<svg 
                     version="1.1" 
                     id="Layer_1" 
@@ -223,7 +226,7 @@ const layerData = computed(() => {
             ];
         case LayerType.CSV:
             return [
-                'CSV File Layer',
+                t('legend.layer.type.csv'),
                 `<svg 
                     xmlns="http://www.w3.org/2000/svg" 
                     shape-rendering="geometricPrecision" 
@@ -240,7 +243,7 @@ const layerData = computed(() => {
             ];
         case LayerType.SHAPEFILE:
             return [
-                'Shapefile Layer',
+                t('legend.layer.type.shapefile'),
                 `<svg 
                     version="1.1" 
                     xmlns="http://www.w3.org/2000/svg" 
@@ -260,7 +263,7 @@ const layerData = computed(() => {
             ];
         case LayerType.OSM:
             return [
-                'OpenStreetMap Tile Layer',
+                t('legend.layer.type.osm'),
                 `<svg 
                     version="1.1" 
                     id="Layer_1" 
@@ -281,7 +284,7 @@ const layerData = computed(() => {
             ];
         case LayerType.DATATABLE:
             return [
-                'ESRI Table Layer',
+                t('legend.layer.type.datatable'),
                 `<svg 
                     version="1.1" 
                     xmlns="http://www.w3.org/2000/svg" 
@@ -301,7 +304,7 @@ const layerData = computed(() => {
             ];
         case LayerType.DATACSV:
             return [
-                'Non-Spatial CSV File Layer',
+                t('legend.layer.type.dataCsv'),
                 `<svg 
                     xmlns="http://www.w3.org/2000/svg" 
                     viewBox="0 0 122.88 97.05"
@@ -312,7 +315,7 @@ const layerData = computed(() => {
             ];
         case LayerType.DATAJSON:
             return [
-                'Compact JSON File Layer',
+                t('legend.layer.type.dataJson'),
                 `<svg 
                     version="1.1" 
                     id="Layer_1" 
@@ -333,7 +336,7 @@ const layerData = computed(() => {
             ];
         case LayerType.SUBLAYER:
             return [
-                'Sublayer',
+                t('legend.layer.type.sublayer'),
                 `<svg 
                     xmlns="http://www.w3.org/2000/svg" 
                     viewBox="0 0 122.88 112.99"
@@ -345,7 +348,7 @@ const layerData = computed(() => {
             ];
         default:
             return [
-                'Unknown Layer Type',
+                t('legend.layer.type.unknown'),
                 `<svg 
                     xmlns="http://www.w3.org/2000/svg" 
                     shape-rendering="geometricPrecision" 
