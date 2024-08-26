@@ -1,5 +1,10 @@
 # Layer Configuration Properties
 
+Layer configuration objects define the layers on the map. They typically exist in the [layers array](../introduction/instantiation.md#creating-an-instance) of an instance configuration object, or are provided at runtime using the [LayerAPI](../api-guides/layers.md#creation).
+
+Below is a list of the various properties that can be specified for a layer config. There are also configurations for [Map Image Sublayer](./layers/sublayer-properties.md#map-image-sublayers) and [WMS Sublayer](./layers/sublayer-properties.md#wms-sublayers) definitions.
+
+
 - [caching](./layers/fancy-properties.md#caching)
 - [colour](./layers/fancy-properties.md#colour)
 - [controls](./layers/basic-properties.md#controls)
@@ -34,6 +39,5 @@
 - [touchTolerance](./layers/fancy-properties.md#touchtolerance)
 - [url](./layers/required-properties.md#url)
 - [xyInAttribs](./layers/fancy-properties.md#xyinattribs)
-- [Map Image Sublayers](./layers/sublayer-properties.md#map-image-sublayers)
-- [WMS Sublayers](./layers/sublayer-properties.md#wms-sublayers)
+
 
