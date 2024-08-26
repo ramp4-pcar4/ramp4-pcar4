@@ -90,7 +90,11 @@ const zoomToFeature = () => {
     const oidPair = props.params.layerCols[layer.id].find(
         (pair: AttributeMapPair) => pair.origAttr === layer.oidField
     );
-    const oid = props.params.data[oidPair.mappedAttr ?? oidPair.origAttr];
+
+    const oid =
+        props.params.data[
+            oidPair ? (oidPair.mappedAttr ?? oidPair.origAttr) : layer.oidField
+        ];
 
     const zoomUsingGraphic = () => {
         const opts = { getGeom: true };

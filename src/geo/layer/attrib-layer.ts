@@ -373,9 +373,10 @@ export class AttribLayer extends MapLayer {
                 }
             }
 
-            const webFeat = await this.$iApi.geo.attributes.loadSingleFeature(
-                serviceParams
-            );
+            const webFeat =
+                await this.$iApi.geo.attributes.loadSingleFeature(
+                    serviceParams
+                );
             if (needWebGeom) {
                 // save our result in the cache
                 this.attribs.quickCache.setGeom(
@@ -662,7 +663,8 @@ export class AttribLayer extends MapLayer {
 
             esriConfig.orderBy = rampConfig.drawOrder.map(dr => {
                 // pick ascending if no value was defined.
-                const order = dr.ascending ?? true ? 'ascending' : 'descending';
+                const order =
+                    (dr.ascending ?? true) ? 'ascending' : 'descending';
 
                 if (dr.field) {
                     return {
