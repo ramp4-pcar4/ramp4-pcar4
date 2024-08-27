@@ -600,7 +600,7 @@
                     "type": "string",
                     "enum": ["all", "buttons", "slider"],
                     "default": "buttons",
-                    "description": "Specifies between zoom buttons or zoom sliders."
+                    "description": "Specifies between zoom buttons or zoom sliders. Currently not supported."
                 },
                 "items": {
                     "type": "array",
@@ -611,12 +611,11 @@
                         "geolocator",
                         "basemap"
                     ],
-                    "description": "Map navigation buttons displayed on mapnav.",
+                    "description": "Map navigation buttons displayed on mapnav. These will be displayed in addition to the zoom buttons, which are always visible.",
                     "items": {
                         "type": "string",
                         "enum": [
                             "geolocator",
-                            "zoom",
                             "home",
                             "basemap",
                             "help",
