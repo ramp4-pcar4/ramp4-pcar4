@@ -1,0 +1,93 @@
+name: Clean up demo folders when they no longer exist
+
+on:
+    schedule:
+        - cron: '0 0 * * *' # Runs every day at midnight
+    workflow_dispatch: # Allows manual trigger from the GitHub website
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+    contents: write
+    pages: write
+    id-token: write
+
+jobs:
+    clean_folders:
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+
+        steps:
+            - name: Checkout the repo
+              uses: actions/checkout@v4
+              with:
+                  ref: demo-page
+
+            - name: Set up Git
+              run: |
+                  git config --global user.name "GitHub Action"
+                  git config --global user.email "action@github.com"
+
+            - name: Fetch remote branches and tags from origin
+              run: git fetch origin --prune
+
+            - name: Run cleanup script
+              run: |
+                  # Get all remote branch names from origin
+                  remote_branches=$(git branch -r | grep -v '\->' | grep "origin/" | sed "s# *origin/##g")
+
+                  # Get all remote tag names from origin
+                  remote_tags=$(git ls-remote --tags origin | awk -F/ '{print $NF}' | sed 's/\^{}//')
+
+                  # Combine branches and tags into a single list
+                  remote_refs=$(echo -e "$remote_branches\n$remote_tags")
+
+                  # Get all folder names in the current directory
+                  local_folders=$(ls -d */ | sed 's#/##')
+
+                  # Loop through each folder in the current directory
+                  for folder in $local_folders; do
+                      # Check if the folder name exists in the list of remote refs
+                      if ! echo "$remote_refs" | grep -qw "$folder"; then
+                          # If the folder name doesn't exist in the remote refs, delete the folder
+                          echo "Deleting folder: $folder"
+                          rm -rf "$folder"
+                      fi
+                  done
+
+            - name: Commit and push changes
+              id: commit-changes
+              run: |
+                  git add .
+                  if ! git diff --cached --exit-code > /dev/null; then
+                      git commit -m "Automated folder cleanup"
+                    
+                      # Squash the commit history into a single commit
+                      git reset --soft $(git rev-list --max-parents=0 HEAD)
+                      git commit -m "Automated folder cleanup"
+                      
+                      git push -f origin demo-page
+                      # Let the next steps know that changes were made and deployment is needed
+                      echo "changes=true" >> $GITHUB_ENV
+                  else
+                      echo "No changes to commit"
+                      # Let the next steps know that no changes were made and deployment will be skipped
+                      echo "changes=false" >> $GITHUB_ENV
+                  fi
+
+            - name: Upload artifact
+              if: env.changes == 'true'
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: '.'
+                  retention-days: 1
+
+            - name: Setup Pages
+              if: env.changes == 'true'
+              uses: actions/configure-pages@v5
+
+            - name: Deploy to GitHub Pages
+              if: env.changes == 'true'
+              id: deployment
+              uses: actions/deploy-pages@v4
