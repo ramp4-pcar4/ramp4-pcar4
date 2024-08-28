@@ -1,0 +1,143 @@
+name: Build demo site and deploy to GitHub Pages
+
+on: push
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+    contents: write
+    pages: write
+    id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these deployments to complete.
+concurrency:
+    group: 'pages'
+    cancel-in-progress: false
+
+jobs:
+    build:
+        name: Build the project
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  path: ramp
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: '22.5.1'
+                  cache: 'npm'
+                  cache-dependency-path: ramp/package-lock.json
+
+            - name: Set up Git
+              run: |
+                  git config --global user.name "GitHub Action"
+                  git config --global user.email "action@github.com"
+
+            - name: Create demo-page branch (orphan) if it doesn't exist
+              run: |
+                  # ramp is already checked out in the previous step, use git there to check if demo-pages exists on origin
+                  cd ramp
+                  git fetch origin
+
+                  if git show-ref --quiet refs/remotes/origin/demo-page; then
+                      echo "Branch 'demo-page' exists on origin."
+                  else
+                      echo "Branch 'demo-page' does not exist on origin. Creating an orphan branch..."
+                      cd ../
+                      mkdir -p demo-page
+                      cd demo-page
+                      git init
+                      git checkout --orphan demo-page
+                      git commit --allow-empty -m "Create orphan branch"
+                      git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository_owner }}/ramp4-pcar4
+                      git push -u origin demo-page
+                      echo "Orphan branch 'demo-page' has been created and pushed to origin."
+                      cd ../
+                      # For simplicity we'll delete the demo-page folder now since it'll be checked out in the next step in all cases
+                      rm -rf demo-page
+                  fi
+
+            - uses: actions/checkout@v4
+              with:
+                  ref: demo-page
+                  path: demo-page
+                  fetch-depth: 0
+
+            - name: Remove the old demo if it exists and make docs folder
+              run: |
+                  rm -rf demo-page/${{ github.ref_name }}
+
+                  # this is the deepest folder we need to create
+                  mkdir -p demo-page/${{ github.ref_name }}/docs/api-tech-docs
+
+            # Before building the docs we need to find and replace the version and repo owner references in the raw docs (next two steps).
+            - name: Update docsite version references before docs are built
+              uses: jacobtomlinson/gha-find-replace@v3
+              with:
+                  find: '{{ramp-version}}'
+                  replace: ${{ github.ref_name }}
+                  include: 'ramp/docs/**'
+                  regex: false
+
+            - name: Update docsite repo owner references before docs are built so that the links point to the correct repo
+              uses: jacobtomlinson/gha-find-replace@v3
+              with:
+                  find: '{{repo-owner}}'
+                  replace: ${{ github.repository_owner }}
+                  include: 'ramp/docs/**'
+                  regex: false
+
+            - name: Build the project and generate docs
+              run: |
+                  cd ramp
+                  npm ci
+                  npm run build
+                  npm run ts-docs:generate
+                  npm run vite-docs:generate
+
+            - name: Publish to NPM for tag releases on main repo only
+              if: github.repository == 'ramp4-pcar4/ramp4-pcar4' && startsWith(github.ref, 'refs/tags/v')
+              run: |
+                  TAG_VERSION=${GITHUB_REF#refs/tags/v}
+                  PACKAGE_VERSION=$(node -p "require('./package.json').version")
+                  if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
+                      npm version --allow-same-version --no-git-tag-version $TAG_VERSION
+                   fi
+
+                  npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            - name: Move the built project and docs into the demo-page folder for deployment
+              run: |
+                  mv ramp/dist/* demo-page/${{ github.ref_name }}
+                  mv ramp/vite-docs/* demo-page/${{ github.ref_name }}/docs
+                  mv ramp/ts-docs/* demo-page/${{ github.ref_name }}/docs/api-tech-docs
+
+            - name: Commit and squash to the demo-page branch
+              run: |
+                  cd demo-page
+                  git add .
+                  git commit -m "Applied changes from demo-folder to demo-page"
+
+                  # Squash the commit history into a single commit
+                  git reset --soft $(git rev-list --max-parents=0 HEAD)
+                  git commit -m "Applied changes from demo-folder to demo-page"
+                  git push origin HEAD --force
+
+            - name: Upload artifact
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: demo-page
+                  retention-days: 1
+
+            - name: Setup Pages
+              uses: actions/configure-pages@v5
+
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4

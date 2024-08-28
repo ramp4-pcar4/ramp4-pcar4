@@ -29,7 +29,7 @@ export default {
             },
             {
                 text: 'API Reference',
-                link: 'https://ramp4-pcar4.github.io/ramp4-pcar4/{{ramp-version}}/docs/api-tech-docs/index.html'
+                link: 'https://{{repo-owner}}.github.io/ramp4-pcar4/{{ramp-version}}/docs/api-tech-docs/index.html'
             },
             {
                 text: 'Releases',
