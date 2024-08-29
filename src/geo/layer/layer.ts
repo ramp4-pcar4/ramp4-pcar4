@@ -28,7 +28,8 @@ import {
     InitiationState,
     LayerControl,
     LayerState,
-    LayerType
+    LayerType,
+    SpatialReference
 } from '@/geo/api';
 import { EsriField, EsriRendererFromJson, EsriRequest } from '@/geo/esri';
 import { useLayerStore } from '@/stores/layer';
@@ -448,9 +449,16 @@ export class LayerAPI extends APIScope {
                             sData.geometryType
                         );
 
-                    if (sData?.drawingInfo?.renderer) {
+                    if (sData.drawingInfo?.renderer) {
                         md.renderer = EsriRendererFromJson(
                             sData.drawingInfo.renderer
+                        );
+                    }
+
+                    if (sData.sourceSpatialReference) {
+                        // our config format aligns with ESRI's RestAPI format
+                        md.sourceSR = SpatialReference.fromConfig(
+                            sData.sourceSpatialReference
                         );
                     }
                 } else {

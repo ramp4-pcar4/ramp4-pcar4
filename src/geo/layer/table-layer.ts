@@ -154,9 +154,10 @@ export class TableLayer extends DataLayer {
                 attribs: this.fieldList
             };
 
-            const webFeat = await this.$iApi.geo.attributes.loadSingleFeature(
-                serviceParams
-            );
+            const webFeat =
+                await this.$iApi.geo.attributes.loadSingleFeature(
+                    serviceParams
+                );
 
             this.attribs.quickCache.setAttribs(objectId, webFeat.attributes);
 

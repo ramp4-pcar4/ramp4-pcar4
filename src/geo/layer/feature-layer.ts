@@ -195,9 +195,9 @@ export class FeatureLayer extends AttribLayer {
             this.identifyMode === LayerIdentifyMode.GEOMETRIC
         ) {
             // run a spatial query
-            // TODO investigate if we need the sourceSR param set here
             const qOpts: QueryFeaturesParams = {
-                includeGeometry: false
+                includeGeometry: false,
+                sourceSR: this.sourceSR
             };
 
             if (

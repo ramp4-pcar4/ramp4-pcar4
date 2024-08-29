@@ -368,10 +368,16 @@ Determine if the Layer has been removed from the map / session. This also applie
 myLayer.isRemoved; // false
 ```
 
-Request the layer's spatial reference in [RAMP's format](geometry.md#spatial-reference). Not supported by Data Layers.
+Request the layer's client-side spatial reference in [RAMP's format](geometry.md#spatial-reference). This represents how geometry is encoded within the ESRI map layer. Not supported by Data Layers.
 
 ```js
 const sr = myLayer.getSR() // { wkid: 102100, latestWkid: 3857 }
+```
+
+Request the layer's server-side spatial reference in [RAMP's format](geometry.md#spatial-reference). This represents how geometry is encoded within an ArcGIS Service. Data Layers and any Map Layer not sourcing an ArcGIS Server will return `undefined`.
+
+```js
+const sr = myLayer.sourceSR // { wkid: 3978 }
 ```
 
 ## Identify

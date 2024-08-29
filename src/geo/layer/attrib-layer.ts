@@ -132,6 +132,7 @@ export class AttribLayer extends MapLayer {
             this.fields = sData.fields;
             this.nameField = sData.displayField;
             this.oidField = sData.objectIdField;
+            this.sourceSR = sData.sourceSR;
 
             // drawOrder field check.
             // we won't be fancy enough to pick apart Arcade formulas and field check. Config authors need to do good work.
@@ -373,9 +374,10 @@ export class AttribLayer extends MapLayer {
                 }
             }
 
-            const webFeat = await this.$iApi.geo.attributes.loadSingleFeature(
-                serviceParams
-            );
+            const webFeat =
+                await this.$iApi.geo.attributes.loadSingleFeature(
+                    serviceParams
+                );
             if (needWebGeom) {
                 // save our result in the cache
                 this.attribs.quickCache.setGeom(
@@ -548,7 +550,8 @@ export class AttribLayer extends MapLayer {
             const qOpts: QueryFeaturesParams = {
                 filterGeometry: extent,
                 filterSql: sql,
-                includeGeometry: false
+                includeGeometry: false,
+                sourceSR: this.sourceSR
             };
             cache = this.queryOIDs(qOpts);
             this.filter.setCache(cache, impactedFilters, bExt);
@@ -662,7 +665,8 @@ export class AttribLayer extends MapLayer {
 
             esriConfig.orderBy = rampConfig.drawOrder.map(dr => {
                 // pick ascending if no value was defined.
-                const order = dr.ascending ?? true ? 'ascending' : 'descending';
+                const order =
+                    (dr.ascending ?? true) ? 'ascending' : 'descending';
 
                 if (dr.field) {
                     return {

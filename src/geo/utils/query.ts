@@ -36,6 +36,12 @@ export class QueryAPI extends APIScope {
     async arcGisServerQueryIds(
         options: QueryFeaturesArcServerParams
     ): Promise<Array<number>> {
+        if (!(options.filterGeometry || options.filterSql)) {
+            // ESRI API gets angry if there is no filters.
+            console.error('arcGisServerQueryIds called without any filter');
+            return [];
+        }
+
         // create and set the esri query parameters
 
         const query = new EsriQuery();
@@ -45,7 +51,15 @@ export class QueryAPI extends APIScope {
             query.where = options.filterSql;
         }
         if (options.filterGeometry) {
-            query.geometry = this.queryGeometryHelper(
+            // NOTE the EsriQuery object appears to always convert Esri Extent geometries to Polygon geometries.
+            // the server doc suggests it can receive an extent.
+            // https://developers.arcgis.com/rest/services-reference/enterprise/query-feature-service-layer/
+            // For now we will use our client side extent projector, but if need be we can consider just
+            // writing the query URL in code an using EsriRequest.
+            // Server formats for extent:
+            // geometryType=esriGeometryEnvelope&geometry=<xmin>,<ymin>,<xmax>,<ymax>
+
+            query.geometry = await this.queryGeometryHelper(
                 options.filterGeometry,
                 false,
                 this.$iApi.geo.map.getScale(),
@@ -72,7 +86,7 @@ export class QueryAPI extends APIScope {
         query.outFields = ['*']; // TODO look into using the options value. test it well, as the .where gets wonky with outfields
 
         if (options.filterGeometry) {
-            query.geometry = this.queryGeometryHelper(
+            query.geometry = await this.queryGeometryHelper(
                 options.filterGeometry,
                 true
             );
@@ -126,39 +140,43 @@ export class QueryAPI extends APIScope {
      * @param {Boolean} isFileLayer true if layer is not tied to an arcgis server
      * @param {Integer} [mapScale] optional scale value of the map to help detect problem situations
      * @param {SpatialReference} [sourceSR] optional spatial reference of the layer being queried to help detect problem situations
-     * @return {Geometry} returns the input geometry in the most appropriate form based on the inputs
+     * @return {Promise<Geometry>} resolves the input geometry in the most appropriate form based on the inputs
      */
-    protected queryGeometryHelper(
+    protected async queryGeometryHelper(
         geometry: BaseGeometry,
         isFileLayer: boolean,
         mapScale?: number,
         sourceSR?: SpatialReference
-    ): __esri.Geometry {
-        let finalGeom: __esri.Geometry;
-
-        if (!isFileLayer && geometry.type === GeometryType.EXTENT) {
-            // first check for case of very large extent in Lambert against a LatLong layer.
-            // in this case, we tend to get better results keeping things in an Extent form
-            // as it handles the north pole/180meridan crossage better.
-            if (
+    ): Promise<__esri.Geometry> {
+        if (
+            !isFileLayer &&
+            geometry.type === GeometryType.EXTENT &&
+            sourceSR &&
+            !sourceSR.isEqual(geometry.sr) &&
+            !(
                 mapScale &&
-                sourceSR &&
                 mapScale > 20000000 &&
                 geometry.sr.wkid === 3978 &&
                 sourceSR.wkid === 4326
-            ) {
-                finalGeom = geometry.toESRI();
-            } else {
-                // convert extent to polygon to avoid issues when a service in a different projection
-                // attempts to warp the extent
-                finalGeom = (<Extent>geometry).toPolygon().toESRI();
-            }
-        } else {
-            // take as is
-            finalGeom = geometry.toESRI();
-        }
+            )
+        ) {
+            // if statement explained:
+            //   first section checks if its ArcServer layer, geom is an extent, and server is encoded in different projection.
+            //   second section (indented) makes an exception for Lambert geom, LatLong server, and map is scaled to world view.
+            // so if we hit that scenario and its not the exception, we attempt to project the extent to match
+            // the host server. See issue #2355 for details.
 
-        return finalGeom;
+            const rampWarpedExtent = await this.$iApi.geo.proj.projectExtent(
+                sourceSR,
+                <Extent>geometry
+            );
+
+            return rampWarpedExtent.toESRI();
+        } else {
+            // take as is.
+            // Note that ESRI's Query object converts Extents to Polygons so no need to fuss anymore.
+            return geometry.toESRI();
+        }
     }
 
     /**

@@ -350,13 +350,13 @@ export class MapImageLayer extends MapLayer {
                         // The order in that case is sublayer config -> parent config -> server -> true.
                         miSL.visibility = miSL.isRemoved
                             ? false
-                            : subC.state?.visibility ??
+                            : (subC.state?.visibility ??
                               (this.origState.visibility
-                                  ? miSL._serverVisibility ??
-                                    this.origState.visibility
-                                  : this.origState.visibility ??
-                                    miSL._serverVisibility) ??
-                              true;
+                                  ? (miSL._serverVisibility ??
+                                    this.origState.visibility)
+                                  : (this.origState.visibility ??
+                                    miSL._serverVisibility)) ??
+                              true);
                         miSL.opacity =
                             subC.state?.opacity ?? this.origState.opacity ?? 1;
                         miSL.nameField = subC.nameField || miSL.nameField || '';
@@ -495,8 +495,6 @@ export class MapImageLayer extends MapLayer {
 
         // prepare a query
 
-        // TODO investigate if we need the sourceSR param set here
-
         let pointBuffer: Extent;
         if (options.geometry.type === GeometryType.POINT) {
             pointBuffer = this.$iApi.geo.query.makeClickBuffer(
@@ -529,6 +527,7 @@ export class MapImageLayer extends MapLayer {
             }
 
             qOpts.filterSql = sublayer.getCombinedSqlFilter();
+            qOpts.sourceSR = sublayer.sourceSR;
 
             sublayer
                 .queryOIDs(qOpts)
