@@ -420,6 +420,7 @@ export interface ArcGisServerMetadata {
     name: string;
     dataFormat: DataFormat;
     mapLayer: boolean;
+    sourceSR?: SpatialReference;
 }
 
 export interface GetGraphicParams {
@@ -445,14 +446,36 @@ export interface DiscreteGraphicResult {
 }
 
 export interface QueryFeaturesParams {
-    filterGeometry?: BaseGeometry; // filter by geometry
-    filterSql?: string; // filter by sql query
-    filterOIDs?: Array<number>; // filtering against object ids
-    includeGeometry?: boolean; // if geometry should be included in the result
-    sourceSR?: SpatialReference; // the spatial reference of the web service. providing helps avoid some reprojection issues
+    /**
+     * A geometry to spatially filter by.
+     */
+    filterGeometry?: BaseGeometry;
+
+    /**
+     * A sql query to filtery by
+     */
+    filterSql?: string;
+
+    /**
+     * List of object ids to filter by
+     */
+    filterOIDs?: Array<number>;
+
+    /**
+     * If geometry should be included in the result
+     */
+    includeGeometry?: boolean;
+
+    /**
+     * Spatial reference of the data source. Providing helps avoid some reprojection issues
+     */
+    sourceSR?: SpatialReference;
 }
 
 export interface QueryFeaturesArcServerParams extends QueryFeaturesParams {
+    /**
+     * Url of service to query
+     */
     url: string;
 }
 

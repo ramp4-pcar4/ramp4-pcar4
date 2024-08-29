@@ -504,8 +504,6 @@ export class MapImageLayer extends MapLayer {
 
         // prepare a query
 
-        // TODO investigate if we need the sourceSR param set here
-
         let pointBuffer: Extent;
         if (options.geometry.type === GeometryType.POINT) {
             pointBuffer = this.$iApi.geo.query.makeClickBuffer(
@@ -538,6 +536,7 @@ export class MapImageLayer extends MapLayer {
             }
 
             qOpts.filterSql = sublayer.getCombinedSqlFilter();
+            qOpts.sourceSR = sublayer.sourceSR;
 
             sublayer
                 .queryOIDs(qOpts)

@@ -134,6 +134,7 @@ export class AttribLayer extends MapLayer {
             this.fields = sData.fields;
             this.nameField = sData.displayField;
             this.oidField = sData.objectIdField;
+            this.sourceSR = sData.sourceSR;
 
             // drawOrder field check.
             // we won't be fancy enough to pick apart Arcade formulas and field check. Config authors need to do good work.
@@ -500,7 +501,8 @@ export class AttribLayer extends MapLayer {
             const qOpts: QueryFeaturesParams = {
                 filterGeometry: extent,
                 filterSql: sql,
-                includeGeometry: false
+                includeGeometry: false,
+                sourceSR: this.sourceSR
             };
             cache = this.queryOIDs(qOpts);
             this.filter.setCache(cache, impactedFilters, bExt);
