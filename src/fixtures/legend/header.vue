@@ -53,9 +53,10 @@
         <dropdown-menu
             class="relative"
             position="left-start"
-            :content="t('legend.header.groups')"
-            v-tippy="{ placement: 'left' }"
+            :tooltip="t('legend.header.groups')"
             v-show="isControlAvailable('groupToggle')"
+            tooltipPlacement="left-start"
+            tooltipPlacementAlt="bottom-end"
         >
             <template #header>
                 <div class="p-8">
@@ -85,8 +86,9 @@
         <dropdown-menu
             class="relative"
             position="left-start"
-            :content="t('legend.header.visible')"
-            v-tippy="{ placement: 'left' }"
+            :tooltip="t('legend.header.visible')"
+            tooltipPlacement="left-start"
+            tooltipPlacementAlt="bottom-end"
             v-show="isControlAvailable('visibilityToggle')"
         >
             <template #header>

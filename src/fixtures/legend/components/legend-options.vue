@@ -4,7 +4,8 @@
             class="flex-shrink-0"
             position="bottom-end"
             :tooltip="t('legend.layer.options')"
-            tooltip-placement="left"
+            tooltipPlacement="left"
+            tooltipPlacementAlt="left"
             ref="dropdown"
         >
             <template #header>
