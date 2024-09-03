@@ -4,7 +4,7 @@
         v-focus-item
         position="right-end"
         :tooltip="t('appbar.navigation')"
-        tooltip-placement="right"
+        tooltipPlacement="right"
     >
         <template #header>
             <div class="text-gray-400 w-full h-full hover:text-white p-8">
