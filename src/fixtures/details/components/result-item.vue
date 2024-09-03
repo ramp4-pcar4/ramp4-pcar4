@@ -3,12 +3,12 @@
     <div class="relative flex flex-grow truncate">
         <div
             class="flex flex-grow items-center truncate"
-            v-if="data.loaded && supportsFeatures"
+            v-if="supportsFeatures"
         >
             <!-- display symbol if it has loaded, otherwise display a loading spinner -->
             <div class="flex p-8 items-center">
                 <span
-                    v-if="icon"
+                    v-if="data.loaded && icon"
                     class="flex-none symbologyIcon"
                     v-html="icon"
                 ></span>
@@ -19,11 +19,15 @@
 
             <!-- display name of the data point -->
             <span
+                v-if="data.loaded"
                 class="itemName pl-3 text-left flex-grow truncate"
                 :content="itemName"
                 v-tippy="{ placement: 'right' }"
                 v-html="makeHtmlLink(itemName)"
             ></span>
+            <div v-else class="flex justify-center items-center p-6 flex-grow">
+                <div class="animate-spin spinner h-20 w-20"></div>
+            </div>
 
             <!-- zoom icon -->
             <span class="zoomButton text-center p-3"
@@ -55,7 +59,7 @@
                     v-if="isMapLayer"
                 >
                     <div
-                        v-if="zoomStatus === 'zooming'"
+                        v-if="zoomStatus === 'zooming' || !data.loaded"
                         class="m-auto animate-spin spinner h-20 w-20"
                     ></div>
                     <svg
@@ -234,7 +238,6 @@ const itemChanged = () => {
         //      if it only renders what is on current page, then only visible items should
         //      hit this and make load requests. But need to ensure -- hitting everything
         //      will cause issue #2156
-
         props.data.load().then(() => {
             fetchIcon();
         });
