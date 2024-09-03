@@ -3,12 +3,12 @@
     <div class="relative flex flex-grow truncate">
         <div
             class="flex flex-grow items-center truncate"
-            v-if="data.loaded && supportsFeatures"
+            v-if="supportsFeatures"
         >
             <!-- display symbol if it has loaded, otherwise display a loading spinner -->
             <div class="flex p-8 items-center">
                 <span
-                    v-if="icon"
+                    v-if="data.loaded && icon"
                     class="flex-none symbologyIcon"
                     v-html="icon"
                 ></span>
@@ -19,14 +19,18 @@
 
             <!-- display name of the data point -->
             <span
+                v-if="data.loaded"
                 class="itemName pl-3 text-left flex-grow truncate"
                 :content="itemName"
                 v-tippy="{ placement: 'right' }"
                 v-html="makeHtmlLink(itemName)"
             ></span>
+            <div v-else class="flex p-6 flex-grow">
+                {{ t('details.loading') }}
+            </div>
 
             <!-- zoom icon -->
-            <span class="zoomButton text-center p-3"
+            <span class="zoomButton text-center p-3" v-if="data.loaded"
                 ><button
                     type="button"
                     :content="
