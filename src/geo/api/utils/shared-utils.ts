@@ -1,4 +1,4 @@
-import type { ArcGisServerUrl, UrlQueryMap } from '@/geo/api';
+import type { ArcGisServerUrl, UrlQueryMap, LayerControl } from '@/geo/api';
 import deepmerge from 'deepmerge';
 
 export class SharedUtilsAPI {
@@ -128,6 +128,34 @@ export class SharedUtilsAPI {
         }
 
         return result;
+    }
+    /**
+     * Determines whether the provided control is enabled for the bound layer, based on the config provided
+     * @param control the control we want to determine the availability of
+     * @param config an object containing information regarding enabled/disabled controls for the bound layer
+     * @param isSettingsConfig whether the config object comes from settings fixture config for the
+     * bound layer (defaults to false)
+     * @returns whether the control is available
+     */
+    controlAvailable(
+        control: LayerControl,
+        config:
+            | {
+                  controls?: Array<string>;
+                  disabledControls?: Array<string>;
+              }
+            | undefined,
+        isSettingsConfig: boolean = false
+    ): boolean {
+        // When 'config' comes from the settings fixture config for the bound layer,
+        // we enable the control when the 'controls' array doesn't exist. However, we disable
+        // control in this same scenario when the 'config' comes from the controls/disabledControls
+        // configuration from the bound layer
+        return config?.disabledControls?.includes(control)
+            ? false
+            : config?.controls
+              ? (config?.controls?.includes(control) ?? false)
+              : isSettingsConfig;
     }
 }
 

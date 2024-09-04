@@ -290,9 +290,19 @@ let config = {
                     url: 'https://api.weather.gc.ca//collections/ahccd-trends/items?measurement_type__type_mesure=total_precip&period__periode=Ann&offset=0&limit=1000&province__province=on',
                     xyInAttribs: true,
                     colour: '#55ffff',
+                    controls: ['visibility', 'opacity', 'settings'],
+                    state: {
+                        opacity: 0.8,
+                        visibility: false,
+                        identify: true
+                    },
                     fixtures: {
                         details: {
                             template: 'WFSLayer-Custom'
+                        },
+                        settings: {
+                            controls: ['opacity', 'identify'],
+                            disabledControls: ['visibility']
                         }
                     },
                     fieldMetadata: {
@@ -309,12 +319,33 @@ let config = {
                 },
                 {
                     id: 'TerritoriesPoly',
+                    controls: ['visibility', 'settings'],
+                    disabledControls: ['identify'],
+                    state: {
+                        opacity: 0.4,
+                        visibility: true,
+                        identify: false
+                    },
+                    fixtures: {
+                        settings: {}
+                    },
                     layerType: 'esri-feature',
                     url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/SupportData/MapServer/3',
                     permanentFilteredQuery: `Name = 'Nunavut' OR Name = 'Northwest Territories' OR Name = 'Yukon Territory'`
                 },
                 {
                     id: 'BasinLine',
+                    controls: ['identify', 'opacity', 'settings'],
+                    state: {
+                        opacity: 0,
+                        visibility: true,
+                        identify: true
+                    },
+                    fixtures: {
+                        settings: {
+                            controls: ['visibility']
+                        }
+                    },
                     layerType: 'esri-feature',
                     url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/2',
                     permanentFilteredQuery: `OBJECTID > 80`
