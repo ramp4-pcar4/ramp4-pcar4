@@ -172,7 +172,7 @@ const makeHtmlLink = (html: string, alias: string): string => {
         )}" />`;
     }
 
-    const classes = 'underline text-blue-600 break-all';
+    const classes = 'underline text-blue-700 break-all';
     const div = document.createElement('div');
     div.innerHTML = html.trim();
 
