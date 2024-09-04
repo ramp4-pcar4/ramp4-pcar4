@@ -78,7 +78,10 @@
                         @toggled="updateIdentify"
                         :config="{
                             value: identifyModel,
-                            disabled: !controlAvailable(LayerControl.Identify)
+                            disabled: !(
+                                controlAvailable(LayerControl.Identify) &&
+                                props.layer.supportsIdentify
+                            )
                         }"
                         :ariaLabel="t('settings.label.identify')"
                     ></settings-component>
@@ -169,6 +172,19 @@ watchers.push(
 );
 
 onMounted(() => {
+    // testing code
+    console.log('layer');
+    console.log(props.layer);
+    console.log(`value of supportsIdentify: ${props.layer.supportsIdentify}`);
+    console.log(
+        `identify control available? ${controlAvailable(LayerControl.Identify)}`
+    );
+    console.log(
+        `opacity control available? ${controlAvailable(LayerControl.Opacity)}`
+    );
+    console.log(
+        `visibility control avalable? ${controlAvailable(LayerControl.Visibility)}`
+    );
     loadLayerProperties();
 
     handlers.push(
@@ -232,12 +248,16 @@ const controlAvailable = (control: LayerControl): boolean => {
         props.layer.id
     );
 
-    // check disabled controls, then controls
-    return settingsConfig?.disabledControls?.includes(control)
-        ? false
-        : settingsConfig?.controls
-          ? settingsConfig?.controls?.includes(control)
-          : true;
+    // if the settings config exists, use it to determine the control's availability.
+    // Otherwise, use the layer's config
+    if (settingsConfig) {
+        return settingsConfig?.disabledControls?.includes(control)
+            ? false
+            : settingsConfig?.controls
+              ? settingsConfig?.controls?.includes(control)
+              : true;
+    }
+    return props.layer.controlAvailable(control);
 };
 
 /**
