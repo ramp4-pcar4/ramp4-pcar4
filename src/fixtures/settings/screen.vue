@@ -24,7 +24,12 @@
                         :name="t('settings.label.visibility')"
                         :config="{
                             value: visibilityModel,
-                            disabled: !controlAvailable(LayerControl.Visibility)
+                            disabled: !(
+                                controlAvailable(LayerControl.Visibility) &&
+                                props.layer.controlAvailable(
+                                    LayerControl.Visibility
+                                )
+                            )
                         }"
                         :ariaLabel="t('settings.label.visibility')"
                     />
@@ -39,7 +44,12 @@
                         :config="{
                             onChange: updateOpacity,
                             value: opacityModel,
-                            disabled: !controlAvailable(LayerControl.Opacity)
+                            disabled: !(
+                                controlAvailable(LayerControl.Opacity) &&
+                                props.layer.controlAvailable(
+                                    LayerControl.Opacity
+                                )
+                            )
                         }"
                         :ariaLabel="t('settings.label.opacity')"
                     ></settings-component>
@@ -78,7 +88,13 @@
                         @toggled="updateIdentify"
                         :config="{
                             value: identifyModel,
-                            disabled: !controlAvailable(LayerControl.Identify)
+                            disabled: !(
+                                props.layer.controlAvailable(
+                                    LayerControl.Identify
+                                ) &&
+                                controlAvailable(LayerControl.Identify) &&
+                                props.layer.supportsIdentify
+                            )
                         }"
                         :ariaLabel="t('settings.label.identify')"
                     ></settings-component>
@@ -169,6 +185,19 @@ watchers.push(
 );
 
 onMounted(() => {
+    // testing code
+    console.log('layer');
+    console.log(props.layer);
+    console.log(`value of supportsIdentify: ${props.layer.supportsIdentify}`);
+    console.log(
+        `identify in controls array? ${props.layer.controlAvailable(LayerControl.Identify)}`
+    );
+    console.log(
+        `opacity in controls array? ${props.layer.controlAvailable(LayerControl.Opacity)}`
+    );
+    console.log(
+        `visibility in controls array? ${props.layer.controlAvailable(LayerControl.Visibility)}`
+    );
     loadLayerProperties();
 
     handlers.push(
@@ -231,6 +260,8 @@ const controlAvailable = (control: LayerControl): boolean => {
     const settingsConfig: any = (fixture as SettingsAPI)?.getLayerFixtureConfig(
         props.layer.id
     );
+    // console.log('screen.vue: settingsConfig');
+    // console.log(settingsConfig);
 
     // check disabled controls, then controls
     return settingsConfig?.disabledControls?.includes(control)
