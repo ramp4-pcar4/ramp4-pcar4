@@ -126,7 +126,7 @@ export const usePanelStore = defineStore('panel', () => {
         // TODO: update when panel width system is in place
         let remainingWidth = stackWidth.value;
         const nowVisible: PanelInstance[] = [];
-        const defaultWidth = 350;
+        const defaultWidth = 400;
         const panelMargin = 12;
 
         // add panels until theres no space in the stack
