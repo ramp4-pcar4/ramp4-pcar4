@@ -1,6 +1,6 @@
 {
     "name": "ramp-pcar",
-    "version": "4.8.0",
+    "version": "4.9.1",
     "description": "RAMP4 - The Reusable Accessible Mapping Platform, is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.1 AA compliant common viewer for the Government of Canada. ",
     "type": "module",
     "module": "./dist/lib/ramp.bundle.es.js",
