@@ -1,26 +1,25 @@
 name: PR Commenter
 
 on:
-  pull_request:
-    types: [opened]
+    pull_request_target:
+        types: [opened]
 
 jobs:
-  comment-on-pr:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Comment on the PR
-      uses: peter-evans/create-or-update-comment@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        issue-number: ${{ github.event.pull_request.number }}
-        body: |
-          Your demo site is ready! 🚀
+    comment-on-pr:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Comment on the PR
+              uses: peter-evans/create-or-update-comment@v4
+              with:
+                  issue-number: ${{ github.event.pull_request.number }}
+                  body: |
+                      Your demo site is ready! 🚀
 
-          Enhanced Testing:
-          Samples: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/enhanced-samples.html
-          Catalogue: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/enhanced-all.html
+                      Enhanced Testing:
+                      Samples: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/enhanced-samples.html
+                      Catalogue: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/enhanced-all.html
 
-          Legacy Testing:
-          Main: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/
-          Catalogue: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/index-all.html
-          Samples: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/index-samples.html
+                      Legacy Testing:
+                      Main: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/
+                      Catalogue: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/index-all.html
+                      Samples: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/index-samples.html
