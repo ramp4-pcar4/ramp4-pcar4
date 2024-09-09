@@ -1,3 +1,26 @@
+# Demo Setup for Forked Repos
+
+When you push changes to your forked repo, a demo preview is automatically generated. The demo preview will update each time you push changes. Note that demos are deleted daily whenever the source branch or tag is deleted from your forked repo.
+
+### Accessing Your Demo Previews:
+- **Branch or Tag Preview**: Visit `https://{{github-username}}.github.io/ramp4-pcar4/{{branch-or-tag-name}}` to see a live preview of the branch or tag you've pushed.
+- **List of All Demos**: View all your demo previews by navigating to `https://github.com/{{github-username}}/ramp4-pcar4/tree/demo-page`.
+
+### Enabling Demos for Your Forked Repo:
+To enable demo previews on your forked repository, update the following settings:
+
+1. **GitHub Pages**:
+   - Go to `Settings -> Pages -> Build and deployment source` and select **GitHub Actions**.
+   
+2. **Deployment Branches and Tags**:
+   - Navigate to `Settings -> Environments -> github-pages -> Deployment branches and tags` and choose **No restriction**.
+
+3. **Actions Permissions**:
+   - Under `Settings -> Actions -> General -> Actions permissions`, set it to **Allow all actions and reusable workflows**.
+
+4. **Workflow Permissions**:
+   - Go to `Settings -> Actions -> General -> Workflow permissions`, and select **Read and write permissions**.
+
 # Local development
 
 ## Project Setup

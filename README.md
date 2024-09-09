@@ -123,6 +123,23 @@ During build, the `public` folder contents are placed into the `dist` folder.
 
 ### Demo Builds
 
-The demos of the most recent build are available at https://ramp4-pcar4.github.io/ramp4-pcar4/main/demos/enhanced-all.html.
+When you push changes to your forked repo, a demo preview is automatically generated. The demo preview will update each time you push changes. Note that demos are deleted daily whenever the source branch or tag is deleted from your forked repo.
 
-Demo builds are automatically generated for pull requests if you are a member of the [ramp4-pcar4 organization](https://github.com/orgs/ramp4-pcar4/people) and have your visibility set to public.
+### Accessing Your Demo Previews:
+- **Branch or Tag Preview**: Visit `https://{{github-username}}.github.io/ramp4-pcar4/{{branch-or-tag-name}}` to see a live preview of the branch or tag you've pushed.
+- **List of All Demos**: View all your demo previews by navigating to `https://github.com/{{github-username}}/ramp4-pcar4/tree/demo-page`.
+
+### Enabling Demos for Your Forked Repo:
+To enable demo previews on your forked repository, update the following settings:
+
+1. **GitHub Pages**:
+   - Go to `Settings -> Pages -> Build and deployment source` and select **GitHub Actions**.
+   
+2. **Deployment Branches and Tags**:
+   - Navigate to `Settings -> Environments -> github-pages -> Deployment branches and tags` and choose **No restriction**.
+
+3. **Actions Permissions**:
+   - Under `Settings -> Actions -> General -> Actions permissions`, set it to **Allow all actions and reusable workflows**.
+
+4. **Workflow Permissions**:
+   - Go to `Settings -> Actions -> General -> Workflow permissions`, and select **Read and write permissions**.
