@@ -15,7 +15,7 @@ Multiple instances can be hosted on a page (each requiring their own page elemen
 The `pageElement` is the HTML element or element id that the instance should be created in on the page. Currently, a page element should not be targeted by `createInstance()` more than once (errors will likely occur). If an existing instance needs to be reset, please use the `.reload()` method on the `InstanceAPI`.
 
 The `config` is an object containing a `configs` object which is keyed by language codes with configurations as values. The configurations must follow [this schema](https://github.com/ramp4-pcar4/ramp4-pcar4/blob/main/schema.json).
-This object can optionally include a `startingFixtures` list which is a set of fixtures that the RAMP instance will load. An example of the `config` object is shown below:
+This object can optionally include a `startingFixtures` list which is a set of fixtures that the RAMP instance will load. A simplified example of the `config` object is shown below:
 
 ```js
 {
@@ -23,12 +23,12 @@ This object can optionally include a `startingFixtures` list which is a set of f
     configs: {
         en: {
             map: {},
-            layers: {},
+            layers: [],
             fixtures: {}
         },
         fr: {
             map: {},
-            layers: {},
+            layers: [],
             fixtures: {}
         }
     }
