@@ -19,10 +19,13 @@
 
             <!-- display name of the data point -->
             <span
-                class="itemName pl-3 text-left flex-grow truncate"
+                class="pl-3 text-left flex-grow itemName"
                 :content="itemName"
-                v-tippy="{ placement: 'right' }"
                 v-html="makeHtmlLink(itemName)"
+                v-truncate="{
+                    options: { placement: 'right-end' }
+                }"
+                :tabindex="inList ? -1 : 0"
             ></span>
 
             <!-- zoom icon -->
@@ -137,7 +140,8 @@ const layerStore = useLayerStore();
 const props = defineProps({
     uid: { type: String, required: true },
     data: { type: Object as PropType<IdentifyItem>, required: true },
-    open: { type: Boolean, required: false }
+    open: { type: Boolean, required: false },
+    inList: { type: Boolean, required: false }
 });
 
 const iApi = inject<InstanceAPI>('iApi')!;

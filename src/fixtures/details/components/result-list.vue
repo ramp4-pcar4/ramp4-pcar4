@@ -97,18 +97,28 @@
         <!-- details result, or result list -->
         <div v-if="layerExists">
             <div v-if="getLayerIdentifyItems().length > 0">
-                <div v-if="showList" class="flex flex-col" v-focus-list>
+                <div
+                    v-if="showList"
+                    class="flex flex-col"
+                    v-focus-list
+                    :content="t('details.layers.results.list.tooltip')"
+                    v-tippy="{
+                        trigger: 'manual',
+                        placement: 'top-start'
+                    }"
+                >
                     <button
                         class="flex flex-grow truncate default-focus-style hover:bg-gray-200"
                         v-for="(item, idx) in getLayerIdentifyItems()"
                         :key="idx"
                         @click="clickListItem(idx)"
-                        v-focus-item
+                        v-focus-item="'show-truncate'"
                     >
                         <ResultItem
                             :data="item"
                             :uid="uid"
                             :open="false"
+                            :in-list="true"
                         ></ResultItem>
                     </button>
                 </div>
@@ -116,6 +126,7 @@
                     :data="currentIdentifyItem"
                     :uid="uid"
                     :open="true"
+                    :in-list="false"
                     v-else
                 ></ResultItem>
             </div>
