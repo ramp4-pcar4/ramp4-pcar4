@@ -97,7 +97,15 @@
         <!-- details result, or result list -->
         <div v-if="layerExists">
             <div v-if="getLayerIdentifyItems().length > 0">
-                <div v-if="showList" class="flex flex-col" v-focus-list>
+                <div
+                    v-if="showList"
+                    class="flex flex-col"
+                    v-focus-list
+                    :content="t('details.layers.results.list.tooltip')"
+                    v-tippy="{
+                        placement: 'top-start'
+                    }"
+                >
                     <button
                         class="flex flex-grow truncate default-focus-style hover:bg-gray-200"
                         v-for="(item, idx) in getLayerIdentifyItems()"
