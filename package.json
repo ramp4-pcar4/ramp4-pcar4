@@ -66,7 +66,7 @@
         "tiny-emitter": "^2.1.0",
         "tippy.js": "^6.3.7",
         "vue": "^3.2.31",
-        "vue-accessible-color-picker": "^5.0.1",
+        "vue-accessible-color-picker": "4.1.4",
         "vue-i18n": "^9.13.1",
         "vue-slider-component": "^4.1.0-beta.7",
         "vue-tippy": "^6.4.4",

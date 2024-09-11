@@ -22,6 +22,7 @@
                 v-if="data.loaded"
                 class="pl-3 text-left flex-grow itemName"
                 :content="itemName"
+                v-tippy="{ placement: 'right', allowHTML: true }"
                 v-html="makeHtmlLink(itemName)"
                 v-truncate="{
                     options: { placement: 'right-end' }
