@@ -7,6 +7,12 @@
         @focus="handleItemFocus"
         @blur.self="handleItemBlur"
         v-focus-list
+        :content="t('details.layers.results.list.tooltip')"
+        v-tippy="{
+            trigger: 'manual',
+            placement: 'top-start'
+        }"
+        ref="el"
     >
         <div
             class="flex justify-start relative"
@@ -28,14 +34,27 @@
 <script setup lang="ts">
 // this renders the list of symbology items that run along the left side
 
-import { ref, watch, onBeforeMount, onBeforeUnmount } from 'vue';
+import { ref, watch, onBeforeMount, onBeforeUnmount, onMounted } from 'vue';
 import { useLayerStore } from '@/stores/layer';
 
 import type { LayerInstance } from '@/api';
+import { useI18n } from 'vue-i18n';
 
 import SymbologyItem from './symbology-item.vue';
 
+const { t } = useI18n();
 const layerStore = useLayerStore();
+
+const el = ref<Element>();
+const blurEvent = () => {
+    (el.value as any)._tippy.hide();
+};
+const keyupEvent = (e: Event) => {
+    const evt = e as KeyboardEvent;
+    if (evt.key === 'Tab' && el.value?.matches(':focus')) {
+        (el.value as any)._tippy.show();
+    }
+};
 
 const emit = defineEmits(['selection-changed']);
 const props = defineProps({
@@ -120,8 +139,16 @@ onBeforeMount(() => {
     );
 });
 
+onMounted(() => {
+    el.value?.addEventListener('blur', blurEvent);
+    el.value?.addEventListener('keyup', keyupEvent);
+});
+
 onBeforeUnmount(() => {
     watchers.value.forEach(unwatch => unwatch());
+
+    el.value?.removeEventListener('blur', blurEvent);
+    el.value?.removeEventListener('keyup', keyupEvent);
 });
 </script>
 

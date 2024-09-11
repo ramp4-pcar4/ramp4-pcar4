@@ -182,14 +182,37 @@
     padding: 3px 8px;
     border-radius: 5px;
     text-align: center;
+
+    a:link {
+        color: skyblue;
+        text-decoration: none;
+    }
+
+    a:visited {
+        color: rgb(214, 150, 245);
+    }
+
+    a:hover {
+        color: lightblue;
+        text-decoration: underline;
+    }
+
+    a:visited:hover {
+        color: rgb(230, 191, 250);
+    }
+
+    a:active {
+        color: aqua;
+        text-decoration: underline;
+    }
+
+    a:visited:active {
+        color: rgb(247, 114, 227);
+    }
 }
 
 .tippy-box[data-theme~='ramp4'] svg {
     display: inline;
-}
-
-.tippy-box[data-theme~='ramp4'] a {
-    text-decoration: underline;
 }
 
 .spinner {
