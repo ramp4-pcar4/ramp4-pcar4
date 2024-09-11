@@ -41,8 +41,16 @@
 }
 
 .ramp-styles {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
-        Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    font-family:
+        'Montserrat',
+        -apple-system,
+        BlinkMacSystemFont,
+        Segoe UI,
+        Helvetica,
+        Arial,
+        sans-serif,
+        Apple Color Emoji,
+        Segoe UI Emoji;
     font-size: 16px;
     line-height: 1.5;
     word-wrap: break-word;
@@ -54,8 +62,16 @@
 
 /* Change ag-grid theme default font (Roboto) to match the rest of the page. */
 .ramp-styles .ag-theme-material * {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
-        Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    font-family:
+        'Montserrat',
+        -apple-system,
+        BlinkMacSystemFont,
+        Segoe UI,
+        Helvetica,
+        Arial,
+        sans-serif,
+        Apple Color Emoji,
+        Segoe UI Emoji;
 }
 
 .grid-icons {
@@ -101,8 +117,16 @@
 }
 
 .tippy-tooltip.ramp-theme {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
-        Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    font-family:
+        'Montserrat',
+        -apple-system,
+        BlinkMacSystemFont,
+        Segoe UI,
+        Helvetica,
+        Arial,
+        sans-serif,
+        Apple Color Emoji,
+        Segoe UI Emoji;
     font-size: 14px;
 }
 
@@ -141,8 +165,16 @@
 }
 
 .tippy-box[data-theme~='ramp4'] {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
-        Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    font-family:
+        'Montserrat',
+        -apple-system,
+        BlinkMacSystemFont,
+        Segoe UI,
+        Helvetica,
+        Arial,
+        sans-serif,
+        Apple Color Emoji,
+        Segoe UI Emoji;
     color: white;
     background: #222;
     opacity: 0.9;
@@ -150,14 +182,37 @@
     padding: 3px 8px;
     border-radius: 5px;
     text-align: center;
+
+    a:link {
+        color: skyblue;
+        text-decoration: none;
+    }
+
+    a:visited {
+        color: rgb(214, 150, 245);
+    }
+
+    a:hover {
+        color: lightblue;
+        text-decoration: underline;
+    }
+
+    a:visited:hover {
+        color: rgb(230, 191, 250);
+    }
+
+    a:active {
+        color: aqua;
+        text-decoration: underline;
+    }
+
+    a:visited:active {
+        color: rgb(247, 114, 227);
+    }
 }
 
 .tippy-box[data-theme~='ramp4'] svg {
     display: inline;
-}
-
-.tippy-box[data-theme~='ramp4'] a {
-    text-decoration: underline;
 }
 
 .spinner {
