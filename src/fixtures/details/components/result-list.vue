@@ -97,18 +97,29 @@
         <!-- details result, or result list -->
         <div v-if="layerExists">
             <div v-if="getLayerIdentifyItems().length > 0">
-                <div v-if="showList" class="flex flex-col" v-focus-list>
+                <div
+                    v-if="showList"
+                    class="flex flex-col"
+                    v-focus-list
+                    :content="t('details.layers.results.list.tooltip')"
+                    v-tippy="{
+                        trigger: 'manual',
+                        placement: 'top-start'
+                    }"
+                    ref="el"
+                >
                     <button
                         class="flex flex-grow truncate default-focus-style hover:bg-gray-200"
                         v-for="(item, idx) in getLayerIdentifyItems()"
                         :key="idx"
                         @click="clickListItem(idx)"
-                        v-focus-item
+                        v-focus-item="'show-truncate'"
                     >
                         <ResultItem
                             :data="item"
                             :uid="uid"
                             :open="false"
+                            :in-list="true"
                         ></ResultItem>
                     </button>
                 </div>
@@ -116,6 +127,7 @@
                     :data="currentIdentifyItem"
                     :uid="uid"
                     :open="true"
+                    :in-list="false"
                     v-else
                 ></ResultItem>
             </div>
@@ -173,6 +185,17 @@ import type { PropType } from 'vue';
 
 import { useDetailsStore } from '../store';
 import type { DetailsItemInstance } from '../store';
+
+const el = ref<Element>();
+const blurEvent = () => {
+    (el.value as any)._tippy.hide();
+};
+const keyupEvent = (e: Event) => {
+    const evt = e as KeyboardEvent;
+    if (evt.key === 'Tab' && el.value?.matches(':focus')) {
+        (el.value as any)._tippy.show();
+    }
+};
 
 const iApi = inject<InstanceAPI>('iApi')!;
 
@@ -432,6 +455,9 @@ onMounted(() => {
             }
         })
     );
+
+    el.value?.addEventListener('blur', blurEvent);
+    el.value?.addEventListener('keyup', keyupEvent);
 });
 
 onBeforeMount(() => {
@@ -478,6 +504,9 @@ onBeforeUnmount(() => {
     // clean up hooks into various events.
     watchers.value.forEach(unwatch => unwatch());
     handlers.value.forEach(handler => iApi.event.off(handler));
+
+    el.value?.removeEventListener('blur', blurEvent);
+    el.value?.removeEventListener('keyup', keyupEvent);
 });
 </script>
 
