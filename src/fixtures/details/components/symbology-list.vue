@@ -7,6 +7,11 @@
         @focus="handleItemFocus"
         @blur.self="handleItemBlur"
         v-focus-list
+        :content="t('details.layers.results.list.tooltip')"
+        v-tippy="{
+            trigger: 'manual',
+            placement: 'top-start'
+        }"
     >
         <div
             class="flex justify-start relative"
@@ -32,9 +37,11 @@ import { ref, watch, onBeforeMount, onBeforeUnmount } from 'vue';
 import { useLayerStore } from '@/stores/layer';
 
 import type { LayerInstance } from '@/api';
+import { useI18n } from 'vue-i18n';
 
 import SymbologyItem from './symbology-item.vue';
 
+const { t } = useI18n();
 const layerStore = useLayerStore();
 
 const emit = defineEmits(['selection-changed']);
