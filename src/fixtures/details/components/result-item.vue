@@ -21,7 +21,7 @@
             <span
                 class="itemName pl-3 text-left flex-grow truncate"
                 :content="itemName"
-                v-tippy="{ placement: 'right' }"
+                v-tippy="{ placement: 'right', allowHTML: true }"
                 v-html="makeHtmlLink(itemName)"
             ></span>
 
