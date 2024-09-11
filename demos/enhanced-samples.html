@@ -29,8 +29,10 @@
                     07. Classic Main Sample
                 </option>
             </select>
-            <a class="linky" href="enhanced-all.html">Catalogue</a
-            ><a class="linky" href="index-all.html">Classic Samples</a>
+            <nav class="linky-container">
+                <a class="linky" href="enhanced-all.html">Catalogue</a
+                ><a class="linky" href="index-all.html">Classic Samples</a>
+            </nav>
         </section>
 
         <noscript>
@@ -59,21 +61,42 @@
                 width: 100%;
                 background-color: darkslategrey;
                 display: flex;
-                justify-content: center;
                 height: 36px;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .linky-container {
+                margin-right: 7px;
+                margin-bottom: 2px;
+                display: flex;
             }
             .linky {
-                flex-grow: 0;
                 white-space: nowrap;
                 color: greenyellow;
                 margin: 7px;
             }
             #selectConfig {
                 flex-grow: 1;
+                min-width: 0;
                 margin: 7px;
             }
             #app {
                 height: calc(100vh - 36px);
+            }
+            @media only screen and (max-width: 400px) {
+                #header {
+                    height: 65px;
+                    flex-wrap: wrap;
+                }
+                .linky-container {
+                    overflow-x: scroll;
+                }
+                #app {
+                    height: calc(100vh - 65px);
+                }
+                .linky {
+                    margin-top: 0;
+                }
             }
         </style>
 
