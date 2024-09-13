@@ -128,10 +128,12 @@ export const usePanelStore = defineStore('panel', () => {
         const nowVisible: PanelInstance[] = [];
         const defaultWidth = 350;
         const panelMargin = 12;
+        const gridMinWidth = 600; // Define a minimum width for the grid
 
         // add panels until theres no space in the stack
         for (let i = orderedItems.value.length - 1; i >= 0; i--) {
-            let panelWidth = orderedItems.value[i].width || defaultWidth;
+            let panel = orderedItems.value[i];
+            let panelWidth = panel.width || defaultWidth;
 
             // if not in mobile view, all panels have a 12px margin to the right
             if (!mobileView.value) {
@@ -141,6 +143,15 @@ export const usePanelStore = defineStore('panel', () => {
                 panelWidth = remainingWidth;
             }
 
+            // If we are dealing with the grid, ensure it doesn't occupy too much space
+            if (panel.id === 'grid') {
+                // Ensure the grid occupies only up to the remaining width or its min width
+                panelWidth = Math.max(
+                    Math.min(panelWidth, remainingWidth),
+                    gridMinWidth
+                );
+            }
+
             // mobile mode only allows for one panel to be visible
             if (
                 (remainingWidth >= panelWidth && !mobileView.value) ||
@@ -148,7 +159,12 @@ export const usePanelStore = defineStore('panel', () => {
             ) {
                 remainingWidth -= panelWidth;
                 //@ts-ignore
-                nowVisible.unshift(orderedItems.value[i]);
+                nowVisible.unshift(panel);
+            }
+
+            // Close the grid if it starts taking too much space
+            if (panel.id === 'grid' && remainingWidth < gridMinWidth) {
+                break;
             }
         }
 
