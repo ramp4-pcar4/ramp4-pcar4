@@ -24,12 +24,19 @@
         [multiple],
         textarea,
         select {
-            @apply text-base pt-8 pr-12 pb-8 pl-12 font-normal;
+            font-size: 16px;
+            line-height: 24px;
+            padding-top: 8px;
+            padding-right: 12px;
+            padding-bottom: 8px;
+            padding-left: 12px;
+            font-weight: 400;
         }
 
         [type='checkbox'],
         [type='radio'] {
-            @apply h-16 w-16;
+            height: 16px;
+            width: 16px;
         }
     }
 
@@ -41,8 +48,16 @@
 }
 
 .ramp-styles {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
-        Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    font-family:
+        'Montserrat',
+        -apple-system,
+        BlinkMacSystemFont,
+        Segoe UI,
+        Helvetica,
+        Arial,
+        sans-serif,
+        Apple Color Emoji,
+        Segoe UI Emoji;
     font-size: 16px;
     line-height: 1.5;
     word-wrap: break-word;
@@ -54,8 +69,16 @@
 
 /* Change ag-grid theme default font (Roboto) to match the rest of the page. */
 .ramp-styles .ag-theme-material * {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
-        Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    font-family:
+        'Montserrat',
+        -apple-system,
+        BlinkMacSystemFont,
+        Segoe UI,
+        Helvetica,
+        Arial,
+        sans-serif,
+        Apple Color Emoji,
+        Segoe UI Emoji;
 }
 
 .grid-icons {
@@ -101,8 +124,16 @@
 }
 
 .tippy-tooltip.ramp-theme {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
-        Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    font-family:
+        'Montserrat',
+        -apple-system,
+        BlinkMacSystemFont,
+        Segoe UI,
+        Helvetica,
+        Arial,
+        sans-serif,
+        Apple Color Emoji,
+        Segoe UI Emoji;
     font-size: 14px;
 }
 
@@ -141,8 +172,16 @@
 }
 
 .tippy-box[data-theme~='ramp4'] {
-    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, Segoe UI,
-        Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+    font-family:
+        'Montserrat',
+        -apple-system,
+        BlinkMacSystemFont,
+        Segoe UI,
+        Helvetica,
+        Arial,
+        sans-serif,
+        Apple Color Emoji,
+        Segoe UI Emoji;
     color: white;
     background: #222;
     opacity: 0.9;
