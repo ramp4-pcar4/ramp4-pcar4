@@ -35,7 +35,7 @@
                     <div class="display-none"></div>
 
                     <div
-                        class="flex items-center p-5 ms-5 h-44 cursor-pointer hover:bg-gray-200"
+                        class="flex items-center p-5 h-44 cursor-pointer hover:bg-gray-200"
                     >
                         <!-- dropdown toggle  -->
                         <button
