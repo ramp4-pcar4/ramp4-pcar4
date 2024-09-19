@@ -938,7 +938,9 @@ const setUpTextFilter = (
     // default to regex filtering for text columns
     colDef.filterParams.textMatcher = function (params: any) {
         // treat * as a regular special character
-        const newFilterText = params.filterText.replace(/\*/, '\\*');
+        const newFilterText = params.filterText
+            .replace(/\*/, '\\*')
+            .replace(/[()\[\]]/g, '');
         // surround filter text with .* to match anything before and after
         const re = new RegExp(`^.*${newFilterText}.*`);
         return re.test(params.value);
