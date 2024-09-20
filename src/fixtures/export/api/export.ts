@@ -1,11 +1,7 @@
 import { FixtureInstance } from '@/api/internal';
 import { useExportStore } from '../store';
 import type { ExportConfig } from '../store';
-
-import { fabric } from 'fabric';
-// prevents blurriness <https://stackoverflow.com/questions/47513180/fabricjs-lines-in-group-become-blurry>
-fabric.Object.prototype.objectCaching = false;
-
+import type { fabric } from 'fabric';
 import FileSaver from 'file-saver';
 
 const DEFAULT_WIDTH = 1200;
@@ -130,6 +126,9 @@ export class ExportAPI extends FixtureInstance {
      * @memberof ExportAPI
      */
     async make(canvas: HTMLCanvasElement, panelWidth: number): Promise<void> {
+        const { fabric } = await import('fabric');
+        // prevents blurriness <https://stackoverflow.com/questions/47513180/fabricjs-lines-in-group-become-blurry>
+        fabric.Object.prototype.objectCaching = false;
         const exportStore = useExportStore(this.$vApp.$pinia);
 
         // stores the individual fabric objects for use with a custom render function
