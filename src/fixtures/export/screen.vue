@@ -61,7 +61,7 @@ import ExportSettings from './settings-button.vue';
 import { useExportStore } from './store';
 import { useI18n } from 'vue-i18n';
 
-defineProps({
+const props = defineProps({
     panel: {
         type: Object as PropType<PanelInstance>,
         required: true
@@ -124,6 +124,7 @@ const make = debounce(300, () => {
 });
 
 onBeforeMount(() => {
+    (props.panel as any).exportMake = make;
     // Set up watchers
     watchers.value.push(
         // Listen for any changes to the settings, and refresh the image when they do change
