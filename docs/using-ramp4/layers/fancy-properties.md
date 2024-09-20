@@ -264,7 +264,7 @@ For memory considerations, this property will be deleted from the configuration 
 
 - `file-geojson`: The value can be a GeoJSON object, or a string containing the stringified GeoJSON object.
 - `file-csv`: The value is the file content contained in a string, encoded in UTF-8.
-- `file-shape`: The value is an `ArrayBuffer` containing the content of the zipped shapefile package. Given this is binary data, the `rawData` cannot be specified in a static config file, but can be provided if the configuration object is constructed at runtime.
+- `file-shape`, `file-zip-geojson`, `file-fgb`, `file-zip-fgb`: The value is an `ArrayBuffer` containing the file content of the source file (which should align to the layer type). Given this is binary data, the `rawData` cannot be specified in a static config text file, but can be provided if the configuration object is constructed in memory at runtime.
 - `data-json`: The value can be a [Compact JSON](/api-guides/layers.md#data-layers) object, or a string containing the stringified Compact JSON object.
 
 ```js

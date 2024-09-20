@@ -5,7 +5,10 @@ import {
     CsvLayer,
     FileUtils,
     FeatureLayer,
+    FlatGeobufLayer,
+    FlatGeobufZipLayer,
     GeoJsonLayer,
+    GeoJsonZipLayer,
     GraphicLayer,
     ImageryLayer,
     InstanceAPI,
@@ -83,6 +86,12 @@ export class LayerAPI extends APIScope {
             case LayerType.GEOJSON:
                 closs = GeoJsonLayer;
                 break;
+            case LayerType.GEOJSONZIPPED:
+                closs = GeoJsonZipLayer;
+                break;
+            case LayerType.FLATGEOBUFZIPPED:
+                closs = FlatGeobufZipLayer;
+                break;
             case LayerType.CSV:
                 closs = CsvLayer;
                 break;
@@ -94,6 +103,9 @@ export class LayerAPI extends APIScope {
                 break;
             case LayerType.SHAPEFILE:
                 closs = ShapefileLayer;
+                break;
+            case LayerType.FLATGEOBUF:
+                closs = FlatGeobufLayer;
                 break;
             case LayerType.OSM:
                 closs = OsmTileLayer;
