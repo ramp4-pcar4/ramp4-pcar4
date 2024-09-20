@@ -120,8 +120,11 @@ The ESRI formats assume being hosted on an ArcGIS Server `MapServer`. `FeatureSe
 - OGC WFS 3.0 (`ogc-wfs`)
 - OGC WMS (`ogc-wms`)
 - GeoJSON (`file-geojson`)
+- Zipped GeoJSON (`file-zip-geojson`)
 - CSV File (`file-csv`)
 - Shapefile (`file-shape`)
+- FlatGeobuf (`file-fgb`)
+- Zipped FlatGeobuf (`file-zip-fgb`)
 - OpenStreetMap Tile Layer (`osm-tile`)
 
 ### Data Layers

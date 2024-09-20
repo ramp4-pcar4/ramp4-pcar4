@@ -28,8 +28,11 @@ Valid values:
 - `ogc-wfs`: OGC WFS 3.0
 - `ogc-wms`: OGC WMS
 - `file-geojson`: GeoJSON
+- `file-zip-geojson`: Zipped GeoJSON
 - `file-csv`: CSV File
 - `file-shape`: Shapefile (zipped)
+- `file-fgb`: FlatGeobuf
+- `file-zip-fgb`: Zipped FlatGeobuf
 - `osm-tile`: OpenStreetMap Tile Layer
 - `data-esri-table`  ESRI Table Layer
 - `data-csv` Non Spatial CSV File
