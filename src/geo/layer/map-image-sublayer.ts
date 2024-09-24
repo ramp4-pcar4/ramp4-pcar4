@@ -294,6 +294,15 @@ export class MapImageSublayer extends AttribLayer {
     }
 
     /**
+     * A utility method to allow a parent layer to request this layer to
+     * update its fields to be trimmed after field data is processed.
+     * Generally should only be called internally.
+     */
+    updateFieldsToTrim(): void {
+        this.attribs.attLoader.updateFieldsToTrim(this.getFieldsToTrim());
+    }
+
+    /**
      * Visibility of labels on this layer
      */
     get labelVisibility(): boolean {

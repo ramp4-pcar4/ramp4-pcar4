@@ -27,6 +27,7 @@ import type {
     IdentifyParameters,
     LayerTimes,
     LegendSymbology,
+    RampLayerFieldMetadataConfig,
     TabularAttributeSet
 } from '@/geo/api';
 
@@ -359,6 +360,14 @@ export class LayerInstance extends APIScope {
      */
     get layerExists(): boolean {
         return false;
+    }
+
+    /**
+     * Gets the fields whose string values should be trimmed.
+     * @returns {Array<string>} the field names.
+     */
+    getFieldsToTrim(): Array<string> {
+        return [];
     }
 
     /**

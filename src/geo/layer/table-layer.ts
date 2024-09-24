@@ -100,7 +100,8 @@ export class TableLayer extends DataLayer {
                     oidField: this.oidField,
                     batchSize: -1,
                     attribs: this.fieldList,
-                    permanentFilter: this.getSqlFilter(CoreFilter.PERMANENT)
+                    permanentFilter: this.getSqlFilter(CoreFilter.PERMANENT),
+                    fieldsToTrim: this.getFieldsToTrim()
                 };
                 this.attribs.attLoader = new ArcServerAttributeLoader(
                     this.$iApi,

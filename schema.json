@@ -1813,6 +1813,11 @@
                     "type": "string",
                     "default": "",
                     "description": "Specifies the field title. If missing, attempts to use the service alias, then defaults to the field name."
+                },
+                "trim": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Specifies whether trailing/preceding spaces should be trimmed from the string attribute."
                 }
             },
             "required": ["name"]
