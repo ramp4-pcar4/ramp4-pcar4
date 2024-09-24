@@ -11,13 +11,13 @@ import {
 } from './internal';
 
 import type {
+    AsyncComponentEh,
+    AsyncComponentFactoryEh,
     PanelConfig,
     PanelConfigRoute,
     PanelConfigScreens,
     PanelConfigStyle,
-    PanelDirection,
-    AsyncComponentFactoryEh,
-    AsyncComponentEh
+    PanelDirection
 } from '@/stores/panel';
 
 import ScreenSpinnerV from '@/components/panel-stack/screen-spinner.vue';

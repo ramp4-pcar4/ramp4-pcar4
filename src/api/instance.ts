@@ -25,7 +25,6 @@ import {
     PanelAPI,
     NotificationAPI
 } from './internal';
-import type { LayerInstance } from './internal';
 
 import PanelScreenV from '@/components/panel-stack/panel-screen.vue';
 import PinV from '@/components/panel-stack/controls/pin.vue';
@@ -229,7 +228,10 @@ export class InstanceAPI {
                         langConfig.layers.forEach(layerConfig => {
                             const layer =
                                 this.geo.layer.createLayer(layerConfig);
-                            this.geo.map.addLayer(layer, mapOrderPos);
+                            this.geo.map
+                                .addLayer(layer, mapOrderPos)
+                                // just to silence console about unhandled rejections.
+                                .catch(() => {});
                             if (layer.mapLayer) {
                                 // we only increment for map layers. Data layers get added but do not live in the map stack.
                                 // so no ++. We pass the param to map.addLayer above out of lazyness. It gets ignored for data layers.

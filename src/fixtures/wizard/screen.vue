@@ -644,10 +644,10 @@ const onConfigureContinue = async (data: any) => {
     selectedValues.value = [];
     displayFormat.value = '';
 
-    // config.url =
-    //     'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign';
     const layer = iApi.geo.layer.createLayer(config);
-    iApi.geo.map.addLayer(layer);
+
+    // just to silence console about unhandled rejections.
+    iApi.geo.map.addLayer(layer).catch(() => {});
     layer.userAdded = true;
 
     // notify the legend to prepare a legend item

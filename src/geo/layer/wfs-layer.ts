@@ -14,12 +14,13 @@ export class WfsLayer extends FileLayer {
     }
 
     protected async onInitiate(): Promise<void> {
+        const startTime = Date.now();
         const wrapper = new UrlWrapper(this.config.url);
 
         // get start index and limit set on the url
         const { offset, limit } = wrapper.queryMap;
 
-        this.sourceGeoJson = await this.$iApi.geo.layer.ogc.loadWfsData(
+        const gj = await this.$iApi.geo.layer.ogc.loadWfsData(
             this.config.url,
             -1,
             parseInt(offset) || 0,
@@ -27,8 +28,9 @@ export class WfsLayer extends FileLayer {
             undefined,
             this.config.xyInAttribs
         );
-
-        // TODO error handling? set layer state to error if above call fails?
-        await super.onInitiate();
+        if (startTime > this.lastCancel) {
+            this.sourceGeoJson = gj;
+            await super.onInitiate();
+        }
     }
 }
