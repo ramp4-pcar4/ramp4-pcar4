@@ -12,7 +12,8 @@ const enum KEYS {
     Escape = 'Escape',
     EscapeIE = 'Esc',
     Enter = 'Enter',
-    Space = ' '
+    Space = ' ',
+    Tab = 'Tab'
 }
 
 const LIST_ATTR = 'focus-list';
@@ -135,9 +136,6 @@ export class FocusListManager {
         element.addEventListener('keydown', function (event: KeyboardEvent) {
             focusManager.onKeydown(event);
         });
-        element.addEventListener('click', function (event: MouseEvent) {
-            focusManager.onClick(event);
-        });
         element.addEventListener('focus', function () {
             focusManager.onFocus();
         });
@@ -149,6 +147,15 @@ export class FocusListManager {
         });
         element.addEventListener('touchstart', function () {
             focusManager.onTouchstart();
+        });
+
+        document.addEventListener('click', function (event: MouseEvent) {
+            // @ts-ignore
+            if (element.contains(event.target)) {
+                focusManager.onClick(event);
+            } else {
+                focusManager.defocusItem(focusManager.highlightedItem);
+            }
         });
     }
 
@@ -232,6 +239,7 @@ export class FocusListManager {
      */
     shiftHighlight(listOfItems: HTMLElement[], reverse = false) {
         this.defocusItem(this.highlightedItem);
+
         if (reverse) {
             // if the main element is highlighted, move it to the last sub-item
             // otherwise move the highlight "back" one item (wrapping if needed)
@@ -347,7 +355,7 @@ export class FocusListManager {
 
             case KEYS.Enter:
             case KEYS.Space:
-                // if the the list is the target then it has focus, meaning the user is traversing this list
+                // if the list is the target then it has focus, meaning the user is traversing this list
                 // and not a list farther down the tree (or a tabbable button, etc.)
                 // however if the list is the highlighted item we let the default behaviour through (as it has regular focus)
                 if (
@@ -361,6 +369,28 @@ export class FocusListManager {
                     this.highlightedItem.click();
                 }
                 break;
+            case KEYS.Tab:
+                // we only modify Tab behavior if the highlighted item isnt the list
+                if (this.highlightedItem !== this.element) {
+                    // prevent focus-items with tabbable children from being defocused right away
+                    if (
+                        this.highlightedItem.querySelectorAll(TABBABLE_TAGS)
+                            .length === 0
+                    ) {
+                        this.defocusItem(this.highlightedItem);
+                    }
+
+                    // If the Shift key was clicked alongside Tab, prevent the default behavior
+                    // and return focus to the focus list
+                    if (event.shiftKey) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        this.defocusItem(this.highlightedItem);
+                        this.highlightedItem = this.element;
+                        this.element.removeAttribute('aria-activedescendant');
+                        this.element.focus();
+                    }
+                }
         }
     }
 
@@ -439,9 +469,14 @@ export class FocusListManager {
             )
         ) {
             this.setAriaActiveDescendant(this.highlightedItem);
+        } else if (this.highlightedItem !== this.element) {
+            this.focusItem(this.highlightedItem);
         }
 
         syncTabIndex(this.element);
+        if (this.highlightedItem && this.highlightedItem !== this.element) {
+            this.highlightedItem.setAttribute('tabindex', '-1');
+        }
     }
 
     /**
