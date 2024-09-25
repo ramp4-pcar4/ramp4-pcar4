@@ -1,4 +1,4 @@
-import { createInstance, geo } from '../lib/ramp.browser.es.js';
+import { createInstance, geo } from '../esChunked/ramp.js';
 
 window.debugInstance = null;
 
