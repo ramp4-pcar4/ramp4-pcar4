@@ -545,7 +545,7 @@ export class MapLayer extends CommonLayer {
     }
 
     /**
-     * Provides the spatial reference of the layer
+     * Provides the spatial reference of how the underlying ESRI layer is encoding geometry on the client.
      *
      * @returns {SpatialReference} the layer spatial reference in RAMP API format
      */

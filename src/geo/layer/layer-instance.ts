@@ -226,6 +226,11 @@ export class LayerInstance extends APIScope {
     extent: Extent | undefined; // layer extent
 
     /**
+     * The spatial reference of the source of geometry (e.g. map server). Undefined for non-ArcServer and non-spatial layers.
+     */
+    sourceSR: SpatialReference | undefined;
+
+    /**
      * Indicates if the layer can be modified with filters.
      */
     canModifyLayer: boolean;
