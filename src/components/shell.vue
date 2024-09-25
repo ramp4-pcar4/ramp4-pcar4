@@ -8,7 +8,7 @@
             <div class="absolute top-8 w-full flex justify-center">
                 <button
                     type="button"
-                    class="bg-white opacity-0 focus:opacity-100 z-50 shadow-md px-10"
+                    class="bg-white hidden-until-focus z-50 shadow-md px-10"
                     @click="openKeyboardInstructions"
                 >
                     {{ t('keyboardInstructions.open') }}
@@ -80,5 +80,24 @@ const teleported = (): PanelInstance[] =>
     width: 100px;
     height: 100px;
     animation: spin 2s ease-in-out infinite;
+}
+
+/* Compared to using `opacity: 0`, this method prevents WAVE contrast errors.*/
+
+.hidden-until-focus {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(100%);
+}
+
+.hidden-until-focus:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    clip: auto;
+    clip-path: none;
 }
 </style>
