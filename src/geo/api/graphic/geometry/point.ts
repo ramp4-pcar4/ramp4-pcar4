@@ -88,12 +88,7 @@ export class Point extends BaseGeometry {
     }
 
     static fromESRI(esriPoint: EsriPoint, id?: number | string): Point {
-        return new Point(
-            id,
-            [esriPoint.x, esriPoint.y],
-            SpatialReference.fromESRI(esriPoint.spatialReference),
-            true
-        );
+        return new Point(id, [esriPoint.x, esriPoint.y], SpatialReference.fromESRI(esriPoint.spatialReference), true);
     }
 
     toESRI(): EsriPoint {
@@ -104,21 +99,11 @@ export class Point extends BaseGeometry {
         });
     }
 
-    static fromGeoJSON(
-        geoJsonPoint: GeoJson.Point,
-        id?: number | string
-    ): Point {
-        return new Point(
-            id,
-            geoJsonPoint.coordinates,
-            SpatialReference.fromGeoJSON(geoJsonPoint.crs),
-            true
-        );
+    static fromGeoJSON(geoJsonPoint: GeoJson.Point, id?: number | string): Point {
+        return new Point(id, geoJsonPoint.coordinates, SpatialReference.fromGeoJSON(geoJsonPoint.crs), true);
     }
 
     toGeoJSON(): GeoJson.Point {
-        return <GeoJson.Point>(
-            this.geoJsonFactory(GeoJsonGeomType.POINT, this.toArray())
-        );
+        return <GeoJson.Point>this.geoJsonFactory(GeoJsonGeomType.POINT, this.toArray());
     }
 }

@@ -15,10 +15,7 @@
         </h1>
 
         <!-- highlight toggle -->
-        <div
-            class="p-8 mb-8 bg-gray-100 flex justify-between"
-            v-if="canHighlight"
-        >
+        <div class="p-8 mb-8 bg-gray-100 flex justify-between" v-if="canHighlight">
             <label for="toggle">{{ t('details.togglehilight.title') }}</label>
             <Toggle
                 :config="{
@@ -30,10 +27,7 @@
         </div>
 
         <!-- paginator and list button for multiple features -->
-        <div
-            class="flex flex-col justify-between p-8 mb-8 bg-gray-100"
-            v-if="showPaginator"
-        >
+        <div class="flex flex-col justify-between p-8 mb-8 bg-gray-100" v-if="showPaginator">
             <div class="flex">
                 <button
                     v-if="!showList"
@@ -44,36 +38,19 @@
                 >
                     {{ t('details.item.see.list') }}
                 </button>
-                <div
-                    class="flex ml-auto bg-gray-200 py-8 items-center"
-                    :class="{ 'w-full': showList }"
-                >
+                <div class="flex ml-auto bg-gray-200 py-8 items-center" :class="{ 'w-full': showList }">
                     <button
                         type="button"
-                        :content="
-                            t(
-                                showList
-                                    ? 'details.items.previous'
-                                    : 'details.item.previous.item'
-                            )
-                        "
+                        :content="t(showList ? 'details.items.previous' : 'details.item.previous.item')"
                         v-tippy="{ placement: 'top' }"
                         @click="advanceItemIndex(-1)"
                         class="mx-2 opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
-                        :aria-label="
-                            t(
-                                showList
-                                    ? 'details.items.previous'
-                                    : 'details.item.previous.item'
-                            )
-                        "
+                        :aria-label="t(showList ? 'details.items.previous' : 'details.item.previous.item')"
                         :disabled="currentIdx === 0"
                     >
                         <svg height="24" width="24" viewBox="0 0 23 23">
                             <g>
-                                <path
-                                    d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
-                                />
+                                <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" />
                             </g>
                         </svg>
                     </button>
@@ -82,50 +59,27 @@
                             showList
                                 ? t('details.items.range', [
                                       currentIdx + 1,
-                                      Math.min(
-                                          endIdx,
-                                          getLayerIdentifyItems().length
-                                      ),
+                                      Math.min(endIdx, getLayerIdentifyItems().length),
                                       getLayerIdentifyItems().length
                                   ])
-                                : t('details.item.count', [
-                                      currentIdx + 1,
-                                      getLayerIdentifyItems().length
-                                  ])
+                                : t('details.item.count', [currentIdx + 1, getLayerIdentifyItems().length])
                         }}
                     </span>
                     <button
                         type="button"
-                        :content="
-                            t(
-                                showList
-                                    ? 'details.items.next'
-                                    : 'details.item.next.item'
-                            )
-                        "
+                        :content="t(showList ? 'details.items.next' : 'details.item.next.item')"
                         v-tippy="{ placement: 'top' }"
                         @click="advanceItemIndex(1)"
                         class="mx-2 rotate-180 opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
-                        :aria-label="
-                            t(
-                                showList
-                                    ? 'details.items.next'
-                                    : 'details.item.next.item'
-                            )
-                        "
+                        :aria-label="t(showList ? 'details.items.next' : 'details.item.next.item')"
                         :disabled="
-                            (!showList &&
-                                currentIdx ===
-                                    getLayerIdentifyItems().length - 1) ||
-                            (showList &&
-                                endIdx >= getLayerIdentifyItems().length)
+                            (!showList && currentIdx === getLayerIdentifyItems().length - 1) ||
+                            (showList && endIdx >= getLayerIdentifyItems().length)
                         "
                     >
                         <svg height="24" width="24" viewBox="0 0 23 23">
                             <g>
-                                <path
-                                    d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
-                                />
+                                <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" />
                             </g>
                         </svg>
                     </button>
@@ -149,29 +103,15 @@
                 >
                     <button
                         class="flex flex-grow truncate default-focus-style hover:bg-gray-200"
-                        v-for="(item, idx) in getLayerIdentifyItems().slice(
-                            currentIdx,
-                            endIdx
-                        )"
+                        v-for="(item, idx) in getLayerIdentifyItems().slice(currentIdx, endIdx)"
                         :key="idx"
                         @click="clickListItem(currentIdx + idx)"
                         v-focus-item="'show-truncate'"
                     >
-                        <ResultItem
-                            :data="item"
-                            :uid="uid"
-                            :open="false"
-                            :in-list="true"
-                        ></ResultItem>
+                        <ResultItem :data="item" :uid="uid" :open="false" :in-list="true"></ResultItem>
                     </button>
                 </div>
-                <ResultItem
-                    :data="currentIdentifyItem"
-                    :uid="uid"
-                    :open="true"
-                    :in-list="false"
-                    v-else
-                ></ResultItem>
+                <ResultItem :data="currentIdentifyItem" :uid="uid" :open="true" :in-list="false" v-else></ResultItem>
             </div>
             <div class="text-center" v-else>
                 {{ t('details.layers.results.empty.currentLayer') }}
@@ -184,11 +124,7 @@
     </div>
 
     <!-- identified item is loading -->
-    <div
-        v-else
-        class="flex justify-center py-10 items-center"
-        :class="results.length > 1 ? 'ml-42' : ''"
-    >
+    <div v-else class="flex justify-center py-10 items-center" :class="results.length > 1 ? 'ml-42' : ''">
         <span class="animate-spin spinner h-20 w-20 px-5 mr-8"></span>
         {{ t('details.item.loading') }}
     </div>
@@ -206,23 +142,9 @@ import ResultItem from './result-item.vue';
 import Toggle from '../../../components/controls/toggle-switch-control.vue';
 
 import { GlobalEvents } from '@/api';
-import type {
-    IdentifyItem,
-    IdentifyResult,
-    InstanceAPI,
-    LayerInstance,
-    PanelInstance
-} from '@/api';
+import type { IdentifyItem, IdentifyResult, InstanceAPI, LayerInstance, PanelInstance } from '@/api';
 
-import {
-    computed,
-    inject,
-    onMounted,
-    onBeforeMount,
-    onBeforeUnmount,
-    ref,
-    watch
-} from 'vue';
+import { computed, inject, onMounted, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
 import type { PropType } from 'vue';
 
 import { useDetailsStore } from '../store';
@@ -284,9 +206,7 @@ const handlers = ref<Array<string>>([]);
 const watchers = ref<Array<Function>>([]);
 
 const activeGreedy = computed<number>(() => detailsStore.activeGreedy);
-const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(
-    () => detailsStore.properties
-);
+const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(() => detailsStore.properties);
 const endIdx = computed<number>(() => currentIdx.value + itemsPerPage.value);
 
 /**
@@ -317,18 +237,13 @@ const showPaginator = computed<boolean>(
     () =>
         layerExists.value &&
         ((!showList.value && getLayerIdentifyItems().length > 1) ||
-            (showList.value &&
-                getLayerIdentifyItems().length > itemsPerPage.value))
+            (showList.value && getLayerIdentifyItems().length > itemsPerPage.value))
 );
 
 const layerName = computed<string>(() => {
     const layer = getBoundLayer();
 
-    if (
-        layer &&
-        detailProperties.value[layer.id] &&
-        detailProperties.value[layer.id].name
-    ) {
+    if (layer && detailProperties.value[layer.id] && detailProperties.value[layer.id].name) {
         return detailProperties.value[layer.id].name;
     }
     return layer?.name ?? '';
@@ -414,12 +329,7 @@ const advanceItemIndex = (direction: number) => {
 const updateHighlight = () => {
     const resultItems = getLayerIdentifyItems();
 
-    if (
-        hilightToggle.value &&
-        isLayerResultLoaded &&
-        resultItems.length > 0 &&
-        canHighlight.value
-    ) {
+    if (hilightToggle.value && isLayerResultLoaded && resultItems.length > 0 && canHighlight.value) {
         // we are highlighting, and there is something that could be hilighted.
         // the hilightDetailsItems will handle the waiting for items to finish loading, as well as ensuring
         // that any stale loads will not be drawn / removed when users spam their highlights real fast.
@@ -427,10 +337,7 @@ const updateHighlight = () => {
         if (showList.value) {
             // highlight entire list
             // TODO once pagination becomes a thing, this needs to just highlight what is on current page of the list.
-            detailsFixture.value.hilightDetailsItems(
-                resultItems.slice(currentIdx.value, endIdx.value),
-                props.uid
-            );
+            detailsFixture.value.hilightDetailsItems(resultItems.slice(currentIdx.value, endIdx.value), props.uid);
         } else {
             // highlight current item being displayed.
             // being extra careful just incase our index went beyond the array bounds
@@ -451,8 +358,7 @@ const updateHighlight = () => {
  */
 const clickShowList = () => {
     showList.value = true;
-    currentIdx.value =
-        Math.floor(currentIdx.value / itemsPerPage.value) * itemsPerPage.value;
+    currentIdx.value = Math.floor(currentIdx.value / itemsPerPage.value) * itemsPerPage.value;
     updateHighlight();
 };
 
@@ -485,15 +391,12 @@ const clickListItem = (idx: number) => {
 onMounted(() => {
     // close this panel if layer is removed
     handlers.value.push(
-        iApi.event.on(
-            GlobalEvents.LAYER_REMOVE,
-            (removedLayer: LayerInstance) => {
-                const detailsPanel = iApi.panel.get('details-panel');
-                if (props.uid === removedLayer.uid && !!detailsPanel) {
-                    detailsPanel.close();
-                }
+        iApi.event.on(GlobalEvents.LAYER_REMOVE, (removedLayer: LayerInstance) => {
+            const detailsPanel = iApi.panel.get('details-panel');
+            if (props.uid === removedLayer.uid && !!detailsPanel) {
+                detailsPanel.close();
             }
-        )
+        })
     );
 
     handlers.value.push(

@@ -59,8 +59,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                         attribution: {
                             text: {
                                 disabled: true
@@ -222,11 +221,7 @@ let options = {
     loadDefaultEvents: true
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 
 window.debugInstance = rInstance;
 
@@ -272,12 +267,7 @@ const testSuite = async () => {
 
     console.log(
         'create group under "Visibility Set"',
-        window.lApi.addItem(
-            group,
-            window.lApi.getItem(
-                window.lApi.getLegendConfig().root.children[1].uid
-            )
-        )
+        window.lApi.addItem(group, window.lApi.getItem(window.lApi.getLegendConfig().root.children[1].uid))
     );
 
     const layer = window.debugInstance.geo.layer.createLayer({
@@ -323,25 +313,13 @@ const testSuite = async () => {
     console.log('get legend', window.lApi.getLegend());
     console.log('get legend config', window.lApi.getLegendConfig());
     console.log('get item WFSLayer', window.lApi.getItem('WFSLayer'));
-    console.log(
-        'get layer item with layer id CleanAir',
-        window.lApi.getLayerItem('CleanAir')
-    );
-    console.log(
-        'get item layer id MIL sublayer',
-        window.lApi.getItem('WaterQuantity-9')
-    );
+    console.log('get layer item with layer id CleanAir', window.lApi.getLayerItem('CleanAir'));
+    console.log('get item layer id MIL sublayer', window.lApi.getItem('WaterQuantity-9'));
     console.log('get item with uid', window.lApi.getItem('😎'));
-    console.log(
-        'get all expanded (undefined=true)',
-        window.lApi.getAllExpanded()
-    );
+    console.log('get all expanded (undefined=true)', window.lApi.getAllExpanded());
     console.log('get all expanded true', window.lApi.getAllExpanded(true));
     console.log('get all expanded false', window.lApi.getAllExpanded(false));
-    console.log(
-        'get all visible (undefined=true)',
-        window.lApi.getAllVisible(true)
-    );
+    console.log('get all visible (undefined=true)', window.lApi.getAllVisible(true));
     console.log('get all visible true', window.lApi.getAllVisible());
     console.log('get all visible false', window.lApi.getAllVisible(false));
 
@@ -351,12 +329,8 @@ const testSuite = async () => {
 
     console.log('*********** Delete ***********');
 
-    console.log(
-        'remove item by legend id: run `window.lApi.removeItem(uid or legend item instance)`'
-    );
-    console.log(
-        'remove item by legend id: run `window.lApi.removeLayerItem(layerId)`'
-    );
+    console.log('remove item by legend id: run `window.lApi.removeItem(uid or legend item instance)`');
+    console.log('remove item by legend id: run `window.lApi.removeLayerItem(layerId)`');
 
     console.log('=========================================');
 };

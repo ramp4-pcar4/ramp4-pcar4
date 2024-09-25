@@ -5,25 +5,17 @@ describe('Settings', () => {
     });
 
     it('has correct initial state', () => {
-        cy.window()
-            .its('rInstance.$vApp.$store')
-            .invoke('get', 'layer/getLayerById', 'CleanAir')
-            .as('layer');
+        cy.window().its('rInstance.$vApp.$store').invoke('get', 'layer/getLayerById', 'CleanAir').as('layer');
 
         cy.get('@layer').then(layer => {
             // make layer invisible initially
             cy.wrap(layer).invoke('setVisibility', false);
             // open settings panel
-            cy.window()
-                .its('rInstance.fixture')
-                .invoke('get', 'settings')
-                .invoke('toggleSettings', layer.uid);
+            cy.window().its('rInstance.fixture').invoke('get', 'settings').invoke('toggleSettings', layer.uid);
         });
 
         // wait for settings panel to open
-        cy.contains('[data-cy="settings"] .rv-subsection', 'Show layer').find(
-            '.vue-js-switch'
-        );
+        cy.contains('[data-cy="settings"] .rv-subsection', 'Show layer').find('.vue-js-switch');
 
         // layer visibility toggle should be off
         cy.contains('[data-cy="settings"] .rv-subsection', 'Show layer')
@@ -41,10 +33,7 @@ describe('Settings', () => {
             cy.wrap(layer).invoke('setVisibility', true);
             cy.wrap(layer).invoke('setOpacity', 0.43);
             // open settings panel again
-            cy.window()
-                .its('rInstance.fixture')
-                .invoke('get', 'settings')
-                .invoke('toggleSettings', layer.uid);
+            cy.window().its('rInstance.fixture').invoke('get', 'settings').invoke('toggleSettings', layer.uid);
         });
 
         // layer visibility toggle should be on
@@ -53,9 +42,7 @@ describe('Settings', () => {
             .should('have.class', 'toggled');
 
         // opacity should be correct
-        cy.get('.vue-slider-dot')
-            .should('have.attr', 'aria-valuetext')
-            .and('equal', '43');
+        cy.get('.vue-slider-dot').should('have.attr', 'aria-valuetext').and('equal', '43');
 
         // close settings
         cy.get('[data-cy="settings"] header button[content="Close"]').click();
@@ -63,10 +50,7 @@ describe('Settings', () => {
     });
 
     it('changes layer state', () => {
-        cy.window()
-            .its('rInstance.$vApp.$store')
-            .invoke('get', 'layer/getLayerById', 'CleanAir')
-            .as('layer');
+        cy.window().its('rInstance.$vApp.$store').invoke('get', 'layer/getLayerById', 'CleanAir').as('layer');
 
         cy.get('@layer').then(layer => {
             // make layer invisible  and full opacity initially
@@ -74,16 +58,11 @@ describe('Settings', () => {
             cy.wrap(layer).invoke('setOpacity', 1);
 
             // open settings panel
-            cy.window()
-                .its('rInstance.fixture')
-                .invoke('get', 'settings')
-                .invoke('toggleSettings', layer.uid);
+            cy.window().its('rInstance.fixture').invoke('get', 'settings').invoke('toggleSettings', layer.uid);
         });
 
         // toggle layer visibility on
-        cy.contains('[data-cy="settings"] .rv-subsection', 'Show layer')
-            .find('.vue-js-switch')
-            .click({ force: true });
+        cy.contains('[data-cy="settings"] .rv-subsection', 'Show layer').find('.vue-js-switch').click({ force: true });
         // layer should be visible
         cy.get('@layer').invoke('getVisibility').should('equal', true);
 
@@ -99,10 +78,7 @@ describe('Settings', () => {
     });
 
     it('reacts to layer state', () => {
-        cy.window()
-            .its('rInstance.$vApp.$store')
-            .invoke('get', 'layer/getLayerById', 'CleanAir')
-            .as('layer');
+        cy.window().its('rInstance.$vApp.$store').invoke('get', 'layer/getLayerById', 'CleanAir').as('layer');
 
         cy.get('@layer').then(layer => {
             // make layer invisible  and full opacity initially
@@ -110,16 +86,11 @@ describe('Settings', () => {
             cy.wrap(layer).invoke('setOpacity', 1);
 
             // open settings panel
-            cy.window()
-                .its('rInstance.fixture')
-                .invoke('get', 'settings')
-                .invoke('toggleSettings', layer.uid);
+            cy.window().its('rInstance.fixture').invoke('get', 'settings').invoke('toggleSettings', layer.uid);
         });
 
         // wait for settings panel to open
-        cy.contains('[data-cy="settings"] .rv-subsection', 'Show layer').find(
-            '.vue-js-switch'
-        );
+        cy.contains('[data-cy="settings"] .rv-subsection', 'Show layer').find('.vue-js-switch');
 
         // toggle visibility and set opacity
         cy.get('@layer').invoke('setVisibility', true);

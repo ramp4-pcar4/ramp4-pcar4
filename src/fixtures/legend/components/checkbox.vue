@@ -3,13 +3,7 @@
         <!-- TODO: see if getting this to use v-model works; children wouldnt update properly on initial try -->
         <input
             :type="isRadio ? 'radio' : 'checkbox'"
-            :aria-label="
-                t(
-                    checked
-                        ? `legend.visibility.hide${label}`
-                        : `legend.visibility.show${label}`
-                )
-            "
+            :aria-label="t(checked ? `legend.visibility.hide${label}` : `legend.visibility.show${label}`)"
             @click.stop="toggleVisibility()"
             :checked="checked && initialChecked"
             @keypress.enter.prevent
@@ -22,13 +16,7 @@
             class="mx-5 h-15 w-15"
             tabindex="-1"
             :disabled="disabled"
-            :content="
-                t(
-                    checked
-                        ? `legend.visibility.hide${label}`
-                        : `legend.visibility.show${label}`
-                )
-            "
+            :content="t(checked ? `legend.visibility.hide${label}` : `legend.visibility.show${label}`)"
             v-tippy="{ placement: 'top-end', hideOnClick: false }"
         />
     </div>
@@ -70,9 +58,7 @@ onMounted(() => {
  * @returns {boolean} true when no child symbols are visible
  */
 const _noSymbolsVisible = (item: LayerItem): boolean => {
-    return !item.symbologyStack.some(
-        (item: LegendSymbology) => item.visibility
-    );
+    return !item.symbologyStack.some((item: LegendSymbology) => item.visibility);
 };
 
 /**
@@ -93,10 +79,7 @@ const toggleVisibility = (): void => {
             props.legendItem.toggleVisibility(true);
         } else {
             // Toggle the child symbology
-            props.legendItem.setSymbologyVisibility(
-                props.value.uid,
-                !props.value.lastVisbility
-            );
+            props.legendItem.setSymbologyVisibility(props.value.uid, !props.value.lastVisbility);
         }
 
         // If all child symbols are toggled off, then toggle off the parent layer too
@@ -115,9 +98,7 @@ const toggleVisibility = (): void => {
             if (filterGuts.length === 0) {
                 // nothing visible.
                 sql = '1=2';
-            } else if (
-                filterGuts.length < props.legendItem.symbologyStack.length
-            ) {
+            } else if (filterGuts.length < props.legendItem.symbologyStack.length) {
                 // only a subset of checkboxes are checked. need filter
                 sql = filterGuts.join(' OR ');
             }

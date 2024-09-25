@@ -10,12 +10,7 @@
 
         <!-- only perform transition on screen components that are not loaded yet; if already loaded, switch right away -->
         <transition @before-leave="beforeLeave" @leave="leave" @enter="enter">
-            <component
-                :is="panel.route.screen"
-                v-bind="panel.route.props"
-                :panel="panel"
-                v-focus-container
-            ></component>
+            <component :is="panel.route.screen" v-bind="panel.route.props" :panel="panel" v-focus-container></component>
         </transition>
     </div>
 </template>
@@ -49,11 +44,7 @@ onMounted(() => {
     }
 });
 
-const animateTransition = (
-    el: Element,
-    done: () => void,
-    value: number[]
-): void => {
+const animateTransition = (el: Element, done: () => void, value: number[]): void => {
     if (skipTransition.value) {
         return done();
     }
@@ -86,9 +77,7 @@ const beforeLeave = (el: Element): void => {
     // just before the component is removed from DOM; supress the focus ring on the screen component just before `leave` event
     componentEl.value
         .querySelectorAll('[focus-item')
-        .forEach((element: Element) =>
-            element.classList.remove('default-focus-style')
-        );
+        .forEach((element: Element) => element.classList.remove('default-focus-style'));
 };
 
 const leave = (el: Element, done: () => void): void => {

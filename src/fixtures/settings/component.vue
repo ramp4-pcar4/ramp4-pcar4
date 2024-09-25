@@ -1,11 +1,5 @@
 <template>
-    <component
-        :is="templates[type]"
-        :icon="icons[icon]"
-        :name="name"
-        :config="config"
-        :aria-label="ariaLabel"
-    />
+    <component :is="templates[type]" :icon="icons[icon]" :name="name" :config="config" :aria-label="ariaLabel" />
 </template>
 
 <script setup lang="ts">
@@ -31,9 +25,7 @@ defineProps({
         required: true
     },
     icon: {
-        type: String as PropType<
-            'visibility' | 'opacity' | 'box' | 'location' | 'refresh'
-        >,
+        type: String as PropType<'visibility' | 'opacity' | 'box' | 'location' | 'refresh'>,
         required: true
     },
     ariaLabel: {

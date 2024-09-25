@@ -18,15 +18,8 @@
                 <div
                     class="upload-mask absolute inset-0 flex border-dashed border-2 border-gray-400 pointer-events-none justify-center"
                 >
-                    <svg
-                        class="w-30 h-30 m-auto"
-                        fill="#a8a8a8"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 58 58"
-                    >
-                        <path
-                            d="M29,58A29,29,0,1,0,0,29,29,29,0,0,0,29,58ZM29,4A25,25,0,1,1,4,29,25,25,0,0,1,29,4Z"
-                        />
+                    <svg class="w-30 h-30 m-auto" fill="#a8a8a8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58 58">
+                        <path d="M29,58A29,29,0,1,0,0,29,29,29,0,0,0,29,58ZM29,4A25,25,0,1,1,4,29,25,25,0,0,1,29,4Z" />
                         <polygon
                             points="27 22 27 44.4 31 44.4 31 22 41.7 31.1 44.3 28.1 29 15 13.7 28.1 16.3 31.1 27 22"
                         />
@@ -53,11 +46,7 @@
                 />
             </div>
             <div v-if="urlError" class="text-red-900 text-xs">
-                {{
-                    modelValue
-                        ? validationMessages?.invalid
-                        : validationMessages?.required
-                }}
+                {{ modelValue ? validationMessages?.invalid : validationMessages?.required }}
             </div>
         </div>
         <div v-else-if="type === 'select'">
@@ -77,15 +66,9 @@
                             :disableFuzzyMatching="true"
                             :searchable="searchable"
                             :childrenIgnoreDisabled="true"
-                            :placeholder="
-                                t('wizard.configure.sublayers.select')
-                            "
-                            :noResultsText="
-                                t('wizard.configure.sublayers.results')
-                            "
-                            :clearAllText="
-                                t('wizard.configure.sublayers.clearAll')
-                            "
+                            :placeholder="t('wizard.configure.sublayers.select')"
+                            :noResultsText="t('wizard.configure.sublayers.results')"
+                            :clearAllText="t('wizard.configure.sublayers.clearAll')"
                             @select="
                                 $nextTick(() => {
                                     handleSelection();
@@ -108,9 +91,7 @@
                                 </label>
                             </template>
 
-                            <template
-                                v-slot:[optionLabel]="{ node, labelClassName }"
-                            >
+                            <template v-slot:[optionLabel]="{ node, labelClassName }">
                                 <label
                                     :class="labelClassName"
                                     v-truncate="{
@@ -127,10 +108,7 @@
                             </template>
                         </treeselect>
                     </div>
-                    <div
-                        v-if="validation && sublayersError"
-                        class="text-red-900 text-xs"
-                    >
+                    <div v-if="validation && sublayersError" class="text-red-900 text-xs">
                         {{ validationMessages?.required }}
                     </div>
                 </div>
@@ -143,25 +121,14 @@
                         @input="handleServiceSelection(size, $event)"
                         :aria-label="props.ariaLabel"
                     >
-                        <option
-                            class="p-6"
-                            v-for="option in options"
-                            :key="option.label"
-                            :value="option.value"
-                        >
+                        <option class="p-6" v-for="option in options" :key="option.label" :value="option.value">
                             {{ option.label }}
                         </option>
                     </select>
-                    <div
-                        v-if="validation && formatError"
-                        class="text-red-900 text-xs"
-                    >
+                    <div v-if="validation && formatError" class="text-red-900 text-xs">
                         {{ validationMessages?.invalid }}
                     </div>
-                    <div
-                        v-if="validation && failureError"
-                        class="text-red-900 text-xs"
-                    >
+                    <div v-if="validation && failureError" class="text-red-900 text-xs">
                         {{ validationMessages?.failure }}
                     </div>
                 </div>
@@ -223,14 +190,7 @@ interface ValidationMsgs {
 const iApi = inject<InstanceAPI>('iApi');
 const { t } = useI18n();
 
-const emit = defineEmits([
-    'update:modelValue',
-    'link',
-    'select',
-    'upload',
-    'text',
-    'nested'
-]);
+const emit = defineEmits(['update:modelValue', 'link', 'select', 'upload', 'text', 'nested']);
 
 const props = defineProps({
     defaultOption: {
@@ -329,15 +289,11 @@ if (props.defaultOption && props.modelValue === '' && props.options.length) {
     let defaultValue = props.options[0].value;
     if (props.name === 'latField') {
         const latNames = new RegExp(/^(y|lat.*)$/i);
-        const latCandidate = props.options.find(option =>
-            latNames.test(option.label)
-        );
+        const latCandidate = props.options.find(option => latNames.test(option.label));
         defaultValue = latCandidate?.value || defaultValue;
     } else if (props.name === 'longField') {
         const longNames = new RegExp(/^(x|long.*)$/i);
-        const longCandidate = props.options.find(option =>
-            longNames.test(option.label)
-        );
+        const longCandidate = props.options.find(option => longNames.test(option.label));
         defaultValue = longCandidate?.value || defaultValue;
     }
     emit('update:modelValue', defaultValue);
@@ -394,9 +350,7 @@ const handleNameInput = (event: Event) => {
 const handleSelection = () => {
     // small delay so the selected model can update
     emit('select', props.sublayerOptions(selected.value));
-    selected.value && selected.value.length > 0
-        ? (sublayersError.value = false)
-        : (sublayersError.value = true);
+    selected.value && selected.value.length > 0 ? (sublayersError.value = false) : (sublayersError.value = true);
 };
 
 const truncateVal = (selected: string) => {
@@ -411,23 +365,15 @@ function observeHeight() {
         setHeight();
     });
 
-    resizeObserver.value.observe(
-        iApi!.$vApp.$el.querySelector('.vue-treeselect__control')
-    );
-    resizeObserver.value.observe(
-        iApi!.$vApp.$el.querySelector('.vue-treeselect__menu')
-    );
+    resizeObserver.value.observe(iApi!.$vApp.$el.querySelector('.vue-treeselect__control'));
+    resizeObserver.value.observe(iApi!.$vApp.$el.querySelector('.vue-treeselect__menu'));
 }
 
 const setHeight = () => {
     // calculates height of tree selector
-    const menuHeight = iApi!.$vApp.$el.querySelector(
-        '.vue-treeselect__menu'
-    )?.clientHeight!;
+    const menuHeight = iApi!.$vApp.$el.querySelector('.vue-treeselect__menu')?.clientHeight!;
 
-    const selectHeight = iApi!.$vApp.$el.querySelector(
-        '.vue-treeselect__control'
-    )?.clientHeight!;
+    const selectHeight = iApi!.$vApp.$el.querySelector('.vue-treeselect__control')?.clientHeight!;
 
     el.value.style.height = `${menuHeight + selectHeight + 30}px`;
 };
@@ -444,10 +390,7 @@ const addAriaLabel = () => {
     if (treeWrapper.value) {
         const input = treeWrapper.value.querySelector('input[type="text"]');
         if (input) {
-            input.setAttribute(
-                'aria-label',
-                t('wizard.configure.sublayers.select')
-            );
+            input.setAttribute('aria-label', t('wizard.configure.sublayers.select'));
         }
     }
 };

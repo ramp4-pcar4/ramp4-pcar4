@@ -19,12 +19,7 @@
                     {{ t('export.download') }}
                 </button>
 
-                <button
-                    type="button"
-                    @click="make()"
-                    class="py-8 px-4 sm:px-16"
-                    :aria-label="t('export.refresh')"
-                >
+                <button type="button" @click="make()" class="py-8 px-4 sm:px-16" :aria-label="t('export.refresh')">
                     {{ t('export.refresh') }}
                 </button>
 
@@ -39,16 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-    computed,
-    getCurrentInstance,
-    inject,
-    onBeforeMount,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-    watch
-} from 'vue';
+import { computed, getCurrentInstance, inject, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { PropType } from 'vue';
 import type { InstanceAPI, PanelInstance } from '@/api';
 import type { ExportAPI } from './api/export';
@@ -75,32 +61,20 @@ const resizeObserver = ref<ResizeObserver | undefined>(undefined);
 const watchers = ref<Array<Function>>([]);
 
 const el = computed<Element>(() => getCurrentInstance()?.proxy?.$el);
-const componentSelectedState = computed(
-    () => exportStore.componentSelectedState
-);
+const componentSelectedState = computed(() => exportStore.componentSelectedState);
 const selectedComponents = computed<any>(() => {
     let state: any = {};
     if (fixture.value) {
-        Object.keys(componentSelectedState.value).forEach(
-            (component: string) => {
-                state[component] = {
-                    name: component,
-                    selected:
-                        componentSelectedState.value[
-                            component as
-                                | 'title'
-                                | 'map'
-                                | 'mapElements'
-                                | 'legend'
-                                | 'footnote'
-                                | 'timestamp'
-                        ] ?? false,
-                    selectable:
-                        (fixture.value?.config as any)[component]?.selectable ??
-                        true
-                };
-            }
-        );
+        Object.keys(componentSelectedState.value).forEach((component: string) => {
+            state[component] = {
+                name: component,
+                selected:
+                    componentSelectedState.value[
+                        component as 'title' | 'map' | 'mapElements' | 'legend' | 'footnote' | 'timestamp'
+                    ] ?? false,
+                selectable: (fixture.value?.config as any)[component]?.selectable ?? true
+            };
+        });
     }
     return state;
 });
@@ -114,9 +88,7 @@ const make = debounce(300, () => {
         return;
     }
 
-    const canvasElement = el.value.querySelector(
-        '.export-canvas'
-    ) as HTMLCanvasElement;
+    const canvasElement = el.value.querySelector('.export-canvas') as HTMLCanvasElement;
 
     fixture.value.make(canvasElement, el.value.clientWidth);
 });

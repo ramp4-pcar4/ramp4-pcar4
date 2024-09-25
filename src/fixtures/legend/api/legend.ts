@@ -13,13 +13,12 @@ export class LegendAPI extends FixtureInstance {
      */
     _parseConfig(legendConfig?: LegendConfig): void {
         // parse the header controls, or default the controls
-        const controls: Array<string> =
-            legendConfig?.headerControls?.slice() ?? [
-                'wizard',
-                'layerReorder',
-                'groupToggle',
-                'visibilityToggle'
-            ];
+        const controls: Array<string> = legendConfig?.headerControls?.slice() ?? [
+            'wizard',
+            'layerReorder',
+            'groupToggle',
+            'visibilityToggle'
+        ];
         useLegendStore(this.$vApp.$pinia).headerControls = controls;
 
         if (!legendConfig || !legendConfig.root.children) {
@@ -30,8 +29,7 @@ export class LegendAPI extends FixtureInstance {
         this.handlePanelTeleports(['legend']);
 
         // get all layer fixture configs to read layer-specific legend properties
-        const layerLegendConfigs: { [layerId: string]: any } =
-            this.getLayerFixtureConfigs();
+        const layerLegendConfigs: { [layerId: string]: any } = this.getLayerFixtureConfigs();
 
         legendConfig.root.children.forEach(legendItem => {
             // pass the layer legend fixture config
@@ -68,11 +66,7 @@ export class LegendAPI extends FixtureInstance {
             if (itemConf.sublayerIndex !== undefined) {
                 itemConf.layerId = `${itemConf.layerId}-${itemConf.sublayerIndex}`;
             }
-            item = new LayerItem(
-                this.$iApi,
-                itemConf,
-                parent
-            ) as unknown as LegendItem;
+            item = new LayerItem(this.$iApi, itemConf, parent) as unknown as LegendItem;
         }
 
         // initialize objects for all non-hidden group/set children entries
@@ -105,8 +99,7 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     addItem(item: any | LegendItem, parent?: LegendItem): LegendItem {
-        const constructedItem: LegendItem =
-            item instanceof LegendItem ? item : this.createItem(item, parent);
+        const constructedItem: LegendItem = item instanceof LegendItem ? item : this.createItem(item, parent);
         this._insertItem(constructedItem, parent);
 
         return constructedItem;
@@ -120,10 +113,7 @@ export class LegendAPI extends FixtureInstance {
      * @returns {Promise<LegendItem>} a promise that resolves with the added layer item
      * @memberof LegendAPI
      */
-    async addLayerItem(
-        layer: LayerInstance,
-        parent?: LegendItem
-    ): Promise<LayerItem> {
+    async addLayerItem(layer: LayerInstance, parent?: LegendItem): Promise<LayerItem> {
         // only create a top-level legend item for the layer that will be in a placeholder state
         const item: LayerItem = new LayerItem(
             this.$iApi,
@@ -166,10 +156,7 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     getLegend(): Array<LegendItem> {
-        return (
-            (useLegendStore(this.$vApp.$pinia)
-                .children as unknown as Array<LegendItem>) || []
-        );
+        return (useLegendStore(this.$vApp.$pinia).children as unknown as Array<LegendItem>) || [];
     }
 
     /**
@@ -234,9 +221,7 @@ export class LegendAPI extends FixtureInstance {
         legend.some(topItem => {
             result = this.searchTreeFirst(
                 topItem,
-                item =>
-                    item instanceof LayerItem &&
-                    (item.layerId === id || item.uid === uid)
+                item => item instanceof LayerItem && (item.layerId === id || item.uid === uid)
             ) as unknown as LayerItem | undefined;
 
             // kickout
@@ -257,9 +242,7 @@ export class LegendAPI extends FixtureInstance {
     getAllExpanded(expanded?: boolean): Array<LegendItem> {
         const check = expanded ?? true;
 
-        return this.searchLegend(
-            item => item.children.length > 0 && item.expanded === check
-        );
+        return this.searchLegend(item => item.children.length > 0 && item.expanded === check);
     }
 
     /**
@@ -287,16 +270,11 @@ export class LegendAPI extends FixtureInstance {
         let parentMostId = '';
 
         // since we support uid on parameter, and can't diff between regular id, need a layer-lookup for string
-        const layerInstance =
-            layer instanceof LayerInstance
-                ? layer
-                : this.$iApi.geo.layer.getLayer(layer);
+        const layerInstance = layer instanceof LayerInstance ? layer : this.$iApi.geo.layer.getLayer(layer);
         if (layerInstance) {
             // if sublayer doesn't have parentlayer, things already horribly broken.
             // empty string just avoids undefined errors, will eventually return [] just slower
-            parentMostId = layerInstance.isSublayer
-                ? layerInstance.parentLayer?.id || ''
-                : layerInstance.id;
+            parentMostId = layerInstance.isSublayer ? layerInstance.parentLayer?.id || '' : layerInstance.id;
         } else {
             // layer not registered.
             return [];
@@ -304,9 +282,7 @@ export class LegendAPI extends FixtureInstance {
 
         return this.searchLegend(
             block =>
-                block instanceof LayerItem &&
-                (block.layerId === parentMostId ||
-                    block.parentLayerId === parentMostId)
+                block instanceof LayerItem && (block.layerId === parentMostId || block.parentLayerId === parentMostId)
         ) as unknown as Array<LayerItem>;
     }
 
@@ -321,10 +297,7 @@ export class LegendAPI extends FixtureInstance {
      */
     updateLegend(layer: LayerInstance): void {
         // helper function to link a layer into a layer item
-        const updateLayerItem = (
-            sourceLayer: LayerInstance | string,
-            error: boolean
-        ) => {
+        const updateLayerItem = (sourceLayer: LayerInstance | string, error: boolean) => {
             const layerItem = this.getLayerItem(sourceLayer);
             if (error) {
                 if (layerItem && sourceLayer instanceof LayerInstance) {
@@ -332,11 +305,7 @@ export class LegendAPI extends FixtureInstance {
                 }
                 layerItem?.error();
             } else {
-                layerItem?.load(
-                    sourceLayer instanceof LayerInstance
-                        ? sourceLayer
-                        : undefined
-                );
+                layerItem?.load(sourceLayer instanceof LayerInstance ? sourceLayer : undefined);
             }
         };
 
@@ -361,27 +330,16 @@ export class LegendAPI extends FixtureInstance {
                             updateLayerItem(layer, false);
                             if (layerItem && !layerItem.treeGrown) {
                                 node.children
-                                    .map(childNode =>
-                                        this._treeWalker(layer, childNode)
-                                    )
-                                    .map(childConf =>
-                                        this.addItem(
-                                            childConf,
-                                            layerItem as unknown as LegendItem
-                                        )
-                                    );
+                                    .map(childNode => this._treeWalker(layer, childNode))
+                                    .map(childConf => this.addItem(childConf, layerItem as unknown as LegendItem));
                                 layerItem.treeGrown = true;
                             }
                             // parse child nodes
-                            node.children.forEach(childNode =>
-                                treeParser(childNode)
-                            );
+                            node.children.forEach(childNode => treeParser(childNode));
                         } else if (!node.isLayerRoot && !node.isLogicalLayer) {
                             // is not root, and is not logical layer (MIL sub groups)
                             // we remove the current layer item for the group, and instead turn it into a group
-                            layerItem = this.getLayerItem(
-                                `${layer.id}-${node.layerIdx}`
-                            );
+                            layerItem = this.getLayerItem(`${layer.id}-${node.layerIdx}`);
                             if (layerItem) {
                                 const layerItemConf = layerItem.getConfig();
                                 delete layerItemConf.layerId;
@@ -394,23 +352,14 @@ export class LegendAPI extends FixtureInstance {
                                     ...this._treeWalker(layer, node),
                                     ...layerItemConf
                                 };
-                                const replacementItem: LegendItem =
-                                    this.createItem(replacementConf);
-                                this._replaceItem(
-                                    layerItem as unknown as LegendItem,
-                                    replacementItem
-                                );
+                                const replacementItem: LegendItem = this.createItem(replacementConf);
+                                this._replaceItem(layerItem as unknown as LegendItem, replacementItem);
                             }
                             // parse child nodes
-                            node.children.forEach(childNode =>
-                                treeParser(childNode)
-                            );
+                            node.children.forEach(childNode => treeParser(childNode));
                         } else if (node.isLogicalLayer) {
                             // is logical layer (regular layers and sublayers)
-                            updateLayerItem(
-                                this._treeWalker(layer, node).layer,
-                                false
-                            );
+                            updateLayerItem(this._treeWalker(layer, node).layer, false);
                         }
                     };
                     treeParser(layer.getLayerTree());
@@ -494,8 +443,7 @@ export class LegendAPI extends FixtureInstance {
      * @memberof LegendAPI
      */
     removeItem(item: string | LegendItem): boolean {
-        const itemToRemove: LegendItem | undefined =
-            typeof item === 'string' ? this.getItem(item) : item;
+        const itemToRemove: LegendItem | undefined = typeof item === 'string' ? this.getItem(item) : item;
 
         if (itemToRemove !== undefined) {
             return this._deleteItem(itemToRemove);
@@ -532,10 +480,7 @@ export class LegendAPI extends FixtureInstance {
      * @param {(item: LegendItem) => boolean} predicate boolean predicate to test each item
      * @returns {LegendItem \ undefined} return the first item that satisfies the given predicate. returns undefined if item is not found.
      */
-    searchTreeFirst(
-        root: LegendItem,
-        predicate: (item: LegendItem) => boolean
-    ): LegendItem | undefined {
+    searchTreeFirst(root: LegendItem, predicate: (item: LegendItem) => boolean): LegendItem | undefined {
         if (predicate(root)) {
             return root;
         } else {
@@ -555,10 +500,7 @@ export class LegendAPI extends FixtureInstance {
      * @param {(item: LegendItem) => boolean} predicate predicate boolean predicate to test each item
      * @returns {Array<LegendItem>} return all items that satisfies the given predicate.
      */
-    searchTreeAll(
-        root: LegendItem,
-        predicate: (item: LegendItem) => boolean
-    ): Array<LegendItem> {
+    searchTreeAll(root: LegendItem, predicate: (item: LegendItem) => boolean): Array<LegendItem> {
         const items: Array<LegendItem> = [];
 
         // good-ol' bfs
@@ -650,9 +592,7 @@ export class LegendAPI extends FixtureInstance {
 
             // unhook layer item listeners
             if (itemToRemove instanceof LayerItem) {
-                itemToRemove.handlers.forEach(handler =>
-                    this.$iApi.event.off(handler)
-                );
+                itemToRemove.handlers.forEach(handler => this.$iApi.event.off(handler));
             }
 
             // remove item from store
@@ -669,11 +609,7 @@ export class LegendAPI extends FixtureInstance {
     }
 
     // map out layer's layer tree children into a legend configs
-    private _treeWalker(
-        layer: LayerInstance,
-        node: TreeNode,
-        extraConfig?: object
-    ): any {
+    private _treeWalker(layer: LayerInstance, node: TreeNode, extraConfig?: object): any {
         // the tree node does not have a reference to the layer, so we need to fetch sublayers manually
         // will be undefined for non-root + non-logical layers (a.k.a MIL sub groups)
 
@@ -708,26 +644,20 @@ export class LegendAPI extends FixtureInstance {
             currItem.name = currLayer.name;
             // TODO: since .children is used here, only legend groups will be created here when MIL is added
             //       can enhance later to use .exclusiveVisibility if user wants to add MIL as visibility set from wizard
-            currItem.children = node.children.map(childNode =>
-                this._treeWalker(layer, childNode, extraConfig)
-            );
+            currItem.children = node.children.map(childNode => this._treeWalker(layer, childNode, extraConfig));
         } else if (!node.isLayerRoot && !node.isLogicalLayer) {
             // is not root, and is not logical layer (MIL sub groups)
             // coud merge above if-branch with this one, but will keep them separate for clarity
             currItem.name = node.name;
             // TODO: since .children is used here, only legend groups will be created here when MIL is added
             //       can enhance later to use .exclusiveVisibility if user wants to add MIL as visibility set from wizard
-            currItem.children = node.children.map(childNode =>
-                this._treeWalker(layer, childNode, extraConfig)
-            );
+            currItem.children = node.children.map(childNode => this._treeWalker(layer, childNode, extraConfig));
         } else if (node.isLogicalLayer) {
             // is logical layer (regular layers and sublayers)
             currItem.layer = currLayer;
             currItem.name = currLayer.name;
             currItem.layerId = currLayer.id;
-            currItem.sublayerIndex = layer.isSublayer
-                ? layer.layerIdx
-                : undefined;
+            currItem.sublayerIndex = layer.isSublayer ? layer.layerIdx : undefined;
         }
 
         return { ...currItem, ...extraConfig };

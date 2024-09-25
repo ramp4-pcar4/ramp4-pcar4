@@ -59,10 +59,6 @@ let options = {
     loadDefaultEvents: true
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 
 window.debugInstance = rInstance;

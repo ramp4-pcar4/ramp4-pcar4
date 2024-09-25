@@ -46,11 +46,7 @@ export function layerConfigUpgrade(ramp2LayerConfig: any): RampLayerConfig {
     return layerUpgrader(ramp2LayerConfig);
 }
 
-export const createInstance = (
-    el: HTMLElement,
-    config?: RampConfigs | undefined,
-    opts?: RampOptions
-) => {
+export const createInstance = (el: HTMLElement, config?: RampConfigs | undefined, opts?: RampOptions) => {
     return new InstanceAPI(el, config, opts);
 };
 

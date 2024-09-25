@@ -6,14 +6,8 @@
             <div class="flex flex-col h-full">
                 <geosearch-bar></geosearch-bar>
                 <geosearch-top-filters></geosearch-top-filters>
-                <loading-bar
-                    class="flex-none"
-                    v-if="loadingResults"
-                ></loading-bar>
-                <div
-                    class="text-red-900 text-xs px-8 mb-10"
-                    v-if="failedServices.length > 0 && !loadingResults"
-                >
+                <loading-bar class="flex-none" v-if="loadingResults"></loading-bar>
+                <div class="text-red-900 text-xs px-8 mb-10" v-if="failedServices.length > 0 && !loadingResults">
                     {{
                         t('geosearch.serviceError', {
                             services: failedServices.join(', ')
@@ -22,17 +16,11 @@
                 </div>
                 <div
                     class="px-8 mb-10 py-8 flex-grow text-wrap border-y border-gray-600 overflow-y-auto"
-                    v-if="
-                        cleanedSearchVal &&
-                        searchResults.length === 0 &&
-                        !loadingResults
-                    "
+                    v-if="cleanedSearchVal && searchResults.length === 0 && !loadingResults"
                 >
                     <span class="relative h-48"
                         >{{ t('geosearch.noResults')
-                        }}<span class="font-bold text-blue-600"
-                            >"{{ cleanedSearchVal }}"</span
-                        ></span
+                        }}<span class="font-bold text-blue-600">"{{ cleanedSearchVal }}"</span></span
                     >
                 </div>
                 <ul
@@ -40,11 +28,7 @@
                     v-focus-list
                     v-if="searchResults.length > 0"
                 >
-                    <li
-                        class="relative h-56"
-                        v-for="(result, idx) in searchResults"
-                        v-bind:key="idx"
-                    >
+                    <li class="relative h-56" v-for="(result, idx) in searchResults" v-bind:key="idx">
                         <button
                             type="button"
                             class="absolute inset-0 h-full w-full hover:bg-gray-300 default-focus-style"
@@ -61,44 +45,22 @@
                                         options: { placement: 'top-start' }
                                     }"
                                 >
-                                    <span
-                                        v-html="
-                                            highlightSearchTerm(
-                                                result.name,
-                                                result.location.province
-                                            )
-                                        "
-                                    ></span>
-                                    <span
-                                        v-if="result.location.province"
-                                        class="text-gray-600 text-sm"
-                                    >
+                                    <span v-html="highlightSearchTerm(result.name, result.location.province)"></span>
+                                    <span v-if="result.location.province" class="text-gray-600 text-sm">
                                         {{
                                             result.location.city
-                                                ? ' ' +
-                                                  result.location.city +
-                                                  ', ' +
-                                                  result.location.province.abbr
-                                                : ' ' +
-                                                  result.location.province.abbr
+                                                ? ' ' + result.location.city + ', ' + result.location.province.abbr
+                                                : ' ' + result.location.province.abbr
                                         }}</span
                                     >
-                                    <span v-if="result.type" class="hidden"
-                                        >;
-                                    </span>
-                                    <span
-                                        v-if="result.type"
-                                        class="text-sm font-normal"
-                                        ><br />{{ result.type }}</span
-                                    >
+                                    <span v-if="result.type" class="hidden">; </span>
+                                    <span v-if="result.type" class="text-sm font-normal"><br />{{ result.type }}</span>
                                 </div>
                             </div>
                         </button>
                     </li>
                 </ul>
-                <geosearch-bottom-filters
-                    class="mt-auto"
-                ></geosearch-bottom-filters>
+                <geosearch-bottom-filters class="mt-auto"></geosearch-bottom-filters>
             </div>
         </template>
     </panel-screen>
@@ -126,9 +88,7 @@ defineProps({
     }
 });
 
-const cleanedSearchVal = computed<string>(() =>
-    geosearchStore.searchVal.replace(/["!*$+?^{}()|[\]\\]/g, '').trim()
-);
+const cleanedSearchVal = computed<string>(() => geosearchStore.searchVal.replace(/["!*$+?^{}()|[\]\\]/g, '').trim());
 const searchResults = computed<Array<any>>(() => geosearchStore.searchResults);
 const loadingResults = computed<boolean>(() => geosearchStore.loadingResults);
 const failedServices = computed<string[]>(() => geosearchStore.failedServices);

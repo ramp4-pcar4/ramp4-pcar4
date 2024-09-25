@@ -7,10 +7,7 @@
         >
             <span class="inline font-bold">{{ val.alias }}</span>
             <span class="flex-auto"></span>
-            <span
-                class="inline"
-                v-html="formatValues(val.value, val.alias, val.type)"
-            ></span>
+            <span class="inline" v-html="formatValues(val.value, val.alias, val.type)"></span>
         </div>
     </div>
 </template>
@@ -43,15 +40,8 @@ const props = defineProps({
     }
 });
 
-const findAndDelete = (
-    fields: FieldDefinition[],
-    propertyType: 'type' | 'name',
-    property: string,
-    helper: any
-) => {
-    const field = fields.find(
-        f => f[propertyType].toLowerCase() === property.toLowerCase()
-    );
+const findAndDelete = (fields: FieldDefinition[], propertyType: 'type' | 'name', property: string, helper: any) => {
+    const field = fields.find(f => f[propertyType].toLowerCase() === property.toLowerCase());
 
     // If the field is found, delete it from the helper object
     if (field) delete helper[field.name];
@@ -91,9 +81,7 @@ const itemData = () => {
     const fieldsMetadata: any = {};
     props.fields.forEach(field => {
         // Check to see if this field is being overwritten in the fixture config.
-        const checkField = props.fixtureFields?.find(
-            item => field.name === item.field
-        );
+        const checkField = props.fixtureFields?.find(item => field.name === item.field);
 
         fieldsMetadata[field.name] = {
             name: checkField?.alias || field.alias || field.name,
@@ -121,10 +109,7 @@ const itemData = () => {
             const cloneValue = clonePayload[key];
 
             displayMetadata[key] = {
-                value:
-                    typeof cloneValue === 'number'
-                        ? iApi?.ui.formatNumber(cloneValue)
-                        : cloneValue,
+                value: typeof cloneValue === 'number' ? iApi?.ui.formatNumber(cloneValue) : cloneValue,
                 alias: fieldMD.name,
                 type: fieldMD.type
             };
@@ -134,9 +119,7 @@ const itemData = () => {
     for (const [key] of Object.entries(displayMetadata)) {
         // only replace html special chars if string represents plain text
         if (iApi!.ui.isPlainText(displayMetadata[key].value)) {
-            displayMetadata[key].value = iApi!.ui.escapeHtml(
-                displayMetadata[key].value
-            );
+            displayMetadata[key].value = iApi!.ui.escapeHtml(displayMetadata[key].value);
         }
     }
 
@@ -166,10 +149,7 @@ const makeHtmlLink = (html: string, alias: string): string => {
             /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i //eslint-disable-line
         )
     ) {
-        return `<img src="${html}" alt="${t(
-            'details.item.alert.defaultAltText',
-            { alias: alias }
-        )}" />`;
+        return `<img src="${html}" alt="${t('details.item.alert.defaultAltText', { alias: alias })}" />`;
     }
 
     const classes = 'underline text-blue-700 break-all';

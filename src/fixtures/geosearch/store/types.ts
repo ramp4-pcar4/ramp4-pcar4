@@ -28,9 +28,7 @@ class Types {
         axios.get(url).then((res: any) => {
             // Remove the code from the type name.
             res.data.definitions.forEach((type: any) => {
-                types[language][type.code] = type.term.split(
-                    `${type.code}-`
-                )[1];
+                types[language][type.code] = type.term.split(`${type.code}-`)[1];
             });
 
             Object.keys(types[language]).forEach(typeKey => {

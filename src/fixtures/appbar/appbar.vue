@@ -19,10 +19,7 @@
         <template v-for="(subArray, index) in items">
             <template v-for="(item, index2) in subArray">
                 <default-button
-                    v-if="
-                        typeof item === 'string' &&
-                        overflowFlags[`${item}-${index2}`] !== true
-                    "
+                    v-if="typeof item === 'string' && overflowFlags[`${item}-${index2}`] !== true"
                     :key="`${item}-${index2}-default`"
                     :panelId="item"
                     class="appbar-item h-48"
@@ -47,9 +44,7 @@
         </template>
 
         <default-button
-            v-for="item in temporaryItems?.filter(
-                t => overflowFlags[`${t}-temp`] !== true
-            )"
+            v-for="item in temporaryItems?.filter(t => overflowFlags[`${t}-temp`] !== true)"
             :panelId="item"
             :minimize="true"
             :key="`${item}-temp`"
@@ -62,10 +57,7 @@
                 <template v-for="(subArray, index) in items" :key="index">
                     <template v-for="(item, index2) in subArray">
                         <default-button
-                            v-if="
-                                typeof item === 'string' &&
-                                overflowFlags[`${item}-${index2}`]
-                            "
+                            v-if="typeof item === 'string' && overflowFlags[`${item}-${index2}`]"
                             :key="`${item}-${index2}-default`"
                             :panelId="item"
                             class="text-black hover:bg-gray my-4 h-36"
@@ -90,9 +82,7 @@
                 </template>
 
                 <default-button
-                    v-for="item in temporaryItems?.filter(
-                        t => overflowFlags[`${t}-temp`]
-                    )"
+                    v-for="item in temporaryItems?.filter(t => overflowFlags[`${t}-temp`])"
                     :panelId="item"
                     :minimize="true"
                     :key="`${item}-temp`"
@@ -102,9 +92,7 @@
                 ></default-button>
             </template>
         </more-button>
-        <notifications-appbar-button
-            class="appbar-item bottom-48 h-48 sm:display-none"
-        ></notifications-appbar-button>
+        <notifications-appbar-button class="appbar-item bottom-48 h-48 sm:display-none"></notifications-appbar-button>
 
         <!-- TODO: disabled this button for now, revist this when we need it in the future -->
         <!-- <nav-button id="nav"></nav-button> -->
@@ -116,16 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-    computed,
-    getCurrentInstance,
-    nextTick,
-    onBeforeMount,
-    onBeforeUnmount,
-    onMounted,
-    onUpdated,
-    ref
-} from 'vue';
+import { computed, getCurrentInstance, nextTick, onBeforeMount, onBeforeUnmount, onMounted, onUpdated, ref } from 'vue';
 import DefaultButton from './default-button.vue';
 import Divider from './divider.vue';
 import MoreButton from './more-button.vue';
@@ -140,9 +119,7 @@ const panelStore = usePanelStore();
 const appbarStore = useAppbarStore();
 
 const items = computed<any>(() => appbarStore.visible);
-const temporaryItems = computed<string[] | undefined>(
-    () => appbarStore.temporary
-);
+const temporaryItems = computed<string[] | undefined>(() => appbarStore.temporary);
 const { t } = useI18n();
 const overflow = ref(false);
 const overflowFlags = ref<{
@@ -187,8 +164,7 @@ onUpdated(() => {
         const element: Element = el.value!;
         let key: string | undefined = undefined;
         let children: Element[] = [...element.children];
-        let bound: number | undefined =
-            children[children.length - 2].getBoundingClientRect().top;
+        let bound: number | undefined = children[children.length - 2].getBoundingClientRect().top;
         if (!panelStore.mobileView) {
             bound = element.getBoundingClientRect().bottom - 38;
         }
@@ -196,11 +172,7 @@ onUpdated(() => {
         // check positions of appbar buttons
         for (let i = children.length - 4; i >= 0; i--) {
             let bottom: number = children[i].getBoundingClientRect().bottom;
-            if (
-                bound &&
-                dropdown &&
-                (bottom > bound || (overflow.value && bottom + 56 > bound))
-            ) {
+            if (bound && dropdown && (bottom > bound || (overflow.value && bottom + 56 > bound))) {
                 children[i].classList.forEach(cl => {
                     if (cl.includes('identifier')) {
                         key = cl.slice(11);
@@ -222,8 +194,7 @@ onUpdated(() => {
             more &&
             dropdown &&
             moreBottom !== 0 &&
-            (moreBottom <= bound - 56 ||
-                (dropdown.childElementCount == 1 && moreBottom <= bound))
+            (moreBottom <= bound - 56 || (dropdown.childElementCount == 1 && moreBottom <= bound))
         ) {
             // dropdown.classList.add(`max-h-${moreBottom - 8}`);
             let buttonsRemaining: number = dropdown.childElementCount;
@@ -249,8 +220,7 @@ onUpdated(() => {
         }
         // clean up flags for items that were removed.
         Object.keys(overflowFlags.value).forEach((key: string) => {
-            if (!element.querySelector(`.identifier-${key}`))
-                delete overflowFlags.value[key];
+            if (!element.querySelector(`.identifier-${key}`)) delete overflowFlags.value[key];
         });
     });
 });

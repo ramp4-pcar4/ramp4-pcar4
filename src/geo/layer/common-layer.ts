@@ -2,12 +2,7 @@
 // used for layer types defined by Core RAMP.
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import {
-    GlobalEvents,
-    InstanceAPI,
-    LayerInstance,
-    NotificationType
-} from '@/api/internal';
+import { GlobalEvents, InstanceAPI, LayerInstance, NotificationType } from '@/api/internal';
 import {
     DataFormat,
     DefPromise,
@@ -24,12 +19,7 @@ import {
     TreeNode
 } from '@/geo/api';
 
-import type {
-    AttributeSet,
-    GetGraphicParams,
-    RampLayerConfig,
-    TabularAttributeSet
-} from '@/geo/api';
+import type { AttributeSet, GetGraphicParams, RampLayerConfig, TabularAttributeSet } from '@/geo/api';
 import to from 'await-to-js';
 
 const enum TimerType {
@@ -75,10 +65,8 @@ export class CommonLayer extends LayerInstance {
         this.layerFormat = LayerFormat.UNKNOWN;
 
         const defaultTimes = $iApi.geo.map.layerDefaultTimes;
-        this.expectedTime.draw =
-            rampConfig.expectedDrawTime ?? defaultTimes.draw;
-        this.expectedTime.load =
-            rampConfig.expectedLoadTime ?? defaultTimes.load;
+        this.expectedTime.draw = rampConfig.expectedDrawTime ?? defaultTimes.draw;
+        this.expectedTime.load = rampConfig.expectedLoadTime ?? defaultTimes.load;
 
         // falsey || , 0 means defer to map default
         this.expectedTime.fail = rampConfig.maxLoadTime || defaultTimes.fail;
@@ -177,9 +165,7 @@ export class CommonLayer extends LayerInstance {
                 // doing this prevents that (everything async in init-load is respecting this var).
                 // However we do treat the error as genuine, so the notification will ping.
                 this.lastCancel = Date.now();
-                failStepsHelper(
-                    'Layer timed out during initialize. Id: ' + this.id
-                );
+                failStepsHelper('Layer timed out during initialize. Id: ' + this.id);
             }
         }, this.expectedTime.fail);
 
@@ -193,9 +179,7 @@ export class CommonLayer extends LayerInstance {
                 this.startTimer(TimerType.DRAW);
             }
             if (initiateErr) {
-                failStepsHelper(
-                    `Init error on layer id: ${this.id} . ${initiateErr.message}`
-                );
+                failStepsHelper(`Init error on layer id: ${this.id} . ${initiateErr.message}`);
             } else {
                 this.updateInitiationState(InitiationState.INITIATED);
             }
@@ -210,9 +194,7 @@ export class CommonLayer extends LayerInstance {
         }
 
         if (this.initiationState === InitiationState.INITIATED) {
-            console.error(
-                `Encountered layer initialize while already initiated, layer id ${this.id}`
-            );
+            console.error(`Encountered layer initialize while already initiated, layer id ${this.id}`);
         }
     }
 
@@ -276,9 +258,7 @@ export class CommonLayer extends LayerInstance {
                             this.loadPromDone = true;
 
                             // This will just trigger the above statements for each sublayer
-                            this.sublayers.forEach(sublayer =>
-                                sublayer.onLoad()
-                            );
+                            this.sublayers.forEach(sublayer => sublayer.onLoad());
                             this.updateLayerState(LayerState.LOADED);
                         }
                     } else {
@@ -419,9 +399,7 @@ export class CommonLayer extends LayerInstance {
     // methods will override the stubs.
 
     protected stubError(): void {
-        throw new Error(
-            `Attempted to use a method not valid for ${this.layerType}`
-        );
+        throw new Error(`Attempted to use a method not valid for ${this.layerType}`);
     }
 
     /**
@@ -519,11 +497,7 @@ export class CommonLayer extends LayerInstance {
      * @param {String} value value of the key
      * @param {Boolean} forceRefresh show the new fancy version of the layer or not
      */
-    setCustomParameter(
-        key: string,
-        value: string,
-        forceRefresh: boolean = true
-    ): void {
+    setCustomParameter(key: string, value: string, forceRefresh: boolean = true): void {
         this.stubError();
     }
 

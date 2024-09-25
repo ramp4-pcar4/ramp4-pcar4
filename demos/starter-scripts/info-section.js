@@ -117,8 +117,7 @@ let config = {
                             {
                                 name: 'Title info section',
                                 infoType: 'title',
-                                content:
-                                    'The quick brown fox jumps over the lazy dog'
+                                content: 'The quick brown fox jumps over the lazy dog'
                             },
                             {
                                 name: 'Text info section',
@@ -153,20 +152,17 @@ let config = {
                                     {
                                         name: 'Waltz, bad nymph, for quick jigs vex.',
                                         infoType: 'text',
-                                        content:
-                                            'Waltz, bad nymph, for quick jigs vex.'
+                                        content: 'Waltz, bad nymph, for quick jigs vex.'
                                     },
                                     {
                                         name: 'Sphinx of black quartz, judge my vow.',
                                         infoType: 'text',
-                                        content:
-                                            'Sphinx of black quartz, judge my vow.'
+                                        content: 'Sphinx of black quartz, judge my vow.'
                                     },
                                     {
                                         name: 'How vexingly quick daft zebras jump!',
                                         infoType: 'text',
-                                        content:
-                                            'How vexingly quick daft zebras jump!'
+                                        content: 'How vexingly quick daft zebras jump!'
                                     }
                                 ]
                             }
@@ -192,16 +188,10 @@ let options = {
     loadDefaultEvents: true
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
-rInstance.fixture
-    .addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details'])
-    .then(() => {
-        rInstance.panel.open('legend');
-    });
+const rInstance = createInstance(document.getElementById('app'), config, options);
+rInstance.fixture.addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details']).then(() => {
+    rInstance.panel.open('legend');
+});
 
 rInstance.$element.component('Details-Default-Template-Esri', {
     props: ['identifyData', 'fields'],
@@ -230,10 +220,7 @@ rInstance.$element.component('Details-Default-Template-Esri', {
             });
             Object.keys(helper).map(key => {
                 helper[key] = {
-                    value:
-                        typeof helper[key] === 'number'
-                            ? this.$iApi.$i18n.n(helper[key], 'number')
-                            : helper[key],
+                    value: typeof helper[key] === 'number' ? this.$iApi.$i18n.n(helper[key], 'number') : helper[key],
                     alias: aliases[key] || key
                 };
             });

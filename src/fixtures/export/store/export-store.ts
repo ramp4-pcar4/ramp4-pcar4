@@ -14,19 +14,12 @@ export const useExportStore = defineStore('export', () => {
     const fileName = ref<string>('');
 
     function toggleSelected(value: {
-        name:
-            | 'title'
-            | 'map'
-            | 'mapElements'
-            | 'legend'
-            | 'footnote'
-            | 'timestamp';
+        name: 'title' | 'map' | 'mapElements' | 'legend' | 'footnote' | 'timestamp';
         selected?: boolean;
     }) {
         if (componentSelectedState.value[value.name] !== undefined) {
             const currValue: boolean = componentSelectedState.value[value.name];
-            componentSelectedState.value[value.name] =
-                value.selected !== undefined ? value.selected : !currValue;
+            componentSelectedState.value[value.name] = value.selected !== undefined ? value.selected : !currValue;
         }
     }
 

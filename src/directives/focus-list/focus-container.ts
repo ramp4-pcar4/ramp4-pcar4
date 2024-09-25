@@ -63,12 +63,9 @@ class FocusContainerManager {
         this.disableTabbing();
 
         const focusManager = this;
-        this.element.addEventListener(
-            'keypress',
-            function (event: KeyboardEvent) {
-                focusManager.onKeypress(event);
-            }
-        );
+        this.element.addEventListener('keypress', function (event: KeyboardEvent) {
+            focusManager.onKeypress(event);
+        });
         this.element.addEventListener('click', function () {
             focusManager.onClick();
         });
@@ -85,21 +82,15 @@ class FocusContainerManager {
      */
     removeEventListeners() {
         const focusManager = this;
-        this.element.removeEventListener(
-            'keypress',
-            function (event: KeyboardEvent) {
-                focusManager.onKeypress(event);
-            }
-        );
+        this.element.removeEventListener('keypress', function (event: KeyboardEvent) {
+            focusManager.onKeypress(event);
+        });
         this.element.removeEventListener('click', function () {
             focusManager.onClick();
         });
-        this.element.removeEventListener(
-            'focusout',
-            function (event: FocusEvent) {
-                focusManager.onFocusOut(event);
-            }
-        );
+        this.element.removeEventListener('focusout', function (event: FocusEvent) {
+            focusManager.onFocusOut(event);
+        });
         this.element.removeEventListener('focus', function () {
             focusManager.onFocus();
         });
@@ -148,12 +139,9 @@ class FocusContainerManager {
      * Sets tabindex to -1 for EVERY element under the container element
      */
     disableTabbing() {
-        const tab_list = Array.prototype.filter.call(
-            this.element.querySelectorAll(TABBABLE_TAGS),
-            () => {
-                return true;
-            }
-        ) as HTMLElement[];
+        const tab_list = Array.prototype.filter.call(this.element.querySelectorAll(TABBABLE_TAGS), () => {
+            return true;
+        }) as HTMLElement[];
 
         tab_list.forEach((el: HTMLElement) => {
             el.tabIndex = -1;
@@ -166,24 +154,19 @@ class FocusContainerManager {
      */
     enableTabbing() {
         let first_tabbable_item: any = undefined;
-        Array.prototype.map.call(
-            this.element.querySelectorAll(TABBABLE_TAGS),
-            el => {
-                // !!el.offsetParent means it is visible
-                if (
-                    (el.closest(FOCUS_ATTRS) === this.element ||
-                        (el.closest(FOCUS_ATTRS) === el &&
-                            el.parentElement!.closest(FOCUS_ATTRS) ===
-                                this.element)) &&
-                    !!el.offsetParent
-                ) {
-                    el.tabIndex = 0;
-                    if (first_tabbable_item === undefined) {
-                        first_tabbable_item = el;
-                    }
+        Array.prototype.map.call(this.element.querySelectorAll(TABBABLE_TAGS), el => {
+            // !!el.offsetParent means it is visible
+            if (
+                (el.closest(FOCUS_ATTRS) === this.element ||
+                    (el.closest(FOCUS_ATTRS) === el && el.parentElement!.closest(FOCUS_ATTRS) === this.element)) &&
+                !!el.offsetParent
+            ) {
+                el.tabIndex = 0;
+                if (first_tabbable_item === undefined) {
+                    first_tabbable_item = el;
                 }
             }
-        );
+        });
         return first_tabbable_item;
     }
 }

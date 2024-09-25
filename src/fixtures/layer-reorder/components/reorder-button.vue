@@ -2,9 +2,7 @@
     <button
         type="button"
         v-if="!disabled"
-        :class="`pb-10 text-gray-500 hover:text-black p-8 ${
-            direction === 'up' ? 'rotate-180' : ''
-        }`"
+        :class="`pb-10 text-gray-500 hover:text-black p-8 ${direction === 'up' ? 'rotate-180' : ''}`"
         :content="t(`layer-reorder.move.${direction}`)"
         v-tippy="{
             placement: 'top-start',
@@ -20,9 +18,7 @@
     <button
         type="button"
         v-else
-        :class="`pb-10 text-gray-300 p-8 ${
-            direction === 'up' ? 'rotate-180' : ''
-        }`"
+        :class="`pb-10 text-gray-300 p-8 ${direction === 'up' ? 'rotate-180' : ''}`"
         :disabled="disabled"
         :aria-label="t(`layer-reorder.move.${direction}`)"
     >

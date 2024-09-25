@@ -4,13 +4,9 @@
             type="button"
             class="text-gray-500 hover:text-black focus:text-black p-8"
             :class="{ 'text-gray-700': active }"
-            :content="
-                t(active ? 'panels.controls.unpin' : 'panels.controls.pin')
-            "
+            :content="t(active ? 'panels.controls.unpin' : 'panels.controls.pin')"
             v-tippy="{ placement: 'bottom', hideOnClick: false }"
-            :aria-label="
-                t(active ? 'panels.controls.unpin' : 'panels.controls.pin')
-            "
+            :aria-label="t(active ? 'panels.controls.unpin' : 'panels.controls.pin')"
         >
             <svg
                 class="fill-current w-16 h-16"

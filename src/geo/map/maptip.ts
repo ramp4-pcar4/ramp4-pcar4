@@ -1,17 +1,6 @@
-import {
-    APIScope,
-    GlobalEvents,
-    InstanceAPI,
-    LayerInstance
-} from '@/api/internal';
+import { APIScope, GlobalEvents, InstanceAPI, LayerInstance } from '@/api/internal';
 import { useMaptipStore } from '@/stores/maptip';
-import type {
-    Attributes,
-    GraphicHitResult,
-    MaptipProperties,
-    Point,
-    ScreenPoint
-} from '@/geo/api';
+import type { Attributes, GraphicHitResult, MaptipProperties, Point, ScreenPoint } from '@/geo/api';
 import { GeometryType } from '@/geo/api';
 
 export class MaptipAPI extends APIScope {
@@ -42,8 +31,7 @@ export class MaptipAPI extends APIScope {
         this.#currentCheck = screenPoint;
 
         // Get the graphic object
-        const graphicHit: GraphicHitResult | undefined =
-            await this.$iApi.geo.map.getGraphicAtCoord(screenPoint);
+        const graphicHit: GraphicHitResult | undefined = await this.$iApi.geo.map.getGraphicAtCoord(screenPoint);
 
         // cancel if new check came in while waiting for `getGraphicAtCoord`
         // If the same point is checked twice technically it can get out of sync but then we're checking the same point anyways
@@ -57,8 +45,7 @@ export class MaptipAPI extends APIScope {
         }
 
         // Get the layer
-        const layerInstance: LayerInstance | undefined =
-            this.$iApi.geo.layer.getLayer(graphicHit.layerId);
+        const layerInstance: LayerInstance | undefined = this.$iApi.geo.layer.getLayer(graphicHit.layerId);
 
         if (layerInstance?.geomType != GeometryType.POLYGON) {
             // Check if the same maptip already exists
@@ -79,9 +66,7 @@ export class MaptipAPI extends APIScope {
 
         if (!layerInstance) {
             // Something seriously wrong here because esri gave us a non-existent layerID
-            console.error(
-                `graphic hit test returned non-existent layer id: ${graphicHit.layerId}`
-            );
+            console.error(`graphic hit test returned non-existent layer id: ${graphicHit.layerId}`);
             return;
         }
 
@@ -123,12 +108,8 @@ export class MaptipAPI extends APIScope {
         screenPoint: Point;
     }) {
         this.setContent(
-            `<div class="flex items-center space-x-5"><span>${
-                info.icon
-            }</span><span class="line-clamp-3">${
-                info.attributes[
-                    info.layer.config.tooltipField || info.layer.nameField
-                ]
+            `<div class="flex items-center space-x-5"><span>${info.icon}</span><span class="line-clamp-3">${
+                info.attributes[info.layer.config.tooltipField || info.layer.nameField]
             }</span></div>`
         );
     }

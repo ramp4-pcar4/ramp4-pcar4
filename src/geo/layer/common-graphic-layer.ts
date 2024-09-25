@@ -103,17 +103,13 @@ export class CommonGraphicLayer extends MapLayer {
                 this._graphics.push(g);
                 return true;
             } else {
-                console.error(
-                    `Attempting to add graphic with id '${g.id}' that has already been added.`
-                );
+                console.error(`Attempting to add graphic with id '${g.id}' that has already been added.`);
                 return false;
             }
         });
 
         const mapSR = this.$iApi.geo.map.getSR();
-        const projGeomsProms = validGraphics.map(g =>
-            this.$iApi.geo.proj.projectGeometry(mapSR, g.geometry)
-        );
+        const projGeomsProms = validGraphics.map(g => this.$iApi.geo.proj.projectGeometry(mapSR, g.geometry));
 
         const projGeoms = await Promise.all(projGeomsProms);
 
@@ -168,9 +164,7 @@ export class CommonGraphicLayer extends MapLayer {
         ids.forEach(id => {
             // need to tag the param as `any` because .id is something we manually added
 
-            const esriIdx = this.esriLayer!.graphics.findIndex(
-                (g: any) => g.id === id
-            );
+            const esriIdx = this.esriLayer!.graphics.findIndex((g: any) => g.id === id);
             if (esriIdx > -1) {
                 this.esriLayer!.graphics.removeAt(esriIdx);
             }

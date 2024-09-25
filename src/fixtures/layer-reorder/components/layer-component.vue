@@ -34,55 +34,27 @@
                     <!-- TODO: fix this hack that prevents duplicate UI bug on prod (to reproduce: remove this, run prod build and open -> close -> re-open reorder panel) -->
                     <div class="display-none"></div>
 
-                    <div
-                        class="flex items-center p-5 ms-5 h-44 cursor-pointer hover:bg-gray-200"
-                    >
+                    <div class="flex items-center p-5 ms-5 h-44 cursor-pointer hover:bg-gray-200">
                         <!-- dropdown toggle  -->
                         <button
                             type="button"
                             v-if="element.supportsSublayers"
                             @click="toggleExpand(element)"
                             class="text-gray-500 hover:text-black p-5"
-                            :content="
-                                t(
-                                    `layer-reorder.${
-                                        !element.isExpanded
-                                            ? 'expand'
-                                            : 'collapse'
-                                    }`
-                                )
-                            "
+                            :content="t(`layer-reorder.${!element.isExpanded ? 'expand' : 'collapse'}`)"
                             v-focus-item
                             v-tippy="{
                                 placement: 'right',
                                 aria: 'describedby'
                             }"
-                            :aria-label="
-                                t(
-                                    `layer-reorder.${
-                                        !element.isExpanded
-                                            ? 'expand'
-                                            : 'collapse'
-                                    }`
-                                )
-                            "
+                            :aria-label="t(`layer-reorder.${!element.isExpanded ? 'expand' : 'collapse'}`)"
                         >
-                            <svg
-                                v-if="element.isExpanded"
-                                class="fill-current w-20 h-20 mx-4"
-                                viewBox="0 0 24 24"
-                            >
+                            <svg v-if="element.isExpanded" class="fill-current w-20 h-20 mx-4" viewBox="0 0 24 24">
                                 <path d="M0 0h24v24H0z" fill="none" />
                                 <path d="M19 13H5v-2h14v2z" />
                             </svg>
-                            <svg
-                                v-else
-                                class="fill-current w-20 h-20 mx-4"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"
-                                ></path>
+                            <svg v-else class="fill-current w-20 h-20 mx-4" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
                             </svg>
                         </button>
 
@@ -109,9 +81,7 @@
                     <!-- display children of the parent layer -->
                     <div
                         class="items-center bg-gray-200 p-5 pl-30 default-focus-style cursor-pointer"
-                        v-if="
-                            element.isExpanded && element.sublayers.length > 0
-                        "
+                        v-if="element.isExpanded && element.sublayers.length > 0"
                         v-focus-list
                     >
                         <div
@@ -215,11 +185,8 @@ const loadLayers = (): void => {
 
     // TODO investigate if we still need the ...toRaw now that this comes from the layer API instead of directly from the store.
     //      performance hit if we don't, and this gets spammed every time a layer status changes.
-    const mainLayerList = [
-        ...toRaw(iApi.geo.layer.allLayersOnMap(true))
-    ].filter(
-        (layer: LayerInstance) =>
-            !layer.isCosmetic && layer.layerState !== LayerState.ERROR
+    const mainLayerList = [...toRaw(iApi.geo.layer.allLayersOnMap(true))].filter(
+        (layer: LayerInstance) => !layer.isCosmetic && layer.layerState !== LayerState.ERROR
     ); // filter out cosmetic layers and error'd layers. This source doesn't lave loading or dead layers.
 
     layersModel.value = mainLayerList
@@ -261,9 +228,7 @@ const loadLayers = (): void => {
  * @param {LayerInstance} layer the layer that has loaded
  */
 const loadLayerData = (layer: LayerInstance): void => {
-    let model: LayerModel | undefined = layersModel.value.find(
-        (layerModel: LayerModel) => layerModel.id === layer.id
-    );
+    let model: LayerModel | undefined = layersModel.value.find((layerModel: LayerModel) => layerModel.id === layer.id);
 
     if (!model) {
         return;
@@ -272,10 +237,7 @@ const loadLayerData = (layer: LayerInstance): void => {
     // load data from layer
     model.name = layer.name;
     model.sublayers = layer.sublayers
-        .filter(
-            (sublayer: LayerInstance) =>
-                sublayer !== undefined && !sublayer.isRemoved
-        )
+        .filter((sublayer: LayerInstance) => sublayer !== undefined && !sublayer.isRemoved)
         .map((sublayer: LayerInstance) => {
             return {
                 id: sublayer.id,
@@ -296,14 +258,9 @@ const toggleExpand = (layerModel: LayerModel): void => {
     }
     layerModel.isExpanded = !layerModel.isExpanded;
     iApi.updateAlert(
-        t(
-            layerModel.isExpanded
-                ? 'layer-reorder.expanded'
-                : 'layer-reorder.collapsed',
-            {
-                name: layerModel.name
-            }
-        )!
+        t(layerModel.isExpanded ? 'layer-reorder.expanded' : 'layer-reorder.collapsed', {
+            name: layerModel.name
+        })!
     );
 };
 
@@ -311,9 +268,7 @@ const toggleExpand = (layerModel: LayerModel): void => {
  * User started moving the layer, keep track of the old order
  */
 const onMoveLayerDragStart = (): void => {
-    oldOrder.value = layersModel.value.map(
-        (layerModel: LayerModel) => layerModel.orderIdx
-    );
+    oldOrder.value = layersModel.value.map((layerModel: LayerModel) => layerModel.orderIdx);
 };
 
 /**
