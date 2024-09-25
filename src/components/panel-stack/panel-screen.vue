@@ -1,10 +1,12 @@
 <template>
     <div
         class="h-full flex flex-col items-stretch"
-        :content="t('panels.access')"
+        :content="`<div style='word-break: break-word;'>${t(panel.alertName) + '. ' + t('panels.access')}</div>`"
         v-tippy="{
             trigger: 'manual',
             onShow: checkMode,
+            allowHTML: true,
+            maxWidth: panel.style['flex-basis'] ?? 350,
             popperOptions: {
                 placement: 'top',
                 modifiers: [
@@ -18,7 +20,6 @@
         <header
             v-if="header"
             class="flex flex-shrink-0 items-center border-b border-solid border-gray-600 px-8 h-48 overflow-hidden"
-            tabindex="-1"
         >
             <back
                 :class="
@@ -27,7 +28,11 @@
                 @click="panel.close()"
             ></back>
 
-            <h2 class="flex-grow text-lg py-16 pl-8 min-w-0" v-truncate>
+            <h2
+                class="flex-grow text-lg py-16 pl-8 min-w-0"
+                v-truncate
+                tabIndex="0"
+            >
                 <slot name="header"></slot>
             </h2>
 
@@ -130,7 +135,7 @@ const checkMode = () => !mobileView.value && !props.panel.teleport;
 const move = (direction: PanelDirection) => {
     props.panel.move(direction);
     if (direction === 'left') {
-        // needed to preserve focus on correct panel
+        // needed to preserve focus on correct panel.
         nextTick(() => {
             (el.value?.querySelector('.move-left') as HTMLElement).focus();
         });

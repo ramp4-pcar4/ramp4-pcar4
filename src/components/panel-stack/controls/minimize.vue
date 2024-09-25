@@ -1,5 +1,5 @@
 <template>
-    <div class="relative" tabindex="-1">
+    <div class="relative">
         <button
             type="button"
             class="text-gray-500 hover:text-black focus:text-black p-6"
