@@ -143,14 +143,8 @@ export class LayerAPI extends APIScope {
      */
     getSublayer(layerId: string, index: number): LayerInstance | undefined {
         // find the parent
-        const parentLayer = useLayerStore(this.$vApp.$pinia).getLayerById(
-            layerId
-        );
-        if (
-            parentLayer &&
-            parentLayer.supportsSublayers &&
-            index < parentLayer.sublayers.length
-        ) {
+        const parentLayer = useLayerStore(this.$vApp.$pinia).getLayerById(layerId);
+        if (parentLayer && parentLayer.supportsSublayers && index < parentLayer.sublayers.length) {
             // sublayers is a sparse array. if index is a non-existing slot, returns undefined which is correct
             return parentLayer.sublayers[index];
         } else {
@@ -168,13 +162,9 @@ export class LayerAPI extends APIScope {
         // layer search required since order array only tracks layerid, not uid
         const layer = this.getLayer(layerId);
         if (layer && layer.mapLayer) {
-            const searchId = layer.isSublayer
-                ? layer.parentLayer!.id
-                : layer.id;
+            const searchId = layer.isSublayer ? layer.parentLayer!.id : layer.id;
 
-            const idx = this.layerOrderIds().findIndex(
-                orderId => orderId === searchId
-            );
+            const idx = this.layerOrderIds().findIndex(orderId => orderId === searchId);
             return idx === -1 ? undefined : idx;
         } else {
             return undefined;
@@ -198,10 +188,7 @@ export class LayerAPI extends APIScope {
     allLayers(): Array<LayerInstance> {
         // TODO: make result non-reactive via toRaw ?
         //       is anything requiring layer reactivity?
-        return (
-            (useLayerStore(this.$vApp.$pinia)
-                .layers as unknown as Array<LayerInstance>) || []
-        );
+        return (useLayerStore(this.$vApp.$pinia).layers as unknown as Array<LayerInstance>) || [];
     }
 
     /**
@@ -210,9 +197,7 @@ export class LayerAPI extends APIScope {
      */
     allActiveLayers(): Array<LayerInstance> {
         return this.allLayers().filter(
-            l =>
-                l.layerState !== LayerState.ERROR &&
-                l.initiationState === InitiationState.INITIATED
+            l => l.layerState !== LayerState.ERROR && l.initiationState === InitiationState.INITIATED
         );
     }
 
@@ -224,15 +209,11 @@ export class LayerAPI extends APIScope {
      * @returns {Array<LayerInstance>} all layers on the map
      */
     allLayersOnMap(inMapOrder: boolean = true): Array<LayerInstance> {
-        let mapLayers = this.allLayers().filter(
-            l => l.mapLayer && l.initiationState === InitiationState.INITIATED
-        );
+        let mapLayers = this.allLayers().filter(l => l.mapLayer && l.initiationState === InitiationState.INITIATED);
 
         if (inMapOrder) {
             const lOrder = this.layerOrderIds();
-            const cash = new Map<string, number>(
-                lOrder.map((layerId, i) => [layerId, i])
-            );
+            const cash = new Map<string, number>(lOrder.map((layerId, i) => [layerId, i]));
             mapLayers.sort((lay1, lay2) => {
                 // index of layer 1 - index of layer 2
                 return cash.get(lay1.id)! - cash.get(lay2.id)!;
@@ -247,9 +228,7 @@ export class LayerAPI extends APIScope {
      * @returns {Array<LayerInstance>} all loaded data layers
      */
     allDataLayers(): Array<LayerInstance> {
-        return this.allLayers().filter(
-            l => !l.mapLayer && l.initiationState === InitiationState.INITIATED
-        );
+        return this.allLayers().filter(l => !l.mapLayer && l.initiationState === InitiationState.INITIATED);
     }
 
     /**
@@ -265,9 +244,7 @@ export class LayerAPI extends APIScope {
      * @returns {Array<LayerInstance>} all initiating layers
      */
     allInitiatingLayers(): Array<LayerInstance> {
-        return this.allLayers().filter(
-            l => l.initiationState === InitiationState.INITIATING
-        );
+        return this.allLayers().filter(l => l.initiationState === InitiationState.INITIATING);
     }
 
     /**
@@ -289,20 +266,19 @@ export class LayerAPI extends APIScope {
         }
 
         // get controls config from layer.config since we do not expect this to change mid-session
-        const controls: Array<LayerControl> =
-            layer.config.controls?.slice() ?? [
-                LayerControl.BoundaryZoom,
-                LayerControl.Datatable,
-                LayerControl.Identify,
-                LayerControl.Metadata,
-                LayerControl.Opacity,
-                LayerControl.Refresh,
-                LayerControl.Reload,
-                LayerControl.Remove,
-                LayerControl.Settings,
-                LayerControl.Symbology,
-                LayerControl.Visibility
-            ];
+        const controls: Array<LayerControl> = layer.config.controls?.slice() ?? [
+            LayerControl.BoundaryZoom,
+            LayerControl.Datatable,
+            LayerControl.Identify,
+            LayerControl.Metadata,
+            LayerControl.Opacity,
+            LayerControl.Refresh,
+            LayerControl.Reload,
+            LayerControl.Remove,
+            LayerControl.Settings,
+            LayerControl.Symbology,
+            LayerControl.Visibility
+        ];
 
         // remove controls if layer doesn't support them
         const controlsToRemove: Array<LayerControl> = [];
@@ -313,17 +289,12 @@ export class LayerAPI extends APIScope {
             controlsToRemove.push(LayerControl.BoundaryZoom);
         }
         const metaConfig =
-            layer.config?.metadata ||
-            (layer.isSublayer ? layer.parentLayer?.config?.metadata : {}) ||
-            {};
+            layer.config?.metadata || (layer.isSublayer ? layer.parentLayer?.config?.metadata : {}) || {};
         if (!metaConfig.url) {
             controlsToRemove.push(LayerControl.Metadata);
         }
 
-        if (
-            !layer.mapLayer &&
-            !layer.config.controls?.includes(LayerControl.Settings)
-        ) {
+        if (!layer.mapLayer && !layer.config.controls?.includes(LayerControl.Settings)) {
             controlsToRemove.push(LayerControl.Settings);
         }
 
@@ -355,9 +326,7 @@ export class LayerAPI extends APIScope {
         }
 
         // extract info for this service
-        const [err, serviceResult] = await to<__esri.RequestResponse>(
-            EsriRequest(url, { query: { f: 'json' } })
-        );
+        const [err, serviceResult] = await to<__esri.RequestResponse>(EsriRequest(url, { query: { f: 'json' } }));
         if (!serviceResult) {
             // case where service request was unsuccessful
             console.error(`Service metadata load error: ${url}`, err);
@@ -397,9 +366,7 @@ export class LayerAPI extends APIScope {
         md.currentVersion = sData.currentVersion || -1;
         md.minScale = sData.effectiveMinScale || sData.minScale || 0;
         md.maxScale = sData.effectiveMaxScale || sData.maxScale || 0;
-        md.extent = sData.extent
-            ? Extent.fromArcServer(sData.extent, 'layer_extent')
-            : undefined;
+        md.extent = sData.extent ? Extent.fromArcServer(sData.extent, 'layer_extent') : undefined;
         // Default to true since user typically wants to see their stuff
         md.defaultVisibility = sData.defaultVisibility ?? true;
         md.canModifyLayer = sData.canModifyLayer ?? true;
@@ -415,9 +382,7 @@ export class LayerAPI extends APIScope {
 
             if (Array.isArray(sData.fields)) {
                 // parse fields to our format
-                const esriFields: Array<EsriField> = sData.fields.map(
-                    (f: any) => EsriField.fromJSON(f)
-                );
+                const esriFields: Array<EsriField> = sData.fields.map((f: any) => EsriField.fromJSON(f));
                 md.fields = esriFields.map(f => {
                     return {
                         name: f.name,
@@ -447,31 +412,22 @@ export class LayerAPI extends APIScope {
                         (() => {
                             // TODO worth pinging the notification api, or pushing layer into error state?
                             //      this likely bricks the layer. Also very unlikely to ever happen
-                            console.error(
-                                `Encountered service with no OID defined: ${url}`
-                            );
+                            console.error(`Encountered service with no OID defined: ${url}`);
                             return '';
                         })();
                 }
 
                 // special stuff for layers with map data
                 if (sData.type === 'Feature Layer') {
-                    md.geometryType =
-                        this.$iApi.geo.geom.serverGeomTypeToRampGeomType(
-                            sData.geometryType
-                        );
+                    md.geometryType = this.$iApi.geo.geom.serverGeomTypeToRampGeomType(sData.geometryType);
 
                     if (sData.drawingInfo?.renderer) {
-                        md.renderer = EsriRendererFromJson(
-                            sData.drawingInfo.renderer
-                        );
+                        md.renderer = EsriRendererFromJson(sData.drawingInfo.renderer);
                     }
 
                     if (sData.sourceSpatialReference) {
                         // our config format aligns with ESRI's RestAPI format
-                        md.sourceSR = SpatialReference.fromConfig(
-                            sData.sourceSpatialReference
-                        );
+                        md.sourceSR = SpatialReference.fromConfig(sData.sourceSpatialReference);
                     }
                 } else {
                     // it was a table
@@ -496,17 +452,12 @@ export class LayerAPI extends APIScope {
      * @param permanentFilter optional filter to apply to the count
      * @returns {Promise} that resolves with the feature count, -1 if error
      */
-    async loadFeatureCount(
-        serviceUrl: string,
-        permanentFilter: string = ''
-    ): Promise<number> {
+    async loadFeatureCount(serviceUrl: string, permanentFilter: string = ''): Promise<number> {
         if (!serviceUrl) {
             // case where a non-server subclass ends up calling this via .super magic.
             // will avoid failed attempts at reading a non-existing service.
             // class should implement their own logic to load feature count (e.g. scrape from file layer)
-            console.error(
-                'A layer without a url attempted to run the server based feature count routine.'
-            );
+            console.error('A layer without a url attempted to run the server based feature count routine.');
             return 0;
         }
 
@@ -523,17 +474,12 @@ export class LayerAPI extends APIScope {
             }
         };
 
-        const [err, serviceResult] = await to<__esri.RequestResponse>(
-            EsriRequest(`${serviceUrl}/query`, restParam)
-        );
+        const [err, serviceResult] = await to<__esri.RequestResponse>(EsriRequest(`${serviceUrl}/query`, restParam));
 
         // Throw console warnings, don't crash the app
         if (!serviceResult) {
             // case where service request was unsuccessful
-            console.error(
-                `Feature count request unsuccessful: ${serviceUrl}`,
-                err
-            );
+            console.error(`Feature count request unsuccessful: ${serviceUrl}`, err);
             return 0;
         }
         if (!serviceResult.data) {
@@ -542,12 +488,9 @@ export class LayerAPI extends APIScope {
             return 0;
         }
 
-        if (Number.isInteger(serviceResult.data.count))
-            return serviceResult.data.count;
+        if (Number.isInteger(serviceResult.data.count)) return serviceResult.data.count;
         else {
-            console.error(
-                `Funny result (${serviceResult.data.count}) during feature count: ${serviceUrl}`
-            );
+            console.error(`Funny result (${serviceResult.data.count}) during feature count: ${serviceUrl}`);
             return 0;
         }
     }

@@ -15,14 +15,7 @@
         "module": "NodeNext"
     },
     "typedocOptions": {
-        "entryPoints": [
-            "./src/main.ts",
-            "./src/api",
-            "./src/fixtures",
-            "./src/directives",
-            "./src/geo",
-            "./src/lang"
-        ],
+        "entryPoints": ["./src/main.ts", "./src/api", "./src/fixtures", "./src/directives", "./src/geo", "./src/lang"],
         "out": "ts-docs",
         "customCss": "./docs/.typedoc/theme/custom.css",
         "entryPointStrategy": "expand",

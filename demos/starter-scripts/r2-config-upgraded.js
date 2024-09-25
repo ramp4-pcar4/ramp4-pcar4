@@ -26,8 +26,7 @@ const r2config = {
     version: '2.0',
     language: 'en',
     services: {
-        proxyUrl:
-            'https://maps.canada.ca/wmsproxy/ws/wmsproxy/executeFromProxy',
+        proxyUrl: 'https://maps.canada.ca/wmsproxy/ws/wmsproxy/executeFromProxy',
         exportMapUrl:
             'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task',
         export: {
@@ -44,14 +43,10 @@ const r2config = {
         },
         search: {
             serviceUrls: {
-                geoNames:
-                    'https://geogratis.gc.ca/services/geoname/en/geonames.json',
-                geoLocation:
-                    'https://geogratis.gc.ca/services/geolocation/en/locate?q=',
-                geoSuggest:
-                    'https://geogratis.gc.ca/services/geolocation/en/suggest?q=',
-                provinces:
-                    'https://geogratis.gc.ca/services/geoname/en/codes/province.json',
+                geoNames: 'https://geogratis.gc.ca/services/geoname/en/geonames.json',
+                geoLocation: 'https://geogratis.gc.ca/services/geolocation/en/locate?q=',
+                geoSuggest: 'https://geogratis.gc.ca/services/geolocation/en/suggest?q=',
+                provinces: 'https://geogratis.gc.ca/services/geoname/en/codes/province.json',
                 types: 'https://geogratis.gc.ca/services/geoname/en/codes/concise.json'
             }
         }
@@ -420,8 +415,7 @@ const r2config = {
                 name: 'Canada Base Map - Transportation (CBMT)',
                 description:
                     'The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.',
-                altText:
-                    'altText - The Canada Base Map - Transportation (CBMT)',
+                altText: 'altText - The Canada Base Map - Transportation (CBMT)',
                 layers: [
                     {
                         id: 'CBMT',
@@ -497,8 +491,7 @@ const r2config = {
                         url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseEsriPhysical',
@@ -513,8 +506,7 @@ const r2config = {
                         url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseEsriRelief',
@@ -529,14 +521,12 @@ const r2config = {
                         url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseEsriStreet',
                 name: 'World Street Map',
-                description:
-                    'This worldwide street map presents highway-level data for the world.',
+                description: 'This worldwide street map presents highway-level data for the world.',
                 altText: 'altText - ESWorld Street Map',
                 layers: [
                     {
@@ -545,8 +535,7 @@ const r2config = {
                         url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseEsriTerrain',
@@ -561,8 +550,7 @@ const r2config = {
                         url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseEsriTopo',
@@ -577,8 +565,7 @@ const r2config = {
                         url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             }
         ]
     }
@@ -592,11 +579,7 @@ let options = {
     startRequired: false
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    r4config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), r4config, options);
 
 window.debugInstance = rInstance;
 console.log(r4config);

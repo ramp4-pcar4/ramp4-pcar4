@@ -50,11 +50,7 @@ onMounted(() => {
     }
 });
 
-const animateTransition = (
-    el: Element,
-    done: () => void,
-    value: number[]
-): void => {
+const animateTransition = (el: Element, done: () => void, value: number[]): void => {
     if (skipTransition.value) {
         return done();
     }
@@ -87,9 +83,7 @@ const beforeLeave = (el: Element): void => {
     // just before the component is removed from DOM; supress the focus ring on the screen component just before `leave` event
     componentEl.value
         .querySelectorAll('[focus-item')
-        .forEach((element: Element) =>
-            element.classList.remove('default-focus-style')
-        );
+        .forEach((element: Element) => element.classList.remove('default-focus-style'));
 };
 
 const leave = (el: Element, done: () => void): void => {

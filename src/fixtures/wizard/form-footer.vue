@@ -1,10 +1,6 @@
 <template>
     <div class="flex justify-end mb-20">
-        <button
-            class="hover:bg-gray-200 text-gray-600 font-bold py-8 px-16 m-2"
-            type="button"
-            @click="$emit('cancel')"
-        >
+        <button class="hover:bg-gray-200 text-gray-600 font-bold py-8 px-16 m-2" type="button" @click="$emit('cancel')">
             {{ t('wizard.step.cancel') }}
         </button>
 
@@ -44,17 +40,13 @@ const props = defineProps({
 const submitButton = ref<HTMLButtonElement>();
 
 watch(toRef(props, 'disabled'), disabled => {
-    if (
-        !disabled &&
-        submitButton.value!.classList.contains('button--loading')
-    ) {
+    if (!disabled && submitButton.value!.classList.contains('button--loading')) {
         submitButton.value!.classList.remove('button--loading');
     }
 });
 
 const loadButton = () => {
-    if (props.animation)
-        submitButton.value!.classList.toggle('button--loading');
+    if (props.animation) submitButton.value!.classList.toggle('button--loading');
 };
 </script>
 

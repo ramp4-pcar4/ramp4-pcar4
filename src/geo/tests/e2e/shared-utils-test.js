@@ -17,8 +17,7 @@ describe('GeoAPI SharedUtils', () => {
                     'https://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_watershed_2013/MapServer/1'
                 )
             ).to.deep.equal({
-                rootUrl:
-                    'https://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_watershed_2013/MapServer',
+                rootUrl: 'https://www.agr.gc.ca/atlas/rest/services/mapservices/aafc_watershed_2013/MapServer',
                 index: 1
             });
         });
@@ -32,8 +31,7 @@ describe('GeoAPI SharedUtils', () => {
                     'https://www.agr.gc.ca/atlas/rest/services/mapservices/crop_spatial_density/MapServer/5/'
                 )
             ).to.deep.equal({
-                rootUrl:
-                    'https://www.agr.gc.ca/atlas/rest/services/mapservices/crop_spatial_density/MapServer',
+                rootUrl: 'https://www.agr.gc.ca/atlas/rest/services/mapservices/crop_spatial_density/MapServer',
                 index: 5
             });
         });
@@ -48,8 +46,7 @@ describe('GeoAPI SharedUtils', () => {
                     'https://www.agr.gc.ca/atlas/rest/services/mapservices/crop_spatial_density/MapServer'
                 )
             ).to.deep.equal({
-                rootUrl:
-                    'https://www.agr.gc.ca/atlas/rest/services/mapservices/crop_spatial_density/MapServer',
+                rootUrl: 'https://www.agr.gc.ca/atlas/rest/services/mapservices/crop_spatial_density/MapServer',
                 index: 0
             });
         });
@@ -63,10 +60,7 @@ describe('GeoAPI SharedUtils', () => {
             for (i = 0; i < 10; i++) {
                 cy.wrap({ uuid: sharedUtils.generateUUID() })
                     .its('uuid')
-                    .should(
-                        'match',
-                        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-                    );
+                    .should('match', /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
             }
         });
     });
@@ -82,8 +76,7 @@ describe('GeoAPI SharedUtils', () => {
             for (i = 0; i < 10000; i++) {
                 uuids.push(sharedUtils.generateUUID());
             }
-            let findDuplicates = arr =>
-                arr.filter((item, index) => arr.indexOf(item) != index);
+            let findDuplicates = arr => arr.filter((item, index) => arr.indexOf(item) != index);
             let duplicates = findDuplicates(uuids);
             expect(duplicates).to.be.empty;
         });
@@ -159,11 +152,9 @@ describe('GeoAPI SharedUtils', () => {
     it('formatLatLongDMSString undefined point', () => {
         cy.window().then(window => {
             const sharedUtils = window.debugInstance.geo.shared;
-            const xyformat = sharedUtils
-                .formatLatLongDMSString(undefined)
-                .then(xyformat => {
-                    expect(xyformat).to.deep.equal({ lat: '', lon: '' });
-                });
+            const xyformat = sharedUtils.formatLatLongDMSString(undefined).then(xyformat => {
+                expect(xyformat).to.deep.equal({ lat: '', lon: '' });
+            });
         });
     });
 
@@ -171,12 +162,7 @@ describe('GeoAPI SharedUtils', () => {
         cy.window().then(window => {
             const sharedUtils = window.debugInstance.geo.shared;
             sharedUtils.formatLatLongDMSString(undefined);
-            const point = new Point(
-                999,
-                [11131949.079, 32316213801.068],
-                undefined,
-                true
-            );
+            const point = new Point(999, [11131949.079, 32316213801.068], undefined, true);
             sharedUtils.formatLatLongDMSString(point).then(xyformat => {
                 expect(xyformat).to.deep.equal({ lat: '', lon: '' });
             });
@@ -187,12 +173,7 @@ describe('GeoAPI SharedUtils', () => {
         cy.window().then(window => {
             const sharedUtils = window.debugInstance.geo.shared;
             sharedUtils.formatLatLongDMSString(undefined);
-            const point = new Point(
-                999,
-                [-18924313.435, 16213801.068],
-                undefined,
-                true
-            );
+            const point = new Point(999, [-18924313.435, 16213801.068], undefined, true);
             sharedUtils.formatLatLongDMSString(point).then(xyformat => {
                 expect(xyformat).to.deep.equal({ lat: '', lon: '' });
             });
@@ -203,12 +184,7 @@ describe('GeoAPI SharedUtils', () => {
         cy.window().then(window => {
             const sharedUtils = window.debugInstance.geo.shared;
             sharedUtils.formatLatLongDMSString(undefined);
-            const point = new Point(
-                999,
-                [11131949.0799, 16213801.068],
-                new SpatialReference(102100),
-                true
-            );
+            const point = new Point(999, [11131949.0799, 16213801.068], new SpatialReference(102100), true);
             sharedUtils.formatLatLongDMSString(point).then(xyformat => {
                 expect(xyformat).to.deep.equal({
                     lat: '81° 00\' 00"',

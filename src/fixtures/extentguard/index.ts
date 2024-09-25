@@ -21,12 +21,7 @@ interface ClipResult {
  * @param {Number} boundingMin minimum value of the bounding range
  * @return {ClipResult} bundle of information. resulting range and flag if it was adjusted
  */
-function clipCoords(
-    testMax: number,
-    testMin: number,
-    boundingMax: number,
-    boundingMin: number
-): ClipResult {
+function clipCoords(testMax: number, testMin: number, boundingMax: number, boundingMin: number): ClipResult {
     // center co-ord of the  range to test
     const testLength = testMax - testMin;
     const middle = testMin + testLength / 2;
@@ -97,15 +92,12 @@ class ExtentguardFixture extends ExtentguardAPI {
         };
 
         // watch for basemap schema changes
-        this.schemaEH = this.$iApi.event.on(
-            GlobalEvents.MAP_BASEMAPCHANGE,
-            (payload: BasemapChange) => {
-                if (payload.schemaChanged) {
-                    // make sure new schema wants the fixture active
-                    this.checkActive();
-                }
+        this.schemaEH = this.$iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, (payload: BasemapChange) => {
+            if (payload.schemaChanged) {
+                // make sure new schema wants the fixture active
+                this.checkActive();
             }
-        );
+        });
 
         // do a status check when map creates, or if map already created
         if (this.$iApi.geo.map.created) {
@@ -122,22 +114,16 @@ class ExtentguardFixture extends ExtentguardAPI {
      */
     private checkActive(): void {
         const store = useExtentguardStore(this.$vApp.$pinia);
-        if (
-            store.alwaysOn ||
-            store.extentSetIds.includes(this.$iApi.geo.map.getExtentSet().id)
-        ) {
+        if (store.alwaysOn || store.extentSetIds.includes(this.$iApi.geo.map.getExtentSet().id)) {
             if (!store.active) {
                 // turn on, start listening to extent changes
                 store.setActive(true);
 
-                this.extentEH = this.$iApi.event.on(
-                    GlobalEvents.MAP_EXTENTCHANGE,
-                    (extent: Extent) => {
-                        if (!store.enforcing) {
-                            this.enforceBoundary(extent, false);
-                        }
+                this.extentEH = this.$iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, (extent: Extent) => {
+                    if (!store.enforcing) {
+                        this.enforceBoundary(extent, false);
                     }
-                );
+                });
             }
         } else if (store.active) {
             // turn off
@@ -170,19 +156,9 @@ class ExtentguardFixture extends ExtentguardAPI {
     private enforceBoundary(extent: Extent, safetyCheck: boolean): void {
         const maxExtent = this.$iApi.geo.map.getExtentSet().maximumExtent;
 
-        const xTest = clipCoords(
-            extent.xmax,
-            extent.xmin,
-            maxExtent.xmax,
-            maxExtent.xmin
-        );
+        const xTest = clipCoords(extent.xmax, extent.xmin, maxExtent.xmax, maxExtent.xmin);
 
-        const yTest = clipCoords(
-            extent.ymax,
-            extent.ymin,
-            maxExtent.ymax,
-            maxExtent.ymin
-        );
+        const yTest = clipCoords(extent.ymax, extent.ymin, maxExtent.ymax, maxExtent.ymin);
 
         if (yTest.changed || xTest.changed) {
             // something was adjusted.
@@ -213,25 +189,14 @@ class ExtentguardFixture extends ExtentguardAPI {
             // adjusted animation as the default is pretty aggressive and mildly shocking.
             // 300ms on linear is also ok. ease-in-out feels a bit more natural to me.
             setTimeout(() => {
-                this.$iApi.geo.map
-                    .zoomMapTo(
-                        respectfulExtent,
-                        undefined,
-                        true,
-                        400,
-                        'ease-in-out'
-                    )
-                    .then(() => {
-                        store.setEnforcing(false);
-                        // need to check again. a very wild pan on a wrappable co-ord system
-                        // can strand us in a zone where you get stuck.
-                        // the saftey param gets turned on, will perform rescue moves if
-                        // we're stuck.
-                        this.enforceBoundary(
-                            this.$iApi.geo.map.getExtent(),
-                            true
-                        );
-                    });
+                this.$iApi.geo.map.zoomMapTo(respectfulExtent, undefined, true, 400, 'ease-in-out').then(() => {
+                    store.setEnforcing(false);
+                    // need to check again. a very wild pan on a wrappable co-ord system
+                    // can strand us in a zone where you get stuck.
+                    // the saftey param gets turned on, will perform rescue moves if
+                    // we're stuck.
+                    this.enforceBoundary(this.$iApi.geo.map.getExtent(), true);
+                });
             }, 150);
         }
     }

@@ -19,9 +19,7 @@ export class ImageryLayer extends MapLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        this.esriLayer = markRaw(
-            new EsriImageryLayer(this.makeEsriLayerConfig(this.origRampConfig))
-        );
+        this.esriLayer = markRaw(new EsriImageryLayer(this.makeEsriLayerConfig(this.origRampConfig)));
         await super.onInitiate();
     }
 
@@ -31,11 +29,8 @@ export class ImageryLayer extends MapLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(
-        rampLayerConfig: RampLayerConfig
-    ): __esri.ImageryLayerProperties {
-        const esriConfig: __esri.ImageryLayerProperties =
-            super.makeEsriLayerConfig(rampLayerConfig);
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.ImageryLayerProperties {
+        const esriConfig: __esri.ImageryLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         return esriConfig;
     }

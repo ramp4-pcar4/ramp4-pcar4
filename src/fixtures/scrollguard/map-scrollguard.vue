@@ -18,32 +18,32 @@ const scrollGuard = ref<HTMLElement>();
 const enabled = computed(() => scrollguardStore.enabled);
 
 onMounted(() => {
-    (
-        iApi.$vApp.$el.querySelector(
-            '.inner-shell + .esri-view'
-        )! as HTMLElement
-    )?.addEventListener('wheel', wheelHandler, {
-        capture: true
-    });
-    iApi.event.on(GlobalEvents.MAP_CREATED, () => {
-        (
-            iApi.$vApp.$el.querySelector(
-                '.inner-shell + .esri-view'
-            )! as HTMLElement
-        )?.addEventListener('wheel', wheelHandler, {
+    (iApi.$vApp.$el.querySelector('.inner-shell + .esri-view')! as HTMLElement)?.addEventListener(
+        'wheel',
+        wheelHandler,
+        {
             capture: true
-        });
+        }
+    );
+    iApi.event.on(GlobalEvents.MAP_CREATED, () => {
+        (iApi.$vApp.$el.querySelector('.inner-shell + .esri-view')! as HTMLElement)?.addEventListener(
+            'wheel',
+            wheelHandler,
+            {
+                capture: true
+            }
+        );
     });
 });
 
 onBeforeUnmount(() => {
-    (
-        iApi.$vApp.$el.querySelector(
-            '.inner-shell + .esri-view'
-        )! as HTMLElement
-    )?.removeEventListener('wheel', wheelHandler, {
-        capture: true
-    });
+    (iApi.$vApp.$el.querySelector('.inner-shell + .esri-view')! as HTMLElement)?.removeEventListener(
+        'wheel',
+        wheelHandler,
+        {
+            capture: true
+        }
+    );
 });
 
 const wheelHandler = (event: WheelEvent) => {

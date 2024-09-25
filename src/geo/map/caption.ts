@@ -1,12 +1,6 @@
 import { APIScope, InstanceAPI } from '@/api/internal';
 import { useMapCaptionStore } from '@/stores/map-caption';
-import type {
-    Attribution,
-    MapCaptionConfig,
-    Point,
-    ScaleBar,
-    ScaleHelper
-} from '@/geo/api';
+import type { Attribution, MapCaptionConfig, Point, ScaleBar, ScaleHelper } from '@/geo/api';
 
 export class MapCaptionAPI extends APIScope {
     // Default point formatters
@@ -55,8 +49,7 @@ export class MapCaptionAPI extends APIScope {
                 mapCaptionStore.coords.disabled = true;
             } else {
                 // get formatter specified in the config
-                const defaultFormatter: string | undefined =
-                    captionConfig.mapCoords.formatter;
+                const defaultFormatter: string | undefined = captionConfig.mapCoords.formatter;
                 if (defaultFormatter !== undefined) {
                     this.setPointFormatter(defaultFormatter);
                 }
@@ -69,8 +62,7 @@ export class MapCaptionAPI extends APIScope {
                 mapCaptionStore.scale.disabled = true;
             } else {
                 // get the scalebar unit specified in the config
-                const useImperialUnits: boolean | undefined =
-                    captionConfig.scaleBar.imperialScale;
+                const useImperialUnits: boolean | undefined = captionConfig.scaleBar.imperialScale;
                 if (useImperialUnits !== undefined) {
                     // update the value in the store
                     mapCaptionStore.toggleScale(useImperialUnits);
@@ -131,12 +123,9 @@ export class MapCaptionAPI extends APIScope {
             } else if (!newAttribution.logo.disabled) {
                 // Need to add OR (||) incase newAttribution values are undefined/empty.
                 // In those cases, use esri logo values
-                attribution.logo!.altText =
-                    newAttribution.logo.altText || esriLogo.altText;
-                attribution.logo!.link =
-                    newAttribution.logo.link || esriLogo.link;
-                attribution.logo!.value =
-                    newAttribution.logo.value || esriLogo.value;
+                attribution.logo!.altText = newAttribution.logo.altText || esriLogo.altText;
+                attribution.logo!.link = newAttribution.logo.link || esriLogo.link;
+                attribution.logo!.value = newAttribution.logo.value || esriLogo.value;
             } else {
                 attribution!.logo!.disabled = true; // logo is disabled, so keep logo empty
             }
@@ -147,8 +136,7 @@ export class MapCaptionAPI extends APIScope {
             } else if (!newAttribution.text.disabled) {
                 // Need to add OR (||) incase newAttribution value is undefined/empty
                 // In those cases, use default esri text
-                attribution.text!.value =
-                    newAttribution.text.value || esriText.value;
+                attribution.text!.value = newAttribution.text.value || esriText.value;
             } else {
                 attribution.text!.disabled = true; // text is disabled, so keep text empty (for now)
             }
@@ -166,17 +154,11 @@ export class MapCaptionAPI extends APIScope {
 
         // If the new attribution is undefined, or its text is disabled, or it has no text defined,
         // pull text from copyright
-        if (
-            !newAttribution ||
-            newAttribution.text?.disabled ||
-            !newAttribution.text
-        ) {
+        if (!newAttribution || newAttribution.text?.disabled || !newAttribution.text) {
             // Pull copyright text from basemap's baselayers
 
             if (!this.$iApi.geo.map.esriMap) {
-                console.warn(
-                    'Attempted to fetch map attribution with undefined map'
-                );
+                console.warn('Attempted to fetch map attribution with undefined map');
                 return;
             }
 
@@ -192,8 +174,7 @@ export class MapCaptionAPI extends APIScope {
                             // Keep count of layer.load checks done so far
                             let elapsedIntervals: number = 0;
                             // The maximum number of layer.load checks we will do
-                            const maxIntervals: number =
-                                loadTimeout / intervalTimeout;
+                            const maxIntervals: number = loadTimeout / intervalTimeout;
 
                             const wait = setInterval(function () {
                                 if (bl.loaded && !bl.loadError) {
@@ -216,8 +197,7 @@ export class MapCaptionAPI extends APIScope {
                     .map((bl: any) => bl.copyright)
                     .join(' | ');
 
-                attribution.text!.value =
-                    copyrightText || attribution.text!.value || esriText.value;
+                attribution.text!.value = copyrightText || attribution.text!.value || esriText.value;
 
                 // Update attribution
                 const mapCaptionStore = useMapCaptionStore(this.$vApp.$pinia);
@@ -241,13 +221,10 @@ export class MapCaptionAPI extends APIScope {
             return;
         }
 
-        const isImperialScale: boolean =
-            currentScaleBar?.isImperialScale || false;
+        const isImperialScale: boolean = currentScaleBar?.isImperialScale || false;
 
         // the object after the ?? is just to chill out typescript. Array.find threatens undefined even though we will get a match.
-        const scaleInfo = this.scaleHelper().find(
-            h => h.isImperialScale === isImperialScale
-        ) ?? {
+        const scaleInfo = this.scaleHelper().find(h => h.isImperialScale === isImperialScale) ?? {
             isImperialScale: false,
             units: 'error',
             pixels: 1,
@@ -256,9 +233,7 @@ export class MapCaptionAPI extends APIScope {
 
         mapCaptionStore.scale = {
             width: `${scaleInfo.pixels}px`,
-            label: `${this.$iApi.$i18n.n(scaleInfo.distance, 'number')}${
-                scaleInfo.units
-            }`,
+            label: `${this.$iApi.$i18n.n(scaleInfo.distance, 'number')}${scaleInfo.units}`,
             isImperialScale: isImperialScale
         };
     }
@@ -290,9 +265,7 @@ export class MapCaptionAPI extends APIScope {
         if (typeof value === 'string') {
             // value is formatter id
             if (!(value in this.DEFAULT_POINT_FORMATTERS)) {
-                console.warn(
-                    `Could not find point formatter with id: ${value}`
-                );
+                console.warn(`Could not find point formatter with id: ${value}`);
                 return;
             }
             this.pointFormatter = this.DEFAULT_POINT_FORMATTERS[value];
@@ -319,8 +292,7 @@ export class MapCaptionAPI extends APIScope {
         const metersInAFoot = 3.28084;
 
         // use arrays to store both imperial and metric calulcations
-        const measureUnits: Array<string> =
-            meters > 1000 ? ['km', 'mi'] : ['m', 'ft'];
+        const measureUnits: Array<string> = meters > 1000 ? ['km', 'mi'] : ['m', 'ft'];
 
         for (let i = 0; i < 2; i++) {
             const isImperialScale = i === 1;
@@ -335,9 +307,7 @@ export class MapCaptionAPI extends APIScope {
             // If meters < 1Km, then use different scaling
             if (meters > 1000) {
                 // get the distance in units, either miles or kilometers
-                const units =
-                    (mapResolution * factor) /
-                    (isImperialScale ? metersInAMile : 1000);
+                const units = (mapResolution * factor) / (isImperialScale ? metersInAMile : 1000);
 
                 // length of the distance number
                 const len = Math.round(units).toString().length;
@@ -349,15 +319,10 @@ export class MapCaptionAPI extends APIScope {
                 result[i].distance = Math.ceil(units / div) * div;
 
                 // calcualte length of the scale line in pixels based on the round distance
-                result[i].pixels =
-                    (result[i].distance *
-                        (isImperialScale ? metersInAMile : 1000)) /
-                    mapResolution;
+                result[i].pixels = (result[i].distance * (isImperialScale ? metersInAMile : 1000)) / mapResolution;
             } else {
                 // Round the meters up
-                result[i].distance = Math.ceil(
-                    isImperialScale ? meters * metersInAFoot : meters
-                );
+                result[i].distance = Math.ceil(isImperialScale ? meters * metersInAFoot : meters);
                 result[i].pixels = meters / mapResolution;
             }
         }
@@ -377,9 +342,7 @@ export class MapCaptionAPI extends APIScope {
      * @return {Number} the wrapped value
      */
     wrapValue(val: number, min: number, max: number): number {
-        return (
-            ((((val - min) % (max - min)) + (max - min)) % (max - min)) + min
-        );
+        return ((((val - min) % (max - min)) + (max - min)) % (max - min)) + min;
     }
 
     /**
@@ -391,10 +354,7 @@ export class MapCaptionAPI extends APIScope {
      */
     async formatLatLongDMS(p: Point): Promise<string> {
         // get the lat long projection
-        const latLongPoint: any = await this.$iApi.geo.proj.projectGeometry(
-            4326,
-            p
-        );
+        const latLongPoint: any = await this.$iApi.geo.proj.projectGeometry(4326, p);
 
         const lat = this.wrapValue(latLongPoint.y, -90, 90);
         const lon = this.wrapValue(latLongPoint.x, -180, 180);
@@ -409,25 +369,18 @@ export class MapCaptionAPI extends APIScope {
         const mx = Math.floor(Math.abs((lon - dx) * 60));
         const sx = Math.floor((Math.abs(lon) - Math.abs(dx) - mx / 60) * 3600);
 
-        return `${this.$iApi.$i18n.n(
-            Math.abs(dy),
-            'number'
-        )}${degreeSymbol} ${this.$iApi.$i18n.n(my, 'number', {
+        return `${this.$iApi.$i18n.n(Math.abs(dy), 'number')}${degreeSymbol} ${this.$iApi.$i18n.n(my, 'number', {
             minimumIntegerDigits: 2
         } as any)}' ${this.$iApi.$i18n.n(sy, 'number', {
             minimumIntegerDigits: 2
-        } as any)}" ${this.$iApi.$i18n.t(
-            'map.coordinates.' + (lat > 0 ? 'north' : 'south')
-        )} | ${this.$iApi.$i18n.n(
+        } as any)}" ${this.$iApi.$i18n.t('map.coordinates.' + (lat > 0 ? 'north' : 'south'))} | ${this.$iApi.$i18n.n(
             Math.abs(dx),
             'number'
         )}${degreeSymbol} ${this.$iApi.$i18n.n(mx, 'number', {
             minimumIntegerDigits: 2
         } as any)}' ${this.$iApi.$i18n.n(sx, 'number', {
             minimumIntegerDigits: 2
-        } as any)}" ${this.$iApi.$i18n.t(
-            'map.coordinates.' + (0 > lon ? 'west' : 'east')
-        )}`;
+        } as any)}" ${this.$iApi.$i18n.t('map.coordinates.' + (0 > lon ? 'west' : 'east'))}`;
     }
 
     /**
@@ -439,10 +392,7 @@ export class MapCaptionAPI extends APIScope {
      */
     async formatLatLongDDM(p: Point): Promise<string> {
         // get the lat long projection
-        const latLongPoint: any = await this.$iApi.geo.proj.projectGeometry(
-            4326,
-            p
-        );
+        const latLongPoint: any = await this.$iApi.geo.proj.projectGeometry(4326, p);
 
         const lat = this.wrapValue(latLongPoint.y, -90, 90);
         const lon = this.wrapValue(latLongPoint.x, -180, 180);
@@ -455,25 +405,18 @@ export class MapCaptionAPI extends APIScope {
         const dx = Math.floor(Math.abs(lon)) * (lon < 0 ? -1 : 1);
         const mx = Math.abs((lon - dx) * 60);
 
-        return `${this.$iApi.$i18n.n(
-            Math.abs(dy),
-            'number'
-        )}${degreeSymbol} ${this.$iApi.$i18n.n(my, 'number', {
+        return `${this.$iApi.$i18n.n(Math.abs(dy), 'number')}${degreeSymbol} ${this.$iApi.$i18n.n(my, 'number', {
             minimumIntegerDigits: 2,
             minimumFractionDigits: 5,
             maximumFractionDigits: 5
-        } as any)} ${this.$iApi.$i18n.t(
-            'map.coordinates.' + (lat > 0 ? 'north' : 'south')
-        )} | ${this.$iApi.$i18n.n(
+        } as any)} ${this.$iApi.$i18n.t('map.coordinates.' + (lat > 0 ? 'north' : 'south'))} | ${this.$iApi.$i18n.n(
             Math.abs(dx),
             'number'
         )}${degreeSymbol} ${this.$iApi.$i18n.n(mx, 'number', {
             minimumIntegerDigits: 2,
             minimumFractionDigits: 5,
             maximumFractionDigits: 5
-        } as any)} ${this.$iApi.$i18n.t(
-            'map.coordinates.' + (0 > lon ? 'west' : 'east')
-        )}`;
+        } as any)} ${this.$iApi.$i18n.t('map.coordinates.' + (0 > lon ? 'west' : 'east'))}`;
     }
 
     /**
@@ -485,10 +428,7 @@ export class MapCaptionAPI extends APIScope {
      */
     async formatLatLongDD(p: Point): Promise<string> {
         // get the lat long projection
-        const latLongPoint: any = await this.$iApi.geo.proj.projectGeometry(
-            4326,
-            p
-        );
+        const latLongPoint: any = await this.$iApi.geo.proj.projectGeometry(4326, p);
 
         const lat = this.wrapValue(latLongPoint.y, -90, 90);
         const lon = this.wrapValue(latLongPoint.x, -180, 180);
@@ -508,9 +448,7 @@ export class MapCaptionAPI extends APIScope {
             minimumIntegerDigits: 2,
             minimumFractionDigits: 5,
             maximumFractionDigits: 5
-        } as any)}${degreeSymbol} ${this.$iApi.$i18n.t(
-            'map.coordinates.' + (0 > lon ? 'west' : 'east')
-        )}`;
+        } as any)}${degreeSymbol} ${this.$iApi.$i18n.t('map.coordinates.' + (0 > lon ? 'west' : 'east'))}`;
     }
 
     /**
@@ -522,10 +460,7 @@ export class MapCaptionAPI extends APIScope {
      */
     async formatMercator(p: Point): Promise<string> {
         // project using Web-Mercator wkid
-        const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(
-            102100,
-            p
-        );
+        const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(102100, p);
 
         return `${this.$iApi.$i18n.n(
             Math.floor(projectedPoint.x),
@@ -542,20 +477,11 @@ export class MapCaptionAPI extends APIScope {
      */
     async formatLambert(p: Point): Promise<string> {
         // project using Lambert wkid
-        const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(
-            3978,
-            p
-        );
+        const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(3978, p);
 
-        return `${this.$iApi.$i18n.n(
-            Math.abs(Math.floor(projectedPoint.x)),
-            'number'
-        )} m ${this.$iApi.$i18n.t(
+        return `${this.$iApi.$i18n.n(Math.abs(Math.floor(projectedPoint.x)), 'number')} m ${this.$iApi.$i18n.t(
             'map.coordinates.' + (0 > projectedPoint.x ? 'west' : 'east')
-        )} | ${this.$iApi.$i18n.n(
-            Math.abs(Math.floor(projectedPoint.y)),
-            'number'
-        )} m ${this.$iApi.$i18n.t(
+        )} | ${this.$iApi.$i18n.n(Math.abs(Math.floor(projectedPoint.y)), 'number')} m ${this.$iApi.$i18n.t(
             'map.coordinates.' + (projectedPoint.y > 0 ? 'north' : 'south')
         )}`;
     }
@@ -569,10 +495,7 @@ export class MapCaptionAPI extends APIScope {
      */
     async formatUTM(p: Point): Promise<string> {
         // get the lat long point
-        const latLongPoint: any = await this.$iApi.geo.proj.projectGeometry(
-            4326,
-            p
-        );
+        const latLongPoint: any = await this.$iApi.geo.proj.projectGeometry(4326, p);
         const lat = this.wrapValue(latLongPoint.y, -90, 90);
         const lon = this.wrapValue(latLongPoint.x, -180, 180);
 
@@ -580,21 +503,14 @@ export class MapCaptionAPI extends APIScope {
         const zone = Math.ceil((lon + 180) / 6);
 
         // project the point using the zone's utm projection
-        const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(
-            parseInt('326' + zone),
-            p
-        );
+        const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(parseInt('326' + zone), p);
 
         return `${this.$iApi.$i18n.n(zone, 'number', {
             minimumIntegerDigits: 2
-        } as any)} ${this.$iApi.$i18n.t(
-            'map.coordinates.' + (lat > 0 ? 'north' : 'south')
-        )} ${this.$iApi.$i18n.n(
+        } as any)} ${this.$iApi.$i18n.t('map.coordinates.' + (lat > 0 ? 'north' : 'south'))} ${this.$iApi.$i18n.n(
             Math.floor(projectedPoint.x),
             'number'
-        )} m${this.$iApi.$i18n.t(
-            'map.coordinates.east'
-        )} | ${this.$iApi.$i18n.n(
+        )} m${this.$iApi.$i18n.t('map.coordinates.east')} | ${this.$iApi.$i18n.n(
             Math.abs(Math.floor(projectedPoint.y)),
             'number'
         )} m${this.$iApi.$i18n.t('map.coordinates.north')}`;
@@ -609,14 +525,8 @@ export class MapCaptionAPI extends APIScope {
      */
     async formatBasemap(p: Point): Promise<string> {
         // project the point using the basemaps spatial reference
-        const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(
-            this.$iApi.geo.map.getSR(),
-            p
-        );
+        const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(this.$iApi.geo.map.getSR(), p);
 
-        return `${this.$iApi.$i18n.n(
-            projectedPoint.x,
-            'number'
-        )} | ${this.$iApi.$i18n.n(projectedPoint.y, 'number')}`;
+        return `${this.$iApi.$i18n.n(projectedPoint.x, 'number')} | ${this.$iApi.$i18n.n(projectedPoint.y, 'number')}`;
     }
 }

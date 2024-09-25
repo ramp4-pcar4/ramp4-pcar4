@@ -106,10 +106,7 @@ export class GeometryAPI {
      * @param {String | Number} [id] optional id for the result geometry
      * @returns {BaseGeometry} a RAMP API geometry
      */
-    geomEsriToRamp(
-        esriGeometry: EsriGeometry,
-        id?: number | string
-    ): BaseGeometry {
+    geomEsriToRamp(esriGeometry: EsriGeometry, id?: number | string): BaseGeometry {
         switch (esriGeometry.type) {
             case 'point':
                 return Point.fromESRI(<EsriPoint>esriGeometry, id);
@@ -129,9 +126,7 @@ export class GeometryAPI {
             case 'multipoint':
                 return MultiPoint.fromESRI(<EsriMultipoint>esriGeometry, id);
             default:
-                throw new Error(
-                    `Encountered unhandled geometry type ${esriGeometry.type}`
-                );
+                throw new Error(`Encountered unhandled geometry type ${esriGeometry.type}`);
         }
     }
 
@@ -142,42 +137,22 @@ export class GeometryAPI {
      * @param {String | Number} [id] optional id for the result geometry
      * @returns {BaseGeometry} a RAMP API geometry
      */
-    geomGeoJsonToRamp(
-        geoJsonGeometry: GeoJson.DirectGeometryObject,
-        id?: number | string
-    ): BaseGeometry {
+    geomGeoJsonToRamp(geoJsonGeometry: GeoJson.DirectGeometryObject, id?: number | string): BaseGeometry {
         switch (geoJsonGeometry.type) {
             case GeoJsonGeomType.POINT:
                 return Point.fromGeoJSON(<GeoJson.Point>geoJsonGeometry, id);
             case GeoJsonGeomType.LINESTRING:
-                return LineString.fromGeoJSON(
-                    <GeoJson.LineString>geoJsonGeometry,
-                    id
-                );
+                return LineString.fromGeoJSON(<GeoJson.LineString>geoJsonGeometry, id);
             case GeoJsonGeomType.POLYGON:
-                return Polygon.fromGeoJSON(
-                    <GeoJson.Polygon>geoJsonGeometry,
-                    id
-                );
+                return Polygon.fromGeoJSON(<GeoJson.Polygon>geoJsonGeometry, id);
             case GeoJsonGeomType.MULTIPOINT:
-                return MultiPoint.fromGeoJSON(
-                    <GeoJson.MultiPoint>geoJsonGeometry,
-                    id
-                );
+                return MultiPoint.fromGeoJSON(<GeoJson.MultiPoint>geoJsonGeometry, id);
             case GeoJsonGeomType.MULTILINESTRING:
-                return MultiLineString.fromGeoJSON(
-                    <GeoJson.MultiLineString>geoJsonGeometry,
-                    id
-                );
+                return MultiLineString.fromGeoJSON(<GeoJson.MultiLineString>geoJsonGeometry, id);
             case GeoJsonGeomType.MULTIPOLYGON:
-                return MultiPolygon.fromGeoJSON(
-                    <GeoJson.MultiPolygon>geoJsonGeometry,
-                    id
-                );
+                return MultiPolygon.fromGeoJSON(<GeoJson.MultiPolygon>geoJsonGeometry, id);
             default:
-                throw new Error(
-                    `Encountered unhandled geometry type ${geoJsonGeometry.type}`
-                );
+                throw new Error(`Encountered unhandled geometry type ${geoJsonGeometry.type}`);
         }
     }
 
@@ -206,9 +181,7 @@ export class GeometryAPI {
             properties: typescriptIsDumb
         };
 
-        Object.keys(rampGraphic.attributes).forEach(
-            k => (f.properties[k] = rampGraphic.attributes[k])
-        );
+        Object.keys(rampGraphic.attributes).forEach(k => (f.properties[k] = rampGraphic.attributes[k]));
 
         return f;
     }
@@ -220,23 +193,14 @@ export class GeometryAPI {
      * @param {number | string } [geomId] an id to apply to the geometry of the graphic
      * @returns {Graphic} a RAMP API Graphic
      */
-    graphicGeoJsonToRamp(
-        geoJsonFeature: any,
-        geomId?: number | string
-    ): Graphic {
+    graphicGeoJsonToRamp(geoJsonFeature: any, geomId?: number | string): Graphic {
         if (geoJsonFeature.type !== 'Feature') {
-            throw new Error(
-                'Expected input parameter of graphicGeoJsonToRamp to be a GeoJson feature'
-            );
+            throw new Error('Expected input parameter of graphicGeoJsonToRamp to be a GeoJson feature');
         }
 
         const geom = this.geomGeoJsonToRamp(geoJsonFeature.geometry, geomId);
         const attrib: any = {};
-        Object.keys(
-            geoJsonFeature.properties.forEach(
-                (k: any) => (attrib[k] = geoJsonFeature.properties[k])
-            )
-        );
+        Object.keys(geoJsonFeature.properties.forEach((k: any) => (attrib[k] = geoJsonFeature.properties[k])));
 
         // TODO we are just using default id for the graphic. do we want a second optional function
         //      param to set this as well? double optionals are messy. Caller can override the result.
@@ -260,9 +224,7 @@ export class GeometryAPI {
 
         gConf.geometry = this.geomRampToEsri(rampGraphic.geometry);
 
-        Object.keys(rampGraphic.attributes).forEach(
-            k => (gConf.attributes[k] = rampGraphic.attributes[k])
-        );
+        Object.keys(rampGraphic.attributes).forEach(k => (gConf.attributes[k] = rampGraphic.attributes[k]));
 
         if (rampGraphic.style) {
             // convert style to esri style
@@ -284,17 +246,13 @@ export class GeometryAPI {
         switch (esriSymbol.type) {
             case 'picture-marker':
             case 'simple-marker':
-                return PointStyle.fromESRI(
-                    <EsriSimpleMarkerSymbol | EsriPictureMarkerSymbol>esriSymbol
-                );
+                return PointStyle.fromESRI(<EsriSimpleMarkerSymbol | EsriPictureMarkerSymbol>esriSymbol);
             case 'simple-line':
                 return LineStyle.fromESRI(<EsriSimpleLineSymbol>esriSymbol);
             case 'simple-fill':
                 return PolygonStyle.fromESRI(<EsriSimpleFillSymbol>esriSymbol);
             default:
-                console.error(
-                    `Unsupported ESRI symbol type encountered: ${esriSymbol.type}`
-                );
+                console.error(`Unsupported ESRI symbol type encountered: ${esriSymbol.type}`);
 
                 // Should we hard error? Returning a point to a non-point requestor might be more chaotic.
                 return new PointStyle();
@@ -320,9 +278,7 @@ export class GeometryAPI {
             case 'esriGeometryEnvelope':
                 return GeometryType.EXTENT;
             default:
-                console.error(
-                    `Unrecognized server geometry type encountered: ${serverType}`
-                );
+                console.error(`Unrecognized server geometry type encountered: ${serverType}`);
                 return GeometryType.UNKNOWN;
         }
     }
@@ -344,17 +300,13 @@ export class GeometryAPI {
                 return GeometryType.MULTIPOINT;
             default:
                 // "multipatch" and "mesh" are valid values but we have no equivalent currently
-                console.error(
-                    `Unrecognized client geometry type encountered: ${clientType}`
-                );
+                console.error(`Unrecognized client geometry type encountered: ${clientType}`);
                 return GeometryType.UNKNOWN;
         }
     }
 
     // converts a geojson geometry type to an esri geometry type that can support it
-    geoJsonGeomTypeToEsriGeomType(
-        geoJsonGeomType: GeoJsonGeomType
-    ): 'point' | 'multipoint' | 'polyline' | 'polygon' {
+    geoJsonGeomTypeToEsriGeomType(geoJsonGeomType: GeoJsonGeomType): 'point' | 'multipoint' | 'polyline' | 'polygon' {
         switch (geoJsonGeomType) {
             case GeoJsonGeomType.POINT:
                 return 'point';
@@ -368,9 +320,7 @@ export class GeometryAPI {
                 return 'multipoint';
 
             default:
-                throw new Error(
-                    `Encountered unhandled geometry type ${geoJsonGeomType}`
-                );
+                throw new Error(`Encountered unhandled geometry type ${geoJsonGeomType}`);
         }
     }
 

@@ -43,21 +43,17 @@ const ICON_WIDTH = 32;
 const MIN_COLUMN_WIDTH = 350;
 const COLUMN_SPACING = 20;
 
-const DEFAULT_FONT =
-    'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif';
+const DEFAULT_FONT = 'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif';
 
 class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
     get config(): any {
-        const fixtureConfig: ExportConfig | undefined =
-            this.$iApi.fixture.get<ExportAPI>('export').config;
+        const fixtureConfig: ExportConfig | undefined = this.$iApi.fixture.get<ExportAPI>('export').config;
         return fixtureConfig?.legend;
     }
 
     async make(options: any): Promise<fabric.Group> {
         // filter out loading/errored, invisible, and cosmetic layers
-        const layers = this.$iApi.geo.layer
-            .allLayersOnMap()
-            .filter(layer => !layer.isCosmetic);
+        const layers = this.$iApi.geo.layer.allLayersOnMap().filter(layer => !layer.isCosmetic);
 
         if (layers.length === 0) {
             // return an empty group
@@ -73,17 +69,11 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
         );
 
         // calculate column width such that columns are even spaced across entire export width
-        const columnWidth =
-            (options.width - (columns - 1) * COLUMN_SPACING) / columns;
+        const columnWidth = (options.width - (columns - 1) * COLUMN_SPACING) / columns;
 
         let runningHeight = 0;
 
-        const segments = await Promise.all(
-            this._makeSegments(
-                layers as unknown as Array<LayerInstance>,
-                columnWidth
-            )
-        );
+        const segments = await Promise.all(this._makeSegments(layers as unknown as Array<LayerInstance>, columnWidth));
 
         // string all the graphic legend elements together adding margins between them
         const fbAllItems = segments
@@ -95,43 +85,31 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
                 segmentTitle.top = runningHeight;
                 runningHeight += segmentTitle.height! + SEGMENT_BOTTOM_MARGIN;
 
-                const allChunkItems = chunks.map(
-                    ({ title: chunkTitle, items: chunkItems }, chunkIndex) => {
-                        const result = [];
+                const allChunkItems = chunks.map(({ title: chunkTitle, items: chunkItems }, chunkIndex) => {
+                    const result = [];
 
-                        // if a single chunk shares the title with its parent segment, skip the chunk title
-                        if (
-                            chunkTitle &&
-                            !(
-                                chunks.length === 1 &&
-                                chunkTitle.text === segmentTitle.text
-                            )
-                        ) {
-                            if (chunkIndex > 0) {
-                                runningHeight += CHUNK_TOP_MARGIN;
-                            }
-
-                            chunkTitle.top = runningHeight;
-                            runningHeight +=
-                                chunkTitle.height! + CHUNK_BOTTOM_MARGIN;
-
-                            result.push(chunkTitle);
+                    // if a single chunk shares the title with its parent segment, skip the chunk title
+                    if (chunkTitle && !(chunks.length === 1 && chunkTitle.text === segmentTitle.text)) {
+                        if (chunkIndex > 0) {
+                            runningHeight += CHUNK_TOP_MARGIN;
                         }
 
-                        chunkItems.forEach(item => {
-                            item.top = runningHeight;
-                            runningHeight += item.height! + ITEM_MARGIN;
-                        });
+                        chunkTitle.top = runningHeight;
+                        runningHeight += chunkTitle.height! + CHUNK_BOTTOM_MARGIN;
 
-                        return [...result, ...chunkItems].filter(a => a);
+                        result.push(chunkTitle);
                     }
-                );
+
+                    chunkItems.forEach(item => {
+                        item.top = runningHeight;
+                        runningHeight += item.height! + ITEM_MARGIN;
+                    });
+
+                    return [...result, ...chunkItems].filter(a => a);
+                });
 
                 // create a group for each config layer
-                return new fabric.Group([
-                    segmentTitle,
-                    ...allChunkItems.flat()
-                ]);
+                return new fabric.Group([segmentTitle, ...allChunkItems.flat()]);
             })
             .flat();
 
@@ -150,37 +128,24 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
      * @returns {fabric.Group}
      * @memberof ExportLegendFixture
      */
-    private _makeColumns(
-        items: fabric.Group[],
-        columnWidth: number,
-        columns: number
-    ) {
+    private _makeColumns(items: fabric.Group[], columnWidth: number, columns: number) {
         let curColumn = 0;
         let curTop = 0;
         let accumLength = 0;
         // target column height is the total length of all items divided by number of columns
-        const targetHeight: number =
-            items[items.length - 1].aCoords!.bl.y / columns;
+        const targetHeight: number = items[items.length - 1].aCoords!.bl.y / columns;
 
         items.forEach((group, index) => {
-            const height: number =
-                index !== items.length - 1
-                    ? items[index + 1].top! - group.top!
-                    : group.height!;
+            const height: number = index !== items.length - 1 ? items[index + 1].top! - group.top! : group.height!;
 
             // reached end of column, try to evently split items
-            const columnFull: boolean =
-                accumLength > targetHeight * (curColumn + 1);
+            const columnFull: boolean = accumLength > targetHeight * (curColumn + 1);
             // don't allow column to go over target if layer is very long
             const longLayer: boolean = curTop !== 0 && height > targetHeight;
             // ensure there are no empty columns on the right
-            const fillColumns: boolean =
-                columns - curColumn > items.length - index;
+            const fillColumns: boolean = columns - curColumn > items.length - index;
 
-            if (
-                (columnFull || longLayer || fillColumns) &&
-                curColumn < columns
-            ) {
+            if ((columnFull || longLayer || fillColumns) && curColumn < columns) {
                 // move to next column
                 ++curColumn;
                 curTop = 0;
@@ -208,10 +173,7 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
      * @returns {Promise<Segment>[]}
      * @memberof ExportLegendFixture
      */
-    private _makeSegments(
-        layers: LayerInstance[],
-        segmentWidth: number
-    ): Promise<Segment>[] {
+    private _makeSegments(layers: LayerInstance[], segmentWidth: number): Promise<Segment>[] {
         return layers.map(async (layer: LayerInstance) => {
             const title = new fabric.Textbox(layer.name, {
                 fontSize: 24,
@@ -246,15 +208,10 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
      * @returns {Promise<SegmentChunk>[]}
      * @memberof ExportLegendFixture
      */
-    private _makeSegmentChunks(
-        ids: number[],
-        layer: LayerInstance,
-        segmentWidth: number
-    ): Promise<SegmentChunk>[] {
+    private _makeSegmentChunks(ids: number[], layer: LayerInstance, segmentWidth: number): Promise<SegmentChunk>[] {
         const rootLayer: LayerInstance = layer;
         return ids.map<Promise<SegmentChunk>>(async (idx: number) => {
-            const currLayer: LayerInstance | undefined =
-                idx === -1 ? rootLayer : rootLayer.getSublayer(idx);
+            const currLayer: LayerInstance | undefined = idx === -1 ? rootLayer : rootLayer.getSublayer(idx);
 
             if (!currLayer) {
                 // This should not happen, but if it does return an ERROR label
@@ -277,9 +234,7 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
                 width: segmentWidth
             });
 
-            const items = await Promise.all(
-                this._makeChunkItems(symbologyStack, segmentWidth)
-            );
+            const items = await Promise.all(this._makeChunkItems(symbologyStack, segmentWidth));
 
             return {
                 title,
@@ -296,14 +251,9 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
      * @returns {Promise<fabric.Group>[]}
      * @memberof ExportLegendFixture
      */
-    private _makeChunkItems(
-        symbologyStack: LegendSymbology[],
-        segmentWidth: number
-    ): Promise<fabric.Group>[] {
+    private _makeChunkItems(symbologyStack: LegendSymbology[], segmentWidth: number): Promise<fabric.Group>[] {
         return symbologyStack.map(async symbol => {
-            const fbSymbol = (
-                await promisify(fabric.loadSVGFromString)(symbol.svgcode)
-            )[0];
+            const fbSymbol = (await promisify(fabric.loadSVGFromString)(symbol.svgcode))[0];
 
             if (!symbol.esriStandard) {
                 // WMS legend
@@ -387,9 +337,7 @@ type Callback<A> = (args: A) => void;
  * @param fn A
  * @returns
  */
-const promisify = <T, A>(
-    fn: (args: T, cb: Callback<A>) => void
-): ((args: T) => Promise<A>) => {
+const promisify = <T, A>(fn: (args: T, cb: Callback<A>) => void): ((args: T) => Promise<A>) => {
     return (args: T) =>
         new Promise(resolve => {
             fn(args, callbackArgs => {

@@ -1,10 +1,5 @@
 import { markRaw } from 'vue';
-import {
-    Basemap,
-    CommonMapAPI,
-    GraphicLayer,
-    InstanceAPI
-} from '@/api/internal';
+import { Basemap, CommonMapAPI, GraphicLayer, InstanceAPI } from '@/api/internal';
 import { Graphic, LayerType, PolygonStyle } from '@/geo/api';
 import type { Extent, RampMapConfig } from '@/geo/api';
 import { EsriMapView } from '@/geo/esri';
@@ -39,13 +34,10 @@ export class OverviewMapAPI extends CommonMapAPI {
      */
     protected createMapView(basemap: string | Basemap): void {
         if (!basemap) {
-            throw new Error(
-                'Attempted to create overview map view without a basemap'
-            );
+            throw new Error('Attempted to create overview map view without a basemap');
         }
 
-        const bm: Basemap =
-            typeof basemap === 'string' ? this.findBasemap(basemap) : basemap;
+        const bm: Basemap = typeof basemap === 'string' ? this.findBasemap(basemap) : basemap;
 
         this.applyBasemap(bm);
 
@@ -65,10 +57,7 @@ export class OverviewMapAPI extends CommonMapAPI {
                     rotationEnabled: false
                 },
                 spatialReference: this._rampSR.toESRI(),
-                extent: this.$iApi.geo.map
-                    .getExtent()
-                    .toESRI()
-                    .expand(expandFactor) // use the expanded main map extent
+                extent: this.$iApi.geo.map.getExtent().toESRI().expand(expandFactor) // use the expanded main map extent
             })
         );
 
@@ -147,10 +136,7 @@ export class OverviewMapAPI extends CommonMapAPI {
             return;
         }
 
-        const overviewGraphic = new Graphic(
-            this.$iApi.geo.map.getExtent(),
-            'overview-graphic'
-        );
+        const overviewGraphic = new Graphic(this.$iApi.geo.map.getExtent(), 'overview-graphic');
 
         const borderColour = this.overviewmapStore.borderColour ?? '#FF0000';
         const borderWidth = this.overviewmapStore.borderWidth ?? 1;
@@ -158,9 +144,7 @@ export class OverviewMapAPI extends CommonMapAPI {
         const areaOpacity = this.overviewmapStore.areaOpacity ?? 0.25;
 
         // generate hex colour with alpha
-        const areaFill = `${areaColour}${Math.round(areaOpacity * 255).toString(
-            16
-        )}`;
+        const areaFill = `${areaColour}${Math.round(areaOpacity * 255).toString(16)}`;
 
         overviewGraphic.style = new PolygonStyle({
             fill: { colour: areaFill },
@@ -216,9 +200,7 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @protected
      */
     findBasemap(id: string): Basemap {
-        const bm: Basemap | undefined = this._basemapStore.find(
-            bms => bms.id === id
-        );
+        const bm: Basemap | undefined = this._basemapStore.find(bms => bms.id === id);
         if (bm) {
             return bm;
         } else {
@@ -226,9 +208,7 @@ export class OverviewMapAPI extends CommonMapAPI {
             const configStore = useConfigStore(this.$vApp.$pinia);
             const mainMapConfig: RampMapConfig = configStore.config.map;
             if (mainMapConfig) {
-                const bmConfig = mainMapConfig.basemaps.find(
-                    bm => bm.id === id
-                );
+                const bmConfig = mainMapConfig.basemaps.find(bm => bm.id === id);
                 if (bmConfig) {
                     return new Basemap(bmConfig);
                 }
@@ -260,8 +240,7 @@ export class OverviewMapAPI extends CommonMapAPI {
             ? this.findBasemap(this.getCurrentBasemapId()!)
             : undefined;
 
-        const differentSchema: boolean =
-            currBm?.tileSchemaId !== bm.tileSchemaId;
+        const differentSchema: boolean = currBm?.tileSchemaId !== bm.tileSchemaId;
 
         if (differentSchema) {
             this.destroyMapView();
@@ -292,9 +271,7 @@ export class OverviewMapAPI extends CommonMapAPI {
                 // check if drag hits graphic, if so set start extent
                 if (await this.cursorHitTest(esriDrag)) {
                     this.startExtent = markRaw(
-                        this.overviewGraphicLayer.getEsriGraphic(
-                            'overview-graphic'
-                        )!.geometry
+                        this.overviewGraphicLayer.getEsriGraphic('overview-graphic')!.geometry
                     ) as __esri.Extent;
                 }
             } else if (this.startExtent) {
@@ -304,20 +281,12 @@ export class OverviewMapAPI extends CommonMapAPI {
                     x: esriDrag.x,
                     y: esriDrag.y
                 });
-                const newExtent = this.startExtent
-                    .clone()
-                    .offset(pos.x - origin.x, pos.y - origin.y, 0);
-                this.overviewGraphicLayer.getEsriGraphic(
-                    'overview-graphic'
-                )!.geometry = newExtent;
+                const newExtent = this.startExtent.clone().offset(pos.x - origin.x, pos.y - origin.y, 0);
+                this.overviewGraphicLayer.getEsriGraphic('overview-graphic')!.geometry = newExtent;
 
                 if (esriDrag.action === 'end') {
                     // zoom main map once drag is done
-                    this.$iApi.geo.map.zoomMapTo(
-                        this.$iApi.geo.geom.geomEsriToRamp(newExtent),
-                        undefined,
-                        false
-                    );
+                    this.$iApi.geo.map.zoomMapTo(this.$iApi.geo.geom.geomEsriToRamp(newExtent), undefined, false);
                     this.startExtent = null;
                 }
             }
@@ -333,14 +302,9 @@ export class OverviewMapAPI extends CommonMapAPI {
     updateOverview(newExtent: Extent): Promise<void> {
         const expandFactor: number = this.overviewmapStore.expandFactor;
 
-        const zoomPromise = this.zoomMapTo(
-            newExtent.expand(expandFactor),
-            undefined,
-            false
-        );
+        const zoomPromise = this.zoomMapTo(newExtent.expand(expandFactor), undefined, false);
 
-        const graphic =
-            this.overviewGraphicLayer.getLocalGraphic('overview-graphic');
+        const graphic = this.overviewGraphicLayer.getLocalGraphic('overview-graphic');
 
         // Instead of directly changing graphic geometry, we need to remove graphic, change geometry, and re add graphic.
         // This is because of a glitch where changing the geometry directly sometimes causes multiple indicator rectangles
@@ -359,9 +323,7 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @param {MouseEvent} e
      * @returns {Promise<boolean>}
      */
-    async cursorHitTest(
-        e: MouseEvent | __esri.MapViewScreenPoint
-    ): Promise<boolean> {
+    async cursorHitTest(e: MouseEvent | __esri.MapViewScreenPoint): Promise<boolean> {
         const hitTestResult = await this.esriView!.hitTest(e);
         return hitTestResult.results.length > 0;
     }

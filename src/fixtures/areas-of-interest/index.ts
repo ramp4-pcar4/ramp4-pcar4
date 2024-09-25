@@ -13,9 +13,7 @@ class AreasOfInterestFixture extends AreasOfInterestAPI {
             {
                 'areas-of-interest': {
                     screens: {
-                        'areas-of-interest-screen': markRaw(
-                            AreasOfInterestScreenV
-                        )
+                        'areas-of-interest-screen': markRaw(AreasOfInterestScreenV)
                     },
                     style: {
                         width: '350px'
@@ -49,9 +47,7 @@ class AreasOfInterestFixture extends AreasOfInterestAPI {
 
             this.$iApi.panel.remove('areas-of-interest');
 
-            const areasOfInterestStore = useAreasOfInterestStore(
-                this.$vApp.$pinia
-            );
+            const areasOfInterestStore = useAreasOfInterestStore(this.$vApp.$pinia);
             areasOfInterestStore.$reset();
         };
     }

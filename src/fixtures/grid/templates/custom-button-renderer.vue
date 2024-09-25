@@ -26,17 +26,11 @@ const isButtonVisible = computed<boolean>(() => {
     let data = Object.assign({}, props.params.data);
 
     // Find the layer to determine whether this is a map layer or not.
-    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
-        data['rvUid']
-    )!;
+    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(data['rvUid'])!;
     const visibility = props.params.config.displayOn;
 
     // Determine whether this button should be visible. If the visibility is set to data only, don't display if this is a map layer.
-    if (
-        !layer ||
-        (visibility === 'geo' && !layer.mapLayer) ||
-        (visibility === 'data' && layer.mapLayer)
-    ) {
+    if (!layer || (visibility === 'geo' && !layer.mapLayer) || (visibility === 'data' && layer.mapLayer)) {
         return false;
     }
 
@@ -46,16 +40,10 @@ const isButtonVisible = computed<boolean>(() => {
 const onButtonClick = () => {
     let data = Object.assign({}, props.params.data);
 
-    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(
-        data['rvUid']
-    )!;
-    const oidPair = props.params.layerCols[layer.id].find(
-        (pair: AttributeMapPair) => pair.origAttr === layer.oidField
-    );
+    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(data['rvUid'])!;
+    const oidPair = props.params.layerCols[layer.id].find((pair: AttributeMapPair) => pair.origAttr === layer.oidField);
 
-    const oid = oidPair.mappedAttr
-        ? data[oidPair.mappedAttr]
-        : data[oidPair.origAttr];
+    const oid = oidPair.mappedAttr ? data[oidPair.mappedAttr] : data[oidPair.origAttr];
 
     layer.getGraphic(oid, { getAttribs: true }).then(g => {
         iApi.event.emit(props.params.config.actionEvent, {
@@ -84,14 +72,11 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-    props.params.eGridCell.removeEventListener(
-        'keydown',
-        (e: KeyboardEvent) => {
-            if (e.key === 'Enter') {
-                onButtonClick();
-            }
+    props.params.eGridCell.removeEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            onButtonClick();
         }
-    );
+    });
 
     props.params.eGridCell.removeEventListener('focus', () => {
         (el.value as any)._tippy.show();

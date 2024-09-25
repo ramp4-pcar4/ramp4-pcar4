@@ -3,15 +3,10 @@
         <div v-show="isErrorGrid">
             <p class="pl-8">{{ t('grid.splash.error') }}</p>
         </div>
-        <div
-            v-show="isLoadingGrid && !isErrorGrid"
-            class="flex flex-col justify-center items-center h-full"
-        >
+        <div v-show="isLoadingGrid && !isErrorGrid" class="flex flex-col justify-center items-center h-full">
             <!-- show loading animation if loading -->
             <div class="flex flex-row">
-                <span class="font-bold text-2xl">{{
-                    loadedRecordCount.reduce((sum, count) => sum + count, 0)
-                }}</span>
+                <span class="font-bold text-2xl">{{ loadedRecordCount.reduce((sum, count) => sum + count, 0) }}</span>
                 <svg class="stroke-black stroke-1" height="50" width="25">
                     <line x1="0" y1="50" x2="25" y2="0"></line>
                 </svg>
@@ -19,8 +14,7 @@
             </div>
             <div class="my-20">
                 <span class="text-sm">{{
-                    loadedRecordCount.reduce((sum, count) => sum + count, 0) <
-                    totalRecordCount
+                    loadedRecordCount.reduce((sum, count) => sum + count, 0) < totalRecordCount
                         ? t('grid.splash.loading')
                         : t('grid.splash.building')
                 }}</span>
@@ -38,16 +32,9 @@
         </div>
 
         <!-- render grid if loading is done -->
-        <div
-            v-show="!isLoadingGrid && !isErrorGrid"
-            class="flex flex-wrap gap-y-8 items-center pl-8 pb-8"
-        >
+        <div v-show="!isLoadingGrid && !isErrorGrid" class="flex flex-wrap gap-y-8 items-center pl-8 pb-8">
             <div class="flex flex-1 flex-col max-w-full mr-8">
-                <div
-                    v-show="gridTitle !== ''"
-                    class="w-full font-bold"
-                    v-truncate
-                >
+                <div v-show="gridTitle !== ''" class="w-full font-bold" v-truncate>
                     {{ gridTitle }}
                 </div>
 
@@ -55,9 +42,7 @@
                     {{
                         t('grid.filters.label.info', {
                             range:
-                                filterInfo.visibleRows !== 0
-                                    ? `${filterInfo.firstRow} - ${filterInfo.lastRow}`
-                                    : '0',
+                                filterInfo.visibleRows !== 0 ? `${filterInfo.firstRow} - ${filterInfo.lastRow}` : '0',
                             total: filterInfo.visibleRows
                         })
                     }}
@@ -72,10 +57,7 @@
 
             <div class="flex flex-1 grow-[1.4] items-center max-w-full">
                 <!-- show global search -->
-                <div
-                    class="flex flex-1 min-w-0 items-center pb-4 mr-8"
-                    v-show="config.state.search"
-                >
+                <div class="flex flex-1 min-w-0 items-center pb-4 mr-8" v-show="config.state.search">
                     <!-- global search bar -->
                     <input
                         @input="updateQuickSearch()"
@@ -188,16 +170,10 @@
                             href="javascript:;"
                             class="flex leading-snug items-center w-256"
                             :class="{
-                                hover:
-                                    filtersStatus !== 'disabled'
-                                        ? 'none'
-                                        : 'text-black',
+                                hover: filtersStatus !== 'disabled' ? 'none' : 'text-black',
                                 disabled: filtersStatus === 'disabled'
                             }"
-                            @click="
-                                filtersStatus !== 'disabled' &&
-                                    toggleFiltersToMap()
-                            "
+                            @click="filtersStatus !== 'disabled' && toggleFiltersToMap()"
                             role="button"
                             :aria-label="t('grid.label.filters.apply')"
                         >
@@ -217,15 +193,10 @@
                                     width="18"
                                     viewBox="0 0 24 24"
                                     class="inline float-right"
-                                    v-if="
-                                        filtersStatus !== 'disabled' &&
-                                        config.state.applyToMap
-                                    "
+                                    v-if="filtersStatus !== 'disabled' && config.state.applyToMap"
                                 >
                                     <g id="done">
-                                        <path
-                                            d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
-                                        />
+                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                                     </g>
                                 </svg>
                             </div>
@@ -257,9 +228,7 @@
                                     v-if="config.state.colFilter"
                                 >
                                     <g id="done">
-                                        <path
-                                            d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
-                                        />
+                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                                     </g>
                                 </svg>
                             </div>
@@ -269,16 +238,10 @@
                             href="javascript:;"
                             class="flex leading-snug items-center w-256"
                             :class="{
-                                hover:
-                                    filtersStatus !== 'disabled'
-                                        ? 'none'
-                                        : 'text-black',
+                                hover: filtersStatus !== 'disabled' ? 'none' : 'text-black',
                                 disabled: filtersStatus === 'disabled'
                             }"
-                            @click="
-                                filtersStatus !== 'disabled' &&
-                                    toggleFilterByExtent()
-                            "
+                            @click="filtersStatus !== 'disabled' && toggleFilterByExtent()"
                             role="button"
                             :aria-label="t('grid.filters.label.extent')"
                         >
@@ -298,15 +261,10 @@
                                     width="18"
                                     viewBox="0 0 24 24"
                                     class="inline float-right"
-                                    v-if="
-                                        filtersStatus !== 'disabled' &&
-                                        config.state.filterByExtent
-                                    "
+                                    v-if="filtersStatus !== 'disabled' && config.state.filterByExtent"
                                 >
                                     <g id="done">
-                                        <path
-                                            d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
-                                        />
+                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                                     </g>
                                 </svg>
                             </div>
@@ -340,17 +298,9 @@
                                 />
                             </svg>
                             {{ t('grid.label.pinColumns') }}
-                            <svg
-                                height="18"
-                                width="18"
-                                viewBox="0 0 24 24"
-                                class="inline float-right"
-                                v-if="pinned"
-                            >
+                            <svg height="18" width="18" viewBox="0 0 24 24" class="inline float-right" v-if="pinned">
                                 <g id="done">
-                                    <path
-                                        d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
-                                    />
+                                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                                 </g>
                             </svg>
                         </a>
@@ -387,9 +337,7 @@
             class="ag-theme-material flex-grow"
             enableCellTextSelection="true"
             accentedSort="true"
-            :localeText="
-                locale === 'en' ? AG_GRID_LOCALE_EN : AG_GRID_LOCALE_FR
-            "
+            :localeText="locale === 'en' ? AG_GRID_LOCALE_EN : AG_GRID_LOCALE_FR"
             :gridOptions="agGridOptions"
             :columnDefs="columnDefs"
             :rowData="rowData"
@@ -417,13 +365,7 @@ import {
     watch
 } from 'vue';
 
-import {
-    GlobalEvents,
-    InstanceAPI,
-    LayerInstance,
-    NotificationType,
-    PanelInstance
-} from '@/api/internal';
+import { GlobalEvents, InstanceAPI, LayerInstance, NotificationType, PanelInstance } from '@/api/internal';
 
 import { DefPromise } from '@/geo/api';
 
@@ -438,11 +380,7 @@ import { usePanelStore } from '@/stores/panel';
 import type { ActionButtonDefinition, GridConfig } from './store';
 import TableStateManager from './store/table-state-manager';
 import ColumnStateManager from './store/column-state-manager';
-import {
-    GridAccessibilityManager,
-    tabToNextCellHandler,
-    tabToNextHeaderHandler
-} from './accessibility';
+import { GridAccessibilityManager, tabToNextCellHandler, tabToNextHeaderHandler } from './accessibility';
 
 // custom filter templates
 import GridCustomNumberFilterV from './templates/custom-number-filter.vue';
@@ -460,10 +398,7 @@ import CellRendererV from './templates/cell-renderer.vue';
 import { CoreFilter, FieldType } from '@/geo/api';
 
 // grid locales
-import {
-    AG_GRID_LOCALE_EN,
-    AG_GRID_LOCALE_FR
-} from '@ag-grid-community/locale';
+import { AG_GRID_LOCALE_EN, AG_GRID_LOCALE_FR } from '@ag-grid-community/locale';
 
 import { debounce } from 'throttle-debounce';
 import type { RowNode } from 'ag-grid-community';
@@ -550,12 +485,7 @@ export interface SpecialColumnDefinition {
 }
 
 // these should match up with the `type` value returned by the attribute promise.
-const NUM_TYPES: string[] = [
-    FieldType.OID,
-    FieldType.DOUBLE,
-    FieldType.SINGLE,
-    FieldType.INTEGER
-];
+const NUM_TYPES: string[] = [FieldType.OID, FieldType.DOUBLE, FieldType.SINGLE, FieldType.INTEGER];
 
 const iApi = inject<InstanceAPI>('iApi')!;
 const gridStore = useGridStore();
@@ -598,9 +528,7 @@ const columnApi = ref<ColumnApi>(new ColumnApi());
 const columnDefs = ref<Array<any>>([]);
 const rowData = ref<Array<Attributes>>([]);
 const oidField = ref<string>('OBJECTID'); // this is just placeholder, will get overwritten below
-const gridAccessibilityManager = ref<GridAccessibilityManager | undefined>(
-    undefined
-);
+const gridAccessibilityManager = ref<GridAccessibilityManager | undefined>(undefined);
 const onCellKeyPress = GridAccessibilityManager.onCellKeyPress;
 const filterInfo = ref({ firstRow: 0, lastRow: 0, visibleRows: 0 });
 const filteredOids = ref<{ [uid: string]: Array<number> | undefined }>({});
@@ -639,17 +567,12 @@ const onGridReady = (params: any) => {
     }
 
     const addAriaLabels = () => {
-        const checkboxInputs = document.querySelectorAll(
-            '.ag-input-field-input.ag-checkbox-input'
-        );
+        const checkboxInputs = document.querySelectorAll('.ag-input-field-input.ag-checkbox-input');
         checkboxInputs.forEach((input, index) => {
             const allColumns = columnApi.value.getAllDisplayedColumns();
             const column = allColumns[index].getColDef();
 
-            input.setAttribute(
-                'aria-label',
-                column.headerName ?? t('grid.label.specialColumn')
-            );
+            input.setAttribute('aria-label', column.headerName ?? t('grid.label.specialColumn'));
         });
     };
 
@@ -660,47 +583,30 @@ const onGridReady = (params: any) => {
 
     // listen for layer filter and visibility events and update grid appropriately
     handlers.value.push(
-        iApi.event.on(
-            GlobalEvents.FILTER_CHANGE,
-            ({ uid, filterKey }: { uid: string; filterKey: string }) => {
-                if (
-                    filterKey !== CoreFilter.GRID &&
-                    uid &&
-                    gridLayers.value.map(layer => layer.uid).includes(uid)
-                ) {
-                    applyLayerFilters();
-                }
+        iApi.event.on(GlobalEvents.FILTER_CHANGE, ({ uid, filterKey }: { uid: string; filterKey: string }) => {
+            if (filterKey !== CoreFilter.GRID && uid && gridLayers.value.map(layer => layer.uid).includes(uid)) {
+                applyLayerFilters();
             }
-        )
+        })
     );
     handlers.value.push(
         iApi.event.on(
             GlobalEvents.LAYER_VISIBILITYCHANGE,
             ({ layer }: { visibility: boolean; layer: LayerInstance }) => {
-                if (
-                    layer.uid &&
-                    gridLayers.value.map(layer => layer.uid).includes(layer.uid)
-                ) {
+                if (layer.uid && gridLayers.value.map(layer => layer.uid).includes(layer.uid)) {
                     applyLayerFilters();
                 }
             }
         )
     );
     handlers.value.push(
-        iApi.event.on(
-            GlobalEvents.LAYER_RELOAD_END,
-            (reloadedLayer: LayerInstance) => {
-                reloadedLayer.loadPromise().then(() => {
-                    if (
-                        gridLayers.value
-                            .map(layer => layer.uid)
-                            .includes(reloadedLayer.uid)
-                    ) {
-                        applyLayerFilters();
-                    }
-                });
-            }
-        )
+        iApi.event.on(GlobalEvents.LAYER_RELOAD_END, (reloadedLayer: LayerInstance) => {
+            reloadedLayer.loadPromise().then(() => {
+                if (gridLayers.value.map(layer => layer.uid).includes(reloadedLayer.uid)) {
+                    applyLayerFilters();
+                }
+            });
+        })
     );
     handlers.value.push(
         iApi.event.on(GlobalEvents.CONFIG_CHANGE, () => {
@@ -721,18 +627,12 @@ const onGridReady = (params: any) => {
         )
     );
     handlers.value.push(
-        iApi.event.on(
-            GlobalEvents.LAYER_REMOVE,
-            (removedLayer: LayerInstance) => {
-                if (
-                    origLayerIds.value.includes(removedLayer.id) &&
-                    gridLayers.value.length !== 0
-                ) {
-                    // recreate grid on layer removal
-                    setUpColumns();
-                }
+        iApi.event.on(GlobalEvents.LAYER_REMOVE, (removedLayer: LayerInstance) => {
+            if (origLayerIds.value.includes(removedLayer.id) && gridLayers.value.length !== 0) {
+                // recreate grid on layer removal
+                setUpColumns();
             }
-        )
+        })
     );
     applyLayerFilters();
 };
@@ -821,10 +721,7 @@ const togglePinned = () => {
     pinned.value = !pinned.value;
 
     let cols = columnApi.value.getAllDisplayedColumns();
-    columnApi.value.setColumnsPinned(
-        cols.slice(1, 3),
-        pinned.value ? 'left' : ''
-    );
+    columnApi.value.setColumnsPinned(cols.slice(1, 3), pinned.value ? 'left' : '');
 };
 
 const exportData = () => {
@@ -838,8 +735,7 @@ const exportData = () => {
         suppressQuotes: true,
         processCellCallback: cell => {
             let cellType = cell.column.getColDef().cellRendererParams;
-            if (!cell.value || (cellType && cellType.type === 'number'))
-                return cell.value;
+            if (!cell.value || (cellType && cellType.type === 'number')) return cell.value;
             else if (cellType && cellType.type === 'date')
                 return `"${new Date(cell.value).toLocaleDateString('en-CA', {
                     timeZone: 'UTC',
@@ -855,15 +751,9 @@ const exportData = () => {
     });
 };
 
-const setUpDateFilter = (
-    colDef: ColumnDefinition,
-    state: TableStateManager
-) => {
+const setUpDateFilter = (colDef: ColumnDefinition, state: TableStateManager) => {
     colDef.floatingFilterComponent = 'dateFloatingFilter';
-    colDef.filterParams.comparator = function (
-        filterDate: any,
-        entryDate: any
-    ) {
+    colDef.filterParams.comparator = function (filterDate: any, entryDate: any) {
         let entry = new Date(entryDate);
 
         // We need to specifically compare the UTC year, month, and date because
@@ -896,11 +786,7 @@ const setUpDateFilter = (
     };
 };
 
-const setUpSelectorFilter = (
-    colDef: ColumnDefinition,
-    rowData: Attributes[],
-    state: TableStateManager
-) => {
+const setUpSelectorFilter = (colDef: ColumnDefinition, rowData: Attributes[], state: TableStateManager) => {
     colDef.floatingFilterComponent = 'selectorFloatingFilter';
     colDef.filterParams.inRangeInclusive = true;
     colDef.floatingFilterComponentParams = {
@@ -910,10 +796,7 @@ const setUpSelectorFilter = (
     };
 };
 
-const setUpNumberFilter = (
-    colDef: ColumnDefinition,
-    state: TableStateManager
-) => {
+const setUpNumberFilter = (colDef: ColumnDefinition, state: TableStateManager) => {
     colDef.floatingFilterComponent = 'numberFloatingFilter';
     colDef.filterParams.inRangeInclusive = true;
     colDef.floatingFilterComponentParams = {
@@ -922,10 +805,7 @@ const setUpNumberFilter = (
     };
 };
 
-const setUpTextFilter = (
-    colDef: ColumnDefinition,
-    state: TableStateManager
-) => {
+const setUpTextFilter = (colDef: ColumnDefinition, state: TableStateManager) => {
     colDef.floatingFilterComponent = 'textFloatingFilter';
     colDef.floatingFilterComponentParams = {
         suppressFilterButton: true,
@@ -938,9 +818,7 @@ const setUpTextFilter = (
     // default to regex filtering for text columns
     colDef.filterParams.textMatcher = function (params: any) {
         // treat * as a regular special character
-        const newFilterText = params.filterText
-            .replace(/\*/, '\\*')
-            .replace(/[()\[\]]/g, '\\$&');
+        const newFilterText = params.filterText.replace(/\*/, '\\*').replace(/[()\[\]]/g, '\\$&');
         // surround filter text with .* to match anything before and after
         const re = new RegExp(`^.*${newFilterText}.*`);
         return re.test(params.value);
@@ -1066,36 +944,33 @@ const setUpSpecialColumns = (
         }
 
         // Handle custom buttons.
-        buttonControls.forEach(
-            (buttonConfig: string | ActionButtonDefinition) => {
-                if (buttonConfig === 'zoom' || buttonConfig === 'details')
-                    return;
+        buttonControls.forEach((buttonConfig: string | ActionButtonDefinition) => {
+            if (buttonConfig === 'zoom' || buttonConfig === 'details') return;
 
-                let buttonDef = {
-                    sortable: false,
-                    pinned: mobileView.value ? '' : 'left',
-                    filter: false,
-                    lockPosition: true,
-                    isStatic: true,
-                    maxWidth: 42,
-                    cellStyle: () => {
-                        return {
-                            padding: '0px'
-                        };
-                    },
-                    cellRenderer: CustomButtonRendererV,
-                    cellRendererParams: {
-                        $iApi: iApi,
-                        t: t,
-                        layerCols: layerCols.value,
-                        config: buttonConfig
-                    },
-                    preventExport: true
-                };
+            let buttonDef = {
+                sortable: false,
+                pinned: mobileView.value ? '' : 'left',
+                filter: false,
+                lockPosition: true,
+                isStatic: true,
+                maxWidth: 42,
+                cellStyle: () => {
+                    return {
+                        padding: '0px'
+                    };
+                },
+                cellRenderer: CustomButtonRendererV,
+                cellRendererParams: {
+                    $iApi: iApi,
+                    t: t,
+                    layerCols: layerCols.value,
+                    config: buttonConfig
+                },
+                preventExport: true
+            };
 
-                colDef.push(buttonDef);
-            }
-        );
+            colDef.push(buttonDef);
+        });
     }
 
     // Set up the symbol column.
@@ -1107,8 +982,7 @@ const setUpSpecialColumns = (
             isStatic: true,
             maxWidth: 42,
             cellRenderer: (cell: any) => {
-                const layer: LayerInstance | undefined =
-                    iApi.geo.layer.getLayer(cell.data.rvUid);
+                const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(cell.data.rvUid);
                 if (layer === undefined) return;
                 const iconContainer = document.createElement('span');
                 const oid = cell.data[oidField.value];
@@ -1161,9 +1035,7 @@ const applyLayerFilters = async () => {
     const thisFilterDef = new DefPromise();
     // we make a copy so any filters that come after do not change our local array.
     // this array does not contain thisFilterDef.
-    const activeFilterPromises = filterQueue.value
-        .slice()
-        .map(d => d.getPromise());
+    const activeFilterPromises = filterQueue.value.slice().map(d => d.getPromise());
 
     // push our filter in so any requests after this are blocked by us
     filterQueue.value.push(thisFilterDef);
@@ -1179,9 +1051,7 @@ const applyLayerFilters = async () => {
                 await layer
                     .getFilterOIDs(
                         [CoreFilter.GRID],
-                        config.value.state.filterByExtent
-                            ? iApi.geo.map.getExtent()
-                            : undefined
+                        config.value.state.filterByExtent ? iApi.geo.map.getExtent() : undefined
                     )
                     .then(oids => {
                         filteredOids.value[layer.uid] = oids;
@@ -1241,10 +1111,7 @@ const getFiltersQuery = (id: string) => {
             colStrs.push('1=2');
         }
     });
-    if (
-        config.value.state.searchFilter &&
-        config.value.state.searchFilter.length > 0
-    ) {
+    if (config.value.state.searchFilter && config.value.state.searchFilter.length > 0) {
         const globalSearchVal = globalSearchToSql(id) || '1=2';
         if (globalSearchVal.length > 0) {
             // do not push an empty global search
@@ -1283,10 +1150,7 @@ const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
                 let lastIdx = 0;
                 while (escMatch) {
                     // update all variables after finding an escaped special char, preserving all text except the backslash
-                    newVal =
-                        newVal +
-                        val.substr(lastIdx, escMatch.index - lastIdx) +
-                        escMatch[0].slice(-1);
+                    newVal = newVal + val.substr(lastIdx, escMatch.index - lastIdx) + escMatch[0].slice(-1);
                     lastIdx = escMatch.index + 2;
                     remVal = val.substr(escMatch.index + 2);
                     escMatch = escRegex.exec(val);
@@ -1299,12 +1163,8 @@ const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
                 newVal = newVal.replace(/_/g, 'ௌ_');
                 newVal = `*${newVal}`;
                 // if val contains a % or _, add ESCAPE 'ௌ' at the end of the query
-                let sqlWhere = `UPPER(${col}) LIKE \'${newVal
-                    .replace(/\*/g, '%')
-                    .toUpperCase()}%\'`;
-                return sqlWhere.includes('ௌ%') || sqlWhere.includes('ௌ_')
-                    ? `${sqlWhere} ESCAPE \'ௌ\'`
-                    : sqlWhere;
+                let sqlWhere = `UPPER(${col}) LIKE \'${newVal.replace(/\*/g, '%').toUpperCase()}%\'`;
+                return sqlWhere.includes('ௌ%') || sqlWhere.includes('ௌ_') ? `${sqlWhere} ESCAPE \'ௌ\'` : sqlWhere;
             }
             break;
         }
@@ -1313,15 +1173,9 @@ const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
             const dateFrom = new Date(colFilter.dateFrom ?? 0);
             const dateTo = new Date(colFilter.dateTo ?? 8640000000000000); // max date;
             const from = dateFrom
-                ? `${
-                      dateFrom.getMonth() + 1
-                  }/${dateFrom.getDate()}/${dateFrom.getFullYear()}`
+                ? `${dateFrom.getMonth() + 1}/${dateFrom.getDate()}/${dateFrom.getFullYear()}`
                 : undefined;
-            const to = dateTo
-                ? `${
-                      dateTo.getMonth() + 1
-                  }/${dateTo.getDate()}/${dateTo.getFullYear()}`
-                : undefined;
+            const to = dateTo ? `${dateTo.getMonth() + 1}/${dateTo.getDate()}/${dateTo.getFullYear()}` : undefined;
             switch (colFilter.type) {
                 // cases are functionally greaterThanOrEqual or lessThanOrEqual
                 case 'greaterThan':
@@ -1349,8 +1203,7 @@ const globalSearchToSql = (id: string): string => {
         .getAllDisplayedColumns()
         .filter(
             (column: any) =>
-                (column.colDef.filter === 'agTextColumnFilter' ||
-                    column.colDef.filter === 'agNumberColumnFilter') &&
+                (column.colDef.filter === 'agTextColumnFilter' || column.colDef.filter === 'agNumberColumnFilter') &&
                 getAttrPair(id, column.getColId())
         );
 
@@ -1361,14 +1214,8 @@ const globalSearchToSql = (id: string): string => {
         let rowSql = '';
         // each row must contain all of the split search values
         for (let searchVal of searchVals) {
-            const re = new RegExp(
-                `.*${searchVal.split(' ').join('.*').toUpperCase()}`
-            );
-            const filterVal = `%${searchVal
-                .replace(/\*/g, '%')
-                .split(' ')
-                .join('%')
-                .toUpperCase()}`;
+            const re = new RegExp(`.*${searchVal.split(' ').join('.*').toUpperCase()}`);
+            const filterVal = `%${searchVal.replace(/\*/g, '%').split(' ').join('%').toUpperCase()}`;
             // if any column data matches the search val in regex form, set foundVal to true and proceed to next search term
             let foundVal = false;
             for (let column of columns) {
@@ -1382,42 +1229,22 @@ const globalSearchToSql = (id: string): string => {
                 }
                 // process global search sql independently for text and number columnns
                 else if (colDef.filter === 'agTextColumnFilter') {
-                    const cellData =
-                        row.data[colId] === null
-                            ? null
-                            : row.data[colId].toString();
+                    const cellData = row.data[colId] === null ? null : row.data[colId].toString();
                     if (cellData !== null && re.test(cellData.toUpperCase())) {
                         rowSql
-                            ? (rowSql = rowSql.concat(
-                                  ' AND ',
-                                  `(UPPER(${origColId}) LIKE \'${filterVal}%\')`
-                              ))
-                            : (rowSql = rowSql.concat(
-                                  '(',
-                                  `(UPPER(${origColId}) LIKE \'${filterVal}%\')`
-                              ));
+                            ? (rowSql = rowSql.concat(' AND ', `(UPPER(${origColId}) LIKE \'${filterVal}%\')`))
+                            : (rowSql = rowSql.concat('(', `(UPPER(${origColId}) LIKE \'${filterVal}%\')`));
                         // if we have already stored the current sql break from loop
-                        filteredColumns.includes(rowSql + ')')
-                            ? (foundVal = false)
-                            : (foundVal = true);
+                        filteredColumns.includes(rowSql + ')') ? (foundVal = false) : (foundVal = true);
                         break;
                     }
                 } else if (colDef.filter === 'agNumberColumnFilter') {
-                    const cellData =
-                        row.data[colId] === null ? null : row.data[colId];
+                    const cellData = row.data[colId] === null ? null : row.data[colId];
                     if (cellData !== null && re.test(cellData)) {
                         rowSql
-                            ? (rowSql = rowSql.concat(
-                                  ' AND ',
-                                  `(${origColId} = ${cellData})`
-                              ))
-                            : (rowSql = rowSql.concat(
-                                  '(',
-                                  `(${origColId} = ${cellData})`
-                              ));
-                        filteredColumns.includes(rowSql + ')')
-                            ? (foundVal = false)
-                            : (foundVal = true);
+                            ? (rowSql = rowSql.concat(' AND ', `(${origColId} = ${cellData})`))
+                            : (rowSql = rowSql.concat('(', `(${origColId} = ${cellData})`));
+                        filteredColumns.includes(rowSql + ')') ? (foundVal = false) : (foundVal = true);
                         break;
                     }
                 }
@@ -1437,16 +1264,7 @@ const globalSearchToSql = (id: string): string => {
 };
 
 const stopArrowKeyProp = (event: KeyboardEvent) => {
-    const arrowKeys = [
-        'ArrowDown',
-        'Down',
-        'ArrowLeft',
-        'Left',
-        'ArrowUp',
-        'Up',
-        'ArrowRight',
-        'Right'
-    ];
+    const arrowKeys = ['ArrowDown', 'Down', 'ArrowLeft', 'Left', 'ArrowUp', 'Up', 'ArrowRight', 'Right'];
     if (arrowKeys.includes(event.key)) {
         event.stopPropagation();
     }
@@ -1498,19 +1316,12 @@ const filtersStatus = computed<'disabled' | 'partial' | 'enabled'>(() => {
  * Determine if the current grid has at least one map layer in it
  */
 const hasMapLayers = computed<boolean>(() =>
-    gridLayers.value.some(
-        layer => layer.isLoaded && layer.supportsFeatures && layer.mapLayer
-    )
+    gridLayers.value.some(layer => layer.isLoaded && layer.supportsFeatures && layer.mapLayer)
 );
 
-const getAttrPair = (
-    id: string,
-    attr: string
-): AttributeMapPair | undefined => {
+const getAttrPair = (id: string, attr: string): AttributeMapPair | undefined => {
     // given an attribute name, returns the attribute and, if it exists, the mapped attribute in a layer
-    return layerCols.value[id].find(
-        layer => (layer.mappedAttr ?? layer.origAttr) === attr
-    );
+    return layerCols.value[id].find(layer => (layer.mappedAttr ?? layer.origAttr) === attr);
 };
 
 const setUpColumns = () => {
@@ -1524,16 +1335,11 @@ const setUpColumns = () => {
     }
 
     // get the currently loaded and total record count from layer
-    totalRecordCount.value = fancyLayers.reduce(
-        (count, { featureCount }) => count + featureCount,
-        0
-    );
+    totalRecordCount.value = fancyLayers.reduce((count, { featureCount }) => count + featureCount, 0);
 
     loadedRecordCount.value = new Array(gridLayers.value.length).fill(0);
 
-    fancyLayers.forEach(
-        (fl, idx) => (loadedRecordCount.value[idx] += fl.downloadedAttributes())
-    );
+    fancyLayers.forEach((fl, idx) => (loadedRecordCount.value[idx] += fl.downloadedAttributes()));
 
     // watch the load count of the attrib loader
     fancyLayers.forEach((fl, idx) => {
@@ -1548,30 +1354,23 @@ const setUpColumns = () => {
     });
 
     Promise.all(fancyLayers.map(l => l.loadPromise())).then(() => {
-        const tableAttributePromises: Array<Promise<TabularAttributeSet>> =
-            fancyLayers.map(fl => {
-                return markRaw(fl)
-                    .getTabularAttributes()
-                    .then(tabularAttrSet => {
-                        const gridConfig = config?.value?.state?.state;
+        const tableAttributePromises: Array<Promise<TabularAttributeSet>> = fancyLayers.map(fl => {
+            return markRaw(fl)
+                .getTabularAttributes()
+                .then(tabularAttrSet => {
+                    const gridConfig = config?.value?.state?.state;
 
-                        // use selectedColumnNames to filter out unwanted columns, but only if the appropriate flag is set
-                        if (
-                            gridConfig?.columns &&
-                            gridConfig.columnMetadata?.exclusiveColumns
-                        ) {
-                            const selectedColumnNames = gridConfig.columns.map(
-                                (column: { field: any }) => column.field
-                            );
-                            tabularAttrSet.columns =
-                                tabularAttrSet.columns.filter(column =>
-                                    selectedColumnNames.includes(column.data)
-                                );
-                        }
+                    // use selectedColumnNames to filter out unwanted columns, but only if the appropriate flag is set
+                    if (gridConfig?.columns && gridConfig.columnMetadata?.exclusiveColumns) {
+                        const selectedColumnNames = gridConfig.columns.map((column: { field: any }) => column.field);
+                        tabularAttrSet.columns = tabularAttrSet.columns.filter(column =>
+                            selectedColumnNames.includes(column.data)
+                        );
+                    }
 
-                        return tabularAttrSet;
-                    });
-            });
+                    return tabularAttrSet;
+                });
+        });
 
         Promise.all(tableAttributePromises)
             .then((tableAttributes: Array<TabularAttributeSet>) => {
@@ -1595,10 +1394,7 @@ const setUpColumns = () => {
                     const id: string = fancyLayers[idx].id;
 
                     ta.columns.forEach(col => {
-                        if (
-                            config.value.fieldMap &&
-                            config.value.fieldMap[col.data]
-                        ) {
+                        if (config.value.fieldMap && config.value.fieldMap[col.data]) {
                             attrMap.push({
                                 origAttr: col.data,
                                 mappedAttr: config.value.fieldMap[col.data]
@@ -1612,11 +1408,7 @@ const setUpColumns = () => {
                             });
                         }
 
-                        if (
-                            !mergedTableAttrs.columns
-                                .map(c => c.data)
-                                .includes(col.data)
-                        ) {
+                        if (!mergedTableAttrs.columns.map(c => c.data).includes(col.data)) {
                             mergedTableAttrs.columns.push(col);
                         }
                     });
@@ -1624,13 +1416,8 @@ const setUpColumns = () => {
                     mergedTableAttrs.rows = mergedTableAttrs.rows.concat(
                         ta.rows.map(row => {
                             if (config.value.fieldMap) {
-                                for (const [oldAttr, newAttr] of Object.entries(
-                                    config.value.fieldMap
-                                )) {
-                                    if (
-                                        row[oldAttr] !== undefined &&
-                                        row[newAttr] === undefined
-                                    ) {
+                                for (const [oldAttr, newAttr] of Object.entries(config.value.fieldMap)) {
+                                    if (row[oldAttr] !== undefined && row[newAttr] === undefined) {
                                         row[newAttr] = row[oldAttr];
                                         delete row[oldAttr];
                                     }
@@ -1640,18 +1427,9 @@ const setUpColumns = () => {
                         })
                     );
                     for (let i = 0; i < mergedTableAttrs.rows.length; i++) {
-                        for (const [key] of Object.entries(
-                            mergedTableAttrs.rows[i]
-                        )) {
-                            if (
-                                iApi.ui.isPlainText(
-                                    mergedTableAttrs.rows[i][key]
-                                )
-                            ) {
-                                mergedTableAttrs.rows[i][key] =
-                                    iApi.ui.escapeHtml(
-                                        mergedTableAttrs.rows[i][key]
-                                    );
+                        for (const [key] of Object.entries(mergedTableAttrs.rows[i])) {
+                            if (iApi.ui.isPlainText(mergedTableAttrs.rows[i][key])) {
+                                mergedTableAttrs.rows[i][key] = iApi.ui.escapeHtml(mergedTableAttrs.rows[i][key]);
                             }
                         }
                     }
@@ -1662,17 +1440,14 @@ const setUpColumns = () => {
                             if (
                                 (!iApi.ui.exposeOids && field.type === 'oid') ||
                                 (!iApi.ui.exposeMeasurements &&
-                                    (field.name.toLowerCase() ===
-                                        'shape_length' ||
-                                        field.name.toLowerCase() ===
-                                            'shape_area'))
+                                    (field.name.toLowerCase() === 'shape_length' ||
+                                        field.name.toLowerCase() === 'shape_area'))
                             ) {
                                 systemCols.value.add(field.name);
                             }
                             return {
                                 name:
-                                    config.value.fieldMap &&
-                                    config.value.fieldMap[field.name]
+                                    config.value.fieldMap && config.value.fieldMap[field.name]
                                         ? config.value.fieldMap[field.name]
                                         : field.name,
                                 type: field.type,
@@ -1683,8 +1458,7 @@ const setUpColumns = () => {
                     );
 
                     mergedTableAttrs.oidField =
-                        config.value.fieldMap &&
-                        config.value.fieldMap[ta.oidField]
+                        config.value.fieldMap && config.value.fieldMap[ta.oidField]
                             ? config.value.fieldMap[ta.oidField]
                             : ta.oidField;
 
@@ -1697,25 +1471,14 @@ const setUpColumns = () => {
 
                 // Iterate through table columns and set up column definitions and column filter stuff.
                 // Also adds the `rvSymbol` and `rvInteractive` columns to the table.
-                [
-                    'rvRowIndex',
-                    'rvInteractive',
-                    'rvSymbol',
-                    ...mergedTableAttrs.columns
-                ].forEach((column: any) => {
-                    if (
-                        config.value.state?.columns[column.data] === undefined
-                    ) {
-                        config.value.state.columns[column.data] =
-                            new ColumnStateManager({
-                                field: column.data,
-                                title: column.title
-                            });
+                ['rvRowIndex', 'rvInteractive', 'rvSymbol', ...mergedTableAttrs.columns].forEach((column: any) => {
+                    if (config.value.state?.columns[column.data] === undefined) {
+                        config.value.state.columns[column.data] = new ColumnStateManager({
+                            field: column.data,
+                            title: column.title
+                        });
                     }
-                    if (
-                        (!iApi.ui.exposeOids || !iApi.ui.exposeMeasurements) &&
-                        systemCols.value.has(column.data)
-                    ) {
+                    if ((!iApi.ui.exposeOids || !iApi.ui.exposeMeasurements) && systemCols.value.has(column.data)) {
                         // hide system columns according to their flags
                         config.value.state.columns[column.data].visible = false;
                     }
@@ -1732,9 +1495,7 @@ const setUpColumns = () => {
                         sortable: true,
                         lockPosition: true,
                         filterParams: {},
-                        floatingFilter:
-                            config.value.state.colFilter &&
-                            colConfig.searchable,
+                        floatingFilter: config.value.state.colFilter && colConfig.searchable,
                         hide: !colConfig?.visible,
                         minWidth: colConfig.width,
                         maxWidth: colConfig.width ?? 400,
@@ -1747,9 +1508,7 @@ const setUpColumns = () => {
                             if (
                                 params.headerRowIndex === 0 &&
                                 (keyboardEvent.key === 'Enter' ||
-                                    (!(
-                                        keyboardEvent.target as HTMLElement
-                                    ).classList.contains('ag-header-cell') &&
+                                    (!(keyboardEvent.target as HTMLElement).classList.contains('ag-header-cell') &&
                                         keyboardEvent.key === 'Tab'))
                             ) {
                                 return true;
@@ -1759,20 +1518,10 @@ const setUpColumns = () => {
                     };
 
                     // retrieve the field info for the column
-                    let fieldInfo = mergedTableAttrs.fields.find(
-                        (field: any) => field.name === col.field
-                    );
+                    let fieldInfo = mergedTableAttrs.fields.find((field: any) => field.name === col.field);
 
-                    if (
-                        column === 'rvRowIndex' ||
-                        column === 'rvSymbol' ||
-                        column === 'rvInteractive'
-                    ) {
-                        setUpSpecialColumns(
-                            col,
-                            columnDefs.value,
-                            config.value.state
-                        );
+                    if (column === 'rvRowIndex' || column === 'rvSymbol' || column === 'rvInteractive') {
+                        setUpSpecialColumns(col, columnDefs.value, config.value.state);
                     } else {
                         // set up column filters according to their respective types
                         if (NUM_TYPES.indexOf(fieldInfo!.type) > -1) {
@@ -1780,9 +1529,7 @@ const setUpColumns = () => {
                             col.filter = 'agNumberColumnFilter';
                             col.autoHeight = true;
                             col.cellRenderer =
-                                colConfig.template === ''
-                                    ? CellRendererV
-                                    : iApi.component(colConfig.template);
+                                colConfig.template === '' ? CellRendererV : iApi.component(colConfig.template);
                             col.cellRendererParams = {
                                 type: 'number'
                             };
@@ -1792,29 +1539,21 @@ const setUpColumns = () => {
                             col.autoHeight = true;
                             col.minWidth = 400;
                             col.cellRenderer =
-                                colConfig.template === ''
-                                    ? CellRendererV
-                                    : iApi.component(colConfig.template);
+                                colConfig.template === '' ? CellRendererV : iApi.component(colConfig.template);
                             col.cellRendererParams = {
                                 type: 'date'
                             };
                         } else if (fieldInfo!.type === FieldType.STRING) {
                             if (col.isSelector) {
                                 // set up a selector filter instead of a text filter if the `isSelector` flag is true.
-                                setUpSelectorFilter(
-                                    col,
-                                    mergedTableAttrs.rows,
-                                    config.value.state
-                                );
+                                setUpSelectorFilter(col, mergedTableAttrs.rows, config.value.state);
                             } else {
                                 setUpTextFilter(col, config.value.state);
                             }
                             col.filter = 'agTextColumnFilter';
                             col.autoHeight = true;
                             col.cellRenderer =
-                                colConfig.template === ''
-                                    ? CellRendererV
-                                    : iApi.component(colConfig.template);
+                                colConfig.template === '' ? CellRendererV : iApi.component(colConfig.template);
                             col.cellRendererParams = {
                                 type: 'string'
                             };
@@ -1878,16 +1617,11 @@ onBeforeMount(() => {
         },
         onBodyScroll: () => {
             // prevent tooltips from leaving grid panel on scroll
-            [...document.querySelectorAll('[id^=tippy]')].forEach(
-                (element: any) => {
-                    if (
-                        element._tippy &&
-                        el.value?.contains(element._tippy.reference)
-                    ) {
-                        element._tippy.hide();
-                    }
+            [...document.querySelectorAll('[id^=tippy]')].forEach((element: any) => {
+                if (element._tippy && el.value?.contains(element._tippy.reference)) {
+                    element._tippy.hide();
                 }
-            );
+            });
         },
         onBodyScrollEnd: () => {
             updateRowInfo();
@@ -1898,18 +1632,13 @@ onBeforeMount(() => {
         tabToNextCell: tabToNextCellHandler,
         // tab vertically instead of horizontally
         tabToNextHeader: tabToNextHeaderHandler,
-        onModelUpdated: debounce(300, () =>
-            columnApi.value.autoSizeAllColumns()
-        )
+        onModelUpdated: debounce(300, () => columnApi.value.autoSizeAllColumns())
     };
 
     setUpColumns();
 
     if (filtersStatus.value === 'partial') {
-        iApi.notify.show(
-            NotificationType.WARNING,
-            iApi.$i18n.t(`layer.filterwarning`)
-        );
+        iApi.notify.show(NotificationType.WARNING, iApi.$i18n.t(`layer.filterwarning`));
     }
 
     // ag-grid does not update automatically when language/locale is changed,
@@ -1926,10 +1655,7 @@ onBeforeMount(() => {
     watchers.value.push(
         watch(filtersStatus, newStatus => {
             if (newStatus === 'partial') {
-                iApi.notify.show(
-                    NotificationType.WARNING,
-                    iApi.$i18n.t(`layer.filterwarning`)
-                );
+                iApi.notify.show(NotificationType.WARNING, iApi.$i18n.t(`layer.filterwarning`));
             }
         })
     );

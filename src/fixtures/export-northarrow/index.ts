@@ -6,13 +6,9 @@ import type { ExportAPI, ExportSubFixture } from '@/fixtures/export/api/export';
 import type { ExportConfig } from '../export/store';
 import { Point, SpatialReference } from '@/geo/api';
 
-class ExportNorthArrowFixture
-    extends FixtureInstance
-    implements ExportSubFixture
-{
+class ExportNorthArrowFixture extends FixtureInstance implements ExportSubFixture {
     get config(): any {
-        const fixtureConfig: ExportConfig | undefined =
-            this.$iApi.fixture.get<ExportAPI>('export').config;
+        const fixtureConfig: ExportConfig | undefined = this.$iApi.fixture.get<ExportAPI>('export').config;
         return fixtureConfig?.mapElements;
     }
 
@@ -43,12 +39,8 @@ class ExportNorthArrowFixture
             const arrowWidth = 50;
             // north value (set longitude to be half of Canada extent (141° W, 52° W))
             const pole: Point = new Point('pole', { x: -96, y: 90 });
-            const projPole = (await this.$iApi.geo.proj.projectGeometry(
-                sr,
-                pole
-            )) as Point;
-            const poleScreenPos =
-                this.$iApi.geo.map.mapPointToScreenPoint(projPole);
+            const projPole = (await this.$iApi.geo.proj.projectGeometry(sr, pole)) as Point;
+            const poleScreenPos = this.$iApi.geo.map.mapPointToScreenPoint(projPole);
             // get angle from bottom centre
             const bcScreenPos = {
                 screenX: innerShell.clientWidth / 2,
@@ -57,8 +49,7 @@ class ExportNorthArrowFixture
             // calculate angle
             angle =
                 (Math.atan(
-                    (poleScreenPos.screenX - bcScreenPos.screenX) /
-                        (bcScreenPos.screenY - poleScreenPos.screenY)
+                    (poleScreenPos.screenX - bcScreenPos.screenX) / (bcScreenPos.screenY - poleScreenPos.screenY)
                 ) *
                     180) /
                 Math.PI;
@@ -69,9 +60,7 @@ class ExportNorthArrowFixture
                 arrowWidth / 2;
 
             // Normalize the position to a scale of 0 to 100
-            const positionX = Math.round(
-                (arrowLeft / innerShell.clientWidth) * 100
-            );
+            const positionX = Math.round((arrowLeft / innerShell.clientWidth) * 100);
 
             // Ensure positionX is clamped between 0 and 100
             normalizedPositionX = Math.min(Math.max(positionX, 0), 100);
@@ -84,19 +73,13 @@ class ExportNorthArrowFixture
              **/
             calculateNorthArrowAngle = (normalizedPositionX: number) => {
                 if (normalizedPositionX < 0 || normalizedPositionX > 100) {
-                    throw new Error(
-                        'Normalized position must be between 0 and 100'
-                    );
+                    throw new Error('Normalized position must be between 0 and 100');
                 }
-                const screenPosX =
-                    (innerShell.clientWidth * normalizedPositionX) / 100;
+                const screenPosX = (innerShell.clientWidth * normalizedPositionX) / 100;
                 // We use half of arrowWidth as the X position because we assume the north arrow is always at the top of the screen and
                 // its center point is half the height.
                 return (
-                    Math.atan(
-                        (poleScreenPos.screenX - screenPosX) /
-                            (arrowWidth / 2 - poleScreenPos.screenY)
-                    ) *
+                    Math.atan((poleScreenPos.screenX - screenPosX) / (arrowWidth / 2 - poleScreenPos.screenY)) *
                     (180 / Math.PI)
                 );
             };
@@ -125,8 +108,7 @@ class ExportNorthArrowFixture
                 loadedObjects = new fabric.Group(group);
                 // Add custom properties to the group including the north arrow X position and the angle calculation function
                 (loadedObjects as CustomGroup).positionX = normalizedPositionX;
-                (loadedObjects as CustomGroup).getAngleFromPosition =
-                    calculateNorthArrowAngle;
+                (loadedObjects as CustomGroup).getAngleFromPosition = calculateNorthArrowAngle;
             },
             (_: any, object: any) => {
                 // the group is constructed here

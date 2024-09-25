@@ -34,9 +34,7 @@ export default class TableStateManager {
     parsecolumns() {
         if (this.state.columns) {
             this.state.columns.forEach((columnConfig: any) => {
-                this._columns[columnConfig.field] = new ColumnStateManager(
-                    columnConfig
-                );
+                this._columns[columnConfig.field] = new ColumnStateManager(columnConfig);
             });
         }
     }
@@ -68,11 +66,7 @@ export default class TableStateManager {
      * @param {string} range
      * @memberof TableStateManager
      */
-    setColumnFilterValue(
-        colDefField: any,
-        filterValue: string | number,
-        range?: string
-    ) {
+    setColumnFilterValue(colDefField: any, filterValue: string | number, range?: string) {
         let newFilterValue = filterValue;
         if (filterValue && typeof filterValue === 'string') {
             const escRegex = /[(!"#$%&'+,.\\/:;<=>?@[\]^`{|}~)]/g;
@@ -114,11 +108,7 @@ export default class TableStateManager {
 
     _checkFilters() {
         this._filtered = Object.values(this._columns).some(config => {
-            return (
-                config.filter.value !== '' ||
-                config.filter.min ||
-                config.filter.max
-            );
+            return config.filter.value !== '' || config.filter.min || config.filter.max;
         });
     }
 

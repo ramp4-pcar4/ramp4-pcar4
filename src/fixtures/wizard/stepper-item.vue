@@ -32,11 +32,7 @@
                     {{ title }}
                 </div>
                 <!-- step summary -->
-                <div
-                    v-show="!active()"
-                    class="pl-12 text-xs transition-opacity duration-1000 ease-out"
-                    v-truncate
-                >
+                <div v-show="!active()" class="pl-12 text-xs transition-opacity duration-1000 ease-out" v-truncate>
                     {{ summary }}
                 </div>
             </div>

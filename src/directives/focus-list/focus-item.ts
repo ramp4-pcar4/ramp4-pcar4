@@ -20,10 +20,7 @@ const ITEM_ATTR = 'focus-item';
  * You can show the tooltips of truncated text when this is focussed by supplying the value 'show-truncate' to the directive.
  */
 export const FocusItem: Directive = {
-    beforeMount(
-        el: HTMLElement,
-        binding: DirectiveBinding /*, vnode: Vue.VNode */
-    ) {
+    beforeMount(el: HTMLElement, binding: DirectiveBinding /*, vnode: Vue.VNode */) {
         if (!el.hasAttribute('id')) {
             el.setAttribute('id', generateID());
         }

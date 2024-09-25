@@ -8,11 +8,7 @@
     >
         <template #header>
             <div class="text-gray-400 w-full h-full hover:text-white p-8">
-                <svg
-                    class="fill-current w-24 h-24 m-auto"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                >
+                <svg class="fill-current w-24 h-24 m-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <g>
                         <path d="M0,0h24v24H0V0z" fill="none" />
                         <path

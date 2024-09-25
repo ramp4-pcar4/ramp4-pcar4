@@ -11,10 +11,7 @@
     </head>
     <body style="margin: 0">
         <!-- The page element that the RAMP instance will be created in -->
-        <div
-            id="ramp-instance"
-            style="height: 100vh; max-height: -webkit-fill-available"
-        ></div>
+        <div id="ramp-instance" style="height: 100vh; max-height: -webkit-fill-available"></div>
 
         <!-- Load the compiled RAMP script-->
         <script src="./ramp.browser.iife.js"></script>
@@ -43,9 +40,7 @@
                             lodSets: [
                                 {
                                     id: 'LOD_ESRI_World_AuxMerc_3857',
-                                    lods: RAMP.geo.defaultLODs(
-                                        RAMP.geo.defaultTileSchemas()[1]
-                                    )
+                                    lods: RAMP.geo.defaultLODs(RAMP.geo.defaultTileSchemas()[1])
                                 }
                             ],
                             tileSchemas: [
@@ -54,10 +49,7 @@
                                     name: 'Web Mercator Maps',
                                     extentSetId: 'EXT_ESRI_World_AuxMerc_3857',
                                     lodSetId: 'LOD_ESRI_World_AuxMerc_3857',
-                                    thumbnailTileUrls: [
-                                        '/tile/8/91/74',
-                                        '/tile/8/91/75'
-                                    ]
+                                    thumbnailTileUrls: ['/tile/8/91/74', '/tile/8/91/75']
                                 }
                             ],
                             basemaps: [
@@ -70,8 +62,7 @@
                                             url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                                         }
                                     ],
-                                    tileSchemaId:
-                                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                    tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                 }
                             ],
                             initialBasemapId: 'baseEsriWorld'
@@ -84,11 +75,7 @@
                 loadDefaultEvents: true,
                 startRequired: false
             };
-            const rInstance = RAMP.createInstance(
-                document.getElementById('ramp-instance'),
-                config,
-                options
-            );
+            const rInstance = RAMP.createInstance(document.getElementById('ramp-instance'), config, options);
         </script>
     </body>
 </html>
