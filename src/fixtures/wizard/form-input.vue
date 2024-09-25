@@ -142,6 +142,12 @@
                         :value="modelValue"
                         @input="handleServiceSelection(size, $event)"
                         :aria-label="props.ariaLabel"
+                        v-tippy="{
+                            content: t('select.items'),
+                            trigger: 'manual',
+                            placement: 'top-start'
+                        }"
+                        ref="wizardSelect"
                     >
                         <option
                             class="p-6"
@@ -208,7 +214,7 @@
 
 <script setup lang="ts">
 import type { InstanceAPI } from '@/api';
-import { inject, onBeforeUnmount, reactive, ref, watch } from 'vue';
+import { inject, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import type { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Treeselect from '@ramp4-pcar4/vue3-treeselect';
@@ -321,6 +327,7 @@ const optionLabel = ref('option-label');
 const resizeObserver = ref<ResizeObserver | undefined>(undefined);
 const treeWrapper = ref<HTMLElement | null>(null);
 const watchers = reactive<Array<Function>>([]);
+const wizardSelect = ref<Element>();
 
 if (props.defaultOption && props.modelValue === '' && props.options.length) {
     // regex to guess closest default value for lat/long fields
@@ -452,11 +459,35 @@ const addAriaLabel = () => {
     }
 };
 
+const blurEvent = () => {
+    (wizardSelect.value as any)._tippy.hide();
+};
+
+const keyupEvent = (e: Event) => {
+    const evt = e as KeyboardEvent;
+    if (
+        evt.key === 'Tab' &&
+        wizardSelect.value?.matches(':focus') &&
+        navigator.userAgent.includes('Firefox')
+    ) {
+        (wizardSelect.value as any)._tippy.show();
+    } else {
+        (wizardSelect.value as any)._tippy.hide();
+    }
+};
+
+onMounted(() => {
+    wizardSelect.value?.addEventListener('blur', blurEvent);
+    wizardSelect.value?.addEventListener('keyup', keyupEvent);
+});
+
 onBeforeUnmount(() => {
     // remove the resize observer
     resizeObserver.value!.disconnect();
-
     watchers.forEach(unwatch => unwatch());
+
+    wizardSelect.value?.removeEventListener('blur', blurEvent);
+    wizardSelect.value?.removeEventListener('keyup', keyupEvent);
 });
 </script>
 
