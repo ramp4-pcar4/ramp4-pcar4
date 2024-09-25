@@ -121,6 +121,8 @@ function testBuildConfig() {
                     enhancedAll: '/enhanced-all.html',
                     samples: '/index-samples.html',
                     all: '/index-all.html',
+                    qaSamples: '/qa-samples.html',
+                    qaAll: '/qa-all.html',
                     form: '/index-form.html',
                     teleport: '/index-teleport.html',
                     teleportWet: '/index-teleport-wet.html',
