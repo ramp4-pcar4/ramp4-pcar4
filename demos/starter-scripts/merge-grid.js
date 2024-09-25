@@ -33,10 +33,7 @@ let config = {
                         name: 'Lambert Maps',
                         extentSetId: 'EXT_NRCAN_Lambert_3978',
                         lodSetId: 'LOD_NRCAN_Lambert_3978',
-                        thumbnailTileUrls: [
-                            '/tile/8/285/268',
-                            '/tile/8/285/269'
-                        ],
+                        thumbnailTileUrls: ['/tile/8/285/268', '/tile/8/285/269'],
                         hasNorthPole: true
                     }
                 ],
@@ -54,8 +51,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     }
                 ],
                 initialBasemapId: 'baseNrCan'
@@ -113,35 +109,11 @@ let config = {
                     name: 'Tasty Eats',
                     layerType: 'data-json',
                     rawData: {
-                        fields: [
-                            'Name',
-                            'Description',
-                            'Category',
-                            'Group_',
-                            'Year_'
-                        ],
+                        fields: ['Name', 'Description', 'Category', 'Group_', 'Year_'],
                         data: [
-                            [
-                                'Grouse Burgers',
-                                'A very tasty burger.',
-                                'Burger',
-                                'Fast Food',
-                                '2019'
-                            ],
-                            [
-                                'Greasy Patties',
-                                'A very greasy burger.',
-                                'Burger',
-                                'Fast Food',
-                                '2022'
-                            ],
-                            [
-                                'Big Dirty Slice',
-                                'The best pizza in the world!',
-                                'Pizza',
-                                'Fast Food',
-                                '2023'
-                            ]
+                            ['Grouse Burgers', 'A very tasty burger.', 'Burger', 'Fast Food', '2019'],
+                            ['Greasy Patties', 'A very greasy burger.', 'Burger', 'Fast Food', '2022'],
+                            ['Big Dirty Slice', 'The best pizza in the world!', 'Pizza', 'Fast Food', '2023']
                         ]
                     }
                 },
@@ -163,8 +135,7 @@ let config = {
                                 children: [
                                     {
                                         infoType: 'text',
-                                        content:
-                                            'Represents a simple grid with a single layer.'
+                                        content: 'Represents a simple grid with a single layer.'
                                     },
                                     {
                                         name: 'NPRI',
@@ -228,8 +199,7 @@ let config = {
                             },
                             {
                                 infoType: 'title',
-                                content:
-                                    'Homogenous Merge Grid with Map Filtering',
+                                content: 'Homogenous Merge Grid with Map Filtering',
                                 controls: [],
                                 children: [
                                     {
@@ -261,8 +231,7 @@ let config = {
                                 children: [
                                     {
                                         infoType: 'text',
-                                        content:
-                                            'A merge grid where one layer has failed to load.'
+                                        content: 'A merge grid where one layer has failed to load.'
                                     },
                                     {
                                         name: 'Release Disposals',
@@ -343,11 +312,7 @@ let config = {
                                 },
                                 {
                                     field: 'Symbol',
-                                    sources: [
-                                        'NO2_Symbol',
-                                        'Ozone_Symbol',
-                                        'PM2_5_Symbol'
-                                    ]
+                                    sources: ['NO2_Symbol', 'Ozone_Symbol', 'PM2_5_Symbol']
                                 }
                             ]
                         },
@@ -388,11 +353,7 @@ let options = {
     startRequired: false
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 
 // rInstance.fixture.addDefaultFixtures().then(() => {
 //     rInstance.panel.open('legend');

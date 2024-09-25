@@ -65,16 +65,13 @@ class ExportFixture extends ExportAPI {
             { i18n: { messages } }
         );
 
-        const neededHandler = this.$iApi.event.on(
-            GlobalEvents.PANEL_OPENED,
-            async (panel: PanelInstance) => {
-                if (panel.id === 'export') {
-                    this.$iApi.event.off(neededHandler);
-                    await this.needed();
-                    (panel as any).exportMake();
-                }
+        const neededHandler = this.$iApi.event.on(GlobalEvents.PANEL_OPENED, async (panel: PanelInstance) => {
+            if (panel.id === 'export') {
+                this.$iApi.event.off(neededHandler);
+                await this.needed();
+                (panel as any).exportMake();
             }
-        );
+        });
 
         // parse export section of config and store in the config store
         this._parseConfig(this.config);
@@ -87,25 +84,13 @@ class ExportFixture extends ExportAPI {
             // console.log(`[fixture] ${this.id} removed`);
             unwatch();
             // remove sub fixtures
-            this.$iApi.fixture
-                .get<ExportTitleFixture>('export-title')
-                ?.remove();
+            this.$iApi.fixture.get<ExportTitleFixture>('export-title')?.remove();
             this.$iApi.fixture.get<ExportMapFixture>('export-map')?.remove();
-            this.$iApi.fixture
-                .get<ExportLegendFixture>('export-legend')
-                ?.remove();
-            this.$iApi.fixture
-                .get<ExportNorthArrowFixture>('export-northarrow')
-                ?.remove();
-            this.$iApi.fixture
-                .get<ExportScalebarFixture>('export-scalebar')
-                ?.remove();
-            this.$iApi.fixture
-                .get<ExportTimestampFixture>('export-timestamp')
-                ?.remove();
-            this.$iApi.fixture
-                .get<ExportFootnoteFixture>('export-footnote')
-                ?.remove();
+            this.$iApi.fixture.get<ExportLegendFixture>('export-legend')?.remove();
+            this.$iApi.fixture.get<ExportNorthArrowFixture>('export-northarrow')?.remove();
+            this.$iApi.fixture.get<ExportScalebarFixture>('export-scalebar')?.remove();
+            this.$iApi.fixture.get<ExportTimestampFixture>('export-timestamp')?.remove();
+            this.$iApi.fixture.get<ExportFootnoteFixture>('export-footnote')?.remove();
 
             if (this.$iApi.fixture.exists('appbar')) {
                 const appbarStore = useAppbarStore(this.$vApp.$pinia);

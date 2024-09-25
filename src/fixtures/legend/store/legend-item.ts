@@ -59,10 +59,7 @@ export class LegendItem extends APIScope {
         this._visibility = true; // default value, gets updated later
         this._exclusive = config.exclusive ?? false;
 
-        this._controls = config.controls?.slice() ?? [
-            LegendControl.Visibility,
-            LegendControl.Expand
-        ];
+        this._controls = config.controls?.slice() ?? [LegendControl.Visibility, LegendControl.Expand];
         this._disabledControls = config.disabledControls?.slice();
         this._lastVisible;
         this._visibleChildren = [];
@@ -147,9 +144,7 @@ export class LegendItem extends APIScope {
      * @return {boolean | undefined}
      */
     controlAvailable(control: LegendControl): boolean | undefined {
-        return this._disabledControls?.includes(control)
-            ? false
-            : this._controls?.includes(control);
+        return this._disabledControls?.includes(control) ? false : this._controls?.includes(control);
     }
 
     /**
@@ -159,9 +154,7 @@ export class LegendItem extends APIScope {
      */
     setControl(control: LegendControl, enable: boolean): void {
         if (enable && this._disabledControls?.includes(control)) {
-            this._disabledControls = this._disabledControls.filter(
-                item => item !== control
-            );
+            this._disabledControls = this._disabledControls.filter(item => item !== control);
             this._controls?.push(control);
         } else if (!enable && this._controls?.includes(control)) {
             this._controls = this._controls.filter(item => item !== control);
@@ -202,17 +195,11 @@ export class LegendItem extends APIScope {
                 // - if some children were previously visible, toggle on their visiblility
                 // - if no children were previsouly visible, toggle on all children visiblility
                 this._visibleChildren.length > 0
-                    ? this._visibleChildren.forEach(item =>
-                          item.toggleVisibility(true, false)
-                      )
-                    : this.children.forEach(item =>
-                          item.toggleVisibility(true, false)
-                      );
+                    ? this._visibleChildren.forEach(item => item.toggleVisibility(true, false))
+                    : this.children.forEach(item => item.toggleVisibility(true, false));
             } else {
                 // otherewise turn off visibility for all children
-                this.children.forEach(item =>
-                    item.toggleVisibility(false, false)
-                );
+                this.children.forEach(item => item.toggleVisibility(false, false));
             }
         } else {
             // for exclusive sets ensure that there is only one child item visible
@@ -221,18 +208,14 @@ export class LegendItem extends APIScope {
                 if (
                     this._lastVisible &&
                     (!(this._lastVisible instanceof LayerItem) ||
-                        this._lastVisible.layerControlAvailable(
-                            LayerControl.Visibility
-                        ))
+                        this._lastVisible.layerControlAvailable(LayerControl.Visibility))
                 ) {
                     this._lastVisible.toggleVisibility(true);
                 } else {
                     const itemToTurnOn = this.children.find(
                         child =>
                             !(child instanceof LayerItem) ||
-                            (
-                                child as unknown as LayerItem
-                            ).layerControlAvailable(LayerControl.Visibility)
+                            (child as unknown as LayerItem).layerControlAvailable(LayerControl.Visibility)
                     );
                     if (itemToTurnOn) {
                         itemToTurnOn.toggleVisibility(true);
@@ -261,10 +244,7 @@ export class LegendItem extends APIScope {
         } else if (this.parent?.exclusive) {
             // toggle not visible if item is part of a exclusive set with another item's visibility already toggled on
             const siblingVisible = this.parent.children.some(
-                item =>
-                    item.visibility &&
-                    item !== this &&
-                    item.type === LegendType.Item
+                item => item.visibility && item !== this && item.type === LegendType.Item
             );
             if (siblingVisible) {
                 this.toggleVisibility(false, false);
@@ -277,10 +257,7 @@ export class LegendItem extends APIScope {
      * @param {LegendItem} toggledChild given child legend item
      */
     checkVisibility(toggledChild: LegendItem) {
-        if (
-            this instanceof LayerItem &&
-            !this.layerControlAvailable(LayerControl.Visibility)
-        ) {
+        if (this instanceof LayerItem && !this.layerControlAvailable(LayerControl.Visibility)) {
             return;
         }
         if (!this.exclusive) {
@@ -289,24 +266,14 @@ export class LegendItem extends APIScope {
             if (this.children.some(item => item.visibility)) {
                 this._visibility = true;
                 // save all child items with visibility
-                this._visibleChildren = this.children.filter(
-                    item => item.visibility
-                );
-                if (
-                    this instanceof LayerItem &&
-                    this.layer &&
-                    this.layer.layerExists
-                ) {
+                this._visibleChildren = this.children.filter(item => item.visibility);
+                if (this instanceof LayerItem && this.layer && this.layer.layerExists) {
                     this.layer.visibility = true;
                 }
             } else {
                 this._visibility = false;
                 this._visibleChildren = [];
-                if (
-                    this instanceof LayerItem &&
-                    this.layer &&
-                    this.layer.layerExists
-                ) {
+                if (this instanceof LayerItem && this.layer && this.layer.layerExists) {
                     this.layer.visibility = false;
                 }
             }
@@ -319,21 +286,13 @@ export class LegendItem extends APIScope {
             });
             this._lastVisible = toggledChild;
             this._visibility = true;
-            if (
-                this instanceof LayerItem &&
-                this.layer &&
-                this.layer.layerExists
-            ) {
+            if (this instanceof LayerItem && this.layer && this.layer.layerExists) {
                 this.layer.visibility = true;
             }
         } else {
             // item in exclusive set is being turned off
             this._visibility = false;
-            if (
-                this instanceof LayerItem &&
-                this.layer &&
-                this.layer.layerExists
-            ) {
+            if (this instanceof LayerItem && this.layer && this.layer.layerExists) {
                 this.layer.visibility = false;
             }
             this._lastVisible = toggledChild;

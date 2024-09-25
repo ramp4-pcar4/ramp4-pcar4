@@ -44,9 +44,7 @@ const runPostTest = (instance, utils) => {
         `,
         methods: {
             createSection(title, id) {
-                var val = this.identifyData.loaded
-                    ? this.identifyData.data[id]
-                    : 'Loading...';
+                var val = this.identifyData.loaded ? this.identifyData.data[id] : 'Loading...';
 
                 return `
                 <div style="display: flex; flex-direction: column; padding-top: 5px;">

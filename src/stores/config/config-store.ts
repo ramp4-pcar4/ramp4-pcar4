@@ -22,12 +22,8 @@ export const useConfigStore = defineStore('config', () => {
     const registeredLangs = ref<{ [key: string]: string }>({});
 
     function getActiveConfig(lang: string): RampConfig {
-        if (
-            registeredConfigs.value[registeredLangs.value[lang]] === undefined
-        ) {
-            throw new Error(
-                'Unsupported language or no registered config exists for requested language'
-            );
+        if (registeredConfigs.value[registeredLangs.value[lang]] === undefined) {
+            throw new Error('Unsupported language or no registered config exists for requested language');
         }
         return registeredConfigs.value[registeredLangs.value[lang]];
     }
@@ -38,10 +34,7 @@ export const useConfigStore = defineStore('config', () => {
         // TODO: Verify this does not cause multi ramp problems.
         if (Array.isArray(config.value.layers)) {
             const layerStore = useLayerStore();
-            layerStore.layerConfigs = [
-                ...(layerStore.layerConfigs as any),
-                config.value.layers as any
-            ];
+            layerStore.layerConfigs = [...(layerStore.layerConfigs as any), config.value.layers as any];
         }
     }
 
@@ -62,9 +55,7 @@ export const useConfigStore = defineStore('config', () => {
             // register config for all available languages
             allLangs.forEach((lang: string) => {
                 // initially each language corresponds to first config by default
-                registeredLangs.value[lang] = Object.keys(
-                    registeredConfigs.value
-                )[0];
+                registeredLangs.value[lang] = Object.keys(registeredConfigs.value)[0];
             });
         }
     }

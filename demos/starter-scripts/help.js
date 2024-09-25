@@ -66,11 +66,7 @@ let options = {
     loadDefaultEvents: false
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 rInstance.fixture.addDefaultFixtures(['mapnav', 'help']).then(() => {
     rInstance.panel.open('help');
 });

@@ -3,11 +3,7 @@ import type { IdentifyItem, IdentifyResult } from '@/api';
 import type { Graphic, IdentifyResultFormat } from '@/geo/api';
 import { DetailsItemInstance, useDetailsStore } from '../store';
 
-import type {
-    DetailsConfig,
-    DetailsConfigItem,
-    DetailsItemSet
-} from '../store';
+import type { DetailsConfig, DetailsConfigItem, DetailsItemSet } from '../store';
 
 import type { HilightAPI } from '../../hilight/api/hilight';
 import { HilightMode } from '../../hilight/api/hilight-defs';
@@ -38,9 +34,7 @@ export class DetailsAPI extends FixtureInstance {
 
         // Check to see if each layer has a fixture config in the store.
         payload.forEach(p => {
-            const layer: LayerInstance | undefined = (this as any).$iApi
-                .useStore('layer')
-                .getLayerByUid(p.uid);
+            const layer: LayerInstance | undefined = (this as any).$iApi.useStore('layer').getLayerByUid(p.uid);
 
             this._loadDetailsConfig(layer);
         });
@@ -88,21 +82,13 @@ export class DetailsAPI extends FixtureInstance {
         }
 
         // feature ids are composed of the layer uid and feature object id
-        const layer: LayerInstance | undefined = this.$iApi.geo.layer.getLayer(
-            featureData.uid
-        );
+        const layer: LayerInstance | undefined = this.$iApi.geo.layer.getLayer(featureData.uid);
         const currFeatureId = `${featureData.uid}-${
             // see https://github.com/ramp4-pcar4/ramp4-pcar4/issues/1767 for the reasoning behind this
-            layer?.supportsFeatures
-                ? featureData.data[layer?.oidField ?? '']
-                : JSON.stringify(featureData.data)
+            layer?.supportsFeatures ? featureData.data[layer?.oidField ?? ''] : JSON.stringify(featureData.data)
         }`;
 
-        if (
-            panel.isOpen &&
-            currFeatureId === this.detailsStore.currentFeatureId &&
-            !(open === true)
-        ) {
+        if (panel.isOpen && currFeatureId === this.detailsStore.currentFeatureId && !(open === true)) {
             // panel is open, same request was fired at it, and not a force-open. Close it.
             panel.close();
             this.detailsStore.currentFeatureId = undefined;
@@ -122,12 +108,7 @@ export class DetailsAPI extends FixtureInstance {
         this._loadDetailsConfig(layer);
 
         const fakeResult: IdentifyResult = {
-            items: [
-                ReactiveIdentifyFactory.makeRawItem(
-                    featureData.format,
-                    featureData.data
-                )
-            ],
+            items: [ReactiveIdentifyFactory.makeRawItem(featureData.format, featureData.data)],
             uid: featureData.uid,
             layerId: featureData.layerId || layer?.id || 'error-not-found',
             loading: Promise.resolve(),
@@ -172,18 +153,13 @@ export class DetailsAPI extends FixtureInstance {
             });
         });
 
-        const detailsItems = detailsConfigItems.map(
-            (item: any) => new DetailsItemInstance(item)
-        );
+        const detailsItems = detailsConfigItems.map((item: any) => new DetailsItemInstance(item));
 
         // save the items in the store
-        this.detailsStore.properties = detailsItems.reduce<DetailsItemSet>(
-            (map, item) => {
-                map[item.id] = item;
-                return map;
-            },
-            {}
-        );
+        this.detailsStore.properties = detailsItems.reduce<DetailsItemSet>((map, item) => {
+            map[item.id] = item;
+            return map;
+        }, {});
 
         this._validateItems();
     }
@@ -216,14 +192,11 @@ export class DetailsAPI extends FixtureInstance {
      * @memberof DetailsAPI
      */
     _validateItems() {
-        Object.values<DetailsConfigItem>(this.detailsStore.properties).forEach(
-            item => {
-                if (item.template in this.$vApp.$options.components!) {
-                    this.detailsStore.properties[item.id].componentId =
-                        item.template;
-                }
+        Object.values<DetailsConfigItem>(this.detailsStore.properties).forEach(item => {
+            if (item.template in this.$vApp.$options.components!) {
+                this.detailsStore.properties[item.id].componentId = item.template;
             }
-        );
+        });
     }
 
     /**
@@ -231,10 +204,7 @@ export class DetailsAPI extends FixtureInstance {
      * @param items items to add
      * @param layerUid uid of layer the items belong to
      */
-    async hilightDetailsItems(
-        items: IdentifyItem | Array<IdentifyItem>,
-        layerUid: string
-    ) {
+    async hilightDetailsItems(items: IdentifyItem | Array<IdentifyItem>, layerUid: string) {
         // hilight all provided identify items for this layer
         const hItems = items instanceof Array ? items : [items];
         const hilightFix: HilightAPI = this.$iApi.fixture.get('hilight');
@@ -249,10 +219,7 @@ export class DetailsAPI extends FixtureInstance {
             const thisHighlight = Date.now();
             this.detailsStore.lastHilight = thisHighlight;
 
-            const graphics: Array<Graphic> = await this.getHilightGraphics(
-                hItems,
-                layerUid
-            );
+            const graphics: Array<Graphic> = await this.getHilightGraphics(hItems, layerUid);
 
             if (this.detailsStore.lastHilight === thisHighlight) {
                 // our request on this thread is still the most recent one. begin to add graphics to highlighter
@@ -289,10 +256,7 @@ export class DetailsAPI extends FixtureInstance {
      * @param {IdentifyItem | Array<IdentifyItem>} items items to reload
      * @param {string} layerUid uid of layer the items belong to
      */
-    async reloadDetailsHilight(
-        items: IdentifyItem | Array<IdentifyItem>,
-        layerUid: string
-    ) {
+    async reloadDetailsHilight(items: IdentifyItem | Array<IdentifyItem>, layerUid: string) {
         // DEV NOTE: this call is not being used anymore. But since part of public API, remains
         //           for respectful compatibility
 
@@ -310,10 +274,7 @@ export class DetailsAPI extends FixtureInstance {
         const hItems = items instanceof Array ? items : [items];
         const hilightFix: HilightAPI = this.$iApi.fixture.get('hilight');
         if (hilightFix) {
-            const graphics: Array<Graphic> = await this.getHilightGraphics(
-                hItems,
-                layerUid
-            );
+            const graphics: Array<Graphic> = await this.getHilightGraphics(hItems, layerUid);
             hilightFix.reloadHilight(graphics);
         }
     }
@@ -324,10 +285,7 @@ export class DetailsAPI extends FixtureInstance {
      * @param layerUid uid of layer the items belong to
      * @returns {Promise<Array<Graphic>>} resolves with array of graphics
      */
-    async getHilightGraphics(
-        items: Array<IdentifyItem>,
-        layerUid: string
-    ): Promise<Array<Graphic>> {
+    async getHilightGraphics(items: Array<IdentifyItem>, layerUid: string): Promise<Array<Graphic>> {
         const layer: LayerInstance = this.$iApi.geo.layer.getLayer(layerUid)!;
         const hilightFix: HilightAPI = this.$iApi.fixture.get('hilight');
         const gs: Array<Graphic> = [];
@@ -344,11 +302,7 @@ export class DetailsAPI extends FixtureInstance {
                         getAttribs: true,
                         getStyle: true
                     });
-                    g.id = hilightFix.constructGraphicKey(
-                        ORIGIN_DETAILS,
-                        layerUid,
-                        oid
-                    );
+                    g.id = hilightFix.constructGraphicKey(ORIGIN_DETAILS, layerUid, oid);
                     gs.push(g);
                 })
             );
@@ -363,11 +317,7 @@ export class DetailsAPI extends FixtureInstance {
      * @param {IdentifyItem | Array<IdentifyItem>} items The identify items to highlight. Only required if turning on
      * @param {string} layerUid the layer UID that owns the items. Only required if turning on
      */
-    onHilightToggle(
-        hilightOn: boolean,
-        items?: IdentifyItem | Array<IdentifyItem>,
-        layerUid?: string
-    ) {
+    onHilightToggle(hilightOn: boolean, items?: IdentifyItem | Array<IdentifyItem>, layerUid?: string) {
         // DEV NOTE: this call is not being used anymore. But since part of public API, remains
         //           for respectful compatibility
 

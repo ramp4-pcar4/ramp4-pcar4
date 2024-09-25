@@ -8,10 +8,7 @@
             v-tippy="{ trigger: 'manual', placement: 'top-start' }"
             ref="el"
         >
-            <template
-                v-for="(notification, index) in notificationStack"
-                :key="notification.message + index"
-            >
+            <template v-for="(notification, index) in notificationStack" :key="notification.message + index">
                 <div v-if="index > 0" class="w-full border-b border-black" />
                 <notification-item
                     :class="[notification.type]"
@@ -23,11 +20,7 @@
         <!-- No Notifications -->
         <div v-else class="flex flex-col items-center h-full">
             <span class="flex-grow" />
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                class="h-48 w-48 fill-current"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-48 w-48 fill-current">
                 <path d="M0 0h24v24H0z" fill="none" />
                 <path
                     d="M18 7l-1.41-1.41-6.34 6.34 1.41 1.41L18 7zm4.24-1.41L11.66 16.17 7.48 12l-1.41 1.41L11.66 19l12-12-1.42-1.41zM.41 13.41L6 19l1.41-1.41L1.83 12 .41 13.41z"

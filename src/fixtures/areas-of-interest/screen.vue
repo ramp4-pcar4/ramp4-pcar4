@@ -43,15 +43,11 @@ defineProps({
 
 const areasOfInterestStore = useAreasOfInterestStore();
 
-const areas = computed<AreaOfInterest[] | undefined>(
-    () => areasOfInterestStore.areas
-);
+const areas = computed<AreaOfInterest[] | undefined>(() => areasOfInterestStore.areas);
 let showThumbnail = ref(false);
 
 onMounted(() => {
-    showThumbnail.value = !!areas.value?.some(
-        (area: AreaOfInterest) => area.thumbnail
-    );
+    showThumbnail.value = !!areas.value?.some((area: AreaOfInterest) => area.thumbnail);
 });
 </script>
 

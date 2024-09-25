@@ -13,17 +13,12 @@ export class OverviewmapAPI extends FixtureInstance {
         const overviewmapStore = useOverviewmapStore(this.$vApp.$pinia);
 
         overviewmapStore.basemaps = overviewmapConfig?.basemaps || {};
-        overviewmapStore.mapConfig.basemaps = overviewmapConfig
-            ? Object.values(overviewmapConfig.basemaps)
-            : [];
-        overviewmapStore.startMinimized =
-            overviewmapConfig?.startMinimized ?? true;
+        overviewmapStore.mapConfig.basemaps = overviewmapConfig ? Object.values(overviewmapConfig.basemaps) : [];
+        overviewmapStore.startMinimized = overviewmapConfig?.startMinimized ?? true;
         overviewmapStore.expandFactor = overviewmapConfig?.expandFactor ?? 1.5;
-        overviewmapStore.borderColour =
-            overviewmapConfig?.borderColour ?? '#FF0000';
+        overviewmapStore.borderColour = overviewmapConfig?.borderColour ?? '#FF0000';
         overviewmapStore.borderWidth = overviewmapConfig?.borderWidth ?? 1;
-        overviewmapStore.areaColour =
-            overviewmapConfig?.areaColour ?? '#000000';
+        overviewmapStore.areaColour = overviewmapConfig?.areaColour ?? '#000000';
         overviewmapStore.areaOpacity = overviewmapConfig?.areaOpacity ?? 0.25;
     }
 

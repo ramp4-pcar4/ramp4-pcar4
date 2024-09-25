@@ -18,17 +18,11 @@ export class CsvLayer extends FileLayer {
         let csvData: string; // contents of the file, encoded in UTF8
         const startTime = Date.now();
 
-        if (
-            this.origRampConfig.rawData &&
-            typeof this.origRampConfig.rawData === 'string'
-        ) {
+        if (this.origRampConfig.rawData && typeof this.origRampConfig.rawData === 'string') {
             // csv data has been passed in as static string
             csvData = this.origRampConfig.rawData;
         } else if (this.origRampConfig.url) {
-            csvData = await this.$iApi.geo.layer.files.fetchFileData(
-                this.origRampConfig.url,
-                this.layerType
-            );
+            csvData = await this.$iApi.geo.layer.files.fetchFileData(this.origRampConfig.url, this.layerType);
         } else {
             throw new Error('Csv file config contains no raw data or url');
         }

@@ -21,9 +21,7 @@
             </div>
         </template>
         <template v-slot:default="scope">
-            <div
-                class="about-ramp-dropdown pointer-events-auto bg-white rounded w-256 h-50"
-            >
+            <div class="about-ramp-dropdown pointer-events-auto bg-white rounded w-256 h-50">
                 <div>
                     <h4 class="pb-8 border-b border-gray-600 mb-10">
                         {{ t('ramp.about') }}
@@ -37,9 +35,7 @@
                             <span class="font-bold cursor-text">
                                 {{ versionString }}
                             </span>
-                            <span class="text-sm cursor-text">
-                                [{{ versionHash }}]
-                            </span>
+                            <span class="text-sm cursor-text"> [{{ versionHash }}] </span>
                         </div>
                         <div>
                             <span class="text-sm cursor-text">

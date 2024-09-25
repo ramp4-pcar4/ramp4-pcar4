@@ -20,8 +20,7 @@ export class ScrollguardAPI extends FixtureInstance {
      * @memberof ScrollguardAPI
      */
     _parseConfig(scrollguardConfig?: ScrollguardConfig) {
-        useScrollguardStore(this.$vApp.$pinia).enabled =
-            scrollguardConfig?.enabled || false;
+        useScrollguardStore(this.$vApp.$pinia).enabled = scrollguardConfig?.enabled || false;
     }
 
     get config(): ScrollguardConfig | undefined {

@@ -1,11 +1,4 @@
-import {
-    BaseGeometry,
-    GeoJsonGeomType,
-    GeometryType,
-    Point,
-    Polygon,
-    SpatialReference
-} from '@/geo/api';
+import { BaseGeometry, GeoJsonGeomType, GeometryType, Point, Polygon, SpatialReference } from '@/geo/api';
 
 import type { RampExtentConfig, SrDef, IdDef } from '@/geo/api';
 import { EsriExtent } from '@/geo/esri';
@@ -28,12 +21,7 @@ export class Extent extends BaseGeometry {
      */
     // from two things that can be interpreted as points
     constructor(id: IdDef, minPoint: Point, maxPoint: Point, sr?: SrDef);
-    constructor(
-        id: IdDef,
-        minCoords: Array<number>,
-        maxCoords: Array<number>,
-        sr?: SrDef
-    );
+    constructor(id: IdDef, minCoords: Array<number>, maxCoords: Array<number>, sr?: SrDef);
     constructor(id: IdDef, minXY: object, maxXY: object, sr?: SrDef);
     constructor(id: IdDef, minAnyFormat: any, maxAnyFormat: any, sr?: SrDef);
     constructor(id: IdDef, minGeometry: any, maxGeometry: any, sr?: SrDef) {
@@ -69,10 +57,7 @@ export class Extent extends BaseGeometry {
     center(): Point {
         return new Point(
             this.id + '_centerPoint',
-            [
-                (this.xmax - this.xmin) / 2.0 + this.xmin,
-                (this.ymax - this.ymin) / 2.0 + this.ymin
-            ],
+            [(this.xmax - this.xmin) / 2.0 + this.xmin, (this.ymax - this.ymin) / 2.0 + this.ymin],
             this.sr,
             true
         );
@@ -80,10 +65,7 @@ export class Extent extends BaseGeometry {
 
     expand(factor: number): Extent {
         // need to clone this extent before expanding
-        return Extent.fromESRI(
-            this.toESRI().expand(factor),
-            `${this.id}-expanded`
-        );
+        return Extent.fromESRI(this.toESRI().expand(factor), `${this.id}-expanded`);
     }
 
     clone(): Extent {
@@ -106,9 +88,7 @@ export class Extent extends BaseGeometry {
                 this.ymax >= testPoint.y
             );
         } else {
-            console.error(
-                'Extent.contains(point) must have point in same spatial reference as the extent.'
-            );
+            console.error('Extent.contains(point) must have point in same spatial reference as the extent.');
             return false;
         }
     }
@@ -163,12 +143,7 @@ export class Extent extends BaseGeometry {
             // a param was empty/nothing
             return false;
         }
-        return (
-            this.xmin === e.xmin &&
-            this.ymin === e.ymin &&
-            this.xmax === e.xmax &&
-            this.ymax === e.ymax
-        );
+        return this.xmin === e.xmin && this.ymin === e.ymin && this.xmax === e.xmax && this.ymax === e.ymax;
     }
 
     static fromESRI(esriExtent: EsriExtent, id?: number | string): Extent {
@@ -200,14 +175,9 @@ export class Extent extends BaseGeometry {
     //      However the spec also supports bbox string
     //      Not sure which is best. Have a second set of to/from functions?
 
-    static fromGeoJSON(
-        geoJsonExtent: GeoJson.Polygon,
-        id?: number | string
-    ): Extent {
+    static fromGeoJSON(geoJsonExtent: GeoJson.Polygon, id?: number | string): Extent {
         if (geoJsonExtent.coordinates.length !== 5) {
-            throw new Error(
-                'Extent expected a four vertex polygon from GeoJSON'
-            );
+            throw new Error('Extent expected a four vertex polygon from GeoJSON');
         }
 
         // init min and max at start vertex, then update against other 3 verticies.
@@ -226,17 +196,10 @@ export class Extent extends BaseGeometry {
             });
         });
 
-        return new Extent(
-            id,
-            pMin,
-            pMax,
-            SpatialReference.fromGeoJSON(geoJsonExtent.crs)
-        );
+        return new Extent(id, pMin, pMax, SpatialReference.fromGeoJSON(geoJsonExtent.crs));
     }
 
     toGeoJSON(): GeoJson.Polygon {
-        return <GeoJson.Polygon>(
-            this.geoJsonFactory(GeoJsonGeomType.POLYGON, this.toPolygonArray())
-        );
+        return <GeoJson.Polygon>this.geoJsonFactory(GeoJsonGeomType.POLYGON, this.toPolygonArray());
     }
 }

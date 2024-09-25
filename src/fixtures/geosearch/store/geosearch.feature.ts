@@ -10,14 +10,10 @@ import type { Query } from './query';
 
 // geosearch query services
 // note "geolocation" is a service for looking up locations in canada. It is not a geolocator for the browser's location.
-const GEO_LOCATE_URL =
-    'https://geogratis.gc.ca/services/geolocation/@{language}/locate';
-const GEO_NAMES_URL =
-    'https://geogratis.gc.ca/services/geoname/@{language}/geonames.json';
-const GEO_PROVINCES_URL =
-    'https://geogratis.gc.ca/services/geoname/@{language}/codes/province.json';
-const GEO_TYPES_URL =
-    'https://geogratis.gc.ca/services/geoname/@{language}/codes/concise.json';
+const GEO_LOCATE_URL = 'https://geogratis.gc.ca/services/geolocation/@{language}/locate';
+const GEO_NAMES_URL = 'https://geogratis.gc.ca/services/geoname/@{language}/geonames.json';
+const GEO_PROVINCES_URL = 'https://geogratis.gc.ca/services/geoname/@{language}/codes/province.json';
+const GEO_TYPES_URL = 'https://geogratis.gc.ca/services/geoname/@{language}/codes/concise.json';
 
 // translates codes from json file to province abbreviations
 const CODE_TO_ABBR = {
@@ -62,13 +58,9 @@ export class GeoSearchUI {
 
         const services: any = uConfig?.serviceUrls;
         if (services) {
-            geoLocateUrl = services.geoLocation
-                ? services.geoLocation
-                : GEO_LOCATE_URL;
+            geoLocateUrl = services.geoLocation ? services.geoLocation : GEO_LOCATE_URL;
             geoNameUrl = services.geoNames ? services.geoNames : GEO_NAMES_URL;
-            geoProvinceUrl = services.geoProvince
-                ? services.geoProvince
-                : GEO_PROVINCES_URL;
+            geoProvinceUrl = services.geoProvince ? services.geoProvince : GEO_PROVINCES_URL;
             geoTypesUrl = services.geoTypes ? services.geoTypes : GEO_TYPES_URL;
         } else {
             // If the URLs are not provided, set them to be defaults.
@@ -93,9 +85,7 @@ export class GeoSearchUI {
         if (settings) {
             categories = settings.categories ? settings.categories : [];
             sortOrder = settings.sortOrder ? settings.sortOrder : [];
-            disabledSearchTypes = settings.disabledSearchTypes
-                ? settings.disabledSearchTypes
-                : [];
+            disabledSearchTypes = settings.disabledSearchTypes ? settings.disabledSearchTypes : [];
             maxResults = settings.maxResults > 0 ? settings.maxResults : 100; // > will fail on undefined, defaulting
             officialOnly = !!settings.officialOnly;
         } else {
@@ -159,8 +149,7 @@ export class GeoSearchUI {
                         : Math.min(
                               levDistance[i][j - 1] + 1, // delete
                               levDistance[i - 1][j] + 0.2, // insert
-                              levDistance[i - 1][j - 1] +
-                                  (query[j - 1] === result[i - 1] ? 0 : 1) // substitute
+                              levDistance[i - 1][j - 1] + (query[j - 1] === result[i - 1] ? 0 : 1) // substitute
                           );
             }
         }
@@ -187,131 +176,114 @@ export class GeoSearchUI {
      */
     query(q: string) {
         // run query based on search string input
-        return Q.make(this.config, q.toUpperCase()).onComplete.then(
-            (q: Query) => {
-                // any feature result requires a manual first entry
-                let featureResult: any[] = [];
-                if (q.featureResults.length > 0) {
-                    if (q.resultType === 'fsa') {
-                        // add first geosearch result as location of FSA itself
-                        featureResult = q.featureResults.map((fsa: any) => ({
-                            name: fsa.fsa,
-                            bbox: [
-                                fsa.LatLon.lon + 0.02,
-                                fsa.LatLon.lat - 0.02,
-                                fsa.LatLon.lon - 0.02,
-                                fsa.LatLon.lat + 0.02
-                            ],
-                            type: fsa.desc,
-                            position: [fsa.LatLon.lon, fsa.LatLon.lat],
-                            location: {
-                                latitude: fsa.LatLon.lat,
-                                longitude: fsa.LatLon.lon,
-                                province: this.findProvinceObj(fsa.province)
-                            },
-                            order: -1
-                        }));
-                    } else if (q.resultType === 'nts') {
-                        // add first geosearch result as location of NTS map number
-                        featureResult = q.featureResults.map((nts: any) => ({
-                            name: nts.nts,
-                            bbox: nts.bbox ?? [
-                                nts.LatLon.lon + 0.02,
-                                nts.LatLon.lat - 0.02,
-                                nts.LatLon.lon - 0.02,
-                                nts.LatLon.lat + 0.02
-                            ],
-                            type: nts.desc,
-                            position: [nts.LatLon.lon, nts.LatLon.lat],
-                            location: {
-                                city: nts.location,
-                                latitude: nts.LatLon.lat,
-                                longitude: nts.LatLon.lon
-                            },
-                            order: -1
-                        }));
-                    } else if (q.resultType === 'address') {
-                        featureResult = q.featureResults.map(
-                            (address: any) => ({
-                                name: address.name,
-                                bbox: [
-                                    address.LatLon.lon + 0.002,
-                                    address.LatLon.lat - 0.002,
-                                    address.LatLon.lon - 0.002,
-                                    address.LatLon.lat + 0.002
-                                ],
-                                type: address.desc,
-                                position: [
-                                    address.LatLon.lon,
-                                    address.LatLon.lat
-                                ],
-                                location: {
-                                    city: address.city,
-                                    latitude: address.LatLon.lat,
-                                    longitude: address.LatLon.lon,
-                                    province: this.findProvinceObj(
-                                        address.province
-                                    )
-                                },
-                                order:
-                                    this.config.sortOrder.indexOf('ADDR') >= 0
-                                        ? this.config.sortOrder.indexOf('ADDR')
-                                        : this.config.sortOrder.length
-                            })
-                        );
-                        if (this.config.sortOrder.length > 0) {
-                            // if custom sorting in place, apply lev only to street addresses
-                            featureResult = featureResult.sort(
-                                (a: any, b: any) => {
-                                    return this.levenshteinDistance(q, a.name) >
-                                        this.levenshteinDistance(q, b.name)
-                                        ? 1
-                                        : -1;
-                                }
-                            );
-                        }
+        return Q.make(this.config, q.toUpperCase()).onComplete.then((q: Query) => {
+            // any feature result requires a manual first entry
+            let featureResult: any[] = [];
+            if (q.featureResults.length > 0) {
+                if (q.resultType === 'fsa') {
+                    // add first geosearch result as location of FSA itself
+                    featureResult = q.featureResults.map((fsa: any) => ({
+                        name: fsa.fsa,
+                        bbox: [
+                            fsa.LatLon.lon + 0.02,
+                            fsa.LatLon.lat - 0.02,
+                            fsa.LatLon.lon - 0.02,
+                            fsa.LatLon.lat + 0.02
+                        ],
+                        type: fsa.desc,
+                        position: [fsa.LatLon.lon, fsa.LatLon.lat],
+                        location: {
+                            latitude: fsa.LatLon.lat,
+                            longitude: fsa.LatLon.lon,
+                            province: this.findProvinceObj(fsa.province)
+                        },
+                        order: -1
+                    }));
+                } else if (q.resultType === 'nts') {
+                    // add first geosearch result as location of NTS map number
+                    featureResult = q.featureResults.map((nts: any) => ({
+                        name: nts.nts,
+                        bbox: nts.bbox ?? [
+                            nts.LatLon.lon + 0.02,
+                            nts.LatLon.lat - 0.02,
+                            nts.LatLon.lon - 0.02,
+                            nts.LatLon.lat + 0.02
+                        ],
+                        type: nts.desc,
+                        position: [nts.LatLon.lon, nts.LatLon.lat],
+                        location: {
+                            city: nts.location,
+                            latitude: nts.LatLon.lat,
+                            longitude: nts.LatLon.lon
+                        },
+                        order: -1
+                    }));
+                } else if (q.resultType === 'address') {
+                    featureResult = q.featureResults.map((address: any) => ({
+                        name: address.name,
+                        bbox: [
+                            address.LatLon.lon + 0.002,
+                            address.LatLon.lat - 0.002,
+                            address.LatLon.lon - 0.002,
+                            address.LatLon.lat + 0.002
+                        ],
+                        type: address.desc,
+                        position: [address.LatLon.lon, address.LatLon.lat],
+                        location: {
+                            city: address.city,
+                            latitude: address.LatLon.lat,
+                            longitude: address.LatLon.lon,
+                            province: this.findProvinceObj(address.province)
+                        },
+                        order:
+                            this.config.sortOrder.indexOf('ADDR') >= 0
+                                ? this.config.sortOrder.indexOf('ADDR')
+                                : this.config.sortOrder.length
+                    }));
+                    if (this.config.sortOrder.length > 0) {
+                        // if custom sorting in place, apply lev only to street addresses
+                        featureResult = featureResult.sort((a: any, b: any) => {
+                            return this.levenshteinDistance(q, a.name) > this.levenshteinDistance(q, b.name) ? 1 : -1;
+                        });
                     }
-                } else if (q.resultType === 'latlong') {
-                    // add first geosearch result as location of lat/lon coordinates
-                    featureResult = [q.latLongResult];
-                    featureResult[0].order = -1;
                 }
-                // console.log('first feature result: ', featureResult);
-                // format returned query results appropriately to support zoom/extent functionality
-                const queryResult = q.results.map((item: any) => ({
-                    name: item.name,
-                    bbox: item.bbox,
-                    type: item.type,
-                    position: [item.LatLon.lon, item.LatLon.lat],
-                    location: {
-                        city: item.location,
-                        latitude: item.LatLon.lat,
-                        longitude: item.LatLon.lon,
-                        province: this.findProvinceObj(item.province)
-                    },
-                    order: item.order
-                }));
-
-                // console.log('remaining query results: ', queryResult);
-                return {
-                    results: featureResult
-                        .concat(queryResult)
-                        .slice(0, this.config.maxResults)
-                        .sort((a: any, b: any) => {
-                            // use custom sort order if provided, otherwise lev sort by default
-                            if (this.config.sortOrder.length > 0) {
-                                return a.order > b.order ? 1 : -1;
-                            } else {
-                                return this.levenshteinDistance(q, a.name) >
-                                    this.levenshteinDistance(q, b.name)
-                                    ? 1
-                                    : -1;
-                            }
-                        }),
-                    failedServs: q.failedServs
-                };
+            } else if (q.resultType === 'latlong') {
+                // add first geosearch result as location of lat/lon coordinates
+                featureResult = [q.latLongResult];
+                featureResult[0].order = -1;
             }
-        );
+            // console.log('first feature result: ', featureResult);
+            // format returned query results appropriately to support zoom/extent functionality
+            const queryResult = q.results.map((item: any) => ({
+                name: item.name,
+                bbox: item.bbox,
+                type: item.type,
+                position: [item.LatLon.lon, item.LatLon.lat],
+                location: {
+                    city: item.location,
+                    latitude: item.LatLon.lat,
+                    longitude: item.LatLon.lon,
+                    province: this.findProvinceObj(item.province)
+                },
+                order: item.order
+            }));
+
+            // console.log('remaining query results: ', queryResult);
+            return {
+                results: featureResult
+                    .concat(queryResult)
+                    .slice(0, this.config.maxResults)
+                    .sort((a: any, b: any) => {
+                        // use custom sort order if provided, otherwise lev sort by default
+                        if (this.config.sortOrder.length > 0) {
+                            return a.order > b.order ? 1 : -1;
+                        } else {
+                            return this.levenshteinDistance(q, a.name) > this.levenshteinDistance(q, b.name) ? 1 : -1;
+                        }
+                    }),
+                failedServs: q.failedServs
+            };
+        });
     }
 
     /**
