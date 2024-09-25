@@ -32,12 +32,11 @@
         <!-- paginator and list button for multiple features -->
         <div
             class="flex flex-col justify-between p-8 mb-8 bg-gray-100"
-            v-if="
-                layerExists && getLayerIdentifyItems().length > 1 && !showList
-            "
+            v-if="showPaginator"
         >
-            <div class="flex justify-between">
+            <div class="flex">
                 <button
+                    v-if="!showList"
                     type="button"
                     class="px-8 font-bold hover:bg-gray-200 focus:bg-gray-200"
                     :aria-label="t('details.item.see.list')"
@@ -45,14 +44,29 @@
                 >
                     {{ t('details.item.see.list') }}
                 </button>
-                <div class="flex bg-gray-200 py-8 items-center">
+                <div
+                    class="flex ml-auto bg-gray-200 py-8 items-center"
+                    :class="{ 'w-full': showList }"
+                >
                     <button
                         type="button"
-                        :content="t('details.item.previous.item')"
+                        :content="
+                            t(
+                                showList
+                                    ? 'details.items.previous'
+                                    : 'details.item.previous.item'
+                            )
+                        "
                         v-tippy="{ placement: 'top' }"
                         @click="advanceItemIndex(-1)"
                         class="mx-2 opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
-                        :aria-label="t('details.item.previous.item')"
+                        :aria-label="
+                            t(
+                                showList
+                                    ? 'details.items.previous'
+                                    : 'details.item.previous.item'
+                            )
+                        "
                         :disabled="currentIdx === 0"
                     >
                         <svg height="24" width="24" viewBox="0 0 23 23">
@@ -63,23 +77,48 @@
                             </g>
                         </svg>
                     </button>
-                    <span class="px-8">
+                    <span class="px-3 text-center flex-grow">
                         {{
-                            t('details.item.count', [
-                                currentIdx + 1,
-                                getLayerIdentifyItems().length
-                            ])
+                            showList
+                                ? t('details.items.range', [
+                                      currentIdx + 1,
+                                      Math.min(
+                                          endIdx,
+                                          getLayerIdentifyItems().length
+                                      ),
+                                      getLayerIdentifyItems().length
+                                  ])
+                                : t('details.item.count', [
+                                      currentIdx + 1,
+                                      getLayerIdentifyItems().length
+                                  ])
                         }}
                     </span>
                     <button
                         type="button"
-                        :content="t('details.item.next.item')"
+                        :content="
+                            t(
+                                showList
+                                    ? 'details.items.next'
+                                    : 'details.item.next.item'
+                            )
+                        "
                         v-tippy="{ placement: 'top' }"
                         @click="advanceItemIndex(1)"
                         class="mx-2 rotate-180 opacity-60 hover:opacity-90 disabled:opacity-30 disabled:cursor-default"
-                        :aria-label="t('details.item.next.item')"
+                        :aria-label="
+                            t(
+                                showList
+                                    ? 'details.items.next'
+                                    : 'details.item.next.item'
+                            )
+                        "
                         :disabled="
-                            currentIdx === getLayerIdentifyItems().length - 1
+                            (!showList &&
+                                currentIdx ===
+                                    getLayerIdentifyItems().length - 1) ||
+                            (showList &&
+                                endIdx >= getLayerIdentifyItems().length)
                         "
                     >
                         <svg height="24" width="24" viewBox="0 0 23 23">
@@ -100,9 +139,12 @@
                 <div v-if="showList" class="flex flex-col" v-focus-list>
                     <button
                         class="flex flex-grow truncate default-focus-style hover:bg-gray-200"
-                        v-for="(item, idx) in getLayerIdentifyItems()"
+                        v-for="(item, idx) in getLayerIdentifyItems().slice(
+                            currentIdx,
+                            endIdx
+                        )"
                         :key="idx"
-                        @click="clickListItem(idx)"
+                        @click="clickListItem(currentIdx + idx)"
                         v-focus-item
                     >
                         <ResultItem
@@ -205,10 +247,15 @@ const hilightToggle = ref<boolean>(true);
 const showList = ref<boolean>(false);
 
 /**
- * Index of the item we are displaying within the result's item array.
+ * Index of the item we are displaying within the result's item array
  * Persists in list view
  */
 const currentIdx = ref<number>(0);
+
+/**
+ * Number of items to display at once in list view
+ */
+const itemsPerPage = ref<number>(20);
 
 const handlers = ref<Array<string>>([]);
 const watchers = ref<Array<Function>>([]);
@@ -217,6 +264,7 @@ const activeGreedy = computed<number>(() => detailsStore.activeGreedy);
 const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(
     () => detailsStore.properties
 );
+const endIdx = computed<number>(() => currentIdx.value + itemsPerPage.value);
 
 /**
  * Return the LayerInstance that cooresponds with the UID provided in props.
@@ -241,6 +289,14 @@ const itemRequestTime = computed<Number | undefined>(() => {
     });
     return results?.requestTime;
 });
+
+const showPaginator = computed<boolean>(
+    () =>
+        layerExists.value &&
+        ((!showList.value && getLayerIdentifyItems().length > 1) ||
+            (showList.value &&
+                getLayerIdentifyItems().length > itemsPerPage.value))
+);
 
 const layerName = computed<string>(() => {
     const layer = getBoundLayer();
@@ -322,7 +378,11 @@ const initDetails = () => {
  * Advance the item index by direction (an integer)
  */
 const advanceItemIndex = (direction: number) => {
-    currentIdx.value += direction;
+    if (showList.value) {
+        currentIdx.value += direction * itemsPerPage.value;
+    } else {
+        currentIdx.value += direction;
+    }
 };
 
 /**
@@ -344,7 +404,10 @@ const updateHighlight = () => {
         if (showList.value) {
             // highlight entire list
             // TODO once pagination becomes a thing, this needs to just highlight what is on current page of the list.
-            detailsFixture.value.hilightDetailsItems(resultItems, props.uid);
+            detailsFixture.value.hilightDetailsItems(
+                resultItems.slice(currentIdx.value, endIdx.value),
+                props.uid
+            );
         } else {
             // highlight current item being displayed.
             // being extra careful just incase our index went beyond the array bounds
@@ -365,6 +428,8 @@ const updateHighlight = () => {
  */
 const clickShowList = () => {
     showList.value = true;
+    currentIdx.value =
+        Math.floor(currentIdx.value / itemsPerPage.value) * itemsPerPage.value;
     updateHighlight();
 };
 
@@ -438,7 +503,7 @@ onBeforeMount(() => {
     // Keep an eye to see if the currently selected identify item has been changed.
     watchers.value.push(
         watch(
-            currentIdentifyItem,
+            () => getLayerIdentifyItems(),
             () => {
                 // Re-initialize the details panel if the layer has changed.
                 initDetails();
