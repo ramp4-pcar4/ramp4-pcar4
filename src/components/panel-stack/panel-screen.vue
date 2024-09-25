@@ -68,7 +68,7 @@
 
         <div
             v-if="footer"
-            class="px-16 py-16 border-t border-gray-400 default-focus-style"
+            class="px-8 py-16 border-t border-gray-400 default-focus-style"
             v-focus-item
         >
             <slot name="footer"></slot>
