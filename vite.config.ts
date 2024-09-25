@@ -48,19 +48,22 @@ const baseConfig = {
     }
 } as Record<string, any>;
 
-function cdnBundleConfig() {
+function esInlineConfig() {
     return mergeConfig(baseConfig, {
         build: {
             cssMinify: true,
+            minify: true,
+            sourcemap: true,
             lib: {
-                fileName: (format: string) => `lib/ramp.browser.${format}.js`,
+                fileName: (format: string) =>
+                    `esInline/ramp.browser.${format}.js`,
                 formats: ['es', 'iife']
             },
             rollupOptions: {
                 output: {
                     assetFileNames: (assetInfo: any) => {
                         return assetInfo.name === 'style.css'
-                            ? 'lib/ramp.css'
+                            ? 'esInline/ramp.css'
                             : assetInfo.name;
                     }
                 }
@@ -69,14 +72,26 @@ function cdnBundleConfig() {
     });
 }
 
-function prodBundleConfig() {
+function esChunkConfig() {
     return mergeConfig(baseConfig, {
         build: {
+            outDir: `${distName}/esChunked`,
             minify: true,
+            sourcemap: true,
+            cssMinify: true,
             lib: {
-                fileName: (format: string) =>
-                    `lib/ramp.browser.${format}.prod.js`,
-                formats: ['es', 'iife']
+                fileName: `ramp`,
+                formats: ['es']
+            },
+            rollupOptions: {
+                output: {
+                    inlineDynamicImports: false,
+                    assetFileNames: (assetInfo: any) => {
+                        return assetInfo.name === 'style.css'
+                            ? 'ramp.css'
+                            : assetInfo.name;
+                    }
+                }
             }
         }
     });
@@ -90,7 +105,7 @@ function npmBundleConfig() {
     const config = mergeConfig(baseConfig, {
         build: {
             lib: {
-                fileName: 'lib/ramp.bundle.es',
+                fileName: 'esInline/ramp.bundle.es',
                 formats: ['es']
             },
             rollupOptions: {
@@ -141,10 +156,10 @@ export default defineConfig(viteConfig => {
     if (command === 'build') {
         if (mode === 'npm') {
             return npmBundleConfig();
-        } else if (mode === 'cdn') {
-            return cdnBundleConfig();
-        } else if (mode === 'prod') {
-            return prodBundleConfig();
+        } else if (mode === 'esChunk') {
+            return esChunkConfig();
+        } else if (mode === 'esInline') {
+            return esInlineConfig();
         } else {
             return testBuildConfig();
         }
