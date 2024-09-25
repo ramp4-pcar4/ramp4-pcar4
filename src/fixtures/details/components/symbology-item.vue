@@ -6,11 +6,7 @@
         :content="layerName()"
         v-tippy="{ placement: 'right', sticky: true }"
     >
-        <SymbologyStack
-            class="symbStack w-32 h-32 mr-10"
-            :layer="layer"
-            :result="result"
-        ></SymbologyStack>
+        <SymbologyStack class="symbStack w-32 h-32 mr-10" :layer="layer" :result="result"></SymbologyStack>
         <div class="symbologyLayerName truncate">
             {{ layerName() }}
         </div>
@@ -29,9 +25,7 @@ import { useDetailsStore } from '../store';
 import type { DetailsItemInstance } from '../store';
 
 const detailsStore = useDetailsStore();
-const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(
-    () => detailsStore.properties
-);
+const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(() => detailsStore.properties);
 
 const props = defineProps({
     layer: { type: Object as any, required: true },
@@ -44,11 +38,7 @@ const props = defineProps({
  */
 const layerName = () => {
     const layer = props.layer;
-    if (
-        layer &&
-        detailProperties.value[layer.id] &&
-        detailProperties.value[layer.id].name
-    ) {
+    if (layer && detailProperties.value[layer.id] && detailProperties.value[layer.id].name) {
         return detailProperties.value[layer.id].name;
     }
     return layer?.name ?? '';

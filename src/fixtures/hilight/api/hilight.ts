@@ -1,11 +1,6 @@
 import { CommonGraphicLayer, FixtureInstance } from '@/api/internal';
 import { Graphic, LayerType } from '@/geo/api';
-import {
-    DEFAULT_CONFIG,
-    HILIGHT_LAYER_NAME,
-    HilightMode,
-    type HilightConfig
-} from './hilight-defs';
+import { DEFAULT_CONFIG, HILIGHT_LAYER_NAME, HilightMode, type HilightConfig } from './hilight-defs';
 import { BaseHilightMode } from './hilight-mode/base-hilight-mode';
 import { FogHilightMode } from './hilight-mode/fog-hilight-mode';
 import { GlowHilightMode } from './hilight-mode/glow-hilight-mode';
@@ -26,35 +21,20 @@ export class HilightAPI extends FixtureInstance {
         if (hilightConfig) {
             switch (hilightConfig.mode) {
                 case HilightMode.NONE:
-                    this.hilightMode = new BaseHilightMode(
-                        hilightConfig,
-                        this.$iApi
-                    );
+                    this.hilightMode = new BaseHilightMode(hilightConfig, this.$iApi);
                     break;
                 case HilightMode.GLOW:
-                    this.hilightMode = new GlowHilightMode(
-                        hilightConfig,
-                        this.$iApi
-                    );
+                    this.hilightMode = new GlowHilightMode(hilightConfig, this.$iApi);
                     break;
                 case HilightMode.LIFT:
-                    this.hilightMode = new LiftHilightMode(
-                        hilightConfig,
-                        this.$iApi
-                    );
+                    this.hilightMode = new LiftHilightMode(hilightConfig, this.$iApi);
                     break;
                 case HilightMode.FOG:
-                    this.hilightMode = new FogHilightMode(
-                        hilightConfig,
-                        this.$iApi
-                    );
+                    this.hilightMode = new FogHilightMode(hilightConfig, this.$iApi);
                     break;
                 default:
                     // in this case, the hilighter will use NONE (BaseHilightMode)
-                    console.error(
-                        'Could not find hilight mode:',
-                        hilightConfig.mode
-                    );
+                    console.error('Could not find hilight mode:', hilightConfig.mode);
                     break;
             }
         } else {
@@ -98,11 +78,7 @@ export class HilightAPI extends FixtureInstance {
      * @returns {Promise} resolves when graphics have been removed
      */
     async removeHilight(graphics?: Array<Graphic> | Graphic): Promise<void> {
-        const gs = graphics
-            ? graphics instanceof Array
-                ? graphics
-                : [graphics]
-            : undefined;
+        const gs = graphics ? (graphics instanceof Array ? graphics : [graphics]) : undefined;
         await this.hilightMode.remove(gs);
     }
 
@@ -123,11 +99,7 @@ export class HilightAPI extends FixtureInstance {
      * @param uid Associated layer UID of the Graphic
      * @param oid Associated OID of the Graphic
      */
-    async getGraphicsByKey(
-        origin?: string,
-        uid?: string,
-        oid?: number
-    ): Promise<Array<Graphic>> {
+    async getGraphicsByKey(origin?: string, uid?: string, oid?: number): Promise<Array<Graphic>> {
         const hilightLayer = await this.getHilightLayer();
         if (!hilightLayer) {
             return [];
@@ -184,9 +156,7 @@ export class HilightAPI extends FixtureInstance {
         if (this.hilightMode) {
             return await this.hilightMode.getHilightLayer();
         } else {
-            console.warn(
-                'API get layer request before highlight mode object exists'
-            );
+            console.warn('API get layer request before highlight mode object exists');
             return undefined;
         }
     }

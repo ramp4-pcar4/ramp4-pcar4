@@ -12,10 +12,7 @@ export class Filter {
     private cache: { [key: string]: Promise<Array<number>> }; // object mapping string to promise of array of ints
     private extent: Extent | undefined;
 
-    constructor(
-        permanentWhereClause: string = '',
-        initialWhereClause: string = ''
-    ) {
+    constructor(permanentWhereClause: string = '', initialWhereClause: string = '') {
         this.sql = {
             [CoreFilter.PERMANENT]: permanentWhereClause,
             [CoreFilter.INITIAL]: initialWhereClause
@@ -86,9 +83,7 @@ export class Filter {
      */
     setSql(filterKey: string, whereClause: string): void {
         if (filterKey === CoreFilter.PERMANENT) {
-            console.error(
-                'Attempted to overwrite a permanent filter. Not allowed.'
-            );
+            console.error('Attempted to overwrite a permanent filter. Not allowed.');
         } else {
             this.sql[filterKey] = whereClause;
 
@@ -141,14 +136,9 @@ export class Filter {
      * @param {Boolean} includeExtent if the cache includes extent based filters
      * @returns {String} the cache key to use
      */
-    private getCacheKey(
-        sqlFilters: Array<string>,
-        includeExtent: boolean
-    ): string {
+    private getCacheKey(sqlFilters: Array<string>, includeExtent: boolean): string {
         const sqlKey = sqlFilters.sort().join('$');
-        return `_cache$${sqlKey}${
-            includeExtent ? '$' + CoreFilter.EXTENT : ''
-        }$`;
+        return `_cache$${sqlKey}${includeExtent ? '$' + CoreFilter.EXTENT : ''}$`;
     }
 
     /**
@@ -159,10 +149,7 @@ export class Filter {
      * @param {Boolean} includeExtent if the cache includes extent based filters
      * @returns {Promise} resolves in a filter result appropriate for the parameters. returns undefined if no cache exists.
      */
-    getCache(
-        sqlFilters: Array<string>,
-        includeExtent: boolean
-    ): Promise<Array<number>> {
+    getCache(sqlFilters: Array<string>, includeExtent: boolean): Promise<Array<number>> {
         const key = this.getCacheKey(sqlFilters, includeExtent);
         return this.cache[key];
     }
@@ -175,11 +162,7 @@ export class Filter {
      * @param {Array} sqlFilters list of filter keys influencing this cache
      * @param {Boolean} includeExtent if the cache includes extent based filters
      */
-    setCache(
-        queryPromise: Promise<Array<number>>,
-        sqlFilters: Array<string>,
-        includeExtent: boolean
-    ): void {
+    setCache(queryPromise: Promise<Array<number>>, sqlFilters: Array<string>, includeExtent: boolean): void {
         const key = this.getCacheKey(sqlFilters, includeExtent);
         this.cache[key] = queryPromise;
     }

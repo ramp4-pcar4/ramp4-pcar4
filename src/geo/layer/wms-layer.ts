@@ -48,9 +48,7 @@ export class WmsLayer extends MapLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        this.esriLayer = markRaw(
-            new EsriWMSLayer(this.makeEsriLayerConfig(this.origRampConfig))
-        );
+        this.esriLayer = markRaw(new EsriWMSLayer(this.makeEsriLayerConfig(this.origRampConfig)));
         await super.onInitiate();
     }
 
@@ -60,21 +58,13 @@ export class WmsLayer extends MapLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(
-        rampLayerConfig: RampLayerConfig
-    ): __esri.WMSLayerProperties {
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.WMSLayerProperties {
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
-        const esriConfig: __esri.WMSLayerProperties = super.makeEsriLayerConfig(
-            rampLayerConfig
-        );
+        const esriConfig: __esri.WMSLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
-        const lEntries = <Array<RampLayerWmsSublayerConfig>>(
-            rampLayerConfig.sublayers
-        );
-        this.sublayerNames = lEntries.map(
-            sublayer => sublayer.id || 'error_no_wms_id'
-        );
+        const lEntries = <Array<RampLayerWmsSublayerConfig>>rampLayerConfig.sublayers;
+        this.sublayerNames = lEntries.map(sublayer => sublayer.id || 'error_no_wms_id');
 
         // reminder: unlike MapImageLayer, we do not allow tweaking visibility
         //           of sublayers at runtime.
@@ -120,9 +110,7 @@ export class WmsLayer extends MapLayer {
         this.layerTree.name = this.name;
 
         // Set visibility of sublayers based on presence in the config
-        const crawlSublayers = (
-            sublayers: __esri.Collection<EsriWMSSublayer>
-        ): boolean => {
+        const crawlSublayers = (sublayers: __esri.Collection<EsriWMSSublayer>): boolean => {
             let anySlVis = false;
             sublayers.forEach(sl => {
                 const visible = this.sublayerNames.indexOf(sl.name) > -1;
@@ -214,11 +202,7 @@ export class WmsLayer extends MapLayer {
             requestTime: Date.now()
         });
 
-        this.getFeatureInfo(
-            this.sublayerNames,
-            <Point>options.geometry,
-            this.mimeType
-        )
+        this.getFeatureInfo(this.sublayerNames, <Point>options.geometry, this.mimeType)
             .then(response => {
                 // check if a result is returned by the service. If not, do not add to the array of data
                 // TODO is is possible to have more than one item as a result? check how this works
@@ -234,10 +218,7 @@ export class WmsLayer extends MapLayer {
                         // likely json or an image
                         // TODO improve the dection (maybe use the this.mimeType?)
                         format = IdentifyResultFormat.JSON;
-                    } else if (
-                        response.indexOf('Search returned no results') === -1 &&
-                        response !== ''
-                    ) {
+                    } else if (response.indexOf('Search returned no results') === -1 && response !== '') {
                         // TODO if service is french, will the "no results" message be different?
                         // TODO consider utilizing the infoMap variable above to detect HTML format.
                         format = IdentifyResultFormat.TEXT;
@@ -247,12 +228,7 @@ export class WmsLayer extends MapLayer {
                     }
 
                     if (validReturn) {
-                        result.items.push(
-                            ReactiveIdentifyFactory.makeRawItem(
-                                format,
-                                response
-                            )
-                        );
+                        result.items.push(ReactiveIdentifyFactory.makeRawItem(format, response));
                     }
                 }
 
@@ -276,11 +252,7 @@ export class WmsLayer extends MapLayer {
      * @param {String} value value of the key
      * @param {Boolean} forceRefresh show the new fancy version of the layer or not
      */
-    setCustomParameter(
-        key: string,
-        value: string,
-        forceRefresh: boolean = true
-    ): void {
+    setCustomParameter(key: string, value: string, forceRefresh: boolean = true): void {
         if (this.layerExists) {
             if (!this.esriLayer!.customLayerParameters) {
                 this.esriLayer!.customLayerParameters = {};
@@ -302,18 +274,12 @@ export class WmsLayer extends MapLayer {
      * @param {String} mimeType the format to be requested for the response
      * @returns {Promise} a promise which resolves with the GetFeatureInfo response
      */
-    getFeatureInfo(
-        layerList: Array<string>,
-        point: Point,
-        mimeType: string
-    ): Promise<any> {
+    getFeatureInfo(layerList: Array<string>, point: Point, mimeType: string): Promise<any> {
         const map = this.$iApi.geo.map;
         const esriLayer = this.esriLayer;
 
         if (!map.esriView) {
-            throw new Error(
-                'WMS get feature, no map view exists. Cannot derive click coords'
-            );
+            throw new Error('WMS get feature, no map view exists. Cannot derive click coords');
         }
         if (!esriLayer) {
             this.noLayerErr();
@@ -361,9 +327,7 @@ export class WmsLayer extends MapLayer {
         } else {
             // hail mary. if anything will generate an empty result instead of an error bomb
             wkid = 4326;
-            console.error(
-                'Map is likely in a WKT projection. WMS Identify request will likely fail.'
-            );
+            console.error('Map is likely in a WKT projection. WMS Identify request will likely fail.');
         }
 
         if (srList && srList.length > 1) {
@@ -377,9 +341,7 @@ export class WmsLayer extends MapLayer {
                 }
             }
         } else {
-            console.error(
-                'No supported wkid/epsg code found for WMS service. Identify request will likely fail.'
-            );
+            console.error('No supported wkid/epsg code found for WMS service. Identify request will likely fail.');
         }
 
         if (esriLayer.version === '1.3' || esriLayer.version === '1.3.0') {
@@ -390,9 +352,7 @@ export class WmsLayer extends MapLayer {
                 STYLES: '',
                 FORMAT: esriLayer.imageFormat
             };
-            if (
-                this.$iApi.geo.layer.ogc.reversedAxisWKIDs().indexOf(wkid) > -1
-            ) {
+            if (this.$iApi.geo.layer.ogc.reversedAxisWKIDs().indexOf(wkid) > -1) {
                 req.BBOX = `${ext.ymin},${ext.xmin},${ext.ymax},${ext.xmax}`;
             }
         } else {
@@ -455,22 +415,13 @@ export class WmsLayer extends MapLayer {
                 if (sl.legendUrl) {
                     // check if the style matches that in the config.
                     // need to use forEach here and not find/filter because the sublayers properties are not always the same
-                    (<Array<RampLayerWmsSublayerConfig>>(
-                        this.origRampConfig.sublayers
-                    ))?.forEach(sublayer => {
-                        if (
-                            sublayer.id &&
-                            sublayer.currentStyle &&
-                            sublayer.id === sl.name
-                        ) {
+                    (<Array<RampLayerWmsSublayerConfig>>this.origRampConfig.sublayers)?.forEach(sublayer => {
+                        if (sublayer.id && sublayer.currentStyle && sublayer.id === sl.name) {
                             const wrapper = new UrlWrapper(sl.legendUrl);
                             // assuming here that STYLE is always appended in all caps to avoid using .toUpperCase() above.
                             // if the assumption is wrong, might need to rework some logic so that no case-sensitive parts of the URL get changed. e.g., 'geomet' in geomet layers
                             if ('STYLE' in wrapper.queryMap) {
-                                if (
-                                    wrapper.queryMap.STYLE !==
-                                    sublayer.currentStyle
-                                ) {
+                                if (wrapper.queryMap.STYLE !== sublayer.currentStyle) {
                                     sl.legendUrl = wrapper.updateQuery({
                                         STYLE: sublayer.currentStyle
                                     });
@@ -546,23 +497,19 @@ export class WmsLayer extends MapLayer {
         ).map((imageUri, idx) => {
             // config specified name || server specified name || config id
             const name =
-                configSublayers[idx].name ||
-                this.getWMSLayerTitle(configSublayers[idx].id) ||
-                configSublayers[idx].id;
+                configSublayers[idx].name || this.getWMSLayerTitle(configSublayers[idx].id) || configSublayers[idx].id;
             const symbologyItem: LegendSymbology = {
                 uid: this.$iApi.geo.shared.generateUUID(),
                 label: name,
                 svgcode: '',
                 esriStandard: false, // is an image
-                drawPromise: this.$iApi.geo.symbology
-                    .generateWMSSymbology(imageUri)
-                    .then((data: any) => {
-                        if (startTime > this.lastCancel) {
-                            symbologyItem.svgcode = data.svgcode;
-                            symbologyItem.imgHeight = data.imgHeight;
-                            symbologyItem.imgWidth = data.imgWidth;
-                        }
-                    })
+                drawPromise: this.$iApi.geo.symbology.generateWMSSymbology(imageUri).then((data: any) => {
+                    if (startTime > this.lastCancel) {
+                        symbologyItem.svgcode = data.svgcode;
+                        symbologyItem.imgHeight = data.imgHeight;
+                        symbologyItem.imgWidth = data.imgWidth;
+                    }
+                })
             };
             return symbologyItem;
         });

@@ -48,9 +48,7 @@ export class SpatialReference {
         if (
             (this.wkid && otherSR.wkid && this.wkid === otherSR.wkid) ||
             (this.wkt && otherSR.wkt && this.wkt === otherSR.wkt) ||
-            (this.latestWkid &&
-                otherSR.latestWkid &&
-                this.latestWkid === otherSR.latestWkid)
+            (this.latestWkid && otherSR.latestWkid && this.latestWkid === otherSR.latestWkid)
         ) {
             return true;
         }
@@ -146,9 +144,7 @@ export class SpatialReference {
         return new EsriSpatialReference(this.lean());
     }
 
-    static fromGeoJSON(
-        crs: GeoJson.CoordinateReferenceSystem | undefined
-    ): SpatialReference {
+    static fromGeoJSON(crs: GeoJson.CoordinateReferenceSystem | undefined): SpatialReference {
         const p: string = SpatialReference.parseGeoJsonCrs(crs);
 
         if (p.substring(0, 5) === 'EPSG:') {
@@ -164,9 +160,7 @@ export class SpatialReference {
      * @param {GeoJson.CoordinateReferenceSystem} crs GeoJSON crs object
      * @returns {string} EPSG projection string, either EPSG code or wkt
      */
-    static parseGeoJsonCrs(
-        crs: GeoJson.CoordinateReferenceSystem | undefined
-    ): string {
+    static parseGeoJsonCrs(crs: GeoJson.CoordinateReferenceSystem | undefined): string {
         if (!crs) {
             return 'EPSG:4326';
         } else if (crs.type === 'name') {
@@ -209,8 +203,7 @@ export class SpatialReference {
         if (this.wkt) {
             crs.properties.name = this.wkt; // this is probably wrong, but i dont see a way to hardcode wkt in the geojson specs
         } else {
-            crs.properties.name =
-                'urn:ogc:def:crs:EPSG::' + (this.latestWkid || this.wkid);
+            crs.properties.name = 'urn:ogc:def:crs:EPSG::' + (this.latestWkid || this.wkid);
         }
         return crs;
     }

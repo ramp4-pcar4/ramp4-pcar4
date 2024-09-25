@@ -2,12 +2,7 @@
 
 import { LayerType } from '@/geo/api';
 
-import type {
-    RampBasemapConfig,
-    RampBasemapLayerConfig,
-    RampExtentSetConfig,
-    RampTileSchemaConfig
-} from '@/geo/api';
+import type { RampBasemapConfig, RampBasemapLayerConfig, RampExtentSetConfig, RampTileSchemaConfig } from '@/geo/api';
 
 import type { RampConfigs } from '@/types';
 
@@ -32,9 +27,7 @@ export function configUpgrade2to4(r2c: any): RampConfigs {
 
     r2cs.forEach(c => {
         if (!c.language) {
-            console.warn(
-                'RAMP2 config with no language supplied. Defaulting to English'
-            );
+            console.warn('RAMP2 config with no language supplied. Defaulting to English');
             c.language = 'en';
         }
         const nugget = individualConfigUpgrader(c);
@@ -44,13 +37,11 @@ export function configUpgrade2to4(r2c: any): RampConfigs {
     });
 
     // get all fixture enabled lists
-    const allFixturesEnabled: string[][] = Object.entries(r4c).map(
-        (langConfigPair: [string, any]) => {
-            const fixturesEnabled: string[] = langConfigPair[1].fixturesEnabled;
-            delete langConfigPair[1].fixturesEnabled; // remove this list from the config nugget
-            return fixturesEnabled;
-        }
-    );
+    const allFixturesEnabled: string[][] = Object.entries(r4c).map((langConfigPair: [string, any]) => {
+        const fixturesEnabled: string[] = langConfigPair[1].fixturesEnabled;
+        delete langConfigPair[1].fixturesEnabled; // remove this list from the config nugget
+        return fixturesEnabled;
+    });
 
     // intersect all lists into single list (use a boolean to keep track of any mismatching lists)
     let mismatch: boolean = false;
@@ -69,15 +60,7 @@ export function configUpgrade2to4(r2c: any): RampConfigs {
     }
 
     // add core always-on fixtures
-    startingFixtures.push(
-        'grid',
-        'crosshairs',
-        'scrollguard',
-        'panguard',
-        'wizard',
-        'layer-reorder',
-        'details'
-    );
+    startingFixtures.push('grid', 'crosshairs', 'scrollguard', 'panguard', 'wizard', 'layer-reorder', 'details');
 
     return {
         startingFixtures: startingFixtures,
@@ -154,10 +137,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                 );
             }
         }
-        if (
-            r2Map.components.overviewMap &&
-            r2Map.components.overviewMap.enabled
-        ) {
+        if (r2Map.components.overviewMap && r2Map.components.overviewMap.enabled) {
             // process overview map
             // basemap entries will be added when processing the tile schemas
 
@@ -171,16 +151,11 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                 r4c.fixturesEnabled.push('overviewmap');
             }
 
-            r4c.fixtures.overviewmap.startMinimized =
-                !r2Map.components.overviewMap.initiallyExpanded;
-            r4c.fixtures.overviewmap.expandFactor =
-                r2Map.components.overviewMap.expandFactor ?? 1.5;
+            r4c.fixtures.overviewmap.startMinimized = !r2Map.components.overviewMap.initiallyExpanded;
+            r4c.fixtures.overviewmap.expandFactor = r2Map.components.overviewMap.expandFactor ?? 1.5;
         }
 
-        if (
-            r2Map.components.northArrow &&
-            r2Map.components.northArrow.enabled
-        ) {
+        if (r2Map.components.northArrow && r2Map.components.northArrow.enabled) {
             // process north arrow
 
             const r4na: any = {};
@@ -205,10 +180,8 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                 scaleBar: {
                     disabled: false,
                     imperialScale:
-                        r2Map?.components?.scaleBar?.scalebarUnit ===
-                            'english' ||
-                        (r2Map?.components?.scaleBar?.scalebarUnit === 'dual' &&
-                            Math.floor(Math.random() * 2) === 0)
+                        r2Map?.components?.scaleBar?.scalebarUnit === 'english' ||
+                        (r2Map?.components?.scaleBar?.scalebarUnit === 'dual' && Math.floor(Math.random() * 2) === 0)
                 }
             };
             switch (r2Map.components?.mouseInfo?.spatialReference?.wkid) {
@@ -216,8 +189,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                     r4c.map.caption.mapCoords.formatter = 'LAT_LONG_DMS';
                     break;
                 case 3978:
-                    r4c.map.caption.mapCoords.formatter =
-                        'CANADA_ATLAS_LAMBERT';
+                    r4c.map.caption.mapCoords.formatter = 'CANADA_ATLAS_LAMBERT';
                     break;
                 case 102100:
                     r4c.map.caption.mapCoords.formatter = 'WEB_MERCATOR';
@@ -313,13 +285,9 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                     tileSchemaId: r2ts.id,
                     layers: [
                         {
-                            id:
-                                r2ts.overviewUrl.id ||
-                                `overviewmap-basemap-${r2ts.id}-0`,
+                            id: r2ts.overviewUrl.id || `overviewmap-basemap-${r2ts.id}-0`,
                             layerType:
-                                r2ts.overviewUrl.layerType === 'esriDynamic'
-                                    ? LayerType.MAPIMAGE
-                                    : LayerType.TILE,
+                                r2ts.overviewUrl.layerType === 'esriDynamic' ? LayerType.MAPIMAGE : LayerType.TILE,
                             url: r2ts.overviewUrl.url,
                             opacity: r2ts.overviewUrl.opacity ?? 1
                         }
@@ -352,15 +320,12 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                     logo: {}
                 };
                 if (r2bm.attribution.text) {
-                    r4bm.attribution.text!.disabled =
-                        !r2bm.attribution.text.enabled;
+                    r4bm.attribution.text!.disabled = !r2bm.attribution.text.enabled;
                     r4bm.attribution.text!.value = r2bm.attribution.text.value;
                 }
                 if (r2bm.attribution.logo) {
-                    r4bm.attribution.logo!.disabled =
-                        !r2bm.attribution.logo.enabled;
-                    r4bm.attribution.logo!.altText =
-                        r2bm.attribution.logo.altText;
+                    r4bm.attribution.logo!.disabled = !r2bm.attribution.logo.enabled;
+                    r4bm.attribution.logo!.altText = r2bm.attribution.logo.altText;
                     r4bm.attribution.logo!.value = r2bm.attribution.logo.value;
                     r4bm.attribution.logo!.link = r2bm.attribution.logo.link;
                 }
@@ -370,10 +335,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
             r2bm.layers.forEach((r2bml: any, idx: number) => {
                 const r4bml: RampBasemapLayerConfig = {
                     id: r2bml.id || `${r2bm.id}-${idx}`,
-                    layerType:
-                        r2bml.layerType === 'esriDynamic'
-                            ? LayerType.MAPIMAGE
-                            : LayerType.TILE,
+                    layerType: r2bml.layerType === 'esriDynamic' ? LayerType.MAPIMAGE : LayerType.TILE,
                     url: r2bml.url,
                     opacity: r2bml.opacity ?? 1
                 };
@@ -398,10 +360,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
             // layers already mapped through layerUpgrader
             if (r4c.layers) {
                 r4c.layers.toReversed().forEach((r4layer: any) => {
-                    if (
-                        r4layer.type === 'esri-map-image' ||
-                        r4layer.type === 'ogc-wms'
-                    ) {
+                    if (r4layer.type === 'esri-map-image' || r4layer.type === 'ogc-wms') {
                         const entryGroup: any = {
                             name: r4layer.name ?? `${r4layer.id} Group`,
                             children: []
@@ -417,8 +376,7 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                                 entry.controls = r4Sublayer.controls;
                             }
                             if (r4Sublayer.disabledControls) {
-                                entry.disabledControls =
-                                    r4Sublayer.disabledControls;
+                                entry.disabledControls = r4Sublayer.disabledControls;
                             }
                             if (r4layer.type === 'esri-map-image') {
                                 entry.sublayerIndex = r4Sublayer.index;
@@ -466,48 +424,25 @@ function legendGroupUpgrader(r2legendGroup: any) {
     if (typeof r2legendGroup.expanded !== 'undefined') {
         r4legendGroup.expanded = r2legendGroup.expanded;
     }
-    const allowedControls = [
-        'identify',
-        'opacity',
-        'reload',
-        'remove',
-        'settings',
-        'symbology',
-        'visibility'
-    ];
+    const allowedControls = ['identify', 'opacity', 'reload', 'remove', 'settings', 'symbology', 'visibility'];
     if (r2legendGroup.controls && r2legendGroup.controls.length > 0) {
-        r4legendGroup.controls = controlsUpgrader(
-            r2legendGroup.controls,
-            allowedControls
-        );
+        r4legendGroup.controls = controlsUpgrader(r2legendGroup.controls, allowedControls);
         if (r2legendGroup.controls.includes('visibility')) {
             r4legendGroup.controls.push('visibilityButton');
         }
-        if (
-            r2legendGroup.controls.length !== 1 ||
-            r2legendGroup.controls[0] !== 'visibility'
-        ) {
+        if (r2legendGroup.controls.length !== 1 || r2legendGroup.controls[0] !== 'visibility') {
             console.warn(
                 `Legend entry groups currently support only the visibility control. All other controls are currently not supported.`
             );
         }
         r4legendGroup.controls.push('expandButton');
     }
-    if (
-        r2legendGroup.disabledControls &&
-        r2legendGroup.disabledControls.length > 0
-    ) {
-        r4legendGroup.disabledControls = controlsUpgrader(
-            r2legendGroup.disabledControls,
-            allowedControls
-        );
+    if (r2legendGroup.disabledControls && r2legendGroup.disabledControls.length > 0) {
+        r4legendGroup.disabledControls = controlsUpgrader(r2legendGroup.disabledControls, allowedControls);
         if (r2legendGroup.disabledControls.includes('visibility')) {
             r4legendGroup.disabledControls.push('visibilityButton');
         }
-        if (
-            r2legendGroup.disabledControls.length !== 1 ||
-            r2legendGroup.disabledControls[0] !== 'visibility'
-        ) {
+        if (r2legendGroup.disabledControls.length !== 1 || r2legendGroup.disabledControls[0] !== 'visibility') {
             console.warn(
                 `Legend entry groups currently support only the visibility control. All other controls are currently not supported.`
             );
@@ -589,20 +524,11 @@ function legendEntryUpgrader(r2legendEntry: any) {
         'visibility'
     ];
     if (r2legendEntry.controls && r2legendEntry.controls.length > 0) {
-        r4legendEntry.layerControls = controlsUpgrader(
-            r2legendEntry.controls,
-            allowedControls
-        );
+        r4legendEntry.layerControls = controlsUpgrader(r2legendEntry.controls, allowedControls);
         r4legendEntry.layerControls.push('symbology');
     }
-    if (
-        r2legendEntry.disabledControls &&
-        r2legendEntry.disabledControls.length > 0
-    ) {
-        r4legendEntry.disabledLayerControls = controlsUpgrader(
-            r2legendEntry.disabledControls,
-            allowedControls
-        );
+    if (r2legendEntry.disabledControls && r2legendEntry.disabledControls.length > 0) {
+        r4legendEntry.disabledLayerControls = controlsUpgrader(r2legendEntry.disabledControls, allowedControls);
     }
     // Warning party
     // remove these warnings whenever we add support for one of these properties.
@@ -637,9 +563,7 @@ export function layerUpgrader(r2layer: any): any {
     // fill in the properties that are common across many layer types to avoid duplicate code
     if (r2layer.refreshInterval) {
         r4layer.refreshInterval = r2layer.refreshInterval;
-        console.warn(
-            'Property refreshInterval in layer is currently not supported.'
-        );
+        console.warn('Property refreshInterval in layer is currently not supported.');
     }
     if (r2layer.expectedResponseTime) {
         r4layer.expectedLoadTime = r2layer.expectedResponseTime;
@@ -684,8 +608,7 @@ export function layerUpgrader(r2layer: any): any {
             if (r2layer.layerEntries) {
                 r4layer.sublayers = [];
                 r2layer.layerEntries.forEach((r2LayerEntry: any) => {
-                    const r4Sublayer: any =
-                        layerCommonPropertiesUpgrader(r2LayerEntry);
+                    const r4Sublayer: any = layerCommonPropertiesUpgrader(r2LayerEntry);
                     r4Sublayer.index = r2LayerEntry.index;
 
                     r4layer.sublayers.push(r4Sublayer);
@@ -698,10 +621,7 @@ export function layerUpgrader(r2layer: any): any {
 
             // Check if this feature layer is actually a file layer, and map file layer properties
             if (r2layer.fileType) {
-                r4layer.layerType =
-                    r2layer.fileType === 'shapefile'
-                        ? 'file-shape'
-                        : `file-${r2layer.fileType}`;
+                r4layer.layerType = r2layer.fileType === 'shapefile' ? 'file-shape' : `file-${r2layer.fileType}`;
                 if (r2layer.colour) {
                     r4layer.colour = r2layer.colour;
                 }
@@ -745,8 +665,7 @@ export function layerUpgrader(r2layer: any): any {
             if (r2layer.layerEntries) {
                 r4layer.sublayers = [];
                 r2layer.layerEntries.forEach((r2LayerEntry: any) => {
-                    const r4Sublayer: any =
-                        layerCommonPropertiesUpgrader(r2LayerEntry);
+                    const r4Sublayer: any = layerCommonPropertiesUpgrader(r2LayerEntry);
                     r4Sublayer.id = r2LayerEntry.id;
                     if (r2LayerEntry.currentStyle) {
                         r4Sublayer.currentStyle = r2LayerEntry.currentStyle;
@@ -773,15 +692,11 @@ export function layerUpgrader(r2layer: any): any {
             break;
 
         default:
-            console.warn(
-                `Unhandled layer type in ramp 2 config ${r2layer.layerType}`
-            );
+            console.warn(`Unhandled layer type in ramp 2 config ${r2layer.layerType}`);
     }
 
     if (r2layer.details) {
-        console.warn(
-            `Details config provided in layer ${r2layer.id} cannot be mapped and will be skipped.`
-        );
+        console.warn(`Details config provided in layer ${r2layer.id} cannot be mapped and will be skipped.`);
     }
 
     return r4layer;
@@ -823,10 +738,7 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
     }
 
     if (r2layer.disabledControls && r2layer.disabledControls.length > 0) {
-        r4layer.disabledControls = controlsUpgrader(
-            r2layer.disabledControls,
-            allowedControls
-        );
+        r4layer.disabledControls = controlsUpgrader(r2layer.disabledControls, allowedControls);
     }
 
     if (r2layer.state) {
@@ -886,8 +798,7 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
                     r4layer.fixtures.grid.search = r2layer.table.search.enabled;
                 }
                 if (r2layer.table.search.value) {
-                    r4layer.fixtures.grid.searchFilter =
-                        r2layer.table.search.value;
+                    r4layer.fixtures.grid.searchFilter = r2layer.table.search.value;
                 }
             }
 
@@ -903,8 +814,7 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
                 r4layer.fixtures.grid.showFilter = r2layer.table.showFilter;
             }
             if (typeof r2layer.table.filterByExtent !== 'undefined') {
-                r4layer.fixtures.grid.filterByExtent =
-                    r2layer.table.filterByExtent;
+                r4layer.fixtures.grid.filterByExtent = r2layer.table.filterByExtent;
             }
             if (typeof r2layer.table.searchStrictMatch !== 'undefined') {
                 console.warn(
@@ -963,10 +873,7 @@ function controlsUpgrader(r2controls: String[], allowedControls: String[]) {
     r2controls.forEach((control: any) => {
         if (allowedControls.includes('identify') && control === 'query') {
             r4controls.push('identify');
-        } else if (
-            allowedControls.includes('datatable') &&
-            control === 'data'
-        ) {
+        } else if (allowedControls.includes('datatable') && control === 'data') {
             r4controls.push('datatable');
         } else if (allowedControls.includes(control)) {
             r4controls.push(control);
@@ -1009,10 +916,9 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
         }
 
         if (r2Services.search.disabledSearches) {
-            r4c.fixtures.geosearch.settings.disabledSearchTypes =
-                r2Services.search.disabledSearches.filter(
-                    (s: string) => s !== 'SCALE'
-                );
+            r4c.fixtures.geosearch.settings.disabledSearchTypes = r2Services.search.disabledSearches.filter(
+                (s: string) => s !== 'SCALE'
+            );
         }
     }
 
@@ -1037,9 +943,7 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
                 selectable: r2Services.export.map.isSelectable ?? true
             };
             if (r2Services.export.map.value) {
-                console.warn(
-                    `value property provided in map export component cannot be mapped and will be skipped.`
-                );
+                console.warn(`value property provided in map export component cannot be mapped and will be skipped.`);
             }
         }
         if (r2Services.export.mapElements) {
@@ -1059,26 +963,19 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
                 selectable: r2Services.export.legend.isSelectable ?? true
             };
             if (r2Services.export.legend.columnWidth) {
-                r4c.fixtures.export.legend.columnWidth =
-                    r2Services.export.legend.columnWidth;
+                r4c.fixtures.export.legend.columnWidth = r2Services.export.legend.columnWidth;
             }
             if (r2Services.export.legend.value) {
                 console.warn(
                     `value property provided in legend export component cannot be mapped and will be skipped.`
                 );
             }
-            if (
-                typeof r2Services.export.legend.showInfoSymbology !==
-                'undefined'
-            ) {
+            if (typeof r2Services.export.legend.showInfoSymbology !== 'undefined') {
                 console.warn(
                     `showInfoSymbology property provided in legend export component cannot be mapped and will be skipped.`
                 );
             }
-            if (
-                typeof r2Services.export.legend.showControlledSymbology !==
-                'undefined'
-            ) {
+            if (typeof r2Services.export.legend.showControlledSymbology !== 'undefined') {
                 console.warn(
                     `showControlledSymbology property provided in legend export component cannot be mapped and will be skipped.`
                 );
@@ -1131,9 +1028,7 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
     ];
     unused.forEach((property: any) => {
         if (typeof r2Services[property] !== 'undefined') {
-            console.warn(
-                `${property} property provided in services config cannot be mapped and will be skipped.`
-            );
+            console.warn(`${property} property provided in services config cannot be mapped and will be skipped.`);
         }
     });
 }
@@ -1176,9 +1071,7 @@ function uiUpgrader(r2ui: any, r4c: any): void {
     if (r2ui.help) {
         r4c.fixtures.help = {
             location:
-                r2ui.help.folderName && r2ui.help.folderName !== 'default'
-                    ? `./${r2ui.help.folderName}`
-                    : './help',
+                r2ui.help.folderName && r2ui.help.folderName !== 'default' ? `./${r2ui.help.folderName}` : './help',
             panelWidth: 350
         };
         r4c.fixturesEnabled.push('help');
@@ -1219,10 +1112,7 @@ function uiUpgrader(r2ui: any, r4c: any): void {
                 r4c.fixturesEnabled.push('legend');
             }
         }
-        if (
-            r2ui.appBar.geoSearch !== false &&
-            r4c.fixturesEnabled.includes('geosearch')
-        ) {
+        if (r2ui.appBar.geoSearch !== false && r4c.fixturesEnabled.includes('geosearch')) {
             r4c.fixtures.appbar.items.push('geosearch');
         }
         if (r2ui.appBar.basemap !== false) {
@@ -1236,17 +1126,10 @@ function uiUpgrader(r2ui: any, r4c: any): void {
         r4c.fixtures.appbar.items.push('geosearch');
         r4c.fixtures.appbar.items.push('basemap');
     }
-    if (
-        r2ui.sideMenu &&
-        r2ui.sideMenu.items &&
-        r2ui.sideMenu.items.length > 0
-    ) {
+    if (r2ui.sideMenu && r2ui.sideMenu.items && r2ui.sideMenu.items.length > 0) {
         r2ui.sideMenu.items.forEach((r2SideMenuButtons: any[]) => {
             r2SideMenuButtons.forEach((button: any) => {
-                if (
-                    button === 'layers' &&
-                    !r4c.fixtures.appbar.items.includes('legend')
-                ) {
+                if (button === 'layers' && !r4c.fixtures.appbar.items.includes('legend')) {
                     r4c.fixtures.appbar.items.push('legend');
                     if (!r4c.fixturesEnabled.includes('legend')) {
                         r4c.fixturesEnabled.push('legend');
@@ -1259,8 +1142,7 @@ function uiUpgrader(r2ui: any, r4c: any): void {
                     r4c.fixtures.appbar.items.push(button.toLowerCase());
                     if (
                         button.toLowerCase() === 'help' ||
-                        (button.toLowerCase() === 'export' &&
-                            !r4c.fixturesEnabled.includes(button.toLowerCase()))
+                        (button.toLowerCase() === 'export' && !r4c.fixturesEnabled.includes(button.toLowerCase()))
                     ) {
                         r4c.fixturesEnabled.push(button.toLowerCase());
                     }
@@ -1353,9 +1235,7 @@ function uiUpgrader(r2ui: any, r4c: any): void {
     ];
     unused.forEach((property: any) => {
         if (typeof r2ui[property] !== 'undefined') {
-            console.warn(
-                `${property} property provided in services config cannot be mapped and will be skipped.`
-            );
+            console.warn(`${property} property provided in services config cannot be mapped and will be skipped.`);
         }
     });
 }
@@ -1400,8 +1280,7 @@ function pluginsUpgrader(r2plugins: any, r4c: any): void {
  * @param r4layer gets field metadata updated
  */
 function fieldsSausageGrinder(r2layer: any, r4layer: any): void {
-    const hasOutfields: boolean =
-        r2layer.outfields && r2layer.outfields !== '*';
+    const hasOutfields: boolean = r2layer.outfields && r2layer.outfields !== '*';
     if (!hasOutfields && !r2layer.fieldMetadata) {
         // no config items. do nothing. donethanks
         return;
@@ -1430,15 +1309,10 @@ function fieldsSausageGrinder(r2layer: any, r4layer: any): void {
             // We also have field restriction. ensure any fields not already in the alias list get included.
             // This logic is not perfect. If we have an aliasd field that is not in outfields, unsure how that should be handled
             // (i.e. which overrides). We take the lazy route and let alias override.
-            const checkFields = r2layer.outfields
-                .split(',')
-                .map((s: string) => s.trim());
+            const checkFields = r2layer.outfields.split(',').map((s: string) => s.trim());
 
             checkFields.forEach((cf: string) => {
-                if (
-                    struct.fieldInfo.findIndex((fi: any) => fi.name === cf) ===
-                    -1
-                ) {
+                if (struct.fieldInfo.findIndex((fi: any) => fi.name === cf) === -1) {
                     // field did not exist. add it
                     struct.fieldInfo.push({ name: cf });
                 }
@@ -1449,9 +1323,7 @@ function fieldsSausageGrinder(r2layer: any, r4layer: any): void {
     } else if (hasOutfields) {
         // we only have outfields, no alias mapping.
 
-        struct.fieldInfo = r2layer.outfields
-            .split(',')
-            .map((s: string) => ({ name: s.trim() }));
+        struct.fieldInfo = r2layer.outfields.split(',').map((s: string) => ({ name: s.trim() }));
         struct.exclusiveFields = true;
     }
 

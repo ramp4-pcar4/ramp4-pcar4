@@ -69,9 +69,7 @@ const formatValue = computed<string>(() => {
         return iApi.ui.formatNumber(props.params.value);
     } else if (props.params.type === 'date') {
         // get YYYY-MM-DD from date
-        return props.params.value == null
-            ? ''
-            : new Date(props.params.value).toISOString().slice(0, 10);
+        return props.params.value == null ? '' : new Date(props.params.value).toISOString().slice(0, 10);
     } else if (props.params.type === 'string') {
         // if value is falsey, return it
         if (!props.params.value) {
@@ -96,10 +94,7 @@ const formatValue = computed<string>(() => {
 
 // Returns true if the cell contains any anchor tags.
 const containsLinks = computed<boolean>(() => {
-    return (
-        /<a[^>]*>[^<]+<\/a>/g.test(props.params.value) ||
-        /(http(s)?:\/\/.*)/g.test(props.params.value)
-    );
+    return /<a[^>]*>[^<]+<\/a>/g.test(props.params.value) || /(http(s)?:\/\/.*)/g.test(props.params.value);
 });
 
 onMounted(() => {
@@ -124,10 +119,7 @@ onMounted(() => {
                 (copyTooltip.value as any)?._tippy.show();
             }
         }, 1000);
-        if (
-            (el.value as any)._tippy.reference.clientWidth >=
-            (el.value as any)._tippy.reference.scrollWidth
-        ) {
+        if ((el.value as any)._tippy.reference.clientWidth >= (el.value as any)._tippy.reference.scrollWidth) {
             // hacky solution to prevent non-truncated cells from having a tooltip when using keyboard controls
             (el.value as any)._tippy.hide();
         }
@@ -138,14 +130,11 @@ onBeforeUnmount(() => {
     props.params.eGridCell.removeEventListener('dblclick', () => {
         copy();
     });
-    props.params.eGridCell.removeEventListener(
-        'keydown',
-        (e: KeyboardEvent) => {
-            if (e.ctrlKey && e.code === 'KeyC') {
-                copy();
-            }
+    props.params.eGridCell.removeEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.ctrlKey && e.code === 'KeyC') {
+            copy();
         }
-    );
+    });
     props.params.eGridCell.removeEventListener('blur', () => {
         (el.value as any)._tippy.hide();
         (copyTooltip.value as any)?._tippy.hide();

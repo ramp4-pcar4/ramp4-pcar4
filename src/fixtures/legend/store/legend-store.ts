@@ -10,10 +10,7 @@ interface LegendStore {
     legendConfig: Ref<LegendConfig>;
     children: Ref<[]>;
     headerControls: Ref<string[]>;
-    addItem: (value: {
-        item: LegendItem;
-        parent: LegendItem | undefined;
-    }) => void;
+    addItem: (value: { item: LegendItem; parent: LegendItem | undefined }) => void;
     removeItem: (item: LegendItem) => void;
     replaceItem: (value: { oldItem: LegendItem; newItem: LegendItem }) => void;
 }
@@ -30,22 +27,14 @@ export const useLegendStore = defineStore('legend', () => {
     const children = ref<LegendItem[]>([]);
     const headerControls = ref<string[]>([]);
 
-    function addItem(value: {
-        item: LegendItem;
-        parent: LegendItem | undefined;
-    }) {
+    function addItem(value: { item: LegendItem; parent: LegendItem | undefined }) {
         if (value.parent === undefined) {
             children.value.push(value.item as any);
         } else {
             // validate items to keep ts happy
             // this check should never trigger if legend API is used correctly
-            if (
-                !(value.item instanceof SectionItem) &&
-                !(value.item instanceof LayerItem)
-            ) {
-                console.error(
-                    'attempted to add an unsupported legend item type'
-                );
+            if (!(value.item instanceof SectionItem) && !(value.item instanceof LayerItem)) {
+                console.error('attempted to add an unsupported legend item type');
                 return;
             }
 
@@ -70,12 +59,7 @@ export const useLegendStore = defineStore('legend', () => {
 
             // remove SectionItems with no remaining children
             children = children.filter(
-                item =>
-                    !(
-                        item instanceof SectionItem &&
-                        !item.children.length &&
-                        item.content === ''
-                    )
+                item => !(item instanceof SectionItem && !item.children.length && item.content === '')
             );
 
             return children;

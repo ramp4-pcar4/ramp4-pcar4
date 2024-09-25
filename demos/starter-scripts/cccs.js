@@ -44,10 +44,7 @@ let config = {
                         name: 'Lambert Maps',
                         extentSetId: 'EXT_NRCAN_Lambert_3978',
                         lodSetId: 'LOD_NRCAN_Lambert_3978',
-                        thumbnailTileUrls: [
-                            '/tile/8/285/268',
-                            '/tile/8/285/269'
-                        ],
+                        thumbnailTileUrls: ['/tile/8/285/268', '/tile/8/285/269'],
                         hasNorthPole: true
                     }
                 ],
@@ -65,8 +62,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseSimple',
@@ -80,8 +76,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/Simple/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseCBME_CBCE_HS_RO_3978',
@@ -96,8 +91,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseCBMT_CBCT_GEOM_3978',
@@ -112,8 +106,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     }
                 ],
                 initialBasemapId: 'baseNrCan'
@@ -174,11 +167,7 @@ let options = {
     loadDefaultEvents: true
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 
 rInstance.$element.component('CCCS-Template', {
     props: ['identifyData'],
@@ -265,10 +254,7 @@ rInstance.$element.component('CCCS-Template', {
     },
     methods: {
         async parseData() {
-            if (
-                !this.identifyData.data.data.features ||
-                this.identifyData.data.data.features.length === 0
-            ) {
+            if (!this.identifyData.data.data.features || this.identifyData.data.data.features.length === 0) {
                 this.errord = true;
                 this.parsed = true;
                 return;
@@ -283,8 +269,7 @@ rInstance.$element.component('CCCS-Template', {
             this.result.timePeriod = 'annual';
             this.result.rcp = 'rcp45';
 
-            const tempVal =
-                this.identifyData.data.data.features[0].properties.value;
+            const tempVal = this.identifyData.data.data.features[0].properties.value;
             const parsedVal = parseFloat(tempVal).toFixed(1);
             if (!isNaN(parsedVal)) {
                 this.result.value = (parsedVal >= 0 ? '+' : '') + parsedVal;
@@ -292,11 +277,7 @@ rInstance.$element.component('CCCS-Template', {
                 this.result.value = tempVal;
             }
             this.result.latlong = await this.$iApi.geo.proj.projectGeoJson(
-                JSON.parse(
-                    JSON.stringify(
-                        this.identifyData.data.data.features[0].geometry
-                    )
-                ),
+                JSON.parse(JSON.stringify(this.identifyData.data.data.features[0].geometry)),
                 3978,
                 4326
             );
@@ -329,12 +310,7 @@ rInstance.$element.component('CCCS-Template', {
                         tmin: '°C',
                         tmax: '°C'
                     },
-                    timeSlider: [
-                        '2021-2040',
-                        '2041-2060',
-                        '2061-2080',
-                        '2081-2100'
-                    ],
+                    timeSlider: ['2021-2040', '2041-2060', '2061-2080', '2081-2100'],
                     rcp: {
                         label: 'Emission scenario',
                         rcp85: 'High',
@@ -342,13 +318,11 @@ rInstance.$element.component('CCCS-Template', {
                         rcp26: 'Low'
                     },
                     learnMore: {
-                        default:
-                            'Learn more about the Statistically downscaled climate data dataset.',
+                        default: 'Learn more about the Statistically downscaled climate data dataset.',
                         link: 'https://www.canada.ca/en/environment-climate-change/services/climate-change/canadian-centre-climate-services/display-download/technical-documentation-downscaled-climate-scenarios.html'
                     },
                     details: ['Projected change of', 'by', 'at'],
-                    baseline:
-                        'The projected change is relative to the 1986-2005 average.'
+                    baseline: 'The projected change is relative to the 1986-2005 average.'
                 },
 
                 fr: {
@@ -374,12 +348,7 @@ rInstance.$element.component('CCCS-Template', {
                         tmin: '°C',
                         tmax: '°C'
                     },
-                    timeSlider: [
-                        '2021-2040',
-                        '2041-2060',
-                        '2061-2080',
-                        '2081-2100'
-                    ],
+                    timeSlider: ['2021-2040', '2041-2060', '2061-2080', '2081-2100'],
                     rcp: {
                         label: "Scénarios d'émissions",
                         rcp85: 'Élevées',
@@ -392,8 +361,7 @@ rInstance.$element.component('CCCS-Template', {
                         link: 'https://www.canada.ca/fr/environnement-changement-climatique/services/changements-climatiques/centre-canadien-services-climatiques/afficher-telecharger/documentation-technique-scenarios-climatiques-echelle-reduite.html'
                     },
                     details: ['Changement projeté de', 'par', 'à'],
-                    baseline:
-                        'Les changements projetés sont relatives à la moyenne de 1986-2005.'
+                    baseline: 'Les changements projetés sont relatives à la moyenne de 1986-2005.'
                 }
             };
             return TRANSLATIONS[this.$iApi.language];

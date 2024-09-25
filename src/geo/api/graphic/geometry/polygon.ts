@@ -33,12 +33,7 @@ export class Polygon extends BaseGeometry {
     constructor(id: IdDef, line: LineString);
     constructor(id: IdDef, multiPoint: MultiPoint);
     // from arrays of single line structures that can be interpreted as a multi-ring polygon
-    constructor(
-        id: IdDef,
-        listOfListOfCoords: Array<Array<Array<number>>>,
-        sr?: SrDef,
-        raw?: boolean
-    );
+    constructor(id: IdDef, listOfListOfCoords: Array<Array<Array<number>>>, sr?: SrDef, raw?: boolean);
     constructor(id: IdDef, listOfListOfPoints: Array<Array<Point>>, sr?: SrDef);
     constructor(id: IdDef, listOfListOfXY: Array<Array<object>>, sr?: SrDef);
     constructor(id: IdDef, listOfLinearRings: Array<LinearRing>, sr?: SrDef);
@@ -70,10 +65,7 @@ export class Polygon extends BaseGeometry {
 
     /** Returns an array of the contained rings. A new array is returned each time this is called. */
     get ringArray(): Array<LinearRing> {
-        return this.rawArray.map(
-            (lra, i) =>
-                new LinearRing(this.childIdGenerator(i), lra, this.sr, true)
-        );
+        return this.rawArray.map((lra, i) => new LinearRing(this.childIdGenerator(i), lra, this.sr, true));
     }
 
     /** Returns the string 'Polygon'. */
@@ -113,20 +105,13 @@ export class Polygon extends BaseGeometry {
         return arrOfLines;
     }
 
-    static arrayDeepCopy(
-        a: Array<Array<Array<number>>>
-    ): Array<Array<Array<number>>> {
+    static arrayDeepCopy(a: Array<Array<Array<number>>>): Array<Array<Array<number>>> {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
         return a.map(l => l.map(p => p.slice()));
     }
 
     static fromESRI(esriPoly: EsriPolygon, id?: number | string): Polygon {
-        return new Polygon(
-            id,
-            esriPoly.rings,
-            SpatialReference.fromESRI(esriPoly.spatialReference),
-            true
-        );
+        return new Polygon(id, esriPoly.rings, SpatialReference.fromESRI(esriPoly.spatialReference), true);
     }
 
     toESRI(): EsriPolygon {
@@ -136,21 +121,11 @@ export class Polygon extends BaseGeometry {
         });
     }
 
-    static fromGeoJSON(
-        geoJsonPoly: GeoJson.Polygon,
-        id?: number | string
-    ): Polygon {
-        return new Polygon(
-            id,
-            geoJsonPoly.coordinates,
-            SpatialReference.fromGeoJSON(geoJsonPoly.crs),
-            true
-        );
+    static fromGeoJSON(geoJsonPoly: GeoJson.Polygon, id?: number | string): Polygon {
+        return new Polygon(id, geoJsonPoly.coordinates, SpatialReference.fromGeoJSON(geoJsonPoly.crs), true);
     }
 
     toGeoJSON(): GeoJson.Polygon {
-        return <GeoJson.Polygon>(
-            this.geoJsonFactory(GeoJsonGeomType.POLYGON, this.toArray())
-        );
+        return <GeoJson.Polygon>this.geoJsonFactory(GeoJsonGeomType.POLYGON, this.toArray());
     }
 }

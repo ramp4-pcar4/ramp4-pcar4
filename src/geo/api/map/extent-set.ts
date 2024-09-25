@@ -21,9 +21,7 @@ export class ExtentSet {
 
         // quick extent spatial reference sanity check
         if (fullExtent && !fullExtent.sr.isEqual(this.sr)) {
-            console.error(
-                `Full extent provided in extent set has a mismatching spatial reference: ${fullExtent.sr}`
-            );
+            console.error(`Full extent provided in extent set has a mismatching spatial reference: ${fullExtent.sr}`);
         }
         if (maximumExtent && !maximumExtent.sr.isEqual(this.sr)) {
             console.error(
@@ -76,31 +74,17 @@ export class ExtentSet {
     static fromConfig(extentSetConfig: RampExtentSetConfig): ExtentSet {
         return new ExtentSet(
             extentSetConfig.id,
-            Extent.fromConfig(
-                `${extentSetConfig.id}-extent-default`,
-                extentSetConfig.default
-            ),
+            Extent.fromConfig(`${extentSetConfig.id}-extent-default`, extentSetConfig.default),
             extentSetConfig.full !== undefined
-                ? Extent.fromConfig(
-                      `${extentSetConfig.id}-extent-full`,
-                      extentSetConfig.full
-                  )
+                ? Extent.fromConfig(`${extentSetConfig.id}-extent-full`, extentSetConfig.full)
                 : undefined,
             extentSetConfig.maximum !== undefined
-                ? Extent.fromConfig(
-                      `${extentSetConfig.id}-extent-maximum`,
-                      extentSetConfig.maximum
-                  )
+                ? Extent.fromConfig(`${extentSetConfig.id}-extent-maximum`, extentSetConfig.maximum)
                 : undefined
         );
     }
 
     clone(): ExtentSet {
-        return new ExtentSet(
-            this.id,
-            this._defaultExtent,
-            this._fullExtent,
-            this._maximumExtent
-        );
+        return new ExtentSet(this.id, this._defaultExtent, this._fullExtent, this._maximumExtent);
     }
 }

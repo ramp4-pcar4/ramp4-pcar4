@@ -1,11 +1,5 @@
 <template>
-    <transition-group
-        @enter="enter"
-        @leave="leave"
-        name="panel-container"
-        tag="div"
-        ref="el"
-    >
+    <transition-group @enter="enter" @leave="leave" name="panel-container" tag="div" ref="el">
         <!-- TODO: pass a corresponding fixture instance to the panel component as it can be useful -->
         <panel-container
             v-for="panel in visible(iApi!.screenSize)"
@@ -36,9 +30,7 @@ onMounted(() => {
     const resizeObserver = new ResizeObserver((entries: any) => {
         // determine if app is in mobile mode (app container ONLY has the `xs` class on it,
         // if it contains `sm` then the screen is too large)
-        const newMode = !(
-            iApi?.$vApp.$root?.$refs['app-size'] as HTMLElement
-        ).classList.contains('sm');
+        const newMode = !(iApi?.$vApp.$root?.$refs['app-size'] as HTMLElement).classList.contains('sm');
         const oldMode = mobileMode.value;
 
         // fire event when mobile mode changes
@@ -65,10 +57,7 @@ const enter = (el: Element, done: () => void): void => {
 };
 
 const leave = (el: Element, done: () => void): void => {
-    const [bbox, pbbox] = [
-        el.children[0].getBoundingClientRect(),
-        el.parentElement!.getBoundingClientRect()
-    ];
+    const [bbox, pbbox] = [el.children[0].getBoundingClientRect(), el.parentElement!.getBoundingClientRect()];
 
     // the panel will be positioned `absolute` and it will screw up its dimensions
     // to prevent this, set width/height/left manually before detaching the panel
@@ -88,11 +77,7 @@ const leave = (el: Element, done: () => void): void => {
 /**
  * Animate transition between panel screen components by fading them in/out.
  */
-const animateTransition = (
-    el: Element,
-    done: () => void,
-    values: number[][]
-): void => {
+const animateTransition = (el: Element, done: () => void, values: number[][]): void => {
     anime({
         targets: el,
         duration: 300,

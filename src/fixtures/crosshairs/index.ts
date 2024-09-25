@@ -9,8 +9,7 @@ class CrosshairsFixture extends FixtureInstance {
             app: this.$element
         });
 
-        const innerShell =
-            this.$vApp.$el.getElementsByClassName('inner-shell')[0];
+        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.appendChild(el.childNodes[0]);
 
         // override the removed method here to get access to scope

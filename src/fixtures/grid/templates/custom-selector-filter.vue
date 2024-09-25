@@ -33,10 +33,7 @@ const props = defineProps(['params']);
 
 const selectedOption = ref<string>('');
 const options = ref<Array<string>>([]);
-const fixed = ref<boolean>(
-    props.params.stateManager.columns[props.params.column.colDef.field].filter
-        .static
-);
+const fixed = ref<boolean>(props.params.stateManager.columns[props.params.column.colDef.field].filter.static);
 
 const selectionChanged = () => {
     selectedOption.value = selectedOption.value ? selectedOption.value : '';
@@ -57,10 +54,7 @@ const selectionChanged = () => {
 
         // Save the new filter value in the state manager. Allows for quick recovery if the grid is
         // closed and re-opened.
-        props.params.stateManager.setColumnFilterValue(
-            props.params.column.colDef.field,
-            selectedOption.value
-        );
+        props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, selectedOption.value);
 
         props.params.api.onFilterChanged();
     });
@@ -82,17 +76,13 @@ const selectionChanged = () => {
 
 onBeforeMount(() => {
     // Load previously stored value (if saved in table state manager)
-    selectedOption.value = props.params.stateManager.getColumnFilterValue(
-        props.params.column.colDef.field
-    );
+    selectedOption.value = props.params.stateManager.getColumnFilterValue(props.params.column.colDef.field);
 
     let rowData = props.params.rowData;
 
     // obtain row data and filter out duplicates for selector list
     rowData = rowData.map((row: any) => row[props.params.column.colId]);
-    options.value = rowData.filter(
-        (item: any, idx: any) => rowData.indexOf(item) === idx
-    );
+    options.value = rowData.filter((item: any, idx: any) => rowData.indexOf(item) === idx);
 
     // add the '...' option to allow clearing the selector
     options.value.unshift('...');

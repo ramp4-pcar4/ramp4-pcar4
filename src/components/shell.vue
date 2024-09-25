@@ -1,9 +1,7 @@
 <template>
     <div class="h-full relative">
         <!-- TODO: should inner shell be a separate component? -->
-        <div
-            class="inner-shell absolute top-0 left-0 h-full w-full pointer-events-none"
-        >
+        <div class="inner-shell absolute top-0 left-0 h-full w-full pointer-events-none">
             <div class="sr-only screen-reader-alert"></div>
             <div class="absolute top-8 w-full flex justify-center">
                 <button
@@ -18,9 +16,7 @@
             <panel-stack
                 class="panel-stack sm:flex absolute inset-0 overflow-hidden sm:p-12 z-10 sm:pl-80 xs:pl-40 sm:pb-48 xs:pb-28 xs:pr-0 sm:pr-40"
             ></panel-stack>
-            <notification-floating-button
-                v-if="!appbarFixture"
-            ></notification-floating-button>
+            <notification-floating-button v-if="!appbarFixture"></notification-floating-button>
             <map-caption class="z-30"></map-caption>
         </div>
 
@@ -29,15 +25,8 @@
             <div class="spinner relative inset-x-1/2 inset-y-9/20"></div>
         </div>
 
-        <teleport
-            v-for="panel in teleported()"
-            :to="panel.teleport?.target"
-            :key="panel.id"
-        >
-            <panel-container
-                :key="`${panel.id}`"
-                :panel="panel"
-            ></panel-container>
+        <teleport v-for="panel in teleported()" :to="panel.teleport?.target" :key="panel.id">
+            <panel-container :key="`${panel.id}`" :panel="panel"></panel-container>
         </teleport>
     </div>
 </template>

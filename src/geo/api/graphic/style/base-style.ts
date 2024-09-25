@@ -6,15 +6,11 @@ import type { EsriSymbol } from '@/geo/esri';
 
 export class BaseStyle {
     toOptions(): any {
-        throw new Error(
-            `.toOptions called on BaseStyle. Likely was not implemented on subclass.`
-        );
+        throw new Error(`.toOptions called on BaseStyle. Likely was not implemented on subclass.`);
     }
 
     toESRI(): EsriSymbol {
-        throw new Error(
-            `.toESRI called on BaseStyle. Likely was not implemented on subclass.`
-        );
+        throw new Error(`.toESRI called on BaseStyle. Likely was not implemented on subclass.`);
     }
 
     // takes any "measurement" type option and converts to points units.
@@ -24,9 +20,7 @@ export class BaseStyle {
     // text number + 'px' === pixels, gets converted
     // undefined === undefined
     // empty string === undefined
-    static convToPoints(
-        input: number | string | undefined
-    ): number | undefined {
+    static convToPoints(input: number | string | undefined): number | undefined {
         if (typeof input === 'undefined') {
             return undefined;
         } else if (typeof input === 'string') {

@@ -35,9 +35,7 @@ const baseConfig = {
             output: {
                 inlineDynamicImports: true,
                 assetFileNames: (assetInfo: any) => {
-                    return assetInfo.name === 'style.css'
-                        ? 'bad.css'
-                        : assetInfo.name;
+                    return assetInfo.name === 'style.css' ? 'bad.css' : assetInfo.name;
                 }
             }
         }
@@ -59,9 +57,7 @@ function cdnBundleConfig() {
             rollupOptions: {
                 output: {
                     assetFileNames: (assetInfo: any) => {
-                        return assetInfo.name === 'style.css'
-                            ? 'lib/ramp.css'
-                            : assetInfo.name;
+                        return assetInfo.name === 'style.css' ? 'lib/ramp.css' : assetInfo.name;
                     }
                 }
             }
@@ -74,8 +70,7 @@ function prodBundleConfig() {
         build: {
             minify: true,
             lib: {
-                fileName: (format: string) =>
-                    `lib/ramp.browser.${format}.prod.js`,
+                fileName: (format: string) => `lib/ramp.browser.${format}.prod.js`,
                 formats: ['es', 'iife']
             }
         }
@@ -83,9 +78,7 @@ function prodBundleConfig() {
 }
 
 function npmBundleConfig() {
-    const externalImports = Object.keys(pkg.dependencies).map(
-        dep => new RegExp(`^${dep}`)
-    );
+    const externalImports = Object.keys(pkg.dependencies).map(dep => new RegExp(`^${dep}`));
 
     const config = mergeConfig(baseConfig, {
         build: {

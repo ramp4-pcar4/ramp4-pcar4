@@ -4,13 +4,9 @@ import { FixtureInstance } from '@/api/internal';
 import type { ExportAPI, ExportSubFixture } from '@/fixtures/export/api/export';
 import type { ExportConfig } from '../export/store';
 
-class ExportScalebarFixture
-    extends FixtureInstance
-    implements ExportSubFixture
-{
+class ExportScalebarFixture extends FixtureInstance implements ExportSubFixture {
     get config(): any {
-        const fixtureConfig: ExportConfig | undefined =
-            this.$iApi.fixture.get<ExportAPI>('export').config;
+        const fixtureConfig: ExportConfig | undefined = this.$iApi.fixture.get<ExportAPI>('export').config;
         return fixtureConfig?.mapElements;
     }
 
@@ -29,13 +25,10 @@ class ExportScalebarFixture
 
             const fbScaleText = new fabric.Text(
                 this.$iApi.$i18n.t('export.scaleBar.approx', [
-                    `${this.$iApi.$i18n.n(sInfo[i].distance, 'number')}${
-                        sInfo[i].units
-                    }`
+                    `${this.$iApi.$i18n.n(sInfo[i].distance, 'number')}${sInfo[i].units}`
                 ]),
                 {
-                    fontFamily:
-                        'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif',
+                    fontFamily: 'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif',
                     fill: '#000',
                     fontSize: 16,
                     top: i * 50,
@@ -44,13 +37,10 @@ class ExportScalebarFixture
                     originY: 'top'
                 }
             );
-            const fbScaleLine = new fabric.Line(
-                [0, i === 0 ? 30 : 40, sInfo[i].pixels, i === 0 ? 30 : 40],
-                {
-                    stroke: 'black',
-                    strokeWidth: 3
-                }
-            );
+            const fbScaleLine = new fabric.Line([0, i === 0 ? 30 : 40, sInfo[i].pixels, i === 0 ? 30 : 40], {
+                stroke: 'black',
+                strokeWidth: 3
+            });
 
             fbObjs.push(new fabric.Group([fbScaleLine, fbScaleText]));
         }

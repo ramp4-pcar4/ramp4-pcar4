@@ -6,14 +6,7 @@ import {
     InstanceAPI,
     QuickCache
 } from '@/api/internal';
-import {
-    CoreFilter,
-    Extent,
-    Filter,
-    Graphic,
-    LayerType,
-    NoGeometry
-} from '@/geo/api';
+import { CoreFilter, Extent, Filter, Graphic, LayerType, NoGeometry } from '@/geo/api';
 import type {
     Attributes,
     DiscreteGraphicResult,
@@ -35,10 +28,7 @@ export class TableLayer extends DataLayer {
         super(rampConfig, $iApi);
         this.layerType = LayerType.DATATABLE;
         this.serviceUrl = rampConfig.url;
-        this.filter = new Filter(
-            rampConfig.permanentFilteredQuery || '',
-            rampConfig.initialFilteredQuery || ''
-        );
+        this.filter = new Filter(rampConfig.permanentFilteredQuery || '', rampConfig.initialFilteredQuery || '');
     }
 
     protected async onInitiate(): Promise<void> {
@@ -62,60 +52,46 @@ export class TableLayer extends DataLayer {
         const featIdx: number = urlData.index || 0;
 
         // update asynch data
-        const pLD: Promise<void> = this.$iApi.geo.layer
-            .loadLayerMetadata(this.serviceUrl)
-            .then(sData => {
-                if (startTime < this.lastCancel) {
-                    return;
-                }
-                if (!this.name) {
-                    this.name = sData.name;
-                }
-                this.layerTree.name = this.name;
+        const pLD: Promise<void> = this.$iApi.geo.layer.loadLayerMetadata(this.serviceUrl).then(sData => {
+            if (startTime < this.lastCancel) {
+                return;
+            }
+            if (!this.name) {
+                this.name = sData.name;
+            }
+            this.layerTree.name = this.name;
 
-                this.oidField = sData.objectIdField;
+            this.oidField = sData.objectIdField;
 
-                // apply any config based overrides to the data we just downloaded
+            // apply any config based overrides to the data we just downloaded
 
-                this.nameField =
-                    this.origRampConfig.nameField ||
-                    sData.displayField ||
-                    this.oidField;
+            this.nameField = this.origRampConfig.nameField || sData.displayField || this.oidField;
 
-                // process fields and any overrides
-                this.fields = sData.fields;
+            // process fields and any overrides
+            this.fields = sData.fields;
 
-                this.$iApi.geo.attributes.applyFieldMetadata(
-                    this,
-                    this.origRampConfig.fieldMetadata
-                );
+            this.$iApi.geo.attributes.applyFieldMetadata(this, this.origRampConfig.fieldMetadata);
 
-                // set up attribute loader.
-                // will add a cache even though it will be rarely used (would require an API call to show details prior to grid load)
-                const loadData: AttributeLoaderDetails = {
-                    // version number is only provided on 10.0 SP1 servers and up.
-                    // servers 10.1 and higher support the query limit flag
-                    supportsLimit: (sData.currentVersion || 1) >= 10.1,
-                    serviceUrl: this.serviceUrl,
-                    oidField: this.oidField,
-                    batchSize: -1,
-                    attribs: this.fieldList,
-                    permanentFilter: this.getSqlFilter(CoreFilter.PERMANENT),
-                    fieldsToTrim: this.getFieldsToTrim()
-                };
-                this.attribs.attLoader = new ArcServerAttributeLoader(
-                    this.$iApi,
-                    loadData
-                );
-                this.attribs.quickCache = new QuickCache(this.geomType);
-            });
+            // set up attribute loader.
+            // will add a cache even though it will be rarely used (would require an API call to show details prior to grid load)
+            const loadData: AttributeLoaderDetails = {
+                // version number is only provided on 10.0 SP1 servers and up.
+                // servers 10.1 and higher support the query limit flag
+                supportsLimit: (sData.currentVersion || 1) >= 10.1,
+                serviceUrl: this.serviceUrl,
+                oidField: this.oidField,
+                batchSize: -1,
+                attribs: this.fieldList,
+                permanentFilter: this.getSqlFilter(CoreFilter.PERMANENT),
+                fieldsToTrim: this.getFieldsToTrim()
+            };
+            this.attribs.attLoader = new ArcServerAttributeLoader(this.$iApi, loadData);
+            this.attribs.quickCache = new QuickCache(this.geomType);
+        });
 
         // feature count
         const pFC = this.$iApi.geo.layer
-            .loadFeatureCount(
-                this.serviceUrl,
-                this.getSqlFilter(CoreFilter.PERMANENT)
-            )
+            .loadFeatureCount(this.serviceUrl, this.getSqlFilter(CoreFilter.PERMANENT))
             .then(count => {
                 if (startTime > this.lastCancel) {
                     this.featureCount = count;
@@ -129,10 +105,7 @@ export class TableLayer extends DataLayer {
         return loadPromises;
     }
 
-    async getGraphic(
-        objectId: number,
-        opts: GetGraphicParams
-    ): Promise<Graphic> {
+    async getGraphic(objectId: number, opts: GetGraphicParams): Promise<Graphic> {
         // overridden from DataLayer just to take advantage of caching. If we decide to drop caching, this can almost be deleted;
         // would just need to ensure the attribute downloader runs first if not already started.
 
@@ -158,10 +131,7 @@ export class TableLayer extends DataLayer {
                 attribs: this.fieldList
             };
 
-            const webFeat =
-                await this.$iApi.geo.attributes.loadSingleFeature(
-                    serviceParams
-                );
+            const webFeat = await this.$iApi.geo.attributes.loadSingleFeature(serviceParams);
 
             this.attribs.quickCache.setAttribs(objectId, webFeat.attributes);
 
@@ -290,9 +260,7 @@ export class TableLayer extends DataLayer {
      * @param options {Object} options to provide filters and helpful information.
      * @returns {Promise} resolves in an array of object ids and promises resolving in each feature
      */
-    async queryFeaturesDiscrete(
-        options: QueryFeaturesParams
-    ): Promise<Array<DiscreteGraphicResult>> {
+    async queryFeaturesDiscrete(options: QueryFeaturesParams): Promise<Array<DiscreteGraphicResult>> {
         // TODO potential optimization.
         //      see notes in same method inside AttribLayer
 

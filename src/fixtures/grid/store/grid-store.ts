@@ -30,15 +30,11 @@ export const useGridStore = defineStore('grid', () => {
     }
 
     function getGridId(id: string) {
-        return Object.keys(grids.value).find(gid =>
-            grids.value[gid].layerIds.includes(id)
-        );
+        return Object.keys(grids.value).find(gid => grids.value[gid].layerIds.includes(id));
     }
 
     function removeLayer(gridId: string, layerId: string) {
-        grids.value[gridId].layerIds = grids.value[gridId].layerIds.filter(
-            id => id !== layerId
-        );
+        grids.value[gridId].layerIds = grids.value[gridId].layerIds.filter(id => id !== layerId);
     }
 
     return {
