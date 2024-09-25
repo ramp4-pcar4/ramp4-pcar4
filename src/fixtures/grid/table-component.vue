@@ -1563,7 +1563,7 @@ const setUpColumns = () => {
                             );
                             tabularAttrSet.columns =
                                 tabularAttrSet.columns.filter(column =>
-                                    selectedColumnNames.includes(column.title)
+                                    selectedColumnNames.includes(column.data)
                                 );
                         }
 
