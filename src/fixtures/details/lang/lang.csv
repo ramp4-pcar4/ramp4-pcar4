@@ -7,6 +7,7 @@ details.layers.error,Error,1,Erreur,1
 details.layers.results.empty,No results found for any layer.,1,Aucun résultat trouvé pour aucune couche.,0
 details.layers.results.empty.currentLayer,No results found for the selected layer.,1,Aucun résultat trouvé pour la couche sélectionnée.,1
 details.layers.results.empty.noLayers,No layers for identification.,1,Pas de couches pour l'identification.,0
+details.layers.results.list.tooltip,Use the arrow keys to navigate the items,1,Utilisez les touches fléchées pour naviguer entre les éléments,0
 details.result.default.name,Identify Item {0},1,Désigner l'élément {0},1
 details.loading,Loading...,1,Chargement en cours...,1
 details.items.title,Details,1,Détails,1
