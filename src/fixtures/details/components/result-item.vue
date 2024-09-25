@@ -201,7 +201,7 @@ const itemName = computed<string>(() => {
 // make links look like links and work like links
 const makeHtmlLink = (html: any): any => {
     if (typeof html === 'string') {
-        const classes = 'underline text-blue-600 break-all';
+        const classes = 'underline text-blue-700 break-all';
         const div = document.createElement('div');
         div.innerHTML = html.trim();
 
