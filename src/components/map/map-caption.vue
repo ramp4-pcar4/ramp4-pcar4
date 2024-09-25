@@ -69,8 +69,8 @@
                 :aria-pressed="scale?.isImperialScale"
                 :aria-label="`
                     ${scale?.label} - ${changeScaleMessage(
-                    scale?.isImperialScale
-                )}
+                        scale?.isImperialScale
+                    )}
                 `"
                 v-tippy="{
                     delay: [300, 0],
@@ -99,6 +99,8 @@
                 :ariaLabel="`${t('map.language.short')} - ${t(
                     'map.changeLanguage'
                 )}`"
+                tooltipPlacement="top-start"
+                tooltipPlacementAlt="left-end"
             >
                 <template #header>
                     <span

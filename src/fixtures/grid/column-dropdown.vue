@@ -3,7 +3,7 @@
         class="relative"
         position="bottom-end"
         :tooltip="t('grid.label.columns')"
-        :tooltip-placement="'bottom'"
+        tooltipPlacementAlt="left"
         :centered="false"
     >
         <template #header>

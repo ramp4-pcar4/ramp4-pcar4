@@ -3,7 +3,7 @@
         v-focus-item
         :position="dropdownPlacement"
         :tooltip="t('export.menu')"
-        tooltip-placement="top"
+        tooltipPlacement="top"
     >
         <template #header>
             <div
