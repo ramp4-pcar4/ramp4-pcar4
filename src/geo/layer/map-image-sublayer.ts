@@ -32,7 +32,14 @@ export class MapImageSublayer extends AttribLayer {
         this.layerIdx = config.index;
         this.parentLayer = parent;
 
-        this.dataFormat = DataFormat.ESRI_FEATURE; // this will get flipped to raster during the server metadata checks if needed
+        // these two props will get flipped to raster during the server metadata checks if needed.
+        // has to be set here to allow for initial/permanent filters to be set immediately.
+        // otherwise, layer will get a draw in without filters and pull mountains of data.
+        // this means it won't catch a bad config where someone puts a filter on a raster child.
+        // but that should explode as they test their site and get corrected.
+        this.dataFormat = DataFormat.ESRI_FEATURE;
+        this.supportsFeatures = true;
+
         this.tooltipField = '';
         this.hovertips = false;
         this.url = this.parentLayer?.url;
@@ -253,7 +260,10 @@ export class MapImageSublayer extends AttribLayer {
     }
 
     applySqlFilter(exclusions: Array<string> = []): void {
-        if (this.layerExists) {
+        // this can get set during constructor, so can't use .layerExists as it will fail
+        // the initiated check. MILSubs are funny as they initiate when their parent is already
+        // into the load phase. "Initiating" but layer exists.
+        if (this.parentLayer?.layerExists && this.esriSubLayer) {
             if (this.supportsFeatures) {
                 const sql = this.filter.getCombinedSql(exclusions);
                 this.esriSubLayer!.definitionExpression = sql;
