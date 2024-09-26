@@ -1,4 +1,4 @@
-import { createInstance, geo } from '../esChunked/ramp.js';
+import { createInstance, geo } from '../esDynamic/ramp.js';
 
 window.debugInstance = null;
 

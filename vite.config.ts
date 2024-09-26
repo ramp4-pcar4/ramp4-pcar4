@@ -48,22 +48,21 @@ const baseConfig = {
     }
 } as Record<string, any>;
 
-function esInlineConfig() {
+function inlineConfig() {
     return mergeConfig(baseConfig, {
         build: {
             cssMinify: true,
             minify: true,
             sourcemap: true,
             lib: {
-                fileName: (format: string) =>
-                    `esInline/ramp.browser.${format}.js`,
+                fileName: (format: string) => `ramp.browser.${format}.js`,
                 formats: ['es', 'iife']
             },
             rollupOptions: {
                 output: {
                     assetFileNames: (assetInfo: any) => {
                         return assetInfo.name === 'style.css'
-                            ? 'esInline/ramp.css'
+                            ? 'ramp.css'
                             : assetInfo.name;
                     }
                 }
@@ -72,10 +71,10 @@ function esInlineConfig() {
     });
 }
 
-function esChunkConfig() {
+function esDynamicConfig() {
     return mergeConfig(baseConfig, {
         build: {
-            outDir: `${distName}/esChunked`,
+            outDir: `${distName}/esDynamic`,
             minify: true,
             sourcemap: true,
             cssMinify: true,
@@ -105,7 +104,7 @@ function npmBundleConfig() {
     const config = mergeConfig(baseConfig, {
         build: {
             lib: {
-                fileName: 'esInline/ramp.bundle.es',
+                fileName: 'ramp.bundle.es',
                 formats: ['es']
             },
             rollupOptions: {
@@ -156,10 +155,10 @@ export default defineConfig(viteConfig => {
     if (command === 'build') {
         if (mode === 'npm') {
             return npmBundleConfig();
-        } else if (mode === 'esChunk') {
-            return esChunkConfig();
-        } else if (mode === 'esInline') {
-            return esInlineConfig();
+        } else if (mode === 'esDynamic') {
+            return esDynamicConfig();
+        } else if (mode === 'inline') {
+            return inlineConfig();
         } else {
             return testBuildConfig();
         }
