@@ -643,8 +643,8 @@ let config = {
             layers: [
                 {
                     id: 'climateActionMap',
-                    layerType: 'esri-map-image',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CAM/MapServer',
+                    layerType: 'esri-feature',
+                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CAM/MapServer/1',
                     tolerance: 20,
                     symbologyExpanded: true,
                     sublayers: [

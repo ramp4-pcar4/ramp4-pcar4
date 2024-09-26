@@ -330,6 +330,8 @@ import {
     type PropType
 } from 'vue';
 
+// below import is causing error because of revert to old version (from 5.0.1 to 4.1.4)
+//@ts-ignore
 import { ColorPicker } from 'vue-accessible-color-picker';
 
 import type { InstanceAPI, PanelInstance } from '@/api';
