@@ -57,7 +57,6 @@ $font-list:
 @use 'directives/focus-list/focus-list';
 
 .ramp-styles {
-    @include focus-list.default-focused-styling;
     height: 100%;
     font-family: $font-list;
     h1,
@@ -75,6 +74,7 @@ $font-list:
         font-family: $font-list;
         line-height: 1.5;
     }
+    @include focus-list.default-focused-styling;
 }
 .symbologyIcon {
     @apply bg-white inline-flex justify-center items-center overflow-hidden;
