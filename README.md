@@ -115,7 +115,7 @@ npm run preview
 
 Then open `http://localhost:5050/index.html` in your browser.
 
-The `demos` folder **is** processed by vite and can therefore reference any source file in the repo. This is the starting point for local development. For example, the `demos/starter-scripts/main.js` file imports `{ createInstance, geo } from '@/main';` whereas `public/starter-scripts/index.js` doesn't since RAMP is globally defined by the `index.html` file when it loads `<script src="./lib/ramp.js"></script>`.
+The `demos` folder **is** processed by vite and can therefore reference any source file in the repo. This is the starting point for local development. For example, the `demos/starter-scripts/main.js` file imports `{ createInstance, geo } from '@/main';` whereas `public/starter-scripts/index.js` doesn't since RAMP is globally defined by the `index.html` file when it loads `<script src="./ramp.browser.iife.js"></script>`.
 
 Run `npm run dev` then open `http://localhost:3000/demos/index.html` in your browser.
 
