@@ -820,10 +820,6 @@ export class LayerInstance extends APIScope {
               }
             | undefined = this.$iApi.geo.layer.getLayerControls(this.id);
 
-        // check disabled controls first
-        if (controls?.disabledControls?.includes(control)) {
-            return false;
-        }
-        return controls?.controls.includes(control) ?? false;
+        return this.$iApi.geo.shared.controlAvailable(control, controls);
     }
 }
