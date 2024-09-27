@@ -262,6 +262,7 @@ export class FileLayer extends AttribLayer {
             loaded: false,
             errored: false,
             uid: this.uid,
+            layerId: this.id,
             requestTime: Date.now()
         });
 

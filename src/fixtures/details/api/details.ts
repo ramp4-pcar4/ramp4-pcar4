@@ -1,9 +1,4 @@
-import {
-    AttribLayer,
-    FixtureInstance,
-    LayerInstance,
-    ReactiveIdentifyFactory
-} from '@/api';
+import { FixtureInstance, LayerInstance, ReactiveIdentifyFactory } from '@/api';
 import type { IdentifyItem, IdentifyResult } from '@/api';
 import type { Graphic, IdentifyResultFormat } from '@/geo/api';
 import { DetailsItemInstance, useDetailsStore } from '../store';
@@ -65,9 +60,10 @@ export class DetailsAPI extends FixtureInstance {
      * If panel open and incoming data is what is currently shown, panel closes.
      * The `open` parameter can override the behavior.
      * featureData payload (can be empty if forcing closed)
-     * - uid    : uid string of the layer hosting the feature
-     * - format : structure of the data. IdentifyResultFormat value.
-     * - data   : source information for the feature. Analogous to the data property of an IdentifyItem
+     * - uid     : uid string of the layer hosting the feature
+     * - format  : structure of the data. IdentifyResultFormat value.
+     * - data    : source information for the feature. Analogous to the data property of an IdentifyItem
+     * - layerId : optional layerId string of the layer hosting the feature. Will be looked up if not provided
      *
      * @param {{data: any, uid: string, format: IdentifyResultFormat}} featureData
      * @param {boolean | undefined} open can force the panel to open (true) or close (false) regardless of current panel state
@@ -77,6 +73,7 @@ export class DetailsAPI extends FixtureInstance {
         featureData: {
             data: any;
             uid: string;
+            layerId?: string;
             format: IdentifyResultFormat;
         },
         open: boolean | undefined
@@ -132,6 +129,7 @@ export class DetailsAPI extends FixtureInstance {
                 )
             ],
             uid: featureData.uid,
+            layerId: featureData.layerId || layer?.id || 'error-not-found',
             loading: Promise.resolve(),
             loaded: true,
             errored: false,

@@ -134,6 +134,11 @@ export interface IdentifyResult {
     uid: string;
 
     /**
+     * Layer Id of the logical layer the result came from
+     */
+    layerId: string;
+
+    /**
      * Indicates if the list of results have been identified.
      * This means items is populated. Each item will need to have details loaded as needed.
      */

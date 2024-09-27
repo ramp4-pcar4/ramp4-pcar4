@@ -523,6 +523,7 @@ export class MapImageLayer extends MapLayer {
                 loaded: false,
                 errored: false,
                 uid: sublayer.uid,
+                layerId: sublayer.id,
                 requestTime: Date.now()
             });
 

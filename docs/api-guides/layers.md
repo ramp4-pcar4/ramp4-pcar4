@@ -430,9 +430,10 @@ Options parameter object, with descriptions following:
 
 The result object of `runIdentify()` is on the fancy side, as there are a few levels identify acts upon. The topmost array of results has an entry for each logical layer involved, including:
 
-- The `uid` of the logical layer
-- A request timestamp (`requestTime`)
-- An array of individual hits (`items`) for the logical layer
+- The `uid` of the logical layer.
+- The `layerId` (i.e. the `id` property value) of the logical layer.
+- A request timestamp (`requestTime`).
+- An array of individual hits (`items`) for the logical layer.
 - A loaded flag (`loaded`) to indicate if `items` has been populated.
 - A promise (`loading`) that resolves when `items` has been populated.
 - A flag to indicate if the identify request failed (`errored`).
@@ -453,6 +454,7 @@ The objects in the `items` array manage each result. To limit lots of potential 
 [
     {
         uid,
+        layerId,
         loaded,
         loading,
         errored,
