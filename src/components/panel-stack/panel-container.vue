@@ -11,6 +11,7 @@
         <!-- only perform transition on screen components that are not loaded yet; if already loaded, switch right away -->
         <transition @before-leave="beforeLeave" @leave="leave" @enter="enter">
             <component
+                class="h-full"
                 :is="panel.route.screen"
                 v-bind="panel.route.props"
                 :panel="panel"
