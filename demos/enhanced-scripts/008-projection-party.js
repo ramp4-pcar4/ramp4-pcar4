@@ -20,12 +20,22 @@ const runPreTest = (config, options, utils) => {
     };
 
     const yarmouth = {
-        id: 'gjFancy',
-        name: 'GeoJson Great Lakes Albers',
+        id: 'gjFancyCRS',
+        name: 'GeoJson CRS Great Lakes Albers',
         layerType: 'file-geojson',
         url: '../file-layers/yarmouth.json',
         caching: true,
         colour: '#FF8C00',
+        nameField: 'name'
+    };
+
+    const duffers = {
+        id: 'gjFancyWKT',
+        name: 'GeoJson WKT Great Lakes Albers',
+        layerType: 'file-geojson',
+        url: '../file-layers/duffers.json',
+        caching: true,
+        colour: '#008CAA',
         nameField: 'name'
     };
 
@@ -56,6 +66,7 @@ const runPreTest = (config, options, utils) => {
     utils.addLayerLegend(lambertFL);
     utils.addLayerLegend(happy);
     utils.addLayerLegend(yarmouth);
+    utils.addLayerLegend(duffers);
 
     return { config, options };
 };
