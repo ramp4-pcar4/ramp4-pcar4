@@ -109,14 +109,10 @@ export class FileLayer extends AttribLayer {
         const opts: GeoJsonOptions = {
             layerId: this.origRampConfig.id || '',
             targetSR: this.$iApi.geo.map.getSR(),
-            ...(this.origRampConfig.latField && {
-                latField: this.origRampConfig.latField
-            }),
-            ...(this.origRampConfig.longField && {
-                lonField: this.origRampConfig.longField
-            }),
             colour: this.origRampConfig.colour,
-            fieldMetadata: this.origRampConfig.fieldMetadata
+            fieldMetadata: this.origRampConfig.fieldMetadata,
+            latField: this.origRampConfig.latField || '',
+            lonField: this.origRampConfig.longField || ''
         };
 
         this.esriJson = await this.$iApi.geo.layer.files.geoJsonToEsriJson(

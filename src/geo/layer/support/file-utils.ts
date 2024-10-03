@@ -6,7 +6,7 @@ import shp from 'shpjs/dist/shp.min.js';
 import axios from 'redaxios';
 
 import { EsriSimpleRenderer, EsriSpatialReference } from '@/geo/esri';
-import { Colour, FieldType, LayerType } from '@/geo/api';
+import { Colour, FieldType, LayerType, SpatialReference } from '@/geo/api';
 
 import type {
     CsvOptions,
@@ -403,7 +403,7 @@ export class FileUtils extends APIScope {
         options: GeoJsonOptions
     ): Promise<__esri.FeatureLayerProperties> {
         let targetSR: any;
-        let srcProj = 'EPSG:4326'; // 4326 is the default for GeoJSON with no projection defined
+        let srcProj = '';
         let layerId: string;
         const configPackage: __esri.FeatureLayerProperties = {
             objectIdField: 'OBJECTID',
@@ -432,15 +432,12 @@ export class FileUtils extends APIScope {
             JSON.stringify(defaultRenderers[value])
         );
 
-        // attempt to get spatial reference from geoJson
-        if (geoJson.crs && geoJson.crs.type === 'name') {
-            srcProj = geoJson.crs.properties.name;
-        }
-
         // pluck treats from options parameter
         if (options) {
             if (options.sourceProjection) {
-                srcProj = options.sourceProjection;
+                srcProj = this.$iApi.geo.proj.normalizeProj(
+                    options.sourceProjection
+                );
             }
 
             if (options.targetSR) {
@@ -464,6 +461,12 @@ export class FileUtils extends APIScope {
             }
         } else {
             throw new Error('geoJsonToEsriJson - missing opts arguement');
+        }
+
+        if (!srcProj) {
+            // the options did not include a source projection.
+            // attempt to get it from the geoJson object, LatLon if doesn't exist
+            srcProj = SpatialReference.parseGeoJsonCrs(geoJson.crs);
         }
 
         // Note: while this appears to always give the layer a simple renderer,
@@ -529,20 +532,12 @@ export class FileUtils extends APIScope {
         }
 
         // look up projection definitions if they don't already exist and we have enough info
-
-        // note we need to use the SR object, not the normalized string, as checkProj cant handle a raw WKT
-        //      and this function won't have a raw EPSG code / proj4 string coming from param targetSR.
-        //      if this becomes a problem, we can change checkProj to test if the start of a string is `EPSG`, and if not, assume it's wkt.
-        //      nicer solution would be find a wkt regex to validate, but lazy search didnt reveal one.
-
-        // TODO if we want/need, we can put an error handler on the promise to deal with incompatible projections.
-        //      e.g. maybe we want to catch it and then build a dummy layer set to error state?
         await this.$iApi.geo.proj.checkProjBomber([srcProj, targetSR]);
 
         // generate a nicely formatted object that that esri feature layer constructor can accept to make a local layer
 
         // project data and convert to esri json format
-        const fancySR = new EsriSpatialReference(targetSR);
+        const fancySR = SpatialReference.parseSR(targetSR).toESRI();
 
         await this.$iApi.geo.proj.projectGeoJson(geoJson, srcProj, destProj);
 
