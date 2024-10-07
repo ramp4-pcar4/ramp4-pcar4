@@ -11,19 +11,33 @@ import type ExportTimestampFixture from '../export-timestamp';
 import type ExportTitleFixture from '../export-title';
 import type ExportNorthArrowFixture from '../export-northarrow';
 import type ExportScalebarFixture from '../export-scalebar';
+import type { PanelInstance } from '@/api';
 import { useAppbarStore } from '../appbar/store';
 import { useExportStore } from './store';
+import { GlobalEvents } from '@/api';
 
 class ExportFixture extends ExportAPI {
     initialized(): void {
         // load sub-fixtures required by the export
-        this.$iApi.fixture.add('export-title');
-        this.$iApi.fixture.add('export-map');
-        this.$iApi.fixture.add('export-legend');
-        this.$iApi.fixture.add('export-northarrow');
-        this.$iApi.fixture.add('export-scalebar');
-        this.$iApi.fixture.add('export-timestamp');
-        this.$iApi.fixture.add('export-footnote');
+    }
+
+    async needed() {
+        const exportTitle = (await import('../export-title')).default;
+        const exportMap = (await import('../export-map')).default;
+        const exportLegend = (await import('../export-legend')).default;
+        const exportNorthArrow = (await import('../export-northarrow')).default;
+        const exportScalebar = (await import('../export-scalebar')).default;
+        const exportTimestamp = (await import('../export-timestamp')).default;
+        const exportFootnote = (await import('../export-footnote')).default;
+
+        // any type is needed to suppress TS errors, not able to find a better solution/type for use
+        this.$iApi.fixture.add('export-title', exportTitle as any);
+        this.$iApi.fixture.add('export-map', exportMap as any);
+        this.$iApi.fixture.add('export-legend', exportLegend as any);
+        this.$iApi.fixture.add('export-northarrow', exportNorthArrow as any);
+        this.$iApi.fixture.add('export-scalebar', exportScalebar as any);
+        this.$iApi.fixture.add('export-timestamp', exportTimestamp as any);
+        this.$iApi.fixture.add('export-footnote', exportFootnote as any);
     }
 
     added(): void {
@@ -49,6 +63,17 @@ class ExportFixture extends ExportAPI {
                 }
             },
             { i18n: { messages } }
+        );
+
+        const neededHandler = this.$iApi.event.on(
+            GlobalEvents.PANEL_OPENED,
+            async (panel: PanelInstance) => {
+                if (panel.id === 'export') {
+                    await this.needed();
+                    (panel as any).exportMake();
+                    this.$iApi.event.off(neededHandler);
+                }
+            }
         );
 
         // parse export section of config and store in the config store
