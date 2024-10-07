@@ -57,7 +57,13 @@
             class="appbar-item h-48"
         ></default-button>
 
-        <more-button id="more" v-show="overflow">
+        <more-button
+            id="more"
+            v-show="overflow"
+            :numItems="numberOverflow"
+            :renderWatch="popperRerender"
+            @update-parent="rerender"
+        >
             <template v-slot:default>
                 <template v-for="(subArray, index) in items" :key="index">
                     <template v-for="(item, index2) in subArray">
@@ -138,6 +144,8 @@ import { useI18n } from 'vue-i18n';
 
 const panelStore = usePanelStore();
 const appbarStore = useAppbarStore();
+const numberOverflow = ref(0);
+const popperRerender = ref(0);
 
 const items = computed<any>(() => appbarStore.visible);
 const temporaryItems = computed<string[] | undefined>(
@@ -150,6 +158,21 @@ const overflowFlags = ref<{
 }>({});
 
 const el = ref<Element>();
+
+// When the popper (from the more-button component) is rendered for the first time, it tends to
+// overlap the top border of the `inner-shell` component. Re-rendering the appbar (as well as recreating
+// the popper) seems to resolve this. The same issue tends to occur when opening a new (non-default) panel,
+// then opening the popper. When closing a non-default panel (ex. grid, details) while the popper is open, there
+// would have been empty space in the popper (due to the way that the popper height is set in the more-button
+// component). Re-rendering the appbar also fixes this. Note: this solution isn't really tackling the root cause
+// of the issue, and seems inefficient. If a better solution exists, feel free to implement it and remove this
+// function (as well as the other code involved in re-rendering)
+const rerender = () => {
+    nextTick(() => {
+        const instance = getCurrentInstance();
+        instance?.proxy?.$forceUpdate();
+    });
+};
 
 const blurEvent = () => {
     (el.value as any)._tippy.hide();
@@ -206,7 +229,13 @@ onUpdated(() => {
                         key = cl.slice(11);
                     }
                 });
-                if (key) overflowFlags.value[key] = true;
+                if (key) {
+                    overflowFlags.value[key] = true;
+                    if (!(key as String).includes('divider')) {
+                        numberOverflow.value++;
+                    }
+                    popperRerender.value++;
+                }
                 if (!overflow.value) overflow.value = true;
             } else if (bottom !== 0) {
                 break;
@@ -236,7 +265,12 @@ onUpdated(() => {
                             key = cl.slice(11);
                         }
                     });
-                    if (key) overflowFlags.value[key] = false;
+                    if (key) {
+                        overflowFlags.value[key] = false;
+                        if (!(key as String).includes('divider')) {
+                            numberOverflow.value--;
+                        }
+                    }
                     moreBottom += 48;
                     buttonsRemaining -= 1;
                     index += 1;
@@ -249,8 +283,16 @@ onUpdated(() => {
         }
         // clean up flags for items that were removed.
         Object.keys(overflowFlags.value).forEach((key: string) => {
-            if (!element.querySelector(`.identifier-${key}`))
+            if (!element.querySelector(`.identifier-${key}`)) {
                 delete overflowFlags.value[key];
+                if (!key.includes('divider')) {
+                    numberOverflow.value = Math.max(
+                        0,
+                        numberOverflow.value - 1
+                    );
+                }
+                popperRerender.value++;
+            }
         });
     });
 });
