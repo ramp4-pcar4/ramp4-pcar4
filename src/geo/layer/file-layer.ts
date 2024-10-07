@@ -3,18 +3,9 @@
 // most of the implementations will only change the initiate() code, which will have whatever
 // custom pre-processing of data to massage it into geojson for this class to process.
 
-import {
-    AttribLayer,
-    FileLayerAttributeLoader,
-    InstanceAPI,
-    ReactiveIdentifyFactory
-} from '@/api/internal';
+import { AttribLayer, FileLayerAttributeLoader, InstanceAPI, ReactiveIdentifyFactory } from '@/api/internal';
 
-import type {
-    AttributeLoaderDetails,
-    IdentifyResult,
-    QueryFeaturesFileParams
-} from '@/api/internal';
+import type { AttributeLoaderDetails, IdentifyResult, QueryFeaturesFileParams } from '@/api/internal';
 
 import {
     DataFormat,
@@ -37,12 +28,7 @@ import type {
     RampLayerConfig
 } from '@/geo/api';
 
-import {
-    EsriFeatureFilter,
-    EsriFeatureLayer,
-    EsriField,
-    EsriRendererFromJson
-} from '@/geo/esri';
+import { EsriFeatureFilter, EsriFeatureLayer, EsriField, EsriRendererFromJson } from '@/geo/esri';
 
 import { markRaw, reactive, toRaw } from 'vue';
 
@@ -70,10 +56,7 @@ export class FileLayer extends AttribLayer {
         this.tooltipField = '';
         this.layerIdx = 0;
 
-        if (
-            rampConfig.identifyMode &&
-            rampConfig.identifyMode !== LayerIdentifyMode.NONE
-        ) {
+        if (rampConfig.identifyMode && rampConfig.identifyMode !== LayerIdentifyMode.NONE) {
             this.identifyMode = rampConfig.identifyMode;
         } else {
             this.identifyMode = LayerIdentifyMode.HYBRID;
@@ -82,9 +65,7 @@ export class FileLayer extends AttribLayer {
 
     async reload(): Promise<void> {
         if (this.origRampConfig.caching !== true && !this.origRampConfig.url) {
-            console.error(
-                'Attempted to reload file layer from non server source without caching enabled.'
-            );
+            console.error('Attempted to reload file layer from non server source without caching enabled.');
             return;
         }
         await super.reload();
@@ -119,14 +100,9 @@ export class FileLayer extends AttribLayer {
             fieldMetadata: this.origRampConfig.fieldMetadata
         };
 
-        this.esriJson = await this.$iApi.geo.layer.files.geoJsonToEsriJson(
-            this.sourceGeoJson,
-            opts
-        );
+        this.esriJson = await this.$iApi.geo.layer.files.geoJsonToEsriJson(this.sourceGeoJson, opts);
 
-        this.esriLayer = markRaw(
-            new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig))
-        );
+        this.esriLayer = markRaw(new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig)));
 
         this.esriJson = undefined;
         if (!this.origRampConfig.caching) {
@@ -143,11 +119,8 @@ export class FileLayer extends AttribLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(
-        rampLayerConfig: RampLayerConfig
-    ): __esri.FeatureLayerProperties {
-        const esriConfig: __esri.FeatureLayerProperties =
-            super.makeEsriLayerConfig(rampLayerConfig);
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.FeatureLayerProperties {
+        const esriConfig: __esri.FeatureLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         const oidField = 'OBJECTID';
 
@@ -190,9 +163,7 @@ export class FileLayer extends AttribLayer {
 
         // setting custom renderer here (if one is provided)
         if (this.esriLayer && this.origRampConfig.customRenderer?.type) {
-            this.esriLayer.renderer = EsriRendererFromJson(
-                this.config.customRenderer
-            );
+            this.esriLayer.renderer = EsriRendererFromJson(this.config.customRenderer);
         }
 
         this.layerTree.name = this.name;
@@ -202,18 +173,13 @@ export class FileLayer extends AttribLayer {
         // NOTE name field overrides from config have already been applied by this point
         if (this.origRampConfig.tooltipField) {
             this.tooltipField =
-                this.$iApi.geo.attributes.fieldValidator(
-                    this.fields,
-                    this.origRampConfig.tooltipField
-                ) || this.nameField;
+                this.$iApi.geo.attributes.fieldValidator(this.fields, this.origRampConfig.tooltipField) ||
+                this.nameField;
         } else {
             this.tooltipField = this.nameField;
         }
 
-        this.$iApi.geo.attributes.applyFieldMetadata(
-            this,
-            this.origRampConfig.fieldMetadata
-        );
+        this.$iApi.geo.attributes.applyFieldMetadata(this, this.origRampConfig.fieldMetadata);
 
         this.attribs.attLoader.updateFieldList(this.fieldList);
 
@@ -280,24 +246,15 @@ export class FileLayer extends AttribLayer {
         let symbolHitBucket: Array<number> = [];
 
         // if our identify mode needs geometry hit, run it
-        if (
-            this.identifyMode === LayerIdentifyMode.HYBRID ||
-            this.identifyMode === LayerIdentifyMode.GEOMETRIC
-        ) {
+        if (this.identifyMode === LayerIdentifyMode.HYBRID || this.identifyMode === LayerIdentifyMode.GEOMETRIC) {
             // run a spatial query
             const qOpts: QueryFeaturesParams = {
                 includeGeometry: false
             };
 
-            if (
-                this.geomType !== GeometryType.POLYGON &&
-                options.geometry.type === GeometryType.POINT
-            ) {
+            if (this.geomType !== GeometryType.POLYGON && options.geometry.type === GeometryType.POINT) {
                 // if our layer is not polygon, and our identify input is a point, make a point buffer
-                qOpts.filterGeometry = this.$iApi.geo.query.makeClickBuffer(
-                    <Point>options.geometry,
-                    options.tolerance
-                );
+                qOpts.filterGeometry = this.$iApi.geo.query.makeClickBuffer(<Point>options.geometry, options.tolerance);
             } else {
                 qOpts.filterGeometry = options.geometry;
             }
@@ -312,8 +269,7 @@ export class FileLayer extends AttribLayer {
         // if our identify mode needs symbol hit, run it
         if (
             options.hitTest &&
-            (this.identifyMode === LayerIdentifyMode.HYBRID ||
-                this.identifyMode === LayerIdentifyMode.SYMBOLIC)
+            (this.identifyMode === LayerIdentifyMode.HYBRID || this.identifyMode === LayerIdentifyMode.SYMBOLIC)
         ) {
             // we wait for geometry (if it happened) to avoid race conditions.
             symbolBlocker = geomBlocker.then(async () => {
@@ -326,9 +282,7 @@ export class FileLayer extends AttribLayer {
                         .filter(
                             hr =>
                                 hr.layerId === this.id &&
-                                geomHitBucket.findIndex(
-                                    g => hr.oid === g.attributes[this.oidField]
-                                ) === -1
+                                geomHitBucket.findIndex(g => hr.oid === g.attributes[this.oidField]) === -1
                         )
                         .map(hr => hr.oid)
                 );
@@ -344,18 +298,11 @@ export class FileLayer extends AttribLayer {
                 // push any items, incase something was bound to the array
 
                 geomHitBucket.forEach(gr => {
-                    result.items.push(
-                        ReactiveIdentifyFactory.makeRawItem(
-                            IdentifyResultFormat.ESRI,
-                            gr.attributes
-                        )
-                    );
+                    result.items.push(ReactiveIdentifyFactory.makeRawItem(IdentifyResultFormat.ESRI, gr.attributes));
                 });
 
                 symbolHitBucket.forEach(oid => {
-                    result.items.push(
-                        ReactiveIdentifyFactory.makeOidItem(oid, this)
-                    );
+                    result.items.push(ReactiveIdentifyFactory.makeOidItem(oid, this));
                 });
 
                 // Resolve the loading promise, set the flag
@@ -373,25 +320,20 @@ export class FileLayer extends AttribLayer {
     extractLayerMetadata(): void {
         const l = this.esriLayer;
         if (!l) {
-            throw new Error(
-                'file layer attempted to extract data from esri layer, esri layer did not exist'
-            );
+            throw new Error('file layer attempted to extract data from esri layer, esri layer did not exist');
         }
 
         // properties for all endpoints
         this.supportsFeatures = true;
 
-        this.geomType = this.$iApi.geo.geom.clientGeomTypeToRampGeomType(
-            l.geometryType
-        );
+        this.geomType = this.$iApi.geo.geom.clientGeomTypeToRampGeomType(l.geometryType);
 
         // if we ever make config override for scale, would need to apply on the layer constructor, will end up here
         this.scaleSet.minScale = l.minScale || 0;
         this.scaleSet.maxScale = l.maxScale || 0;
 
         // ESRI API appears to calculate the extent correctly. Well done!
-        this.extent =
-            this.extent ?? Extent.fromESRI(l.fullExtent, this.id + '_extent');
+        this.extent = this.extent ?? Extent.fromESRI(l.fullExtent, this.id + '_extent');
 
         const esriFields: Array<EsriField> = markRaw(l.fields.slice());
         this.fields = esriFields.map(f => {
@@ -407,10 +349,7 @@ export class FileLayer extends AttribLayer {
 
         // if there was a custom renderer in the config, it would have been applied when the
         // layer was constructed. no need to check here.
-        this.renderer = this.$iApi.geo.symbology.makeRenderer(
-            l.renderer,
-            this.fields
-        );
+        this.renderer = this.$iApi.geo.symbology.makeRenderer(l.renderer, this.fields);
 
         // this array will have a set of promises that resolve when all the legend svg has drawn.
         // for now, will not include that set (promise.all'd) on the layer load blocker;
@@ -425,16 +364,10 @@ export class FileLayer extends AttribLayer {
             batchSize: -1,
             fieldsToTrim: [] // fields already trimmed at layer initiation
         };
-        this.attribs.attLoader = new FileLayerAttributeLoader(
-            this.$iApi,
-            loadData
-        );
+        this.attribs.attLoader = new FileLayerAttributeLoader(this.$iApi, loadData);
     }
 
-    async getGraphic(
-        objectId: number,
-        opts: GetGraphicParams
-    ): Promise<Graphic> {
+    async getGraphic(objectId: number, opts: GetGraphicParams): Promise<Graphic> {
         let resGraphic: Graphic;
 
         if (!opts.getGeom && this.attribs.attLoader.isLoaded()) {
@@ -443,11 +376,7 @@ export class FileLayer extends AttribLayer {
 
             const atSet = await this.attribs.attLoader.getAttribs();
 
-            resGraphic = new Graphic(
-                new NoGeometry(),
-                '',
-                atSet.features[atSet.oidIndex[objectId]]
-            );
+            resGraphic = new Graphic(new NoGeometry(), '', atSet.features[atSet.oidIndex[objectId]]);
         } else {
             // use query against layer innards.
             // performance is significantly worse.
@@ -466,18 +395,14 @@ export class FileLayer extends AttribLayer {
             if (resultArr.length === 0) {
                 throw new Error(`Could not find object id ${objectId}`);
             } else if (resultArr.length !== 1) {
-                console.warn(
-                    'did not get a single result on a query for a specific object id'
-                );
+                console.warn('did not get a single result on a query for a specific object id');
             }
 
             resGraphic = resultArr[0];
         }
 
         if (opts.getStyle) {
-            const esriSymb = toRaw(
-                this.renderer!.getGraphicSymbol(resGraphic.attributes)
-            );
+            const esriSymb = toRaw(this.renderer!.getGraphicSymbol(resGraphic.attributes));
             resGraphic.style = this.$iApi.geo.geom.styleEsriToRamp(esriSymb);
         }
 
@@ -519,9 +444,7 @@ export class FileLayer extends AttribLayer {
         // run the query. since geojson is local, the util always returns everything.
         // iterate through the results and strip out the OIDs
         const gjFeats = await this.$iApi.geo.query.geoJsonQuery(gjOpt);
-        return gjFeats.map(feat =>
-            feat.attributes ? feat.attributes[this.oidField] : -1
-        );
+        return gjFeats.map(feat => (feat.attributes ? feat.attributes[this.oidField] : -1));
     }
 
     applySqlFilter(exclusions: Array<string> = []): void {

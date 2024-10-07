@@ -18,12 +18,7 @@
                     Switch to Screen A
                 </button>
 
-                <img
-                    class="my-16"
-                    src="https://media.giphy.com/media/iWkHDNtcHpB5e/giphy.gif"
-                    alt=""
-                    srcset=""
-                />
+                <img class="my-16" src="https://media.giphy.com/media/iWkHDNtcHpB5e/giphy.gif" alt="" srcset="" />
 
                 <p>Locale merging:</p>
                 <dl>

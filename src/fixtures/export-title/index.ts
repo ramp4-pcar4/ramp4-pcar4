@@ -7,8 +7,7 @@ import type { ExportConfig } from '../export/store';
 
 class ExportTitleFixture extends FixtureInstance implements ExportSubFixture {
     get config(): any {
-        const fixtureConfig: ExportConfig | undefined =
-            this.$iApi.fixture.get<ExportAPI>('export').config;
+        const fixtureConfig: ExportConfig | undefined = this.$iApi.fixture.get<ExportAPI>('export').config;
         return fixtureConfig?.title;
     }
 
@@ -17,8 +16,7 @@ class ExportTitleFixture extends FixtureInstance implements ExportSubFixture {
 
         const fabricTextConfig: any = {
             text: 'RAMP-Map / PCAR-Carte', // default name
-            fontFamily:
-                'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif',
+            fontFamily: 'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif',
             fill: '#000',
             fontSize: 30,
             top: 0,

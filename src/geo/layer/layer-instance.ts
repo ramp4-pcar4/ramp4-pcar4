@@ -383,11 +383,7 @@ export class LayerInstance extends APIScope {
      * @returns {TreeNode} the root of the layer tree
      */
     getLayerTree(): TreeNode {
-        return new TreeNode(
-            0,
-            'Fake tree',
-            'getLayerTree() was not implemented in layer'
-        );
+        return new TreeNode(0, 'Fake tree', 'getLayerTree() was not implemented in layer');
     }
 
     /**
@@ -677,9 +673,7 @@ export class LayerInstance extends APIScope {
      */
     get parentLayer(): LayerInstance | undefined {
         if (!this.isSublayer) {
-            throw new Error(
-                'Attempted to get parent layer of a non-sublayer object'
-            );
+            throw new Error('Attempted to get parent layer of a non-sublayer object');
         } else {
             return this._parentLayer;
         }
@@ -693,9 +687,7 @@ export class LayerInstance extends APIScope {
      */
     set parentLayer(layer: LayerInstance | undefined) {
         if (!this.isSublayer && layer) {
-            throw new Error(
-                'Attempted to set parent layer for a non-sublayer object'
-            );
+            throw new Error('Attempted to set parent layer for a non-sublayer object');
         } else {
             this._parentLayer = layer;
         }
@@ -755,14 +747,10 @@ export class LayerInstance extends APIScope {
         if (uid === this.uid) {
             return -1;
         } else {
-            const sublayerIdx: number = this._sublayers.findIndex(
-                sublayer => sublayer?.uid === uid
-            );
+            const sublayerIdx: number = this._sublayers.findIndex(sublayer => sublayer?.uid === uid);
             if (sublayerIdx === -1) {
                 // no match
-                throw new Error(
-                    `Attempt to access non-existing unique id [layerid ${this.id}, uid ${uid}]`
-                );
+                throw new Error(`Attempt to access non-existing unique id [layerid ${this.id}, uid ${uid}]`);
             } else {
                 return sublayerIdx;
             }
@@ -781,9 +769,7 @@ export class LayerInstance extends APIScope {
 
         // check if this layer supports sublayers
         if (!this.supportsSublayers) {
-            console.warn(
-                `Attempted to call getSublayer on a layer (layer id: ${this.id}) that does not support FCs`
-            );
+            console.warn(`Attempted to call getSublayer on a layer (layer id: ${this.id}) that does not support FCs`);
             return undefined;
         }
 

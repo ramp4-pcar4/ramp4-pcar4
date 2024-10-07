@@ -146,17 +146,11 @@ export const usePanelStore = defineStore('panel', () => {
             // If we are dealing with the grid, ensure it doesn't occupy too much space
             if (panel.id === 'grid') {
                 // Ensure the grid occupies only up to the remaining width or its min width
-                panelWidth = Math.max(
-                    Math.min(panelWidth, remainingWidth),
-                    gridMinWidth
-                );
+                panelWidth = Math.max(Math.min(panelWidth, remainingWidth), gridMinWidth);
             }
 
             // mobile mode only allows for one panel to be visible
-            if (
-                (remainingWidth >= panelWidth && !mobileView.value) ||
-                nowVisible.length === 0
-            ) {
+            if ((remainingWidth >= panelWidth && !mobileView.value) || nowVisible.length === 0) {
                 remainingWidth -= panelWidth;
                 //@ts-ignore
                 nowVisible.unshift(panel);
@@ -179,9 +173,7 @@ export const usePanelStore = defineStore('panel', () => {
             // remove elements from visible until theres room for pinned
             for (
                 let i = 0;
-                i < nowVisible.length - 1 &&
-                remainingWidth <
-                    (pinned.value.width || defaultWidth) + panelMargin;
+                i < nowVisible.length - 1 && remainingWidth < (pinned.value.width || defaultWidth) + panelMargin;
                 i++
             ) {
                 lastElement = nowVisible.shift()!;
@@ -254,19 +246,13 @@ export const usePanelStore = defineStore('panel', () => {
             //@ts-ignore
             const index = teleported.value.indexOf(panel);
             if (index !== -1) {
-                teleported.value = [
-                    ...teleported.value.slice(0, index),
-                    ...teleported.value.slice(index + 1)
-                ];
+                teleported.value = [...teleported.value.slice(0, index), ...teleported.value.slice(index + 1)];
             }
         } else {
             //@ts-ignore
             const index = orderedItems.value.indexOf(panel);
             if (index !== -1) {
-                orderedItems.value = [
-                    ...orderedItems.value.slice(0, index),
-                    ...orderedItems.value.slice(index + 1)
-                ];
+                orderedItems.value = [...orderedItems.value.slice(0, index), ...orderedItems.value.slice(index + 1)];
             }
         }
     }
@@ -297,10 +283,7 @@ export const usePanelStore = defineStore('panel', () => {
         //@ts-ignore
         const index = visible.value.indexOf(panel);
         if (index !== -1) {
-            visible.value = [
-                ...visible.value.slice(0, index),
-                ...visible.value.slice(index + 1)
-            ];
+            visible.value = [...visible.value.slice(0, index), ...visible.value.slice(index + 1)];
         }
 
         // remove from pinner

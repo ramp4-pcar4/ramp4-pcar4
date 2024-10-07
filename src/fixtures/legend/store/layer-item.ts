@@ -65,10 +65,7 @@ export class LayerItem extends LegendItem {
     get parentLayerId(): string | undefined {
         // layerid is the child id ( so <parentid>-<index> ). Need to math out the first part
         return this._isSublayer
-            ? this._layerId.slice(
-                  0,
-                  this._layerId.length - `-${this._layerIdx}`.length
-              )
+            ? this._layerId.slice(0, this._layerId.length - `-${this._layerIdx}`.length)
             : undefined;
     }
 
@@ -105,9 +102,7 @@ export class LayerItem extends LegendItem {
         this._layerIdx = layer.isSublayer ? layer.layerIdx : undefined;
         this._layerUid = layer.uid;
         this._name = this._name || layer.name;
-        this._symbologyStack = this._customSymbology
-            ? this._symbologyStack
-            : layer.legend; // set this item's symbology stack to layer's default if undefined in config
+        this._symbologyStack = this._customSymbology ? this._symbologyStack : layer.legend; // set this item's symbology stack to layer's default if undefined in config
         this.updateLayerControls();
     }
 
@@ -202,15 +197,8 @@ export class LayerItem extends LegendItem {
      * @param {boolean} updateParent whether or not toggleVisibility should 'bubble-up' the legend tree
      * @param {boolean} forceUpdate ignore control check, used when visibility is changed outside of legend fixture
      */
-    toggleVisibility(
-        visible?: boolean,
-        updateParent: boolean = true,
-        forceUpdate: boolean = false
-    ): void {
-        if (
-            !this.layerControlAvailable(LayerControl.Visibility) &&
-            !forceUpdate
-        ) {
+    toggleVisibility(visible?: boolean, updateParent: boolean = true, forceUpdate: boolean = false): void {
+        if (!this.layerControlAvailable(LayerControl.Visibility) && !forceUpdate) {
             return;
         }
         super.toggleVisibility(visible, updateParent);
@@ -220,9 +208,7 @@ export class LayerItem extends LegendItem {
             this.layer.visibility = this.visibility;
 
             // check child symobls for visibility
-            const someVisible = this._symbologyStack.some(
-                (item: LegendSymbology) => item.lastVisbility
-            );
+            const someVisible = this._symbologyStack.some((item: LegendSymbology) => item.lastVisbility);
 
             this._symbologyStack.forEach((item: LegendSymbology) => {
                 if (!someVisible) {
@@ -273,11 +259,7 @@ export class LayerItem extends LegendItem {
     load(layer: LayerInstance | undefined) {
         // manage the variant param.
         const layerInst =
-            layer instanceof LayerInstance
-                ? layer
-                : this.$iApi.geo.layer.getLayer(
-                      this._layerId ?? this._layerUid
-                  );
+            layer instanceof LayerInstance ? layer : this.$iApi.geo.layer.getLayer(this._layerId ?? this._layerUid);
 
         if (!layerInst) {
             // layer wasn't passed, couldn't be found either. done.
@@ -285,16 +267,13 @@ export class LayerItem extends LegendItem {
         }
 
         this.layer = layerInst;
-        this._layerRedrawing =
-            layerInst.mapLayer && layerInst.drawState !== DrawState.UP_TO_DATE;
+        this._layerRedrawing = layerInst.mapLayer && layerInst.drawState !== DrawState.UP_TO_DATE;
 
         layerInst
             .loadPromise()
             .then(() => {
                 this._layerInitVis =
-                    typeof this._layerInitVis !== 'undefined'
-                        ? this._visibility
-                        : layerInst.visibility;
+                    typeof this._layerInitVis !== 'undefined' ? this._visibility : layerInst.visibility;
                 super.load();
 
                 // override layer item visibility in favour of layer visibility
@@ -310,19 +289,9 @@ export class LayerItem extends LegendItem {
                 this.handlers.push(
                     this.$iApi.event.on(
                         GlobalEvents.LAYER_VISIBILITYCHANGE,
-                        (payload: {
-                            layer: LayerInstance;
-                            visibility: boolean;
-                        }) => {
-                            if (
-                                payload.layer.uid === this.layer.uid &&
-                                this._type === LegendType.Item
-                            ) {
-                                this.toggleVisibility(
-                                    payload.visibility,
-                                    true,
-                                    true
-                                );
+                        (payload: { layer: LayerInstance; visibility: boolean }) => {
+                            if (payload.layer.uid === this.layer.uid && this._type === LegendType.Item) {
+                                this.toggleVisibility(payload.visibility, true, true);
                             }
                         }
                     )
@@ -333,19 +302,14 @@ export class LayerItem extends LegendItem {
                         GlobalEvents.LAYER_DRAWSTATECHANGE,
                         (payload: { layer: LayerInstance; state: string }) => {
                             if (this.layer.uid === payload.layer.uid) {
-                                if (
-                                    payload.layer.drawState ===
-                                    DrawState.REFRESH
-                                ) {
+                                if (payload.layer.drawState === DrawState.REFRESH) {
                                     // if layer is redrawing, turn on the indicator right away
                                     this.layerRedrawing = true;
                                 } else {
                                     // wait for a short duration and check draw state again
                                     setTimeout(() => {
                                         // check draw state again
-                                        this.layerRedrawing =
-                                            payload.layer.drawState ===
-                                            DrawState.REFRESH;
+                                        this.layerRedrawing = payload.layer.drawState === DrawState.REFRESH;
                                     }, 500);
                                 }
                             }
@@ -353,9 +317,7 @@ export class LayerItem extends LegendItem {
                     )
                 );
 
-                this._layerOffscale = this.$iApi.geo.map.created
-                    ? layerInst.isOffscale()
-                    : false;
+                this._layerOffscale = this.$iApi.geo.map.created ? layerInst.isOffscale() : false;
                 this.handlers.push(
                     this.$iApi.event.on(GlobalEvents.MAP_SCALECHANGE, () => {
                         // reason for this check is the scale likes to fire during a reprojection,
@@ -389,9 +351,7 @@ export class LayerItem extends LegendItem {
      * @return {boolean} Indicates if control is enabled on this legend item or layer
      */
     layerControlAvailable(control: LayerControl): boolean {
-        return this._layerDisabledControls?.includes(control)
-            ? false
-            : !!this._layerControls?.includes(control);
+        return this._layerDisabledControls?.includes(control) ? false : !!this._layerControls?.includes(control);
     }
 
     // Update layer controls and disabled controls for this layer item.

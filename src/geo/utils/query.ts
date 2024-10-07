@@ -1,18 +1,7 @@
 import { APIScope, FileLayer, InstanceAPI } from '@/api/internal';
-import {
-    BaseGeometry,
-    Extent,
-    GeometryType,
-    Graphic,
-    NoGeometry,
-    Point,
-    SpatialReference
-} from '@/geo/api';
+import { BaseGeometry, Extent, GeometryType, Graphic, NoGeometry, Point, SpatialReference } from '@/geo/api';
 
-import type {
-    QueryFeaturesArcServerParams,
-    QueryFeaturesParams
-} from '@/geo/api';
+import type { QueryFeaturesArcServerParams, QueryFeaturesParams } from '@/geo/api';
 
 import { EsriQuery, EsriQueryByIds } from '@/geo/esri';
 
@@ -33,9 +22,7 @@ export class QueryAPI extends APIScope {
      * @param options contains properties that define the query and specificy request particulars.
      * @returns resolves with array of object ids.
      */
-    async arcGisServerQueryIds(
-        options: QueryFeaturesArcServerParams
-    ): Promise<Array<number>> {
+    async arcGisServerQueryIds(options: QueryFeaturesArcServerParams): Promise<Array<number>> {
         if (!(options.filterGeometry || options.filterSql)) {
             // ESRI API gets angry if there is no filters.
             console.error('arcGisServerQueryIds called without any filter');
@@ -78,18 +65,13 @@ export class QueryAPI extends APIScope {
      * @param options contains properties that define the query and specificy request particulars.
      * @returns resolves with array of graphic result objects.
      */
-    async geoJsonQuery(
-        options: QueryFeaturesFileParams
-    ): Promise<Array<Graphic>> {
+    async geoJsonQuery(options: QueryFeaturesFileParams): Promise<Array<Graphic>> {
         const query = new EsriQuery();
         query.returnGeometry = !!options.includeGeometry;
         query.outFields = ['*']; // TODO look into using the options value. test it well, as the .where gets wonky with outfields
 
         if (options.filterGeometry) {
-            query.geometry = await this.queryGeometryHelper(
-                options.filterGeometry,
-                true
-            );
+            query.geometry = await this.queryGeometryHelper(options.filterGeometry, true);
             query.spatialRelationship = 'intersects';
         }
 
@@ -119,10 +101,7 @@ export class QueryAPI extends APIScope {
         return featSet.features.map((f, i) => {
             let geom: BaseGeometry;
             if (query.returnGeometry) {
-                geom = this.$iApi.geo.geom.geomEsriToRamp(
-                    f.geometry,
-                    `queryResult${i}`
-                );
+                geom = this.$iApi.geo.geom.geomEsriToRamp(f.geometry, `queryResult${i}`);
             } else {
                 geom = new NoGeometry();
             }
@@ -153,12 +132,7 @@ export class QueryAPI extends APIScope {
             geometry.type === GeometryType.EXTENT &&
             sourceSR &&
             !sourceSR.isEqual(geometry.sr) &&
-            !(
-                mapScale &&
-                mapScale > 20000000 &&
-                geometry.sr.wkid === 3978 &&
-                sourceSR.wkid === 4326
-            )
+            !(mapScale && mapScale > 20000000 && geometry.sr.wkid === 3978 && sourceSR.wkid === 4326)
         ) {
             // if statement explained:
             //   first section checks if its ArcServer layer, geom is an extent, and server is encoded in different projection.
@@ -166,10 +140,7 @@ export class QueryAPI extends APIScope {
             // so if we hit that scenario and its not the exception, we attempt to project the extent to match
             // the host server. See issue #2355 for details.
 
-            const rampWarpedExtent = await this.$iApi.geo.proj.projectExtent(
-                sourceSR,
-                <Extent>geometry
-            );
+            const rampWarpedExtent = await this.$iApi.geo.proj.projectExtent(sourceSR, <Extent>geometry);
 
             return rampWarpedExtent.toESRI();
         } else {
@@ -191,8 +162,7 @@ export class QueryAPI extends APIScope {
         // take pixel tolerance, convert to map units at current scale.
         const map = this.$iApi.geo.map;
         const mapExt = map.getExtent();
-        const buffSize =
-            (tolerance * (mapExt.xmax - mapExt.xmin)) / map.getPixelWidth();
+        const buffSize = (tolerance * (mapExt.xmax - mapExt.xmin)) / map.getPixelWidth();
 
         // Build tolerance envelope of correct size
         return new Extent(

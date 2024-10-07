@@ -22,11 +22,7 @@ export class OsmTileLayer extends MapLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        this.esriLayer = markRaw(
-            new EsriOpenStreetMapLayer(
-                this.makeEsriLayerConfig(this.origRampConfig)
-            )
-        );
+        this.esriLayer = markRaw(new EsriOpenStreetMapLayer(this.makeEsriLayerConfig(this.origRampConfig)));
         await super.onInitiate();
     }
 
@@ -36,11 +32,8 @@ export class OsmTileLayer extends MapLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(
-        rampLayerConfig: RampLayerConfig
-    ): __esri.OpenStreetMapLayerProperties {
-        const esriConfig: __esri.OpenStreetMapLayerProperties =
-            super.makeEsriLayerConfig(rampLayerConfig);
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.OpenStreetMapLayerProperties {
+        const esriConfig: __esri.OpenStreetMapLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         // TODO remove .url from object? should be empty string coming in.
 
@@ -61,10 +54,7 @@ export class OsmTileLayer extends MapLayer {
         // For now, just using a default "O".  The odds of OSM being an active
         // layer in the legend is pretty low, and a config can override the symbol I believe.
 
-        const legGuts = this.$iApi.geo.symbology.generatePlaceholderSymbology(
-            'O',
-            '#03fc4e'
-        );
+        const legGuts = this.$iApi.geo.symbology.generatePlaceholderSymbology('O', '#03fc4e');
         const symbologyItem: LegendSymbology = {
             uid: this.$iApi.geo.shared.generateUUID(),
             label: 'OpenStreetMap', // product name, same in Fr

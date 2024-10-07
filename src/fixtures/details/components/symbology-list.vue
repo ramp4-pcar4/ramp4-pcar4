@@ -14,11 +14,7 @@
         }"
         ref="el"
     >
-        <div
-            class="flex justify-start relative"
-            v-for="(item, idx) in props.results"
-            :key="idx"
-        >
+        <div class="flex justify-start relative" v-for="(item, idx) in props.results" :key="idx">
             <SymbologyItem
                 :key="item.uid"
                 :layer="getLayerInfo(item.uid)"

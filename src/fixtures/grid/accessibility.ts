@@ -47,11 +47,7 @@ export class GridAccessibilityManager {
      * @param {GridApi} agGridApi The ag-grid grid api
      * @param {ColumnApi} agColumnApi The ag-grid column api
      */
-    constructor(
-        element: HTMLElement,
-        agGridApi: GridApi,
-        agColumnApi: ColumnApi
-    ) {
+    constructor(element: HTMLElement, agGridApi: GridApi, agColumnApi: ColumnApi) {
         this.element = element;
         this.agGridApi = agGridApi;
         this.agColumnApi = agColumnApi;
@@ -60,9 +56,7 @@ export class GridAccessibilityManager {
             this.element.querySelectorAll(HEADER_ROW_SELECTOR)
         ) as HTMLElement[];
 
-        this.element
-            .querySelector('.ag-body-horizontal-scroll-viewport')
-            ?.setAttribute('tabindex', '-1');
+        this.element.querySelector('.ag-body-horizontal-scroll-viewport')?.setAttribute('tabindex', '-1');
 
         this.initAccessibilityListeners();
         this.initScrollListeners();
@@ -79,9 +73,7 @@ export class GridAccessibilityManager {
             if (index < 3) {
                 return;
             }
-            const buttons = Array.prototype.slice.call(
-                cell.querySelectorAll('button')
-            ) as HTMLElement[];
+            const buttons = Array.prototype.slice.call(cell.querySelectorAll('button')) as HTMLElement[];
 
             cell.addEventListener('keydown', (event: KeyboardEvent) => {
                 this.cellKeydownHandler(event, cell, buttons);
@@ -91,12 +83,9 @@ export class GridAccessibilityManager {
                 this.cellBlurHandler(event, cell, buttons);
             });
 
-            buttons[buttons.length - 1].addEventListener(
-                'keydown',
-                (event: KeyboardEvent) => {
-                    this.cellButtonTabHandler(event, cell, buttons, false);
-                }
-            );
+            buttons[buttons.length - 1].addEventListener('keydown', (event: KeyboardEvent) => {
+                this.cellButtonTabHandler(event, cell, buttons, false);
+            });
 
             buttons[0].addEventListener('keydown', (event: KeyboardEvent) => {
                 this.cellButtonTabHandler(event, cell, buttons, true);
@@ -115,9 +104,7 @@ export class GridAccessibilityManager {
             if (index < 3) {
                 return;
             }
-            const buttons = Array.prototype.slice.call(
-                cell.querySelectorAll('button')
-            ) as HTMLElement[];
+            const buttons = Array.prototype.slice.call(cell.querySelectorAll('button')) as HTMLElement[];
 
             cell.removeEventListener('keydown', (event: KeyboardEvent) => {
                 this.cellKeydownHandler(event, cell, buttons);
@@ -127,19 +114,13 @@ export class GridAccessibilityManager {
                 this.cellBlurHandler(event, cell, buttons);
             });
 
-            buttons[buttons.length - 1].removeEventListener(
-                'keydown',
-                (event: KeyboardEvent) => {
-                    this.cellButtonTabHandler(event, cell, buttons, false);
-                }
-            );
+            buttons[buttons.length - 1].removeEventListener('keydown', (event: KeyboardEvent) => {
+                this.cellButtonTabHandler(event, cell, buttons, false);
+            });
 
-            buttons[0].removeEventListener(
-                'keydown',
-                (event: KeyboardEvent) => {
-                    this.cellButtonTabHandler(event, cell, buttons, true);
-                }
-            );
+            buttons[0].removeEventListener('keydown', (event: KeyboardEvent) => {
+                this.cellButtonTabHandler(event, cell, buttons, true);
+            });
         });
     }
 
@@ -150,11 +131,7 @@ export class GridAccessibilityManager {
      * @param {HTMLElement} cell The grid header cell
      * @param {HTMLElement[]} buttons The list of buttons in the cell
      */
-    private cellKeydownHandler(
-        event: KeyboardEvent,
-        cell: HTMLElement,
-        buttons: HTMLElement[]
-    ) {
+    private cellKeydownHandler(event: KeyboardEvent, cell: HTMLElement, buttons: HTMLElement[]) {
         if (event.key === 'Enter' && event.target === cell) {
             event.preventDefault();
             buttons.forEach(item => {
@@ -171,15 +148,8 @@ export class GridAccessibilityManager {
      * @param {HTMLElement} cell The grid header cell
      * @param {HTMLElement[]} buttons The list of buttons in the cell
      */
-    private cellBlurHandler(
-        event: FocusEvent,
-        cell: HTMLElement,
-        buttons: HTMLElement[]
-    ) {
-        if (
-            event.target === cell &&
-            !buttons.includes(event.relatedTarget as HTMLElement)
-        ) {
+    private cellBlurHandler(event: FocusEvent, cell: HTMLElement, buttons: HTMLElement[]) {
+        if (event.target === cell && !buttons.includes(event.relatedTarget as HTMLElement)) {
             buttons.forEach(item => {
                 item.setAttribute('tabindex', '-1');
             });
@@ -194,16 +164,8 @@ export class GridAccessibilityManager {
      * @param buttons The list of buttons in the cell
      * @param shift Whether to handle shift tab or regular tab
      */
-    private cellButtonTabHandler(
-        event: KeyboardEvent,
-        cell: HTMLElement,
-        buttons: HTMLElement[],
-        shift: boolean
-    ) {
-        if (
-            event.key === 'Tab' &&
-            ((shift && event.shiftKey) || (!shift && !event.shiftKey))
-        ) {
+    private cellButtonTabHandler(event: KeyboardEvent, cell: HTMLElement, buttons: HTMLElement[], shift: boolean) {
+        if (event.key === 'Tab' && ((shift && event.shiftKey) || (!shift && !event.shiftKey))) {
             event.preventDefault();
             cell.focus();
             buttons.forEach(item => {
@@ -241,9 +203,7 @@ export class GridAccessibilityManager {
      * @param {MouseEvent} event The mousedown event
      */
     private scrollMouseDownHandler(event: MouseEvent) {
-        const scrollBar = this.element.querySelector(
-            '.ag-body-horizontal-scroll-viewport'
-        ) as HTMLElement;
+        const scrollBar = this.element.querySelector('.ag-body-horizontal-scroll-viewport') as HTMLElement;
 
         const scrollStart = scrollBar.scrollLeft;
         const mouseStart = event.clientX;
@@ -260,10 +220,7 @@ export class GridAccessibilityManager {
         // Scroll ends when click is let go or when the cursor leaves the element
         const endDragScroll = () => {
             this.agGrid.style.cursor = 'grab';
-            this.agGrid.removeEventListener(
-                'mousemove',
-                scrollMouseMoveHandler
-            );
+            this.agGrid.removeEventListener('mousemove', scrollMouseMoveHandler);
             this.agGrid.removeEventListener('mouseup', endDragScroll);
             this.agGrid.removeEventListener('mouseleave', endDragScroll);
         };
@@ -301,9 +258,7 @@ interface HeaderPosition {
  * @param {TabToNextHeaderParams} params The parameters passed by the ag grid callback, see above
  * @returns {HeaderPosition} The new header we want the grid to focus
  */
-export function tabToNextHeaderHandler(
-    params: TabToNextHeaderParams
-): HeaderPosition | null {
+export function tabToNextHeaderHandler(params: TabToNextHeaderParams): HeaderPosition | null {
     const column = params.previousHeaderPosition!.column;
 
     const lastIndex = params.previousHeaderPosition!.headerRowIndex;
@@ -351,9 +306,7 @@ interface CellPosition {
  * @param {TabToNextHeaderParams} params The parameters passed by the ag grid callback, see above
  * @returns {CellPosition} The new header we want the grid to focus
  */
-export function tabToNextCellHandler(
-    params: TabToNextCellParams
-): CellPosition | null {
+export function tabToNextCellHandler(params: TabToNextCellParams): CellPosition | null {
     if (params.backwards) {
         // rowIndex of -1 means go to last header
         return { column: params.previousCellPosition.column, rowIndex: -1 };

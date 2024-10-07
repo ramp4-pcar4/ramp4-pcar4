@@ -11,15 +11,12 @@ class MapnavFixture extends MapnavAPI {
 
         // since this has no panel we need to merge in translations ourselves
         // TODO?: see if giving fixtures a nicer way to merge translations w/o panel makes sense
-        Object.entries(messages).forEach(value =>
-            (<any>this.$iApi.$i18n).mergeLocaleMessage(...value)
-        );
+        Object.entries(messages).forEach(value => (<any>this.$iApi.$i18n).mergeLocaleMessage(...value));
 
         const { destroy, el } = this.mount(MapnavV, {
             app: this.$element
         });
-        const innerShell =
-            this.$vApp.$el.getElementsByClassName('inner-shell')[0];
+        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.appendChild(el.childNodes[0]);
 
         this._parseConfig(this.config);

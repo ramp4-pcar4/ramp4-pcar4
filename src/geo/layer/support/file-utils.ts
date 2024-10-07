@@ -8,12 +8,7 @@ import axios from 'redaxios';
 import { EsriSimpleRenderer, EsriSpatialReference } from '@/geo/esri';
 import { Colour, FieldType, LayerType } from '@/geo/api';
 
-import type {
-    CsvOptions,
-    FieldDefinition,
-    GeoJsonField,
-    GeoJsonOptions
-} from '@/geo/api';
+import type { CsvOptions, FieldDefinition, GeoJsonField, GeoJsonOptions } from '@/geo/api';
 
 /**
  * Maps GeoJSON geometry types to a set of default renders defined in GlobalStorage.DefaultRenders
@@ -100,10 +95,7 @@ function assignIds(geoJson: any): void {
  * @param {Object} geoJson           layer data in geoJson format
  * @param {Object} layerDefinition   layer definition of feature layer not yet created
  */
-function cleanUpFields(
-    geoJson: any,
-    configPackage: __esri.FeatureLayerProperties
-) {
+function cleanUpFields(geoJson: any, configPackage: __esri.FeatureLayerProperties) {
     const badField = (name: string) => {
         // basic for now. check for spaces.
         return name.indexOf(' ') > -1;
@@ -119,9 +111,7 @@ function cleanUpFields(
             // determine a new field name that is not bad and is unique, then update the field definition
             do {
                 newField = oldField.replace(/ /g, underscore);
-                badNewName = configPackage.fields?.find(
-                    f2 => f2.name === newField
-                );
+                badNewName = configPackage.fields?.find(f2 => f2.name === newField);
                 if (badNewName) {
                     // new field already exists. enhance it
                     underscore += '_';
@@ -202,22 +192,14 @@ export class FileUtils extends APIScope {
         switch (fileType) {
             case LayerType.GEOJSON:
             case LayerType.DATAJSON:
-                return JSON.parse(
-                    new TextDecoder('utf-8').decode(
-                        new Uint8Array(response.data)
-                    )
-                );
+                return JSON.parse(new TextDecoder('utf-8').decode(new Uint8Array(response.data)));
             case LayerType.SHAPEFILE:
                 return response.data;
             case LayerType.CSV:
             case LayerType.DATACSV:
-                return new TextDecoder('utf-8').decode(
-                    new Uint8Array(response.data)
-                );
+                return new TextDecoder('utf-8').decode(new Uint8Array(response.data));
             default:
-                console.error(
-                    `Unsupported file type passed to fetchFileData- '${fileType}'`
-                );
+                console.error(`Unsupported file type passed to fetchFileData- '${fileType}'`);
         }
     }
 
@@ -226,9 +208,7 @@ export class FileUtils extends APIScope {
      */
     extractGeoJsonFields(geoJson: any): Array<GeoJsonField> {
         if (geoJson.features.length < 1) {
-            throw new Error(
-                'GeoJSON field extraction requires at least one feature'
-            );
+            throw new Error('GeoJSON field extraction requires at least one feature');
         }
 
         // handle geometry collection structure
@@ -241,18 +221,14 @@ export class FileUtils extends APIScope {
                 const geoms = feature.geometry.geometries;
                 // geometry collection cannot be empty, nor contain empty geometries
                 if (geoms === undefined || geoms.length === 0) {
-                    throw new Error(
-                        'GeoJSON file has geometry collection with missing/incomplete geometries'
-                    );
+                    throw new Error('GeoJSON file has geometry collection with missing/incomplete geometries');
                 }
 
                 // geometry type must be consistent within geometry collection
                 const geomType = geoms[0].type;
                 for (let j = 0; j < geoms.length; j++) {
                     if (geoms[j].type !== geomType) {
-                        throw new Error(
-                            'GeoJSON file has geometry collection containing multiple geometry types'
-                        );
+                        throw new Error('GeoJSON file has geometry collection containing multiple geometry types');
                     }
                 }
 
@@ -270,25 +246,19 @@ export class FileUtils extends APIScope {
                 overallGeomType = vGeomType;
             } else if (overallGeomType !== vGeomType) {
                 // this feature is not consistent
-                throw new Error(
-                    'GeoJSON file contains multiple geometry types'
-                );
+                throw new Error('GeoJSON file contains multiple geometry types');
             }
         }
 
         // extract all fields and type them as string for now
-        const fields: Array<GeoJsonField> = Object.keys(
-            geoJson.features[0].properties
-        ).map(field => {
+        const fields: Array<GeoJsonField> = Object.keys(geoJson.features[0].properties).map(field => {
             return { name: field, type: 'string' };
         });
 
         let featureIdx = 0; // keep track of the current feature used for typing infering
 
         // keep track of fields that still need to be typed
-        const fieldsToBeMapped: Array<string> = Object.keys(
-            geoJson.features[0].properties
-        );
+        const fieldsToBeMapped: Array<string> = Object.keys(geoJson.features[0].properties);
 
         // loop through all features until we type all fields or exhaust list
         while (featureIdx < geoJson.features.length) {
@@ -304,19 +274,14 @@ export class FileUtils extends APIScope {
                         // if value is null or undefined, we cannot infer type so we skip this feature and use the next one
                         if (value != null) {
                             // infer the type of this field
-                            const fieldIdx = fields.findIndex(
-                                fieldInfo => fieldInfo.name === field
-                            );
+                            const fieldIdx = fields.findIndex(fieldInfo => fieldInfo.name === field);
                             fields[fieldIdx] = {
                                 name: field,
                                 type: this.inferType(value)
                             };
 
                             // remove this field from the list of fields with pending types
-                            fieldsToBeMapped.splice(
-                                fieldsToBeMapped.indexOf(field),
-                                1
-                            );
+                            fieldsToBeMapped.splice(fieldsToBeMapped.indexOf(field), 1);
                         }
                     });
             }
@@ -343,9 +308,7 @@ export class FileUtils extends APIScope {
         //       Proper typing is always preferred for data analysis and things like sorting
         //       See https://github.com/ramp4-pcar4/ramp4-pcar4/issues/1095
 
-        const fields: Array<string> = dsv
-            .dsvFormat(delimiter)
-            .parseRows(csvData)[0];
+        const fields: Array<string> = dsv.dsvFormat(delimiter).parseRows(csvData)[0];
         return fields.map(field => {
             return { name: field, type: FieldType.STRING };
         });
@@ -357,9 +320,7 @@ export class FileUtils extends APIScope {
      * @param delimiter the delimiter in the data
      */
     filterCsvLatLonFields(csvData: any, delimiter = ',') {
-        const data: Array<Array<string>> = dsv
-            .dsvFormat(delimiter)
-            .parseRows(csvData);
+        const data: Array<Array<string>> = dsv.dsvFormat(delimiter).parseRows(csvData);
         const fields: Array<string> = data[0];
         const result = {
             lat: JSON.parse(JSON.stringify(fields)),
@@ -398,10 +359,7 @@ export class FileUtils extends APIScope {
      * @param options {GeoJsonOptions} any options for the transformation
      * @returns {Object} feature layer constructor object
      */
-    async geoJsonToEsriJson(
-        geoJson: any,
-        options: GeoJsonOptions
-    ): Promise<__esri.FeatureLayerProperties> {
+    async geoJsonToEsriJson(geoJson: any, options: GeoJsonOptions): Promise<__esri.FeatureLayerProperties> {
         let targetSR: any;
         let srcProj = 'EPSG:4326'; // 4326 is the default for GeoJSON with no projection defined
         let layerId: string;
@@ -446,9 +404,7 @@ export class FileUtils extends APIScope {
             if (options.targetSR) {
                 targetSR = options.targetSR;
             } else {
-                throw new Error(
-                    'geoJsonToEsriJson - missing opts.targetSR arguement'
-                );
+                throw new Error('geoJsonToEsriJson - missing opts.targetSR arguement');
             }
 
             if (options.layerId) {
@@ -458,9 +414,7 @@ export class FileUtils extends APIScope {
             }
 
             if (options.colour) {
-                defRender.renderer.symbol.color = new Colour(
-                    options.colour
-                ).toArcServer();
+                defRender.renderer.symbol.color = new Colour(options.colour).toArcServer();
             }
         } else {
             throw new Error('geoJsonToEsriJson - missing opts arguement');
@@ -469,18 +423,13 @@ export class FileUtils extends APIScope {
         // Note: while this appears to always give the layer a simple renderer,
         // if a customRenderer is on the config, it will get applied to the esri
         // layer during FileLayer.onLoadActions()
-        configPackage.renderer = EsriSimpleRenderer.fromJSON(
-            defRender.renderer
-        );
+        configPackage.renderer = EsriSimpleRenderer.fromJSON(defRender.renderer);
 
         // add all the fields to config.Package
         configPackage.fields = (configPackage.fields || []).concat(
             options.fieldMetadata?.exclusiveFields
-                ? (this.extractGeoJsonFields(geoJson) as Array<Object>).filter(
-                      (field: any) =>
-                          options.fieldMetadata?.fieldInfo?.find(
-                              (f: any) => f.name === field.name
-                          )
+                ? (this.extractGeoJsonFields(geoJson) as Array<Object>).filter((field: any) =>
+                      options.fieldMetadata?.fieldInfo?.find((f: any) => f.name === field.name)
                   )
                 : (this.extractGeoJsonFields(geoJson) as Array<Object>)
         );
@@ -508,9 +457,7 @@ export class FileUtils extends APIScope {
         if (options) {
             if (options.latField) {
                 const latField = configPackage.fields.find(
-                    field =>
-                        field.name === options.latField ||
-                        field.alias === options.latField
+                    field => field.name === options.latField || field.alias === options.latField
                 );
                 if (latField) {
                     latField.type = FieldType.DOUBLE;
@@ -518,9 +465,7 @@ export class FileUtils extends APIScope {
             }
             if (options.lonField) {
                 const longField = configPackage.fields.find(
-                    field =>
-                        field.name === options.lonField ||
-                        field.alias === options.lonField
+                    field => field.name === options.lonField || field.alias === options.lonField
                 );
                 if (longField) {
                     longField.type = FieldType.DOUBLE;
@@ -552,12 +497,9 @@ export class FileUtils extends APIScope {
         // NOTE typescript lies here. it insists esriJson will have .features property, but it infact is the feature array itself
         //      it also claims the .sr param is not valid, though it's in the documentation and the code.  lies!
         const esriJson = <any>ArcGIS.convert(geoJson, <any>{ sr: 8888 });
-        configPackage.geometryType =
-            this.$iApi.geo.geom.geoJsonGeomTypeToEsriGeomType(geoJsonGeomType);
+        configPackage.geometryType = this.$iApi.geo.geom.geoJsonGeomTypeToEsriGeomType(geoJsonGeomType);
 
-        const validFields = configPackage.fields.map(
-            esriField => esriField.name
-        );
+        const validFields = configPackage.fields.map(esriField => esriField.name);
 
         // set proper SR on the geometeries, remove any excluded attribute fields
         for (let i = 0; i < esriJson.length; i++) {
@@ -571,13 +513,10 @@ export class FileUtils extends APIScope {
                     // stringify them. Any custom template can re-parse them if they need
                     // the original structure.
                     if (
-                        (Array.isArray(gr.attributes[attName]) ||
-                            typeof gr.attributes[attName] === 'object') &&
+                        (Array.isArray(gr.attributes[attName]) || typeof gr.attributes[attName] === 'object') &&
                         gr.attributes[attName] != null
                     ) {
-                        gr.attributes[attName] = JSON.stringify(
-                            gr.attributes[attName]
-                        );
+                        gr.attributes[attName] = JSON.stringify(gr.attributes[attName]);
                     }
                 } else {
                     // field was excluded, remove it
@@ -588,8 +527,7 @@ export class FileUtils extends APIScope {
 
         // Determine which fields to trim
         const trimFields =
-            options.fieldMetadata?.fieldInfo &&
-            options.fieldMetadata?.fieldInfo.length > 0
+            options.fieldMetadata?.fieldInfo && options.fieldMetadata?.fieldInfo.length > 0
                 ? options.fieldMetadata.fieldInfo
                       .filter(fi => fi.trim && validFields.includes(fi.name))
                       .map(fi => fi.name)
@@ -617,10 +555,7 @@ export class FileUtils extends APIScope {
     //     - latfield: a string identifying the field containing latitude values ('Lat' by default)
     //     - lonfield: a string identifying the field containing longitude values ('Long' by default)
     //     - delimiter: a string defining the delimiter character of the file (',' by default)
-    async csvToGeoJson(
-        csvData: string,
-        opts: CsvOptions | undefined
-    ): Promise<any> {
+    async csvToGeoJson(csvData: string, opts: CsvOptions | undefined): Promise<any> {
         const csvOpts: CsvOptions = {
             // default values
             latfield: 'Lat',
@@ -655,10 +590,8 @@ export class FileUtils extends APIScope {
                     // csv2geojson will not include the lat and long in the feature
                     data.features.map((feature: any) => {
                         // add new property Long and Lat before layer is generated
-                        feature.properties[csvOpts.lonfield!] =
-                            feature.geometry.coordinates[0];
-                        feature.properties[csvOpts.latfield!] =
-                            feature.geometry.coordinates[1];
+                        feature.properties[csvOpts.lonfield!] = feature.geometry.coordinates[0];
+                        feature.properties[csvOpts.latfield!] = feature.geometry.coordinates[1];
                     });
 
                     resolve(data);

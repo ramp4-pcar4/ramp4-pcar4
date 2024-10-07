@@ -31,28 +31,18 @@ export class BaseGeometry {
     }
 
     toESRI(): EsriGeometry {
-        throw new Error(
-            `.toESRI not implemented on geometry type ${this.type}`
-        );
+        throw new Error(`.toESRI not implemented on geometry type ${this.type}`);
     }
 
     toGeoJSON(): GeoJson.DirectGeometryObject {
-        throw new Error(
-            `.toGeoJSON not implemented on geometry type ${this.type}`
-        );
+        throw new Error(`.toGeoJSON not implemented on geometry type ${this.type}`);
     }
 
     invalid(): boolean {
-        return (
-            this.type === GeometryType.NONE ||
-            this.type === GeometryType.UNKNOWN
-        );
+        return this.type === GeometryType.NONE || this.type === GeometryType.UNKNOWN;
     }
 
-    protected geoJsonFactory(
-        type: string,
-        coords: Array<any>
-    ): GeoJson.DirectGeometryObject {
+    protected geoJsonFactory(type: string, coords: Array<any>): GeoJson.DirectGeometryObject {
         const gj: any = {
             type,
             coordinates: coords

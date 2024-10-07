@@ -30,14 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-    computed,
-    inject,
-    onBeforeMount,
-    onBeforeUnmount,
-    ref,
-    watch
-} from 'vue';
+import { computed, inject, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
 import type { PropType } from 'vue';
 
 import type { InstanceAPI, PanelInstance } from '@/api';
@@ -108,8 +101,7 @@ function doSearch(searchTerm: string, sections: any) {
         section.info = originalTextArray.value[index];
         //find the search term in each section
         section.drawn =
-            findInfo(searchTerm, section) ||
-            section.header.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
+            findInfo(searchTerm, section) || section.header.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
         numResults = section.drawn ? numResults + 1 : numResults;
         section.expanded = section.drawn && searchTerm.length > 2;
         if (section.drawn && searchTerm.length > 2) {
@@ -132,17 +124,10 @@ onBeforeMount(() => {
                 if (newLocale === oldLocale) return;
                 // path to where HELP is hosted is different if RAMP is built as prod library
                 const renderer = new marked.Renderer();
-                const loc =
-                    location.value.slice(-1) === '/'
-                        ? location.value
-                        : `${location.value}/`;
+                const loc = location.value.slice(-1) === '/' ? location.value : `${location.value}/`;
                 // make it easier to use images in markdown by prepending path to href if href is not an external source
                 // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
-                renderer.image = (
-                    href: string,
-                    title: string,
-                    text: string
-                ) => {
+                renderer.image = (href: string, title: string, text: string) => {
                     if (href.indexOf('http') === -1) {
                         href = `${loc}images/` + href;
                     }
@@ -156,10 +141,7 @@ onBeforeMount(() => {
                     const reg = /^#\s(.*)\n{2}(?:.+|\n(?!\n{2,}))*/gm;
                     // remove new line character ASCII (13) so that above regex is compatible with all
                     // operating systems (markdown file varies by OS new line preference)
-                    let helpMd = r.data.replace(
-                        new RegExp(String.fromCharCode(13), 'g'),
-                        ''
-                    );
+                    let helpMd = r.data.replace(new RegExp(String.fromCharCode(13), 'g'), '');
                     helpSections.value = [];
                     let section;
                     while ((section = reg.exec(helpMd))) {
@@ -167,23 +149,17 @@ onBeforeMount(() => {
                             header: section[1],
                             // parse markdown on info section, split/splice/join removes the header
                             // since we can't put info section into its own regex grouping
-                            info: marked(
-                                section[0].split('\n').splice(2).join('\n'),
-                                {
-                                    renderer
-                                }
-                            ),
+                            info: marked(section[0].split('\n').splice(2).join('\n'), {
+                                renderer
+                            }),
                             drawn: true,
                             expanded: false
                         });
                         //copy of the original text to refer to after highlighting
                         originalTextArray.value.push(
-                            marked(
-                                section[0].split('\n').splice(2).join('\n'),
-                                {
-                                    renderer
-                                }
-                            )
+                            marked(section[0].split('\n').splice(2).join('\n'), {
+                                renderer
+                            })
                         );
                     }
                 });

@@ -7,9 +7,7 @@ class OverviewmapFixture extends OverviewmapAPI {
     added() {
         // console.log(`[fixture] ${this.id} added`);
 
-        Object.entries(messages).forEach(value =>
-            (<any>this.$iApi.$i18n).mergeLocaleMessage(...value)
-        );
+        Object.entries(messages).forEach(value => (<any>this.$iApi.$i18n).mergeLocaleMessage(...value));
 
         this._parseConfig(this.config);
         const unwatch = this.$vApp.$watch(
@@ -20,8 +18,7 @@ class OverviewmapFixture extends OverviewmapAPI {
         const { destroy, el } = this.mount(OverviewmapV, {
             app: this.$element
         });
-        const innerShell =
-            this.$vApp.$el.getElementsByClassName('inner-shell')[0];
+        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
         innerShell.appendChild(el.childNodes[0]);
 
         // override the removed method here to get access to scope

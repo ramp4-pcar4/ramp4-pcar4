@@ -9,9 +9,7 @@ export interface NotificationStore {
     groups: Ref<{ [id: string]: NotificationGroup }>;
     notificationNumber: ComputedRef<number>;
     showNotification: (notification: Notification) => void;
-    removeNotification: (
-        notification: Notification | NotificationGroup
-    ) => void;
+    removeNotification: (notification: Notification | NotificationGroup) => void;
     registerGroup: (group: NotificationGroup) => void;
     addToGroup: (id: string, message: string) => void;
     clearAll: () => void;
@@ -23,18 +21,14 @@ export const useNotificationStore = defineStore('notification', () => {
     const groups = ref<{ [id: string]: NotificationGroup }>({});
 
     const notificationNumber = computed(() => {
-        return notificationStack.value.length >= 99
-            ? 99
-            : notificationStack.value.length;
+        return notificationStack.value.length >= 99 ? 99 : notificationStack.value.length;
     });
 
     function showNotification(notification: Notification) {
         notificationStack.value = [notification, ...notificationStack.value];
     }
 
-    function removeNotification(
-        notification: Notification | NotificationGroup
-    ) {
+    function removeNotification(notification: Notification | NotificationGroup) {
         if (notificationStack.value.includes(notification)) {
             const index = notificationStack.value.indexOf(notification);
             if (notification instanceof NotificationGroup) {
@@ -55,10 +49,7 @@ export const useNotificationStore = defineStore('notification', () => {
             groups.value[id].messageList.push(message);
 
             if (!notificationStack.value.includes(groups.value[id])) {
-                notificationStack.value = [
-                    groups.value[id],
-                    ...notificationStack.value
-                ];
+                notificationStack.value = [groups.value[id], ...notificationStack.value];
             }
         }
     }

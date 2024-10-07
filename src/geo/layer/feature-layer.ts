@@ -1,8 +1,4 @@
-import {
-    AttribLayer,
-    InstanceAPI,
-    ReactiveIdentifyFactory
-} from '@/api/internal';
+import { AttribLayer, InstanceAPI, ReactiveIdentifyFactory } from '@/api/internal';
 import type { IdentifyResult } from '@/api/internal';
 import {
     CoreFilter,
@@ -14,12 +10,7 @@ import {
     LayerIdentifyMode,
     LayerType
 } from '@/geo/api';
-import type {
-    IdentifyParameters,
-    Point,
-    QueryFeaturesParams,
-    RampLayerConfig
-} from '@/geo/api';
+import type { IdentifyParameters, Point, QueryFeaturesParams, RampLayerConfig } from '@/geo/api';
 import { EsriFeatureLayer, EsriRendererFromJson } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
 
@@ -38,10 +29,7 @@ export class FeatureLayer extends AttribLayer {
         this.supportsIdentify = true;
         this.layerType = LayerType.FEATURE;
         this.layerFormat = LayerFormat.FEATURE;
-        if (
-            rampConfig.identifyMode &&
-            rampConfig.identifyMode !== LayerIdentifyMode.NONE
-        ) {
+        if (rampConfig.identifyMode && rampConfig.identifyMode !== LayerIdentifyMode.NONE) {
             this.identifyMode = rampConfig.identifyMode;
         } else {
             this.identifyMode = LayerIdentifyMode.HYBRID;
@@ -49,11 +37,7 @@ export class FeatureLayer extends AttribLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        markRaw(
-            (this.esriLayer = new EsriFeatureLayer(
-                this.makeEsriLayerConfig(this.origRampConfig)
-            ))
-        );
+        markRaw((this.esriLayer = new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig))));
 
         await super.onInitiate();
     }
@@ -64,18 +48,12 @@ export class FeatureLayer extends AttribLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(
-        rampLayerConfig: RampLayerConfig
-    ): __esri.FeatureLayerProperties {
-        const esriConfig: __esri.FeatureLayerProperties =
-            super.makeEsriLayerConfig(rampLayerConfig);
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.FeatureLayerProperties {
+        const esriConfig: __esri.FeatureLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         // add any extra properties for attrib-based layers here
         // if we have a definition at load, apply it here to avoid cancellation errors on
-        if (
-            rampLayerConfig.initialFilteredQuery ||
-            rampLayerConfig.permanentFilteredQuery
-        ) {
+        if (rampLayerConfig.initialFilteredQuery || rampLayerConfig.permanentFilteredQuery) {
             // even though the layer filter would eventually propagate the query to
             // the definition expression, by setting it on the esri config our initial
             // layer load will apply the filter. This potentially avoids a very big
@@ -94,12 +72,9 @@ export class FeatureLayer extends AttribLayer {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
         // setting custom renderer here (if one is provided)
-        const hasCustRed =
-            this.esriLayer && this.origRampConfig.customRenderer?.type;
+        const hasCustRed = this.esriLayer && this.origRampConfig.customRenderer?.type;
         if (hasCustRed) {
-            this.esriLayer!.renderer = EsriRendererFromJson(
-                this.origRampConfig.customRenderer
-            );
+            this.esriLayer!.renderer = EsriRendererFromJson(this.origRampConfig.customRenderer);
         }
 
         // .url seems to not have the /index ending.  there is parsedUrl.path, but thats not on official definition
@@ -119,31 +94,20 @@ export class FeatureLayer extends AttribLayer {
         ).then(() => {
             if (startTime > this.lastCancel) {
                 // apply server visibility in case of missing visibility in config
-                this.visibility =
-                    this.origRampConfig?.state?.visibility ??
-                    this._serverVisibility ??
-                    true;
+                this.visibility = this.origRampConfig?.state?.visibility ?? this._serverVisibility ?? true;
 
                 // apply any config based overrides to the data we just downloaded
-                this.nameField =
-                    this.origRampConfig.nameField || this.nameField || '';
-                this.tooltipField =
-                    this.origRampConfig.tooltipField || this.nameField;
+                this.nameField = this.origRampConfig.nameField || this.nameField || '';
+                this.tooltipField = this.origRampConfig.tooltipField || this.nameField;
 
-            this.$iApi.geo.attributes.applyFieldMetadata(
-                this,
-                this.origRampConfig.fieldMetadata
-            );
-            this.attribs.attLoader.updateFieldList(this.fieldList);
-            this.attribs.attLoader.updateFieldsToTrim(this.getFieldsToTrim());
-        }
+                this.$iApi.geo.attributes.applyFieldMetadata(this, this.origRampConfig.fieldMetadata);
+                this.attribs.attLoader.updateFieldList(this.fieldList);
+                this.attribs.attLoader.updateFieldsToTrim(this.getFieldsToTrim());
+            }
         });
 
         const pFC = this.$iApi.geo.layer
-            .loadFeatureCount(
-                this.serviceUrl,
-                this.getSqlFilter(CoreFilter.PERMANENT)
-            )
+            .loadFeatureCount(this.serviceUrl, this.getSqlFilter(CoreFilter.PERMANENT))
             .then(count => {
                 if (startTime > this.lastCancel) {
                     this.featureCount = count;
@@ -191,25 +155,16 @@ export class FeatureLayer extends AttribLayer {
         let hitBucket: Array<number> = [];
 
         // if our identify mode needs server hit, run it
-        if (
-            this.identifyMode === LayerIdentifyMode.HYBRID ||
-            this.identifyMode === LayerIdentifyMode.GEOMETRIC
-        ) {
+        if (this.identifyMode === LayerIdentifyMode.HYBRID || this.identifyMode === LayerIdentifyMode.GEOMETRIC) {
             // run a spatial query
             const qOpts: QueryFeaturesParams = {
                 includeGeometry: false,
                 sourceSR: this.sourceSR
             };
 
-            if (
-                this.geomType !== GeometryType.POLYGON &&
-                options.geometry.type === GeometryType.POINT
-            ) {
+            if (this.geomType !== GeometryType.POLYGON && options.geometry.type === GeometryType.POINT) {
                 // if our layer is not polygon, and our identify input is a point, make a point buffer
-                qOpts.filterGeometry = this.$iApi.geo.query.makeClickBuffer(
-                    <Point>options.geometry,
-                    options.tolerance
-                );
+                qOpts.filterGeometry = this.$iApi.geo.query.makeClickBuffer(<Point>options.geometry, options.tolerance);
             } else {
                 qOpts.filterGeometry = options.geometry;
             }
@@ -224,8 +179,7 @@ export class FeatureLayer extends AttribLayer {
         // if our identify mode needs client hit, run it
         if (
             options.hitTest &&
-            (this.identifyMode === LayerIdentifyMode.HYBRID ||
-                this.identifyMode === LayerIdentifyMode.SYMBOLIC)
+            (this.identifyMode === LayerIdentifyMode.HYBRID || this.identifyMode === LayerIdentifyMode.SYMBOLIC)
         ) {
             // we wait for server (if it happened) to avoid race conditions.
             clientBlocker = serverBlocker.then(async () => {
@@ -237,9 +191,7 @@ export class FeatureLayer extends AttribLayer {
                     .filter(
                         hr =>
                             hr.layerId === this.id &&
-                            hitBucket.findIndex(
-                                alreadyHitOid => hr.oid === alreadyHitOid
-                            ) === -1
+                            hitBucket.findIndex(alreadyHitOid => hr.oid === alreadyHitOid) === -1
                     )
                     .forEach(hr => {
                         hitBucket.push(hr.oid);
@@ -252,9 +204,7 @@ export class FeatureLayer extends AttribLayer {
                 // both identifies have completed. convert our hits into identify result goodness
                 hitBucket.forEach(hitOid => {
                     // push, incase something was bound to the array
-                    result.items.push(
-                        ReactiveIdentifyFactory.makeOidItem(hitOid, this)
-                    );
+                    result.items.push(ReactiveIdentifyFactory.makeOidItem(hitOid, this));
                 });
 
                 // Resolve the loading promise, set the flag
@@ -292,14 +242,8 @@ export class FeatureLayer extends AttribLayer {
             if (!this.layerExists) {
                 this.noLayerErr();
                 reject();
-            } else if (
-                !['multipoint', 'polyline', 'polygon'].includes(
-                    this.esriLayer!.geometryType
-                )
-            ) {
-                console.error(
-                    `Attempted to query extent for invalid geometry type ${this.esriLayer!.geometryType}.`
-                );
+            } else if (!['multipoint', 'polyline', 'polygon'].includes(this.esriLayer!.geometryType)) {
+                console.error(`Attempted to query extent for invalid geometry type ${this.esriLayer!.geometryType}.`);
                 reject();
                 // TODO: should the query be re run if the basemap changes, or do we leave it up to user to do the projecting themselves?
             } else {
@@ -313,16 +257,11 @@ export class FeatureLayer extends AttribLayer {
                     })
                         .then(result => {
                             const rampExtent = Extent.fromESRI(result.extent);
-                            this.attribs.quickCache.setExtent(
-                                objectId,
-                                rampExtent
-                            );
+                            this.attribs.quickCache.setExtent(objectId, rampExtent);
                             resolve(rampExtent);
                         })
                         .catch(() => {
-                            console.error(
-                                `Extent querying failed for ${objectId}.`
-                            );
+                            console.error(`Extent querying failed for ${objectId}.`);
                             reject();
                         });
                 }

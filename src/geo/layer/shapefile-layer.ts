@@ -14,10 +14,7 @@ export class ShapefileLayer extends FileLayer {
         let shapefileData: any; // data type is actually an ArrayBuffer
         const startTime = Date.now();
 
-        if (
-            this.origRampConfig.rawData &&
-            this.origRampConfig.rawData instanceof ArrayBuffer
-        ) {
+        if (this.origRampConfig.rawData && this.origRampConfig.rawData instanceof ArrayBuffer) {
             // shapefile data has been passed in as static data.
             // since shapefile is binary, you cannot drop this in a layer config file.
             // The wizard does not use this route. It converts the zip to GeoJson ahead of time and
@@ -28,22 +25,14 @@ export class ShapefileLayer extends FileLayer {
 
             shapefileData = this.origRampConfig.rawData;
         } else if (this.origRampConfig.url) {
-            shapefileData = await this.$iApi.geo.layer.files.fetchFileData(
-                this.origRampConfig.url,
-                this.layerType
-            );
+            shapefileData = await this.$iApi.geo.layer.files.fetchFileData(this.origRampConfig.url, this.layerType);
         } else {
-            throw new Error(
-                'shapefile config contains no url or no/invalid raw data'
-            );
+            throw new Error('shapefile config contains no url or no/invalid raw data');
         }
 
         // convert shapefile to geojson, store in property for FileLayer to consume.
         if (startTime > this.lastCancel) {
-            const gj =
-                await this.$iApi.geo.layer.files.shapefileToGeoJson(
-                    shapefileData
-                );
+            const gj = await this.$iApi.geo.layer.files.shapefileToGeoJson(shapefileData);
 
             if (startTime > this.lastCancel) {
                 this.sourceGeoJson = gj;

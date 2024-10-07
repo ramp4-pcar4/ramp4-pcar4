@@ -11,20 +11,12 @@
             }"
             ref="el"
         >
-            <zoom-nav-section
-                class="mapnav-section bg-white-75 hover:bg-white"
-            ></zoom-nav-section>
+            <zoom-nav-section class="mapnav-section bg-white-75 hover:bg-white"></zoom-nav-section>
             <span class="py-1"></span>
             <div class="mapnav-section bg-white-75 hover:bg-white">
-                <template
-                    v-for="(button, index) in visible"
-                    :key="button.id + 'button'"
-                >
+                <template v-for="(button, index) in visible" :key="button.id + 'button'">
                     <component :is="button.id + '-nav-button'"></component>
-                    <divider-nav
-                        class="mapnav-divider"
-                        v-if="index !== visible.length - 1"
-                    ></divider-nav>
+                    <divider-nav class="mapnav-divider" v-if="index !== visible.length - 1"></divider-nav>
                 </template>
             </div>
         </div>
@@ -68,11 +60,7 @@ onBeforeUnmount(() => {
 /**
  * Return a list of mapnav items with registered components (ones that can be rendered right now).
  */
-const visible = computed(() =>
-    mapnavStore.order
-        .map(id => mapnavStore.items[id])
-        .filter(item => item.componentId)
-);
+const visible = computed(() => mapnavStore.order.map(id => mapnavStore.items[id]).filter(item => item.componentId));
 </script>
 
 <style lang="scss" scoped>

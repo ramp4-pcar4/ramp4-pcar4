@@ -10,9 +10,7 @@
                     {{ layerName }}
                 </div>
                 <div class="flex flex-col justify-center">
-                    <span class="rv-subheader">{{
-                        t('settings.label.display')
-                    }}</span>
+                    <span class="rv-subheader">{{ t('settings.label.display') }}</span>
 
                     <div class="rv-settings-divider"></div>
 
@@ -64,9 +62,7 @@
                 </div>
 
                 <div class="flex flex-col justify-center">
-                    <span class="rv-subheader">{{
-                        t('settings.label.data')
-                    }}</span>
+                    <span class="rv-subheader">{{ t('settings.label.data') }}</span>
 
                     <div class="rv-settings-divider"></div>
 
@@ -78,10 +74,7 @@
                         @toggled="updateIdentify"
                         :config="{
                             value: identifyModel,
-                            disabled: !(
-                                controlAvailable(LayerControl.Identify) &&
-                                props.layer.supportsIdentify
-                            )
+                            disabled: !(controlAvailable(LayerControl.Identify) && props.layer.supportsIdentify)
                         }"
                         :ariaLabel="t('settings.label.identify')"
                     ></settings-component>
@@ -123,15 +116,7 @@
 import type { InstanceAPI, PanelInstance } from '@/api';
 import { GlobalEvents, LayerInstance } from '@/api/internal';
 import { LayerControl } from '@/geo/api';
-import {
-    inject,
-    onBeforeUnmount,
-    onMounted,
-    reactive,
-    ref,
-    watch,
-    type PropType
-} from 'vue';
+import { inject, onBeforeUnmount, onMounted, reactive, ref, watch, type PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SettingsAPI } from './api/settings';
 import SettingsComponent from './component.vue';
@@ -175,14 +160,11 @@ onMounted(() => {
     loadLayerProperties();
 
     handlers.push(
-        iApi.event.on(
-            GlobalEvents.LAYER_VISIBILITYCHANGE,
-            (newVisibility: any) => {
-                if (uid.value === newVisibility.layer.uid) {
-                    visibilityModel.value = newVisibility.visibility;
-                }
+        iApi.event.on(GlobalEvents.LAYER_VISIBILITYCHANGE, (newVisibility: any) => {
+            if (uid.value === newVisibility.layer.uid) {
+                visibilityModel.value = newVisibility.visibility;
             }
-        )
+        })
     );
 
     handlers.push(
@@ -194,27 +176,21 @@ onMounted(() => {
     );
 
     handlers.push(
-        iApi.event.on(
-            GlobalEvents.LAYER_RELOAD_END,
-            (reloadedLayer: LayerInstance) => {
-                reloadedLayer.loadPromise().then(() => {
-                    if (uid.value === reloadedLayer.uid) {
-                        loadLayerProperties();
-                    }
-                });
-            }
-        )
+        iApi.event.on(GlobalEvents.LAYER_RELOAD_END, (reloadedLayer: LayerInstance) => {
+            reloadedLayer.loadPromise().then(() => {
+                if (uid.value === reloadedLayer.uid) {
+                    loadLayerProperties();
+                }
+            });
+        })
     );
 
     handlers.push(
-        iApi.event.on(
-            GlobalEvents.LAYER_REMOVE,
-            (removedLayer: LayerInstance) => {
-                if (uid.value === removedLayer.uid) {
-                    props.panel.close();
-                }
+        iApi.event.on(GlobalEvents.LAYER_REMOVE, (removedLayer: LayerInstance) => {
+            if (uid.value === removedLayer.uid) {
+                props.panel.close();
             }
-        )
+        })
     );
 });
 onBeforeUnmount(() => {
@@ -226,19 +202,14 @@ onBeforeUnmount(() => {
 const controlAvailable = (control: LayerControl): boolean => {
     const fixture = iApi.fixture.get('settings');
     if (!fixture || Object.keys(fixture).length === 0) {
-        console.warn(
-            'Settings panel cannot check for layer control because it could not find settings fixture api'
-        );
+        console.warn('Settings panel cannot check for layer control because it could not find settings fixture api');
         return false;
     }
-    const settingsConfig: any = (fixture as SettingsAPI)?.getLayerFixtureConfig(
-        props.layer.id
-    );
+    const settingsConfig: any = (fixture as SettingsAPI)?.getLayerFixtureConfig(props.layer.id);
 
     // if a settings fixture config exists for the bounded layer, use it to determine the control's availability.
     // Otherwise, use the controls/disabledControls configuration from the bound layer
-    return settingsConfig &&
-        (settingsConfig.controls || settingsConfig.disabledControls)
+    return settingsConfig && (settingsConfig.controls || settingsConfig.disabledControls)
         ? iApi.geo.shared.controlAvailable(control, settingsConfig)
         : props.layer.controlAvailable(control);
 };

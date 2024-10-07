@@ -34,9 +34,7 @@ class Provinces {
     constructor(language: string, url: string) {
         axios.get(url).then((res: any) => {
             // Update the provinces array.
-            res.data.definitions.forEach(
-                (type: any) => (provs[language][type.code] = type.description)
-            );
+            res.data.definitions.forEach((type: any) => (provs[language][type.code] = type.description));
 
             Object.keys(provs[language]).forEach(provKey => {
                 this.list[provKey] = (<any>provs[language])[provKey];
@@ -50,9 +48,7 @@ class Provinces {
     fsaToProvinces(fsa: string): IGenericObjectType {
         const genericObj: IGenericObjectType = {};
         // either a provincial code, or an array of them
-        let provCodes = <number[] | number>(
-            fsaToProv[fsa.substring(0, 1).toUpperCase()]
-        );
+        let provCodes = <number[] | number>fsaToProv[fsa.substring(0, 1).toUpperCase()];
         if (typeof provCodes === 'number') {
             provCodes = [provCodes];
         }

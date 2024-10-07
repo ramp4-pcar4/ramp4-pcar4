@@ -20,10 +20,7 @@ interface LayerStore {
 
 // searches layers and sublayers using BFS and returns the first layer to satisfy the given predicate.
 // Our initial array is just layers, this lets us crawl into sublayers before moving to the next layer.
-const bfs = (
-    layers: Array<LayerInstance>,
-    predicate: (layer: LayerInstance | undefined) => boolean
-) => {
+const bfs = (layers: Array<LayerInstance>, predicate: (layer: LayerInstance | undefined) => boolean) => {
     const queue = [...layers];
     while (queue.length > 0) {
         const layer = queue.shift();
@@ -51,25 +48,17 @@ export const useLayerStore = defineStore('layer', () => {
     //      our store doesn't have lurking undefineds??
 
     function getLayerByUid(uid: string): LayerInstance | undefined {
-        return bfs(
-            layers.value as any,
-            (layer: LayerInstance | undefined) => layer?.uid === uid
-        );
+        return bfs(layers.value as any, (layer: LayerInstance | undefined) => layer?.uid === uid);
     }
 
     function getLayerById(id: string): LayerInstance | undefined {
-        return bfs(
-            layers.value as any,
-            (layer: LayerInstance | undefined) => layer?.id === id
-        );
+        return bfs(layers.value as any, (layer: LayerInstance | undefined) => layer?.id === id);
     }
 
     function getLayerByAny(idOrUid: string): LayerInstance | undefined {
         return bfs(
             layers.value as any,
-            (layer: LayerInstance | undefined) =>
-                layer !== undefined &&
-                (layer.id === idOrUid || layer.uid === idOrUid)
+            (layer: LayerInstance | undefined) => layer !== undefined && (layer.id === idOrUid || layer.uid === idOrUid)
         );
     }
 
@@ -83,10 +72,7 @@ export const useLayerStore = defineStore('layer', () => {
      * @param value the layer to be added to the store
      * @param index map position. required for map layers. not provided for data layers.
      */
-    function addLayer(
-        value: LayerInstance,
-        index: number | undefined = undefined
-    ) {
+    function addLayer(value: LayerInstance, index: number | undefined = undefined) {
         layers.value = [...(layers.value as any), value];
 
         if (value.mapLayer) {
@@ -127,9 +113,7 @@ export const useLayerStore = defineStore('layer', () => {
         }
 
         // find current position of layer id
-        const layerOrderIdx = mapOrder.value.findIndex(
-            layerId => layerId === layer.id
-        );
+        const layerOrderIdx = mapOrder.value.findIndex(layerId => layerId === layer.id);
         if (layerOrderIdx !== -1 && layerOrderIdx !== index) {
             // remove from current position. re-insert at new position
             mapOrder.value.splice(layerOrderIdx, 1);
@@ -154,9 +138,7 @@ export const useLayerStore = defineStore('layer', () => {
 
         // also remove from order array.
         if (value.mapLayer) {
-            const filteredOrder = mapOrder.value.filter(
-                layerId => layerId !== value.id
-            );
+            const filteredOrder = mapOrder.value.filter(layerId => layerId !== value.id);
             mapOrder.value = filteredOrder;
         }
     }

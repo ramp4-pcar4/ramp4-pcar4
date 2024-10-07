@@ -123,10 +123,7 @@ export class DataLayer extends CommonLayer {
             realJson.data.forEach((row, i) => row.push(i + 1)); // +1 to start at 1, not zero
 
             // this will apply any additional aliases and field exclusions as specified.
-            this.$iApi.geo.attributes.applyFieldMetadata(
-                this,
-                this.origRampConfig.fieldMetadata
-            );
+            this.$iApi.geo.attributes.applyFieldMetadata(this, this.origRampConfig.fieldMetadata);
             this.fieldList = '*'; // overwrite, no server.
 
             // TODO this is a potential improvement. Consider doing it if this format becomes popular, otherwise this
@@ -148,10 +145,7 @@ export class DataLayer extends CommonLayer {
                 attribs: '*', // even required?
                 fieldsToTrim: this.getFieldsToTrim()
             };
-            this.attribs.attLoader = new DataLayerAttributeLoader(
-                this.$iApi,
-                loadData
-            );
+            this.attribs.attLoader = new DataLayerAttributeLoader(this.$iApi, loadData);
 
             // trigger the attribute load. this will be synchronous, but is a promise to meet convention.
             // we toss the end result, but it now exists (in proper format) inside the attLoader for all future calls
@@ -161,10 +155,8 @@ export class DataLayer extends CommonLayer {
             this.featureCount = realJson.data.length;
             if (this.origRampConfig.nameField) {
                 this.nameField =
-                    this.$iApi.geo.attributes.fieldValidator(
-                        this.fields,
-                        this.origRampConfig.nameField
-                    ) || this.oidField;
+                    this.$iApi.geo.attributes.fieldValidator(this.fields, this.origRampConfig.nameField) ||
+                    this.oidField;
             } else {
                 this.nameField = this.oidField;
             }
@@ -176,9 +168,7 @@ export class DataLayer extends CommonLayer {
                 delete this.origRampConfig.rawData;
             }
         } else {
-            throw new Error(
-                'Attempted to initiate file based data layer, sourceJson is missing'
-            );
+            throw new Error('Attempted to initiate file based data layer, sourceJson is missing');
         }
     }
 
@@ -243,16 +233,10 @@ export class DataLayer extends CommonLayer {
     getTabularAttributes(): Promise<TabularAttributeSet> {
         // this call will generate the tabular format, or return the cache if
         // it exists
-        return this.$iApi.geo.attributes.generateTabularAttributes(
-            this,
-            this.attribs
-        );
+        return this.$iApi.geo.attributes.generateTabularAttributes(this, this.attribs);
     }
 
-    async getGraphic(
-        objectId: number,
-        options: GetGraphicParams
-    ): Promise<Graphic> {
+    async getGraphic(objectId: number, options: GetGraphicParams): Promise<Graphic> {
         // note: this methods supports data layers not tied to an ArcGIS server.
         //      class TableLayer will override.
 
@@ -267,9 +251,7 @@ export class DataLayer extends CommonLayer {
             resultAttribs = atSet.features[atSet.oidIndex[objectId]];
         } else {
             // something went wrong
-            throw new Error(
-                'Non ESRI data layer did not have attributes populated.'
-            );
+            throw new Error('Non ESRI data layer did not have attributes populated.');
         }
 
         return new Graphic(new NoGeometry(), '', resultAttribs);

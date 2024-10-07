@@ -15,14 +15,8 @@
                 animation: 'scale'
             }"
         >
-            <svg
-                class="fill-current w-16 h-16"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="4 4 16 16"
-            >
-                <path
-                    d="M 15.41 16.09 L 10.83 11.5 L 15.41 6.91 L 14 5.5 L 8 11.5 L 14 17.5 Z"
-                />
+            <svg class="fill-current w-16 h-16" xmlns="http://www.w3.org/2000/svg" viewBox="4 4 16 16">
+                <path d="M 15.41 16.09 L 10.83 11.5 L 15.41 6.91 L 14 5.5 L 8 11.5 L 14 17.5 Z" />
             </svg>
         </button>
     </div>

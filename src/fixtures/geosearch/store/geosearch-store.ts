@@ -11,11 +11,7 @@ import { computed, ref } from 'vue';
  * @param {Object}  queryParams Contains which filter to process
  * @param {Array}   data        An array of results from the query
  */
-function filter(
-    visibleOnly: boolean,
-    queryParams: QueryParams,
-    data: Array<any>
-) {
+function filter(visibleOnly: boolean, queryParams: QueryParams, data: Array<any>) {
     if (visibleOnly && queryParams.extent) {
         // ensure bbox boundaries are within the current map extent properties
         data = data.filter(
@@ -27,11 +23,7 @@ function filter(
         );
     }
     if (queryParams.province && queryParams.province !== '...') {
-        data = data.filter(
-            r =>
-                r.location.province?.name &&
-                r.location.province.name === queryParams.province
-        );
+        data = data.filter(r => r.location.province?.name && r.location.province.name === queryParams.province);
     }
     if (queryParams.type && queryParams.type !== '...') {
         data = data.filter(r => r.type === queryParams.type);
@@ -67,9 +59,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
         () =>
             new Promise(resolve => {
                 GSservice.value.fetchProvinces().then((provs: Array<any>) => {
-                    provs.sort((provA: any, provB: any) =>
-                        provA.name > provB.name ? 1 : -1
-                    );
+                    provs.sort((provA: any, provB: any) => (provA.name > provB.name ? 1 : -1));
                     resolve(provs);
                 });
             })
@@ -87,9 +77,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
         () =>
             new Promise(resolve => {
                 GSservice.value.fetchTypes().then((types: Array<any>) => {
-                    types.sort((typeA: any, typeB: any) =>
-                        typeA.name > typeB.name ? 1 : -1
-                    );
+                    types.sort((typeA: any, typeB: any) => (typeA.name > typeB.name ? 1 : -1));
                     resolve(types);
                 });
             })
@@ -110,45 +98,34 @@ export const useGeosearchStore = defineStore('geosearch', () => {
         loadingResults.value = true;
         // Replace bad characters with empty string because the default geocratis service
         // returns rubbish results if any of these characters are used, so we ignore them.
-        const cleanedSearchVal = searchVal.value
-            .replace(/["!*$+?^{}()|[\]\\]/g, '')
-            .trim();
+        const cleanedSearchVal = searchVal.value.replace(/["!*$+?^{}()|[\]\\]/g, '').trim();
         if (!cleanedSearchVal) {
             searchResults.value = [];
             savedResults.value = [];
             loadingResults.value = false;
         } else {
             // run new query if different search term is entered
-            if (
-                (cleanedSearchVal &&
-                    cleanedSearchVal !== lastSearchVal.value) ||
-                forceReRun
-            ) {
+            if ((cleanedSearchVal && cleanedSearchVal !== lastSearchVal.value) || forceReRun) {
                 // watch for provinces and types to finish loading
                 const watcher = setInterval(() => {
-                    if (
-                        GSservice.value.config.provinces.listFetched &&
-                        GSservice.value.config.types.typesFetched
-                    ) {
+                    if (GSservice.value.config.provinces.listFetched && GSservice.value.config.types.typesFetched) {
                         clearInterval(watcher);
-                        GSservice.value
-                            .query(`${cleanedSearchVal}*`)
-                            .then((data: any) => {
-                                failedServices.value = data.failedServs;
-                                // store data for current search term
-                                lastSearchVal.value = cleanedSearchVal;
-                                savedResults.value = data.results;
+                        GSservice.value.query(`${cleanedSearchVal}*`).then((data: any) => {
+                            failedServices.value = data.failedServs;
+                            // store data for current search term
+                            lastSearchVal.value = cleanedSearchVal;
+                            savedResults.value = data.results;
 
-                                // replace old saved results
-                                const filteredData = filter(
-                                    resultsVisible.value,
-                                    //@ts-ignore
-                                    queryParams.value,
-                                    savedResults.value
-                                );
-                                searchResults.value = filteredData || [];
-                                loadingResults.value = false;
-                            });
+                            // replace old saved results
+                            const filteredData = filter(
+                                resultsVisible.value,
+                                //@ts-ignore
+                                queryParams.value,
+                                savedResults.value
+                            );
+                            searchResults.value = filteredData || [];
+                            loadingResults.value = false;
+                        });
                     }
                 }, 250);
             } else {
@@ -172,12 +149,8 @@ export const useGeosearchStore = defineStore('geosearch', () => {
      * @param   {object}   payload an object with two properties - province (the province to set) and
      * forceReRun (whether to force the query to run again)
      */
-    function setProvince(payload: {
-        province?: string;
-        forceReRun?: boolean;
-    }): void {
-        queryParams.value.province =
-            typeof payload.province === 'undefined' ? '' : payload.province;
+    function setProvince(payload: { province?: string; forceReRun?: boolean }): void {
+        queryParams.value.province = typeof payload.province === 'undefined' ? '' : payload.province;
         // run query after province filter changes
         runQuery(payload.forceReRun);
     }
@@ -190,8 +163,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
      * forceReRun (whether to force the query to run again)
      */
     function setType(payload: { type?: string; forceReRun?: boolean }): void {
-        queryParams.value.type =
-            typeof payload.type === 'undefined' ? '' : payload.type;
+        queryParams.value.type = typeof payload.type === 'undefined' ? '' : payload.type;
         // run query after type filter changes
         runQuery(payload.forceReRun);
     }
@@ -203,9 +175,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
      * @param   {string}    searchTerm  current geosearch search value term
      */
     function setSearchTerm(searchTerm: string): void {
-        lastSearchVal.value = searchVal.value
-            .replace(/["!*$+?^{}()|[\]\\]/g, '')
-            .trim();
+        lastSearchVal.value = searchVal.value.replace(/["!*$+?^{}()|[\]\\]/g, '').trim();
         searchVal.value = searchTerm;
         // run query after search term changes
         runQuery();
@@ -292,9 +262,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
         //       can be provided to the store.
 
         if (mapExtent.extent.sr.wkid !== 4326) {
-            throw new Error(
-                'an extent that was not projected to wkid 4326 was passed to the geosearch store'
-            );
+            throw new Error('an extent that was not projected to wkid 4326 was passed to the geosearch store');
         }
         queryParams.value.extent = mapExtent.extent;
         // run query after toggling map extent filters

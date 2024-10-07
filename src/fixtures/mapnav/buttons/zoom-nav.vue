@@ -1,25 +1,14 @@
 <template>
     <div>
         <mapnav-button :onClickFunction="zoomIn" :tooltip="t('mapnav.zoomIn')">
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                class="fill-current w-32 h-20"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="fill-current w-32 h-20">
                 <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                 <path d="M0 0h24v24H0z" fill="none" />
             </svg>
         </mapnav-button>
         <divider-nav></divider-nav>
-        <mapnav-button
-            :onClickFunction="zoomOut"
-            :tooltip="t('mapnav.zoomOut')"
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                class="fill-current w-32 h-20"
-            >
+        <mapnav-button :onClickFunction="zoomOut" :tooltip="t('mapnav.zoomOut')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="fill-current w-32 h-20">
                 <path d="M19 13H5v-2h14v2z" />
                 <path d="M0 0h24v24H0z" fill="none" />
             </svg>

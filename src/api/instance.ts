@@ -1,10 +1,6 @@
 import { createApp as createRampApp, Transition, TransitionGroup } from 'vue';
 import { createPinia } from 'pinia';
-import type {
-    ComponentPublicInstance,
-    App as VueApp,
-    DefineComponent
-} from 'vue';
+import type { ComponentPublicInstance, App as VueApp, DefineComponent } from 'vue';
 import type { RampConfig, RampConfigs } from '@/types';
 import { i18n } from '@/lang';
 import screenfull from 'screenfull';
@@ -17,14 +13,7 @@ import VueTippy from 'vue-tippy';
 import { FocusList, FocusItem, FocusContainer } from '@/directives/focus-list';
 import { Truncate } from '@/directives/truncate/truncate';
 
-import {
-    EventAPI,
-    FixtureAPI,
-    GeoAPI,
-    GlobalEvents,
-    PanelAPI,
-    NotificationAPI
-} from './internal';
+import { EventAPI, FixtureAPI, GeoAPI, GlobalEvents, PanelAPI, NotificationAPI } from './internal';
 
 import PanelScreenV from '@/components/panel-stack/panel-screen.vue';
 import PinV from '@/components/panel-stack/controls/pin.vue';
@@ -108,11 +97,7 @@ export class InstanceAPI {
 
     private _isFullscreen: boolean;
 
-    constructor(
-        element: HTMLElement,
-        configs?: RampConfigs,
-        options?: RampOptions
-    ) {
+    constructor(element: HTMLElement, configs?: RampConfigs, options?: RampOptions) {
         this.event = new EventAPI(this);
 
         const appInstance = createApp(element, this);
@@ -166,11 +151,7 @@ export class InstanceAPI {
      * @param {RampConfigs | undefined} configs language-keyed R4MP config
      * @param {RampOptions | undefined} options startup options for this R4MP instance
      */
-    private initialize(
-        first: boolean,
-        configs?: RampConfigs,
-        options?: RampOptions
-    ): void {
+    private initialize(first: boolean, configs?: RampConfigs, options?: RampOptions): void {
         const configStore = useConfigStore(this.$vApp.$pinia);
         const panelStore = usePanelStore(this.$vApp.$pinia);
         const maptipStore = useMaptipStore(this.$vApp.$pinia);
@@ -179,9 +160,7 @@ export class InstanceAPI {
                 [key: string]: RampConfig;
             } = configs.configs;
 
-            const langConfig =
-                langConfigs[this.$i18n.locale.value] ??
-                langConfigs[Object.keys(langConfigs)[0]];
+            const langConfig = langConfigs[this.$i18n.locale.value] ?? langConfigs[Object.keys(langConfigs)[0]];
             configStore.newConfig(langConfig);
 
             // register first config for all available languages and then overwrite configs per language as needed
@@ -209,16 +188,12 @@ export class InstanceAPI {
             // if startRequired is true, it will appear after calling start() or setting started to true,
             // at which point the map is created
             const mapDivWatcher = setInterval(() => {
-                const mapViewElement: Element | null =
-                    this.$vApp.$el.querySelector('#esriMap');
+                const mapViewElement: Element | null = this.$vApp.$el.querySelector('#esriMap');
                 if (mapViewElement) {
                     clearInterval(mapDivWatcher);
 
                     // create the map
-                    this.geo.map.createMap(
-                        langConfig.map,
-                        mapViewElement as HTMLDivElement
-                    );
+                    this.geo.map.createMap(langConfig.map, mapViewElement as HTMLDivElement);
 
                     // Hide hovertip on map creation
                     //@ts-ignore
@@ -232,8 +207,7 @@ export class InstanceAPI {
                         // Enhanced positioning logic is now handled by map.addLayer()
                         let mapOrderPos = 0;
                         langConfig.layers.forEach(layerConfig => {
-                            const layer =
-                                this.geo.layer.createLayer(layerConfig);
+                            const layer = this.geo.layer.createLayer(layerConfig);
                             this.geo.map
                                 .addLayer(layer, mapOrderPos)
                                 // just to silence console about unhandled rejections.
@@ -255,10 +229,7 @@ export class InstanceAPI {
                 // there is no way to open the panel with layer data loaded without writing specific code for specific fixtures.
                 // Once layer usage throughout RAMP is normalized, add an extra nugget in the config called options or something so that the panel
                 // can load layer data as well.
-                if (
-                    langConfig.panels.open &&
-                    langConfig.panels.open.length > 0
-                ) {
+                if (langConfig.panels.open && langConfig.panels.open.length > 0) {
                     const panelIds = langConfig.panels.open.map(p => p.id);
                     this.panel.isRegistered(panelIds).then(() => {
                         langConfig.panels?.open?.forEach(panel => {
@@ -278,14 +249,8 @@ export class InstanceAPI {
             }
 
             // disable animations if needed
-            if (
-                !langConfig.system?.animate &&
-                this.$element._container &&
-                this.$element._container.children[0]
-            ) {
-                this.$element._container.children[0].classList.remove(
-                    'animation-enabled'
-                );
+            if (!langConfig.system?.animate && this.$element._container && this.$element._container.children[0]) {
+                this.$element._container.children[0].classList.remove('animation-enabled');
             }
 
             // process system configurations
@@ -296,15 +261,13 @@ export class InstanceAPI {
                 this.ui.exposeOids = langConfig.system.exposeOid;
             }
             if (langConfig.system?.exposeMeasurements != undefined) {
-                this.ui.exposeMeasurements =
-                    langConfig.system.exposeMeasurements;
+                this.ui.exposeMeasurements = langConfig.system.exposeMeasurements;
             }
             if (langConfig.system?.scrollToInstance) {
                 this.ui.scrollToInstance = langConfig.system?.scrollToInstance;
             }
             if (langConfig.system?.suppressNumberLocalization) {
-                this.ui.suppressNumberLocalization =
-                    langConfig.system?.suppressNumberLocalization;
+                this.ui.suppressNumberLocalization = langConfig.system?.suppressNumberLocalization;
             }
 
             // set up key to SVG bindings for zoom icons
@@ -322,9 +285,7 @@ export class InstanceAPI {
             };
 
             this.ui.formatNumber = (num: number) => {
-                return this.ui.suppressNumberLocalization
-                    ? num.toString()
-                    : this.$i18n.n(num, 'number');
+                return this.ui.suppressNumberLocalization ? num.toString() : this.$i18n.n(num, 'number');
             };
 
             /**
@@ -346,8 +307,7 @@ export class InstanceAPI {
              */
             this.ui.isPlainText = (content: any) => {
                 return typeof content === 'string'
-                    ? !this.containsValidHtml(content) &&
-                          !this.representsObject(content)
+                    ? !this.containsValidHtml(content) && !this.representsObject(content)
                     : false;
             };
         }
@@ -370,11 +330,7 @@ export class InstanceAPI {
         // use strict check against false, as missing properties have default value of true.
         // run the default setup functions unless flags have been set to false.
         // override the loadDefaultFixtures flag if startingFixtures is provided
-        if (
-            first &&
-            (options.loadDefaultFixtures !== false ||
-                configs?.startingFixtures !== undefined)
-        ) {
+        if (first && (options.loadDefaultFixtures !== false || configs?.startingFixtures !== undefined)) {
             this.fixture.addDefaultFixtures(configs?.startingFixtures);
         } else if (!first) {
             this.fixture.restore();
@@ -405,9 +361,7 @@ export class InstanceAPI {
         if (first) {
             // remove all fixtures
             // get list of all fixture ids currently added
-            const addedFixtures: Array<string> = Object.keys(
-                fixtureStore.items
-            );
+            const addedFixtures: Array<string> = Object.keys(fixtureStore.items);
             // remove each fixture
             addedFixtures.forEach((id: string) => {
                 // check if the fixture exists first otherwise it will error
@@ -505,8 +459,7 @@ export class InstanceAPI {
             return null;
         }
 
-        const classList = (this.$vApp.$root.$refs['app-size'] as HTMLElement)
-            .classList;
+        const classList = (this.$vApp.$root.$refs['app-size'] as HTMLElement).classList;
         if (classList.contains('lg')) {
             return 'lg';
         } else if (classList.contains('md')) {
@@ -526,9 +479,7 @@ export class InstanceAPI {
     getConfig() {
         // clone it to avoid mutations to store config
         const configStore = useConfigStore(this.$vApp.$pinia);
-        return JSON.parse(
-            JSON.stringify(configStore.getActiveConfig(this.language))
-        );
+        return JSON.parse(JSON.stringify(configStore.getActiveConfig(this.language)));
     }
 
     /**
@@ -669,9 +620,7 @@ export class InstanceAPI {
         return !!(
             this.$element._container &&
             this.$element._container.children[0] &&
-            this.$element._container.children[0].classList.contains(
-                'animation-enabled'
-            )
+            this.$element._container.children[0].classList.contains('animation-enabled')
         );
     }
 
@@ -716,9 +665,7 @@ export class InstanceAPI {
      * @memberof InstanceAPI
      */
     updateAlert(alert: string): void {
-        const alertContainer = this.$vApp.$el.querySelector(
-            '.screen-reader-alert'
-        ) as HTMLElement;
+        const alertContainer = this.$vApp.$el.querySelector('.screen-reader-alert') as HTMLElement;
 
         if (alertContainer.childNodes.length > 0) {
             alertContainer.innerHTML = '';
@@ -769,8 +716,7 @@ export class InstanceAPI {
      * Return whether the string represents an object or array
      */
     representsObject(content: string): boolean {
-        const tagPattern =
-            /^(?:\[\s*(?:[\s\S]*?)\s*\]|\{\s*(?:[\s\S]*?)\s*\})$/;
+        const tagPattern = /^(?:\[\s*(?:[\s\S]*?)\s*\]|\{\s*(?:[\s\S]*?)\s*\})$/;
         return tagPattern.test(content);
     }
 }

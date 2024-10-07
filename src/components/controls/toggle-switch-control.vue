@@ -18,19 +18,14 @@
                     container:
                         'inline-block rounded-full outline-none focus:ring focus:ring-blue-500 focus:ring-opacity-30',
                     toggle: 'flex w-40 h-15 rounded-full relative cursor-pointer transition items-center box-content border-2 text-xs leading-none',
-                    toggleOn:
-                        'bg-blue-500 border-blue-500 justify-start text-white',
-                    toggleOff:
-                        'bg-gray-200 border-gray-200 justify-end text-gray-700',
-                    toggleOnDisabled:
-                        'bg-gray-300 border-gray-300 justify-start text-gray-400 cursor-not-allowed',
-                    toggleOffDisabled:
-                        'bg-gray-200 border-gray-200 justify-end text-gray-400 cursor-not-allowed',
+                    toggleOn: 'bg-blue-500 border-blue-500 justify-start text-white',
+                    toggleOff: 'bg-gray-200 border-gray-200 justify-end text-gray-700',
+                    toggleOnDisabled: 'bg-gray-300 border-gray-300 justify-start text-gray-400 cursor-not-allowed',
+                    toggleOffDisabled: 'bg-gray-200 border-gray-200 justify-end text-gray-400 cursor-not-allowed',
                     handle: 'inline-block bg-white w-15 h-15 top-0 rounded-full absolute transition-all',
                     handleOn: 'left-full transform -translate-x-full',
                     handleOff: 'left-0',
-                    handleOnDisabled:
-                        'bg-gray-100 left-full transform -translate-x-full',
+                    handleOnDisabled: 'bg-gray-100 left-full transform -translate-x-full',
                     handleOffDisabled: 'bg-gray-100 left-0',
                     label: 'text-center w-8 border-box whitespace-nowrap select-none'
                 }"
@@ -90,9 +85,7 @@ const handleKeyup = () => {
 
 const addAriaLabel = () => {
     if (toggleWrapper.value) {
-        const checkbox = toggleWrapper.value.querySelector(
-            'input[type="checkbox"]'
-        );
+        const checkbox = toggleWrapper.value.querySelector('input[type="checkbox"]');
         if (checkbox && props.ariaLabel) {
             checkbox.setAttribute('aria-label', props.ariaLabel);
         }

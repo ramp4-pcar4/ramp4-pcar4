@@ -8,13 +8,7 @@
         tabindex="-1"
         ref="el"
     >
-        <svg
-            class="m-auto"
-            xmlns="http://www.w3.org/2000/svg"
-            height="16"
-            viewBox="0 0 24 24"
-            width="16"
-        >
+        <svg class="m-auto" xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 24 24" width="16">
             <path d="M0 0h24v24H0z" fill="none" />
             <path
                 style="fill: #979797"
@@ -49,11 +43,11 @@ const openDetails = async () => {
 
     const realOidField = layer.oidField;
 
-    const mapperPair: AttributeMapPair | undefined = props.params.layerCols[
-        layer.id
-    ].find((attrPair: AttributeMapPair) => {
-        return attrPair.origAttr === realOidField;
-    });
+    const mapperPair: AttributeMapPair | undefined = props.params.layerCols[layer.id].find(
+        (attrPair: AttributeMapPair) => {
+            return attrPair.origAttr === realOidField;
+        }
+    );
 
     const dataOidField = mapperPair?.mappedAttr || realOidField;
 
@@ -99,14 +93,11 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-    props.params.eGridCell.removeEventListener(
-        'keydown',
-        (e: KeyboardEvent) => {
-            if (e.key === 'Enter') {
-                openDetails();
-            }
+    props.params.eGridCell.removeEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            openDetails();
         }
-    );
+    });
 
     props.params.eGridCell.removeEventListener('focus', () => {
         (el.value as any)._tippy.show();

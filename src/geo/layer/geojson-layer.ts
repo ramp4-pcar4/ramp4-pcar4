@@ -19,15 +19,9 @@ export class GeoJsonLayer extends FileLayer {
         const startTime = Date.now();
 
         if (this.origRampConfig.rawData) {
-            gj = this.$iApi.geo.layer.files.rawDataJsonParser(
-                this.origRampConfig.rawData,
-                this.origRampConfig.caching
-            );
+            gj = this.$iApi.geo.layer.files.rawDataJsonParser(this.origRampConfig.rawData, this.origRampConfig.caching);
         } else if (this.origRampConfig.url) {
-            gj = await this.$iApi.geo.layer.files.fetchFileData(
-                this.origRampConfig.url,
-                this.layerType
-            );
+            gj = await this.$iApi.geo.layer.files.fetchFileData(this.origRampConfig.url, this.layerType);
         } else {
             throw new Error('GeoJson layer config contains no raw data or url');
         }

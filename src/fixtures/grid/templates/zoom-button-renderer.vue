@@ -3,18 +3,13 @@
         v-if="isMapLayer"
         type="button"
         class="flex items-center justify-center w-40 h-36"
-        :content="
-            t(`grid.cells.zoom${zoomStatus === 'none' ? '' : `.${zoomStatus}`}`)
-        "
+        :content="t(`grid.cells.zoom${zoomStatus === 'none' ? '' : `.${zoomStatus}`}`)"
         v-tippy="{ placement: 'top' }"
         @click="zoomToFeature"
         tabindex="-1"
         ref="button"
     >
-        <div
-            v-if="zoomStatus === 'zooming'"
-            class="m-auto animate-spin spinner h-20 w-20"
-        ></div>
+        <div v-if="zoomStatus === 'zooming'" class="m-auto animate-spin spinner h-20 w-20"></div>
         <svg
             v-else-if="zoomStatus === 'zoomed'"
             xmlns="http://www.w3.org/2000/svg"
@@ -24,11 +19,7 @@
             stroke="green"
             class="w-20 h-20"
         >
-            <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M4.5 12.75l6 6 9-13.5"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
         </svg>
         <svg
             v-else-if="zoomStatus === 'error'"
@@ -39,11 +30,7 @@
             stroke="red"
             class="w-20 h-20"
         >
-            <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
         <span v-else v-html="iApi.ui.getZoomIcon()"></span>
     </button>
@@ -66,9 +53,7 @@ const button = ref<HTMLElement>();
 const { t } = useI18n();
 
 const isMapLayer = computed<boolean>((): boolean => {
-    const layer: LayerInstance | undefined = layerStore.getLayerByUid(
-        props.params.data.rvUid
-    );
+    const layer: LayerInstance | undefined = layerStore.getLayerByUid(props.params.data.rvUid);
     return !!layer && layer.mapLayer;
 });
 
@@ -77,9 +62,7 @@ const zoomToFeature = () => {
         return;
     }
     zoomStatus.value = 'zooming';
-    const layer: LayerInstance | undefined = layerStore.getLayerByUid(
-        props.params.data.rvUid
-    );
+    const layer: LayerInstance | undefined = layerStore.getLayerByUid(props.params.data.rvUid);
 
     if (layer === undefined || !layer.isLoaded) {
         updateZoomStatus('error');
@@ -87,14 +70,9 @@ const zoomToFeature = () => {
     }
 
     // similar to the sql lookup, the details panel must use the original OID field to perform zoomies
-    const oidPair = props.params.layerCols[layer.id].find(
-        (pair: AttributeMapPair) => pair.origAttr === layer.oidField
-    );
+    const oidPair = props.params.layerCols[layer.id].find((pair: AttributeMapPair) => pair.origAttr === layer.oidField);
 
-    const oid =
-        props.params.data[
-            oidPair ? (oidPair.mappedAttr ?? oidPair.origAttr) : layer.oidField
-        ];
+    const oid = props.params.data[oidPair ? (oidPair.mappedAttr ?? oidPair.origAttr) : layer.oidField];
 
     const zoomUsingGraphic = () => {
         const opts = { getGeom: true };
@@ -119,10 +97,7 @@ const zoomToFeature = () => {
             });
     };
 
-    if (
-        layer.layerType === LayerType.FEATURE &&
-        layer.geomType !== GeometryType.POINT
-    ) {
+    if (layer.layerType === LayerType.FEATURE && layer.geomType !== GeometryType.POINT) {
         layer
             .getGraphicExtent(oid)
             .then(e => {
@@ -160,14 +135,11 @@ const updateZoomStatus = (value: 'zooming' | 'zoomed' | 'error' | 'none') => {
 onMounted(() => {
     // need to hoist events to top level cell wrapper to be keyboard accessible
     if (isMapLayer.value) {
-        props.params.eGridCell.addEventListener(
-            'keydown',
-            (e: KeyboardEvent) => {
-                if (e.key === 'Enter' && zoomStatus.value === 'none') {
-                    zoomToFeature();
-                }
+        props.params.eGridCell.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'Enter' && zoomStatus.value === 'none') {
+                zoomToFeature();
             }
-        );
+        });
 
         props.params.eGridCell.addEventListener('focus', () => {
             (button.value as any)?._tippy.show();
@@ -180,14 +152,11 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     if (isMapLayer.value) {
-        props.params.eGridCell.removeEventListener(
-            'keydown',
-            (e: KeyboardEvent) => {
-                if (e.key === 'Enter') {
-                    zoomToFeature();
-                }
+        props.params.eGridCell.removeEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                zoomToFeature();
             }
-        );
+        });
         props.params.eGridCell.removeEventListener('focus', () => {
             (button.value as any)?._tippy.show();
         });

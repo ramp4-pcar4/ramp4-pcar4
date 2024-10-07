@@ -59,8 +59,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                         attribution: {
                             text: {
                                 disabled: true
@@ -186,11 +185,7 @@ let options = {
     startRequired: false
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 
 rInstance.$element.component('WFSLayer-Custom', {
     props: ['identifyData'],

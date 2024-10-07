@@ -49,10 +49,7 @@ let config = {
                         name: 'Lambert Maps',
                         extentSetId: 'EXT_NRCAN_Lambert_3978',
                         lodSetId: 'LOD_NRCAN_Lambert_3978',
-                        thumbnailTileUrls: [
-                            '/tile/8/285/268',
-                            '/tile/8/285/269'
-                        ],
+                        thumbnailTileUrls: ['/tile/8/285/268', '/tile/8/285/269'],
                         hasNorthPole: true
                     },
                     {
@@ -195,11 +192,7 @@ let options = {
     loadDefaultEvents: true
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 
 rInstance.$element.component('Details-Default-Template-WMS', {
     props: ['identifyData'],

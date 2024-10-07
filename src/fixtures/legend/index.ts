@@ -38,19 +38,10 @@ class LegendFixture extends LegendAPI {
 
         // parse legend section of config and store information in legend store
         // here we create a copy of the config because the config parser will mutate the layer ids in the config
-        this._parseConfig(
-            this.config !== undefined
-                ? JSON.parse(JSON.stringify(this.config))
-                : undefined
-        );
+        this._parseConfig(this.config !== undefined ? JSON.parse(JSON.stringify(this.config)) : undefined);
         const unwatch = this.$vApp.$watch(
             () => this.config,
-            (value: any) =>
-                this._parseConfig(
-                    value !== undefined
-                        ? JSON.parse(JSON.stringify(value))
-                        : undefined
-                )
+            (value: any) => this._parseConfig(value !== undefined ? JSON.parse(JSON.stringify(value)) : undefined)
         );
 
         // override the removed method here to get access to scope

@@ -111,23 +111,10 @@ let options = {
     loadDefaultEvents: true
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
-rInstance.fixture
-    .addDefaultFixtures([
-        'mapnav',
-        'legend',
-        'appbar',
-        'grid',
-        'details',
-        'wizard'
-    ])
-    .then(() => {
-        rInstance.panel.open('legend');
-    });
+const rInstance = createInstance(document.getElementById('app'), config, options);
+rInstance.fixture.addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details', 'wizard']).then(() => {
+    rInstance.panel.open('legend');
+});
 
 rInstance.$element.component('links-template', {
     props: ['params'],

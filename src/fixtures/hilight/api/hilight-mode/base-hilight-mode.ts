@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import {
-    APIScope,
-    CommonGraphicLayer,
-    InstanceAPI,
-    LayerInstance
-} from '@/api';
+import { APIScope, CommonGraphicLayer, InstanceAPI, LayerInstance } from '@/api';
 import { HilightMode, HILIGHT_LAYER_NAME } from '../hilight-defs';
 import type { Graphic } from '@/geo/api';
 
@@ -38,9 +33,7 @@ export class BaseHilightMode extends APIScope {
      * @param {Graphic | Array<Graphic> | undefined} graphics one or more RAMP Graphics to remove
      * @returns {Promise} resolves when graphics have been added
      */
-    async remove(
-        graphics: Array<Graphic> | Graphic | undefined
-    ): Promise<void> {
+    async remove(graphics: Array<Graphic> | Graphic | undefined): Promise<void> {
         this.notImplementedError('removeGraphics');
     }
 
@@ -62,10 +55,7 @@ export class BaseHilightMode extends APIScope {
     async getHilightLayer(): Promise<CommonGraphicLayer | undefined> {
         const hilightLayer = await this.layerFetcher();
         if (hilightLayer) {
-            if (
-                hilightLayer.isLoaded &&
-                hilightLayer instanceof CommonGraphicLayer
-            ) {
+            if (hilightLayer.isLoaded && hilightLayer instanceof CommonGraphicLayer) {
                 return hilightLayer;
             } else {
                 console.warn('Hilight layer exists but is in bad form.');
@@ -78,9 +68,7 @@ export class BaseHilightMode extends APIScope {
     }
 
     private notImplementedError(method: string) {
-        console.warn(
-            `Hilight mode method ${method} was not implemented by subclass.`
-        );
+        console.warn(`Hilight mode method ${method} was not implemented by subclass.`);
     }
 
     /**
@@ -100,8 +88,7 @@ export class BaseHilightMode extends APIScope {
                 let timeElapsed = 0;
 
                 const layerWatcher = setInterval(() => {
-                    const layer =
-                        this.$iApi.geo.layer.getLayer(HILIGHT_LAYER_NAME);
+                    const layer = this.$iApi.geo.layer.getLayer(HILIGHT_LAYER_NAME);
                     if (layer) {
                         clearInterval(layerWatcher);
                         resolve(layer);

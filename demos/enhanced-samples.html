@@ -17,20 +17,12 @@
             <select id="selectConfig" class="tool">
                 <option value="001-happy">01. Happy</option>
                 <option value="002-simple-empty">02. Simple Empty Map</option>
-                <option value="003-simple-feature">
-                    03. Simple Feature Layers
-                </option>
-                <option value="004-simple-mil">
-                    04. Simple Map Image Layers
-                </option>
+                <option value="003-simple-feature">03. Simple Feature Layers</option>
+                <option value="004-simple-mil">04. Simple Map Image Layers</option>
                 <option value="005-simple-file">05. Simple File Layers</option>
                 <option value="006-simple-data">06. Simple Data Layers</option>
-                <option value="007-main-classic">
-                    07. Classic Main Sample
-                </option>
-                <option value="008-projection-party">
-                    08. Layers in Different Projections
-                </option>
+                <option value="007-main-classic">07. Classic Main Sample</option>
+                <option value="008-projection-party">08. Layers in Different Projections</option>
             </select>
             <nav class="linky-container">
                 <a class="linky" href="enhanced-all.html">Catalogue</a
@@ -40,8 +32,8 @@
 
         <noscript>
             <strong
-                >We're sorry but ramp-core doesn't work properly without
-                JavaScript enabled. Please enable it to continue.</strong
+                >We're sorry but ramp-core doesn't work properly without JavaScript enabled. Please enable it to
+                continue.</strong
             >
         </noscript>
 
@@ -109,9 +101,7 @@
             var SAMPLE_KEY = 'sample';
             var currentUrl = new URL(window.location.href);
 
-            document
-                .getElementById('selectConfig')
-                .addEventListener('change', onConfigSelect);
+            document.getElementById('selectConfig').addEventListener('change', onConfigSelect);
             initialLoad();
 
             async function loadScript(scriptName) {
@@ -179,15 +169,11 @@
                                 lodSets: [
                                     {
                                         id: 'LOD_NRCAN_Lambert_3978',
-                                        lods: geo.defaultLODs(
-                                            geo.defaultTileSchemas()[0]
-                                        )
+                                        lods: geo.defaultLODs(geo.defaultTileSchemas()[0])
                                     },
                                     {
                                         id: 'LOD_ESRI_World_AuxMerc_3857',
-                                        lods: geo.defaultLODs(
-                                            geo.defaultTileSchemas()[1]
-                                        )
+                                        lods: geo.defaultLODs(geo.defaultTileSchemas()[1])
                                     }
                                 ],
                                 tileSchemas: [
@@ -196,10 +182,7 @@
                                         name: 'Lambert Maps',
                                         extentSetId: 'EXT_NRCAN_Lambert_3978',
                                         lodSetId: 'LOD_NRCAN_Lambert_3978',
-                                        thumbnailTileUrls: [
-                                            '/tile/8/285/268',
-                                            '/tile/8/285/269'
-                                        ],
+                                        thumbnailTileUrls: ['/tile/8/285/268', '/tile/8/285/269'],
                                         hasNorthPole: true,
                                         recoveryBasemap: {
                                             basemapId: 'baseProvinces_3978'
@@ -208,13 +191,9 @@
                                     {
                                         id: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                                         name: 'Web Mercator Maps',
-                                        extentSetId:
-                                            'EXT_ESRI_World_AuxMerc_3857',
+                                        extentSetId: 'EXT_ESRI_World_AuxMerc_3857',
                                         lodSetId: 'LOD_ESRI_World_AuxMerc_3857',
-                                        thumbnailTileUrls: [
-                                            '/tile/8/91/74',
-                                            '/tile/8/91/75'
-                                        ],
+                                        thumbnailTileUrls: ['/tile/8/91/74', '/tile/8/91/75'],
                                         recoveryBasemap: {
                                             basemapId: 'baseOpenStreetMap'
                                         }
@@ -226,8 +205,7 @@
                                         name: 'Canada Base Map - Transportation (CBMT)',
                                         description:
                                             'The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.',
-                                        altText:
-                                            'The Canada Base Map - Transportation (CBMT)',
+                                        altText: 'The Canada Base Map - Transportation (CBMT)',
                                         layers: [
                                             {
                                                 id: 'CBMT',
@@ -235,8 +213,7 @@
                                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                                     },
                                     {
                                         id: 'baseSimple',
@@ -250,16 +227,14 @@
                                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/Simple/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                                     },
                                     {
                                         id: 'baseCBME_CBCE_HS_RO_3978',
                                         name: 'Canada Base Map - Elevation (CBME)',
                                         description:
                                             'The Canada Base Map - Elevation (CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.',
-                                        altText:
-                                            'Canada Base Map - Elevation (CBME)',
+                                        altText: 'Canada Base Map - Elevation (CBME)',
                                         layers: [
                                             {
                                                 id: 'CBME_CBCE_HS_RO_3978',
@@ -267,16 +242,14 @@
                                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                                     },
                                     {
                                         id: 'baseCBMT_CBCT_GEOM_3978',
                                         name: 'Canada Base Map - Transportation (CBMT)',
                                         description:
                                             ' The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.',
-                                        altText:
-                                            'Canada Base Map - Transportation (CBMT)',
+                                        altText: 'Canada Base Map - Transportation (CBMT)',
                                         layers: [
                                             {
                                                 id: 'CBMT_CBCT_GEOM_3978',
@@ -284,16 +257,14 @@
                                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                                     },
                                     {
                                         id: 'baseProvinces_3978',
                                         name: 'Provincial and Territorial Boundaries',
                                         description:
                                             "A basic outline of Canada's provincial and territorial boundaries.",
-                                        altText:
-                                            'Canada Base Map - Provincial and Territorial outlines',
+                                        altText: 'Canada Base Map - Provincial and Territorial outlines',
                                         hideThumbnail: true,
                                         layers: [
                                             {
@@ -302,8 +273,7 @@
                                                 url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/Overlays/Provinces/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                                     },
                                     {
                                         id: 'baseEsriWorld',
@@ -318,8 +288,7 @@
                                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                     },
                                     {
                                         id: 'baseEsriPhysical',
@@ -334,8 +303,7 @@
                                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                     },
                                     {
                                         id: 'baseEsriRelief',
@@ -350,8 +318,7 @@
                                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                     },
                                     {
                                         id: 'baseEsriStreet',
@@ -366,8 +333,7 @@
                                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                     },
                                     {
                                         id: 'baseEsriTerrain',
@@ -382,8 +348,7 @@
                                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                     },
                                     {
                                         id: 'baseEsriTopo',
@@ -398,14 +363,12 @@
                                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                     },
                                     {
                                         id: 'baseOpenStreetMap',
                                         name: 'OpenStreetMap',
-                                        description:
-                                            'Open sourced topographical map.',
+                                        description: 'Open sourced topographical map.',
                                         altText: 'OpenStreetMap',
                                         layers: [
                                             {
@@ -415,8 +378,7 @@
                                         ],
                                         thumbnailUrl:
                                             'https://www.openstreetmap.org/assets/about/osm-a74d2c94082260032c133b9d206ee2fdd911e5c82bf03daae10393a02d7b4809.png',
-                                        tileSchemaId:
-                                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                     }
                                 ],
                                 initialBasemapId: 'baseNrCan'
@@ -429,13 +391,7 @@
                                     }
                                 },
                                 appbar: {
-                                    items: [
-                                        'legend',
-                                        'geosearch',
-                                        'basemap',
-                                        'export',
-                                        'layer-reorder'
-                                    ]
+                                    items: ['legend', 'geosearch', 'basemap', 'export', 'layer-reorder']
                                 },
                                 mapnav: {
                                     items: [
@@ -501,15 +457,11 @@
                                 lodSets: [
                                     {
                                         id: 'LOD_NRCAN_Lambert_3978',
-                                        lods: geo.defaultLODs(
-                                            geo.defaultTileSchemas()[0]
-                                        )
+                                        lods: geo.defaultLODs(geo.defaultTileSchemas()[0])
                                     },
                                     {
                                         id: 'LOD_ESRI_World_AuxMerc_3857',
-                                        lods: geo.defaultLODs(
-                                            geo.defaultTileSchemas()[1]
-                                        )
+                                        lods: geo.defaultLODs(geo.defaultTileSchemas()[1])
                                     }
                                 ],
                                 tileSchemas: [
@@ -518,22 +470,15 @@
                                         name: 'Lambert Maps',
                                         extentSetId: 'EXT_NRCAN_Lambert_3978',
                                         lodSetId: 'LOD_NRCAN_Lambert_3978',
-                                        thumbnailTileUrls: [
-                                            '/tile/8/285/268',
-                                            '/tile/8/285/269'
-                                        ],
+                                        thumbnailTileUrls: ['/tile/8/285/268', '/tile/8/285/269'],
                                         hasNorthPole: true
                                     },
                                     {
                                         id: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                                         name: 'Web Mercator Maps',
-                                        extentSetId:
-                                            'EXT_ESRI_World_AuxMerc_3857',
+                                        extentSetId: 'EXT_ESRI_World_AuxMerc_3857',
                                         lodSetId: 'LOD_ESRI_World_AuxMerc_3857',
-                                        thumbnailTileUrls: [
-                                            '/tile/8/91/74',
-                                            '/tile/8/91/75'
-                                        ]
+                                        thumbnailTileUrls: ['/tile/8/91/74', '/tile/8/91/75']
                                     }
                                 ],
                                 basemaps: [
@@ -542,8 +487,7 @@
                                         name: 'Carte de base du Canada - transport (CBCT) avec étiquettes',
                                         description:
                                             "La carte de base du Canada - transport (CBCT) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
-                                        altText:
-                                            'La carte de base du Canada - transport (CBCT)',
+                                        altText: 'La carte de base du Canada - transport (CBCT)',
                                         layers: [
                                             {
                                                 id: 'CBCT',
@@ -551,16 +495,13 @@
                                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBCT3978/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                                     },
                                     {
                                         id: 'baseSimple',
                                         name: 'Carte de base du Canada - simple',
-                                        description:
-                                            'La carte de base du Canada - simple',
-                                        altText:
-                                            'La carte de base du Canada - simple',
+                                        description: 'La carte de base du Canada - simple',
+                                        altText: 'La carte de base du Canada - simple',
                                         layers: [
                                             {
                                                 id: 'SMR',
@@ -568,16 +509,14 @@
                                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/Simple/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                                     },
                                     {
                                         id: 'baseCBME_CBCE_HS_RO_3978',
                                         name: 'Carte de base du Canada - élevation (CBCE)',
                                         description:
                                             "La carte de base du Canada - élevation (CBCE) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
-                                        altText:
-                                            'La carte de base du Canada - élevation (CBCE)',
+                                        altText: 'La carte de base du Canada - élevation (CBCE)',
                                         layers: [
                                             {
                                                 id: 'CBME_CBCE_HS_RO_3978',
@@ -585,16 +524,14 @@
                                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                                     },
                                     {
                                         id: 'baseCBMT_CBCT_GEOM_3978',
                                         name: 'Carte de base du Canada - transport (CBCT)',
                                         description:
                                             "La carte de base du Canada - transport (CBCT) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
-                                        altText:
-                                            'La carte de base du Canada - transport (CBCT)',
+                                        altText: 'La carte de base du Canada - transport (CBCT)',
                                         layers: [
                                             {
                                                 id: 'CBMT_CBCT_GEOM_3978',
@@ -602,8 +539,7 @@
                                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                                     },
                                     {
                                         id: 'baseEsriWorld',
@@ -618,8 +554,7 @@
                                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                     },
                                     {
                                         id: 'baseEsriPhysical',
@@ -634,16 +569,14 @@
                                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                     },
                                     {
                                         id: 'baseEsriRelief',
                                         name: 'Monde en relief ombragé',
                                         description:
                                             "La carte du monde en relief ombragé représente l'élévation de la surface de la terre comme un relief ombragé.Cette carte est utilisée comme couche de fond afin d'ajouter un relief ombragé à d'autres cartes SIG, comme la carte ArcGIS Online World Street Map.",
-                                        altText:
-                                            'La carte du monde en relief ombragé',
+                                        altText: 'La carte du monde en relief ombragé',
                                         layers: [
                                             {
                                                 id: 'World_Shaded_Relief',
@@ -651,8 +584,7 @@
                                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                     },
                                     {
                                         id: 'baseEsriStreet',
@@ -667,8 +599,7 @@
                                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                     },
                                     {
                                         id: 'baseEsriTerrain',
@@ -683,16 +614,14 @@
                                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                     },
                                     {
                                         id: 'baseEsriTopo',
                                         name: 'Monde topographique',
                                         description:
                                             'La carte du monde topographique est conçue pour être utilisé comme une carte de base par les professionnels du SIG et comme une carte de référence par quiconque.',
-                                        altText:
-                                            'La carte du monde topographique',
+                                        altText: 'La carte du monde topographique',
                                         layers: [
                                             {
                                                 id: 'World_Topo_Map',
@@ -700,14 +629,12 @@
                                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                                             }
                                         ],
-                                        tileSchemaId:
-                                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                     },
                                     {
                                         id: 'baseOpenStreetMap',
                                         name: 'OpenStreetMap',
-                                        description:
-                                            'Carte topographique open source.',
+                                        description: 'Carte topographique open source.',
                                         altText: 'OpenStreetMap',
                                         layers: [
                                             {
@@ -717,8 +644,7 @@
                                         ],
                                         thumbnailUrl:
                                             'https://www.openstreetmap.org/assets/about/osm-a74d2c94082260032c133b9d206ee2fdd911e5c82bf03daae10393a02d7b4809.png',
-                                        tileSchemaId:
-                                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                                     }
                                 ],
                                 initialBasemapId: 'baseNrCan'
@@ -731,13 +657,7 @@
                                     }
                                 },
                                 appbar: {
-                                    items: [
-                                        'legend',
-                                        'geosearch',
-                                        'basemap',
-                                        'export',
-                                        'layer-reorder'
-                                    ]
+                                    items: ['legend', 'geosearch', 'basemap', 'export', 'layer-reorder']
                                 },
                                 mapnav: {
                                     items: [
@@ -786,9 +706,7 @@
                         const langConfig = config.configs[langKey];
 
                         langConfig.layers.push(structuredClone(layerConfig));
-                        langConfig.fixtures.legend.root.children.push(
-                            structuredClone({ layerId: layerConfig.id })
-                        );
+                        langConfig.fixtures.legend.root.children.push(structuredClone({ layerId: layerConfig.id }));
                     },
 
                     // adds a layer and makes a basic root level legend entry.
@@ -797,9 +715,7 @@
                         const legendConfig = { layerId: layerConfig.id };
                         langConfigs.forEach(lang => {
                             lang.layers.push(structuredClone(layerConfig));
-                            lang.fixtures.legend.root.children.push(
-                                structuredClone(legendConfig)
-                            );
+                            lang.fixtures.legend.root.children.push(structuredClone(legendConfig));
                         });
                     },
 
@@ -809,46 +725,32 @@
                         const langConfig = config.configs[langKey];
 
                         langConfig.layers.push(structuredClone(layerConfig));
-                        langConfig.fixtures.legend.root.children.push(
-                            structuredClone({ layerId: layerConfig.id })
-                        );
+                        langConfig.fixtures.legend.root.children.push(structuredClone({ layerId: layerConfig.id }));
                     },
 
                     // adds a legend config to the root level legend entry.
                     // same entry is added to both languages
                     addLegend: legendConfig => {
                         langConfigs.forEach(lang => {
-                            lang.fixtures.legend.root.children.push(
-                                structuredClone(legendConfig)
-                            );
+                            lang.fixtures.legend.root.children.push(structuredClone(legendConfig));
                         });
                     },
 
                     // adds a legend config to the root level legend entry.
                     // its only applied to the config of the given language key (en, fr)
                     addLegendLang: (legendConfig, langKey) => {
-                        config.configs[
-                            langKey
-                        ].fixtures.legend.root.children.push(
-                            structuredClone(legendConfig)
-                        );
+                        config.configs[langKey].fixtures.legend.root.children.push(structuredClone(legendConfig));
                     }
                 };
 
                 // get test instructions from selected script
-                const testRunner = await import(
-                    `./enhanced-scripts/${scriptName}.js`
-                );
+                const testRunner = await import(`./enhanced-scripts/${scriptName}.js`);
 
                 // do any test modifications for instance creation
                 const setupData = testRunner.runPreTest(config, options, utils);
 
                 // make the RAMP
-                const rInstance = createInstance(
-                    document.getElementById('app'),
-                    setupData.config,
-                    setupData.options
-                );
+                const rInstance = createInstance(document.getElementById('app'), setupData.config, setupData.options);
 
                 window.debugInstance = rInstance;
 
@@ -858,10 +760,7 @@
 
             function onConfigSelect(event) {
                 // refresh page with new selection in URL
-                currentUrl.searchParams.set(
-                    SAMPLE_KEY,
-                    document.getElementById('selectConfig').selectedIndex + 1
-                );
+                currentUrl.searchParams.set(SAMPLE_KEY, document.getElementById('selectConfig').selectedIndex + 1);
                 window.location.href = currentUrl;
             }
 
@@ -869,11 +768,7 @@
                 var params = new URLSearchParams(currentUrl.search);
                 var sampleIndex = params.get(SAMPLE_KEY) - 1;
                 var selectElem = document.getElementById('selectConfig');
-                if (
-                    params.has(SAMPLE_KEY) &&
-                    sampleIndex >= 1 &&
-                    selectElem.item(sampleIndex)
-                ) {
+                if (params.has(SAMPLE_KEY) && sampleIndex >= 1 && selectElem.item(sampleIndex)) {
                     selectElem.options[sampleIndex].selected = 'selected';
                     loadScript(selectElem.options[sampleIndex].value);
                 } else {

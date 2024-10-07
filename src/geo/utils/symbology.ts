@@ -12,12 +12,7 @@ import { LineStyleType } from '@/geo/api';
 import type { Attributes, FieldDefinition, LegendSymbology } from '@/geo/api';
 
 import { EsriRendererFromJson, EsriRequest } from '@/geo/esri';
-import type {
-    EsriClassBreaksRenderer,
-    EsriRenderer,
-    EsriSimpleRenderer,
-    EsriUniqueValueRenderer
-} from '@/geo/esri';
+import type { EsriClassBreaksRenderer, EsriRenderer, EsriSimpleRenderer, EsriUniqueValueRenderer } from '@/geo/esri';
 
 import svgjs from 'svg.js';
 import to from 'await-to-js';
@@ -64,47 +59,27 @@ export class SymbologyAPI extends APIScope {
      * @param {Object} renderer an enhanced renderer (see function enhanceRenderer)
      * @return {Object} an ESRI Symbol object in server format
      */
-    getGraphicSymbol(
-        attributes: Object,
-        renderer: BaseRenderer
-    ): __esri.Symbol {
+    getGraphicSymbol(attributes: Object, renderer: BaseRenderer): __esri.Symbol {
         return renderer.getGraphicSymbol(attributes);
     }
 
-    makeRenderer(
-        esriRenderer: EsriRenderer,
-        fields: Array<FieldDefinition>,
-        falseRenderer = false
-    ): BaseRenderer {
+    makeRenderer(esriRenderer: EsriRenderer, fields: Array<FieldDefinition>, falseRenderer = false): BaseRenderer {
         switch (esriRenderer.type) {
             case this.SIMPLE:
-                return new SimpleRenderer(
-                    <EsriSimpleRenderer>esriRenderer,
-                    fields
-                );
+                return new SimpleRenderer(<EsriSimpleRenderer>esriRenderer, fields);
 
             case this.CLASS_BREAKS:
-                return new ClassBreaksRenderer(
-                    <EsriClassBreaksRenderer>esriRenderer,
-                    fields,
-                    falseRenderer
-                );
+                return new ClassBreaksRenderer(<EsriClassBreaksRenderer>esriRenderer, fields, falseRenderer);
 
             case this.UNIQUE_VALUE:
-                return new UniqueValueRenderer(
-                    <EsriUniqueValueRenderer>esriRenderer,
-                    fields,
-                    falseRenderer
-                );
+                return new UniqueValueRenderer(<EsriUniqueValueRenderer>esriRenderer, fields, falseRenderer);
 
             default:
                 // TODO find a way to make a fake renderer (i.e. a simple renderer with just a white square)
                 //      and return it. that way it won't crash the app.  once done, change back to console error instead of real error
 
                 // console.error(`Unknown renderer type encountered - ${esriRenderer.type}`);
-                throw new Error(
-                    `Unknown renderer type encountered - ${esriRenderer.type}`
-                );
+                throw new Error(`Unknown renderer type encountered - ${esriRenderer.type}`);
         }
     }
 
@@ -155,10 +130,7 @@ export class SymbologyAPI extends APIScope {
      * @param {Array} list a list of config-supplied symbology items in the form of [ { text: <String>, image: <String> }, ... ] wher `image` can be dataURL or an actual url
      * @return {Array} an array of converted symbology symbols in the form of [ { name: <String>, image: <String>, svgcode: <String> }, ... ]; items will be populated async as conversions are done
      */
-    private listToSymbology(
-        conversionFunction: Function,
-        list: Array<any>
-    ): Array<Object> {
+    private listToSymbology(conversionFunction: Function, list: Array<any>): Array<Object> {
         const results = list.map(({ text, image }) => {
             const result = {
                 name: text,
@@ -193,18 +165,14 @@ export class SymbologyAPI extends APIScope {
      * @param {String} imageUri a image dataUrl or a regular url
      * @param {Object} draw [optional=null] an svg container to draw the image on; if not supplied, a new one is created
      */
-    async renderSymbologyImage(
-        imageUri: string,
-        draw: any = null
-    ): Promise<string> {
+    async renderSymbologyImage(imageUri: string, draw: any = null): Promise<string> {
         if (draw === null) {
             draw = svgjs(window.document.createElement('div'))
                 .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
                 .viewbox(0, 0, 0, 0);
         }
 
-        const dataUri =
-            await this.$iApi.geo.shared.convertImagetoDataURL(imageUri);
+        const dataUri = await this.$iApi.geo.shared.convertImagetoDataURL(imageUri);
         if (dataUri === imageUri) {
             // Something went wrong
             return '';
@@ -231,17 +199,11 @@ export class SymbologyAPI extends APIScope {
      * @param {String} imageUri a image dataUrl or a regular url
      * @param {Object} draw [optional=null] an svg container to draw the image on; if not supplied, a new one is created
      */
-    async renderSymbologyIcon(
-        imageUri: string,
-        draw: any = null
-    ): Promise<string> {
+    async renderSymbologyIcon(imageUri: string, draw: any = null): Promise<string> {
         if (draw === null) {
             // create a temporary svg element and add it to the page; if not added, the element's bounding box cannot be calculated correctly
             const container = window.document.createElement('div');
-            container.setAttribute(
-                'style',
-                'opacity:0;position:fixed;left:100%;top:100%;overflow:hidden'
-            );
+            container.setAttribute('style', 'opacity:0;position:fixed;left:100%;top:100%;overflow:hidden');
             window.document.body.appendChild(container);
 
             draw = svgjs(container)
@@ -250,8 +212,7 @@ export class SymbologyAPI extends APIScope {
         }
 
         // need to draw the image to get its size (technically not needed if we have a url, but this is simpler)
-        const convertedUrl =
-            await this.$iApi.geo.shared.convertImagetoDataURL(imageUri);
+        const convertedUrl = await this.$iApi.geo.shared.convertImagetoDataURL(imageUri);
 
         const { image } = await this.svgDrawImage(draw, convertedUrl);
 
@@ -302,9 +263,7 @@ export class SymbologyAPI extends APIScope {
     }
 
     async generateBlankSymbology(): Promise<string> {
-        return svgjs(window.document.createElement('div'))
-            .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
-            .svg();
+        return svgjs(window.document.createElement('div')).size(this.CONTAINER_SIZE, this.CONTAINER_SIZE).svg();
     }
 
     /**
@@ -336,10 +295,7 @@ export class SymbologyAPI extends APIScope {
 
         // create a temporary svg element and add it to the page; if not added, the element's bounding box cannot be calculated correctly
         const container = window.document.createElement('div');
-        container.setAttribute(
-            'style',
-            'opacity:0;position:fixed;left:100%;top:100%;overflow:hidden'
-        );
+        container.setAttribute('style', 'opacity:0;position:fixed;left:100%;top:100%;overflow:hidden');
         window.document.body.appendChild(container);
 
         const draw = svgjs(container)
@@ -364,16 +320,12 @@ export class SymbologyAPI extends APIScope {
             // @ts-ignore
             cross({ size }) {
                 // esriSMSCross
-                return draw
-                    .path('M 0,10 L 20,10 M 10,0 L 10,20')
-                    .size(size * pts2Pxl);
+                return draw.path('M 0,10 L 20,10 M 10,0 L 10,20').size(size * pts2Pxl);
             },
             // @ts-ignore
             x({ size }) {
                 // esriSMSX
-                return draw
-                    .path('M 0,0 L 20,20 M 20,0 L 0,20')
-                    .size(size * pts2Pxl);
+                return draw.path('M 0,0 L 20,20 M 20,0 L 0,20').size(size * pts2Pxl);
             },
             // @ts-ignore
             triangle({ size }) {
@@ -383,16 +335,12 @@ export class SymbologyAPI extends APIScope {
             // @ts-ignore
             diamond({ size }) {
                 // esriSMSDiamond
-                return draw
-                    .path('M 20,10 L 10,0 0,10 10,20 Z')
-                    .size(size * pts2Pxl);
+                return draw.path('M 20,10 L 10,0 0,10 10,20 Z').size(size * pts2Pxl);
             },
             // @ts-ignore
             square({ size }) {
                 // esriSMSSquare
-                return draw
-                    .path('M 0,0 20,0 20,20 0,20 Z')
-                    .size(size * pts2Pxl);
+                return draw.path('M 0,0 20,0 20,20 0,20 Z').size(size * pts2Pxl);
             }
         };
 
@@ -412,8 +360,7 @@ export class SymbologyAPI extends APIScope {
             [LineStyleType.SHORTDOT]: '1.333,1.333', // esriSLSShortDot
             [LineStyleType.SHORTDASH]: '5.333,1.333', // esriSLSShortDash
             [LineStyleType.SHORTDASHDOT]: '5.333,1.333,1.333,1.333', // esriSLSShortDashDot
-            [LineStyleType.SHORTDASHDOTDOT]:
-                '5.333,1.333,1.333,1.333,1.333,1.333' // esriSLSShortDashDotDot
+            [LineStyleType.SHORTDASHDOTDOT]: '5.333,1.333,1.333,1.333,1.333,1.333' // esriSLSShortDashDotDot
         };
 
         // default stroke style
@@ -443,56 +390,36 @@ export class SymbologyAPI extends APIScope {
                 };
             },
             none: () => 'transparent', // esriSFSNull
-            horizontal: (
-                _symbolColour: Object,
-                symbolStroke: svgjs.StrokeData
-            ) => {
+            horizontal: (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
                 // esriSFSHorizontal
                 const cellSize = 5;
 
                 // patter fill: horizonal line in a 5x5 px square
                 return draw
-                    .pattern(cellSize, cellSize, add =>
-                        add.line(0, cellSize / 2, cellSize, cellSize / 2)
-                    )
+                    .pattern(cellSize, cellSize, add => add.line(0, cellSize / 2, cellSize, cellSize / 2))
                     .stroke(symbolStroke);
             },
-            vertical: (
-                _symbolColour: Object,
-                symbolStroke: svgjs.StrokeData
-            ) => {
+            vertical: (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
                 // esriSFSVertical
                 const cellSize = 5;
 
                 // patter fill: vertical line in a 5x5 px square
                 return draw
-                    .pattern(cellSize, cellSize, add =>
-                        add.line(cellSize / 2, 0, cellSize / 2, cellSize)
-                    )
+                    .pattern(cellSize, cellSize, add => add.line(cellSize / 2, 0, cellSize / 2, cellSize))
                     .stroke(symbolStroke);
             },
-            'forward-diagonal': (
-                _symbolColour: Object,
-                symbolStroke: svgjs.StrokeData
-            ) => {
+            'forward-diagonal': (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
                 // esriSFSForwardDiagonal
                 const cellSize = 5;
 
                 // patter fill: forward diagonal line in a 5x5 px square; two more diagonal lines offset to cover the corners when the main line is cut off
                 return draw.pattern(cellSize, cellSize, add => {
                     add.line(0, 0, cellSize, cellSize).stroke(symbolStroke);
-                    add.line(0, 0, cellSize, cellSize)
-                        .move(0, cellSize)
-                        .stroke(symbolStroke);
-                    add.line(0, 0, cellSize, cellSize)
-                        .move(cellSize, 0)
-                        .stroke(symbolStroke);
+                    add.line(0, 0, cellSize, cellSize).move(0, cellSize).stroke(symbolStroke);
+                    add.line(0, 0, cellSize, cellSize).move(cellSize, 0).stroke(symbolStroke);
                 });
             },
-            'backward-diagonal': (
-                _symbolColour: Object,
-                symbolStroke: svgjs.StrokeData
-            ) => {
+            'backward-diagonal': (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
                 // esriSFSBackwardDiagonal
                 const cellSize = 5;
 
@@ -513,18 +440,11 @@ export class SymbologyAPI extends APIScope {
 
                 // patter fill: horizonal and vertical lines in a 5x5 px square
                 return draw.pattern(cellSize, cellSize, add => {
-                    add.line(cellSize / 2, 0, cellSize / 2, cellSize).stroke(
-                        symbolStroke
-                    );
-                    add.line(0, cellSize / 2, cellSize, cellSize / 2).stroke(
-                        symbolStroke
-                    );
+                    add.line(cellSize / 2, 0, cellSize / 2, cellSize).stroke(symbolStroke);
+                    add.line(0, cellSize / 2, cellSize, cellSize / 2).stroke(symbolStroke);
                 });
             },
-            'diagonal-cross': (
-                _symbolColour: Object,
-                symbolStroke: svgjs.StrokeData
-            ) => {
+            'diagonal-cross': (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
                 // esriSFSDiagonalCross
                 const cellSize = 7;
 
@@ -544,9 +464,7 @@ export class SymbologyAPI extends APIScope {
                 const symbolColour: any = parseEsriColour(symbol.color);
 
                 symbol.outline = symbol.outline || DEFAULT_OUTLINE;
-                const outlineColour: any = parseEsriColour(
-                    symbol.outline.color
-                );
+                const outlineColour: any = parseEsriColour(symbol.outline.color);
                 const outlineStroke = makeStroke({
                     color: outlineColour.colour,
                     opacity: outlineColour.opacity,
@@ -597,15 +515,10 @@ export class SymbologyAPI extends APIScope {
                     opacity: symbolColour.opacity
                 });
                 // @ts-ignore
-                const symbolFill = esriSFSFills[symbol.style](
-                    symbolColour,
-                    symbolStroke
-                );
+                const symbolFill = esriSFSFills[symbol.style](symbolColour, symbolStroke);
 
                 symbol.outline = symbol.outline || DEFAULT_OUTLINE;
-                const outlineColour: any = parseEsriColour(
-                    symbol.outline.color
-                );
+                const outlineColour: any = parseEsriColour(symbol.outline.color);
                 const outlineStroke = makeStroke({
                     color: outlineColour.colour,
                     opacity: outlineColour.opacity,
@@ -623,9 +536,7 @@ export class SymbologyAPI extends APIScope {
 
             text() {
                 // esriTS
-                console.error(
-                    'no support for feature service legend of text symbols'
-                );
+                console.error('no support for feature service legend of text symbols');
             },
 
             'picture-fill'() {
@@ -639,9 +550,7 @@ export class SymbologyAPI extends APIScope {
                 const imageHeight = symbol.height * symbol.yscale;
 
                 symbol.outline = symbol.outline || DEFAULT_OUTLINE;
-                const outlineColour: any = parseEsriColour(
-                    symbol.outline.color
-                );
+                const outlineColour: any = parseEsriColour(symbol.outline.color);
                 const outlineStroke = makeStroke({
                     color: outlineColour.colour,
                     opacity: outlineColour.opacity,
@@ -654,19 +563,13 @@ export class SymbologyAPI extends APIScope {
                     .convertImagetoDataURL(imageUri)
                     .then((imageUri: string) => {
                         // make a fill from a tiled image
-                        const symbolFill = draw.pattern(
-                            imageWidth,
-                            imageHeight,
-                            add =>
-                                // there was a 4th argument 'true' here before, but maximum 3 are accepted. may need to look into this
-                                add.image(imageUri, imageWidth, imageHeight)
+                        const symbolFill = draw.pattern(imageWidth, imageHeight, add =>
+                            // there was a 4th argument 'true' here before, but maximum 3 are accepted. may need to look into this
+                            add.image(imageUri, imageWidth, imageHeight)
                         );
 
                         draw.rect(_this.CONTENT_SIZE, _this.CONTENT_SIZE)
-                            .center(
-                                _this.CONTAINER_CENTER,
-                                _this.CONTAINER_CENTER
-                            )
+                            .center(_this.CONTAINER_CENTER, _this.CONTAINER_CENTER)
                             .fill(symbolFill)
                             .stroke(outlineStroke);
                     });
@@ -679,23 +582,14 @@ export class SymbologyAPI extends APIScope {
                 // imageUri can be just an image url is specified or a dataUri string
                 const sSrc = symbol.source;
                 const imageUri =
-                    sSrc && sSrc.imageData
-                        ? `data:${sSrc.contentType};base64,${sSrc.imageData}`
-                        : symbol.url;
+                    sSrc && sSrc.imageData ? `data:${sSrc.contentType};base64,${sSrc.imageData}` : symbol.url;
 
                 // need to draw the image to get its size (technically not needed if we have a url, but this is simpler)
                 const picturePromise = _this.$iApi.geo.shared
                     .convertImagetoDataURL(imageUri)
-                    .then((imageUri: string) =>
-                        _this.svgDrawImage(draw, imageUri)
-                    )
+                    .then((imageUri: string) => _this.svgDrawImage(draw, imageUri))
                     .then(({ image }) => {
-                        image
-                            .center(
-                                _this.CONTAINER_CENTER,
-                                _this.CONTAINER_CENTER
-                            )
-                            .rotate(symbol.angle || 0);
+                        image.center(_this.CONTAINER_CENTER, _this.CONTAINER_CENTER).rotate(symbol.angle || 0);
 
                         // scale image to fit into the symbology item container
                         _this.fitInto(image, _this.CONTENT_IMAGE_SIZE);
@@ -762,13 +656,7 @@ export class SymbologyAPI extends APIScope {
      * @param {Boolean} crossOrigin [optional = true] specifies if the image should be loaded as crossOrigin
      * @return {Promise} promise resolving with the loaded image and its loader object (see svg.js http://documentup.com/wout/svg.js#image for details)
      */
-    async svgDrawImage(
-        draw: any,
-        imageUri: string,
-        width = 0,
-        height = 0,
-        crossOrigin = true
-    ): Promise<any> {
+    async svgDrawImage(draw: any, imageUri: string, width = 0, height = 0, crossOrigin = true): Promise<any> {
         return new Promise((resolve, reject) => {
             const image = draw
                 .image(imageUri, width, height, crossOrigin)
@@ -790,8 +678,7 @@ export class SymbologyAPI extends APIScope {
         // const elementRbox = element.screenBBox();
 
         const elementRbox = element.node.getBoundingClientRect(); // marker.rbox(); //rbox doesn't work properly in Chrome for some reason
-        const scale =
-            CONTAINER_SIZE / Math.max(elementRbox.width, elementRbox.height);
+        const scale = CONTAINER_SIZE / Math.max(elementRbox.width, elementRbox.height);
         if (scale < 1) {
             element.scale(scale);
         }
@@ -806,8 +693,7 @@ export class SymbologyAPI extends APIScope {
     rendererToLegend(renderer: BaseRenderer): Array<LegendSymbology> {
         let finalSymbols: Array<Array<BaseSymbolUnit>>;
         // put all symbol units from the renderer in one nice array
-        const allRendererSUs: Array<BaseSymbolUnit> =
-            renderer.symbolUnits.slice(0); // make a copy
+        const allRendererSUs: Array<BaseSymbolUnit> = renderer.symbolUnits.slice(0); // make a copy
         if (renderer.defaultUnit) {
             allRendererSUs.push(renderer.defaultUnit);
         }
@@ -850,9 +736,7 @@ export class SymbologyAPI extends APIScope {
                 definitionClause:
                     suSet.length === 1
                         ? firstSu.definitionClause
-                        : `(${suSet
-                              .map(su => su.definitionClause)
-                              .join(' OR ')})`,
+                        : `(${suSet.map(su => su.definitionClause).join(' OR ')})`,
                 svgcode: '', // TODO is '' ok? maybe we need white square svg? or some loading icon?
                 esriStandard: true, // is ESRI standard symbology
                 visibility: true,
@@ -882,9 +766,7 @@ export class SymbologyAPI extends APIScope {
      */
     private async getMapServerLegend(layerUrl: string): Promise<any> {
         if (!layerUrl) {
-            throw new Error(
-                'Legend server request is missing the required url.'
-            );
+            throw new Error('Legend server request is missing the required url.');
         }
 
         // standard json request with error checking
@@ -893,9 +775,7 @@ export class SymbologyAPI extends APIScope {
         };
 
         const fakeData = { layers: [] };
-        const [err, serviceResult] = await to<__esri.RequestResponse>(
-            EsriRequest(`${layerUrl}/legend`, reqParams)
-        );
+        const [err, serviceResult] = await to<__esri.RequestResponse>(EsriRequest(`${layerUrl}/legend`, reqParams));
 
         // Not a catastrophic error, return empty data on error
         if (!serviceResult) {
@@ -922,10 +802,7 @@ export class SymbologyAPI extends APIScope {
      * @returns {Object} a fake unique value renderer based off the legend
      *
      */
-    private mapServerLegendToRenderer(
-        serverLegend: any,
-        layerIndex: number
-    ): BaseRenderer {
+    private mapServerLegendToRenderer(serverLegend: any, layerIndex: number): BaseRenderer {
         const layerLegend = serverLegend.layers.find((l: any) => {
             return l.layerId === layerIndex;
         });
@@ -958,9 +835,7 @@ export class SymbologyAPI extends APIScope {
         } else {
             // TODO does this case ever exist? need to figure out a way to encode this in our official renderer objects
             // renderer = { type: this.NONE };
-            throw new Error(
-                'attempted to make renderer from non-existing legend data'
-            ); // so basically if this error hits, we need to write some new code
+            throw new Error('attempted to make renderer from non-existing legend data'); // so basically if this error hits, we need to write some new code
         }
     }
 
@@ -1033,10 +908,7 @@ export class SymbologyAPI extends APIScope {
             fakeRenderer = this.mapServerLegendToRendererAll(serverLegendData);
         } else {
             intIndex = parseInt(<string>layerIndex); // sometimes a stringified value comes in. careful now.
-            fakeRenderer = this.mapServerLegendToRenderer(
-                serverLegendData,
-                intIndex
-            );
+            fakeRenderer = this.mapServerLegendToRenderer(serverLegendData, intIndex);
         }
         // convert renderer to viewer specific legend
         return this.rendererToLegend(fakeRenderer);

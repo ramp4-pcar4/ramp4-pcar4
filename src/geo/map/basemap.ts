@@ -2,12 +2,7 @@
 
 import { LayerType } from '@/geo/api';
 import type { Attribution, RampBasemapConfig } from '@/geo/api';
-import {
-    EsriBasemap,
-    EsriMapImageLayer,
-    EsriOpenStreetMapLayer,
-    EsriTileLayer
-} from '@/geo/esri';
+import { EsriBasemap, EsriMapImageLayer, EsriOpenStreetMapLayer, EsriTileLayer } from '@/geo/esri';
 
 export class Basemap {
     esriBasemap: EsriBasemap;
@@ -39,9 +34,7 @@ export class Basemap {
                         opacity: layerConfig.opacity
                     });
                 } else {
-                    throw new Error(
-                        `Unsupported layer type provided to basemap config: ${layerConfig.layerType}`
-                    );
+                    throw new Error(`Unsupported layer type provided to basemap config: ${layerConfig.layerType}`);
                 }
 
                 // TODO maybe add support for WebTileLayer. WMS if that works

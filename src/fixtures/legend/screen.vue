@@ -16,25 +16,14 @@
                 }"
                 ref="el"
             >
-                <legend-item
-                    v-for="item in children"
-                    :legendItem="item"
-                    :key="item.uid"
-                />
+                <legend-item v-for="item in children" :legendItem="item" :key="item.uid" />
             </div>
         </template>
     </panel-screen>
 </template>
 
 <script setup lang="ts">
-import {
-    computed,
-    defineAsyncComponent,
-    inject,
-    onBeforeUnmount,
-    onMounted,
-    ref
-} from 'vue';
+import { computed, defineAsyncComponent, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import type { InstanceAPI, PanelInstance } from '@/api';

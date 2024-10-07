@@ -1,15 +1,6 @@
 import { AttribLayer, InstanceAPI, type MapImageLayer } from '@/api/internal';
-import {
-    DataFormat,
-    InitiationState,
-    LayerFormat,
-    LayerType,
-    SpatialReference
-} from '@/geo/api';
-import type {
-    RampLayerConfig,
-    RampLayerMapImageSublayerConfig
-} from '@/geo/api';
+import { DataFormat, InitiationState, LayerFormat, LayerType, SpatialReference } from '@/geo/api';
+import type { RampLayerConfig, RampLayerMapImageSublayerConfig } from '@/geo/api';
 import { markRaw } from 'vue';
 
 /**
@@ -18,11 +9,7 @@ import { markRaw } from 'vue';
 export class MapImageSublayer extends AttribLayer {
     tooltipField: string;
 
-    constructor(
-        config: RampLayerMapImageSublayerConfig,
-        $iApi: InstanceAPI,
-        parent: MapImageLayer
-    ) {
+    constructor(config: RampLayerMapImageSublayerConfig, $iApi: InstanceAPI, parent: MapImageLayer) {
         // unknown is to force a narrower interface into the more common layer interface.
         super(config as unknown as RampLayerConfig, $iApi);
 
@@ -46,9 +33,7 @@ export class MapImageSublayer extends AttribLayer {
         this.canReload = !!(this.url || this.origRampConfig.caching);
 
         if (!parent.esriLayer) {
-            throw new Error(
-                'Map Image Layer with no internal esri layer encountered in sublayer creation'
-            );
+            throw new Error('Map Image Layer with no internal esri layer encountered in sublayer creation');
         }
 
         this.fetchEsriSublayer(parent);
@@ -66,9 +51,7 @@ export class MapImageSublayer extends AttribLayer {
      */
     fetchEsriSublayer(parent: MapImageLayer): void {
         if (!parent.esriLayer) {
-            console.error(
-                'Attempted to fetch the ESRI sublayer when parent has no ESRI layer'
-            );
+            console.error('Attempted to fetch the ESRI sublayer when parent has no ESRI layer');
             return;
         }
 
@@ -89,15 +72,11 @@ export class MapImageSublayer extends AttribLayer {
         //      layer stuff for sublayers.
 
         // use the tree node created by the parent
-        this.layerTree = this.parentLayer!.getLayerTree().findChildByUid(
-            this.uid
-        )!;
+        this.layerTree = this.parentLayer!.getLayerTree().findChildByUid(this.uid)!;
         this.layerTree.name = this.name;
         this.layerTree.layerIdx = this.layerIdx;
 
-        this.identify = !(this.config.state.identify == undefined)
-            ? this.config.state.identify
-            : this.supportsIdentify;
+        this.identify = !(this.config.state.identify == undefined) ? this.config.state.identify : this.supportsIdentify;
 
         return [];
     }
@@ -284,9 +263,7 @@ export class MapImageSublayer extends AttribLayer {
      */
     getSR(): SpatialReference {
         if (this.parentLayer?.esriLayer) {
-            return SpatialReference.fromESRI(
-                (<any>this._parentLayer?.esriLayer)?.spatialReference!
-            );
+            return SpatialReference.fromESRI((<any>this._parentLayer?.esriLayer)?.spatialReference!);
         } else {
             this.noLayerErr();
             return SpatialReference.latLongSR();

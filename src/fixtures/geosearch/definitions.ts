@@ -106,9 +106,4 @@ export type NameResultList = INameResult[];
 export type NTSResultList = INTSResult[];
 export type AddressResultList = IAddressResult[];
 export type ResultList = (INameResult | IAddressResult)[];
-export type queryFeatureResults =
-    | IFSAResult
-    | INTSResult
-    | IAddressResult
-    | ILatLongResult
-    | undefined;
+export type queryFeatureResults = IFSAResult | INTSResult | IAddressResult | ILatLongResult | undefined;

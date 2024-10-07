@@ -16,19 +16,13 @@ class AppbarFixture extends AppbarAPI {
         // console.log(`[fixture] ${this.id} added`);
 
         // merge in translations since this has no panel
-        Object.entries(messages).forEach(value =>
-            (<any>this.$iApi.$i18n).mergeLocaleMessage(...value)
-        );
+        Object.entries(messages).forEach(value => (<any>this.$iApi.$i18n).mergeLocaleMessage(...value));
 
         const { destroy, el } = this.mount(AppbarV, {
             app: this.$element
         });
-        const innerShell =
-            this.$vApp.$el.getElementsByClassName('inner-shell')[0];
-        innerShell.insertBefore(
-            el.childNodes[0],
-            innerShell.querySelector('.panel-stack')
-        );
+        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
+        innerShell.insertBefore(el.childNodes[0], innerShell.querySelector('.panel-stack'));
 
         this._parseConfig(this.config);
         const unwatch = this.$vApp.$watch(

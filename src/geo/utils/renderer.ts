@@ -24,11 +24,7 @@ export class BaseRenderer {
 
     // falseRenderer is set to true when we are creating a fake renderer to facilitate generating a legend from
     // a non-feature service, like a tile layer or imagery layer.
-    constructor(
-        esriRenderer: EsriRenderer,
-        layerFields: Array<FieldDefinition>,
-        falseRenderer = false
-    ) {
+    constructor(esriRenderer: EsriRenderer, layerFields: Array<FieldDefinition>, falseRenderer = false) {
         this.innerRenderer = esriRenderer;
         this.symbolUnits = [];
         this.falseRenderer = falseRenderer;
@@ -49,9 +45,7 @@ export class BaseRenderer {
 
     protected searchRenderer(attributes: any): BaseSymbolUnit {
         const sParams: any = this.makeSearchParams(attributes);
-        const targetSU = this.symbolUnits.find((su: BaseSymbolUnit) =>
-            su.match(sParams)
-        );
+        const targetSU = this.symbolUnits.find((su: BaseSymbolUnit) => su.match(sParams));
         if (targetSU) {
             return targetSU;
         } else if (this.defaultUnit) {
@@ -75,10 +69,7 @@ export class BaseRenderer {
 
     // worker function. determines if a field value should be wrapped in
     // any character and returns the character. E.g. string would return ', numbers return empty string.
-    protected getFieldDelimiter(
-        fieldName: string,
-        fields: Array<FieldDefinition>
-    ): string {
+    protected getFieldDelimiter(fieldName: string, fields: Array<FieldDefinition>): string {
         let delim = `'`;
 
         // no field definition means we assume strings.
@@ -98,10 +89,7 @@ export class BaseRenderer {
 
     // worker function
     // corrects for any character-case discrepancy for field names in the renderer vs on the layer
-    protected cleanFieldName(
-        fieldName: string,
-        fields: Array<FieldDefinition>
-    ): string {
+    protected cleanFieldName(fieldName: string, fields: Array<FieldDefinition>): string {
         if (!fieldName) {
             // testing an undefined/unused field. return original value.
             return fieldName;
@@ -135,9 +123,7 @@ export class BaseRenderer {
             return '';
         }
 
-        const elseClauseGuts = this.symbolUnits
-            .map(pl => pl.definitionClause)
-            .join(' OR ');
+        const elseClauseGuts = this.symbolUnits.map(pl => pl.definitionClause).join(' OR ');
 
         return `(NOT (${elseClauseGuts}))`;
     }
@@ -163,10 +149,7 @@ export class BaseSymbolUnit {
 }
 
 export class SimpleRenderer extends BaseRenderer {
-    constructor(
-        esriRenderer: EsriSimpleRenderer,
-        layerFields: Array<FieldDefinition>
-    ) {
+    constructor(esriRenderer: EsriSimpleRenderer, layerFields: Array<FieldDefinition>) {
         super(esriRenderer, layerFields);
 
         this.type = RendererType.Simple;
@@ -183,11 +166,7 @@ export class UniqueValueRenderer extends BaseRenderer {
     private delim: string;
     private keyFields: Array<string>;
 
-    constructor(
-        esriRenderer: EsriUniqueValueRenderer,
-        layerFields: Array<FieldDefinition>,
-        falseRenderer = false
-    ) {
+    constructor(esriRenderer: EsriUniqueValueRenderer, layerFields: Array<FieldDefinition>, falseRenderer = false) {
         super(esriRenderer, layerFields, falseRenderer);
 
         this.type = RendererType.Unique;
@@ -199,17 +178,11 @@ export class UniqueValueRenderer extends BaseRenderer {
             return inStr.replace(/'/g, `''`);
         };
 
-        this.keyFields = [
-            esriRenderer.field,
-            esriRenderer.field2,
-            esriRenderer.field3
-        ] // extract field names
+        this.keyFields = [esriRenderer.field, esriRenderer.field2, esriRenderer.field3] // extract field names
             .filter(fn => fn) // remove any undefined names
             .map((fn: string) => this.cleanFieldName(fn, layerFields)); // correct any mismatched case of field names
 
-        const fieldDelims: Array<string> = this.keyFields.map((fn: string) =>
-            this.getFieldDelimiter(fn, layerFields)
-        );
+        const fieldDelims: Array<string> = this.keyFields.map((fn: string) => this.getFieldDelimiter(fn, layerFields));
 
         esriRenderer.uniqueValueInfos.forEach((uvi: EsriUniqueValueInfo) => {
             const su = new UniqueValueSymbolUnit(this, uvi.value);
@@ -218,17 +191,13 @@ export class UniqueValueRenderer extends BaseRenderer {
 
             // convert fields/values into sql clause
             if (!this.falseRenderer) {
-                const defClauseKeyValues: Array<string> = su.matchValue.split(
-                    this.delim
-                );
+                const defClauseKeyValues: Array<string> = su.matchValue.split(this.delim);
                 // use operator IS NULL to account for nulls
                 const defClause: string = this.keyFields
                     .map((kf: string, i: number) =>
                         defClauseKeyValues[i] === '<Null>'
                             ? `${kf} IS NULL`
-                            : `${kf} = ${fieldDelims[i]}${quoter(
-                                  defClauseKeyValues[i]
-                              )}${fieldDelims[i]}`
+                            : `${kf} = ${fieldDelims[i]}${quoter(defClauseKeyValues[i])}${fieldDelims[i]}`
                     )
                     .join(' AND ');
                 su.definitionClause = `(${defClause})`;
@@ -292,39 +261,26 @@ export class UniqueValueSymbolUnit extends BaseSymbolUnit {
 export class ClassBreaksRenderer extends BaseRenderer {
     private valField: string;
 
-    constructor(
-        esriRenderer: EsriClassBreaksRenderer,
-        layerFields: Array<FieldDefinition>,
-        falseRenderer = false
-    ) {
+    constructor(esriRenderer: EsriClassBreaksRenderer, layerFields: Array<FieldDefinition>, falseRenderer = false) {
         super(esriRenderer, layerFields, falseRenderer);
 
         this.valField = this.cleanFieldName(esriRenderer.field, layerFields);
-        esriRenderer.classBreakInfos.forEach(
-            (cbi: EsriClassBreakInfo, i: number) => {
-                // TODO see if it's possible to have an undefined min/max value that represents inf or -inf
-                const first = i === 0;
-                const su = new ClassBreaksSymbolUnit(
-                    this,
-                    cbi.minValue,
-                    cbi.maxValue,
-                    first
-                );
-                su.label = cbi.label || '';
-                su.symbol = cbi.symbol;
+        esriRenderer.classBreakInfos.forEach((cbi: EsriClassBreakInfo, i: number) => {
+            // TODO see if it's possible to have an undefined min/max value that represents inf or -inf
+            const first = i === 0;
+            const su = new ClassBreaksSymbolUnit(this, cbi.minValue, cbi.maxValue, first);
+            su.label = cbi.label || '';
+            su.symbol = cbi.symbol;
 
-                // Convert fields/values into sql clause. First item has inclusive lower bound (see PR #2239)
-                if (!this.falseRenderer) {
-                    su.definitionClause = `(${this.valField} >${
-                        first ? '=' : ''
-                    }  ${cbi.minValue} AND ${this.valField} <= ${
-                        cbi.maxValue
-                    })`;
-                }
-
-                this.symbolUnits.push(su);
+            // Convert fields/values into sql clause. First item has inclusive lower bound (see PR #2239)
+            if (!this.falseRenderer) {
+                su.definitionClause = `(${this.valField} >${
+                    first ? '=' : ''
+                }  ${cbi.minValue} AND ${this.valField} <= ${cbi.maxValue})`;
             }
-        );
+
+            this.symbolUnits.push(su);
+        });
 
         // do default last so we can collate the other SQL for the NOT
         // the 0 values will be ignored
@@ -352,12 +308,7 @@ export class ClassBreaksSymbolUnit extends BaseSymbolUnit {
     maxValue: number;
     firstBreak: boolean;
 
-    constructor(
-        parent: BaseRenderer,
-        minValue: number,
-        maxValue: number,
-        firstBreak: boolean
-    ) {
+    constructor(parent: BaseRenderer, minValue: number, maxValue: number, firstBreak: boolean) {
         super(parent);
 
         this.minValue = minValue;

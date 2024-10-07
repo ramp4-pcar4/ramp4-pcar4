@@ -55,18 +55,14 @@ export class AppbarAPI extends FixtureInstance {
 
         // save appbar items as a collection to the store
         // they are saves as a set for easy by-id access
-        appbarStore.items = appbarItems
-            .flat()
-            .reduce<AppbarItemSet>((map, item) => {
-                map[item instanceof AppbarItemInstance ? item.id : item] = item;
-                return map;
-            }, {});
+        appbarStore.items = appbarItems.flat().reduce<AppbarItemSet>((map, item) => {
+            map[item instanceof AppbarItemInstance ? item.id : item] = item;
+            return map;
+        }, {});
 
         // save an ordered list of item ids to use when rendering components
         appbarStore.order = appbarItems.map(subArray =>
-            subArray.map(item =>
-                item instanceof AppbarItemInstance ? item.id : item
-            )
+            subArray.map(item => (item instanceof AppbarItemInstance ? item.id : item))
         );
 
         this._validateItems();
@@ -88,9 +84,7 @@ export class AppbarAPI extends FixtureInstance {
             [id].some(v => {
                 if (this.$iApi.fixture.exists(v) && !appbarStore.items[id]) {
                     // if an item is registered globally, save the name of the registered component
-                    (
-                        appbarStore.items[id] as unknown as AppbarItemInstance
-                    ).componentId = `${v}-appbar-button`;
+                    (appbarStore.items[id] as unknown as AppbarItemInstance).componentId = `${v}-appbar-button`;
                 }
             });
         });

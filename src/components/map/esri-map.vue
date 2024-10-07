@@ -39,9 +39,7 @@ watchers.push(
             let offsetX, offsetY: number;
             const originX: number = iApi.geo.map.getPixelWidth() / 2;
             const originY = 0;
-            const screenPointFromMapPoint = iApi.geo.map.mapPointToScreenPoint(
-                maptipPoint.value! as Point
-            );
+            const screenPointFromMapPoint = iApi.geo.map.mapPointToScreenPoint(maptipPoint.value! as Point);
             offsetX = screenPointFromMapPoint.screenX - originX;
             offsetY = originY - screenPointFromMapPoint.screenY;
             maptipInstance.value.setProps({
