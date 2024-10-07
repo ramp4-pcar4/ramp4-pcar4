@@ -214,6 +214,8 @@ import type {
     PanelInstance
 } from '@/api';
 
+import type { BasemapChange } from '@/geo/api';
+
 import {
     computed,
     inject,
@@ -297,19 +299,24 @@ const getBoundLayer = () => {
 };
 
 /**
+ * Find the layer result object for the bound layer, if exists
+ */
+const getBoundLayerResult = (): IdentifyResult | undefined => {
+    return props.results.find(layerIR => {
+        return layerIR.uid === props.uid;
+    });
+};
+
+/**
  * Computed property that returns true if the layer's overall identify result has loaded.
  */
 const isLayerResultLoaded = computed<Boolean>(() => {
-    const results = props.results.find((layer: IdentifyResult) => {
-        return layer.uid === props.uid;
-    });
+    const results = getBoundLayerResult();
     return results?.loaded ?? false;
 });
 
 const itemRequestTime = computed<Number | undefined>(() => {
-    const results = props.results.find((layer: IdentifyResult) => {
-        return layer.uid === props.uid;
-    });
+    const results = getBoundLayerResult();
     return results?.requestTime;
 });
 
@@ -335,13 +342,18 @@ const layerName = computed<string>(() => {
 });
 
 /**
+ * Lets us watch() the uid
+ */
+const uidCompute = computed<string>(() => {
+    return props.uid;
+});
+
+/**
  * Retrieves the identify items that belong to the layer currently bound to this list.
  * If there are no results, returns an empty array.
  */
 const getLayerIdentifyItems = () => {
-    const results = props.results.find((layerResult: IdentifyResult) => {
-        return layerResult.uid === props.uid;
-    });
+    const results = getBoundLayerResult();
 
     return results ? results.items : [];
 };
@@ -398,11 +410,12 @@ const initDetails = () => {
 };
 
 /**
- * Advance the item index by direction (an integer)
+ * Advance the item index by direction (an integer). Singular in detail mode, by a page in list mode
  */
 const advanceItemIndex = (direction: number) => {
     if (showList.value) {
         currentIdx.value += direction * itemsPerPage.value;
+        updateHighlight();
     } else {
         currentIdx.value += direction;
     }
@@ -412,11 +425,23 @@ const advanceItemIndex = (direction: number) => {
  * Updates the highlighter when something changes (panel minimized, opened, change in selected result, etc.)
  */
 const updateHighlight = () => {
+    /*
+    Dev notes for paths that hit this method, since its a bit spicey.
+    currentIdentifyItem watcher -> initDetails : handles changes in the details view of an item.
+        includes initial load, layer change, item pagination. Anything that isn't in list mode.
+    uidCompute watcher : handles a new layer being selected and we are in list mode.
+    advanceItemIndex : handles pagination change when in list mode
+    onHilightToggle : handles user mashing the toggler button
+    clickShowList : handles user going from detail view to list view on same layer
+    clickListItem : handles weird scenario where user clicks first (top) item in list view to switch to its detail view
+    BASEMAP_CHANGE event : handles re-applying hilight if schema changed
+    */
+
     const resultItems = getLayerIdentifyItems();
 
     if (
         hilightToggle.value &&
-        isLayerResultLoaded &&
+        isLayerResultLoaded.value &&
         resultItems.length > 0 &&
         canHighlight.value
     ) {
@@ -425,8 +450,7 @@ const updateHighlight = () => {
         // that any stale loads will not be drawn / removed when users spam their highlights real fast.
 
         if (showList.value) {
-            // highlight entire list
-            // TODO once pagination becomes a thing, this needs to just highlight what is on current page of the list.
+            // highlight what is on current page of the list.
             detailsFixture.value.hilightDetailsItems(
                 resultItems.slice(currentIdx.value, endIdx.value),
                 props.uid
@@ -451,6 +475,7 @@ const updateHighlight = () => {
  */
 const clickShowList = () => {
     showList.value = true;
+
     currentIdx.value =
         Math.floor(currentIdx.value / itemsPerPage.value) * itemsPerPage.value;
     updateHighlight();
@@ -478,8 +503,15 @@ const detailsMinimized = () => {
  * @param idx the index of the point that was clicked.
  */
 const clickListItem = (idx: number) => {
+    const secretIdx = currentIdx.value;
     currentIdx.value = idx;
     showList.value = false;
+    if (secretIdx === idx) {
+        // we clicked on the row that currentIdx was secretly tracking.
+        // as such, the watcher on the current item won't trigger, so
+        // need to update the highlight
+        updateHighlight();
+    }
 };
 
 onMounted(() => {
@@ -488,7 +520,7 @@ onMounted(() => {
         iApi.event.on(
             GlobalEvents.LAYER_REMOVE,
             (removedLayer: LayerInstance) => {
-                const detailsPanel = iApi.panel.get('details-panel');
+                const detailsPanel = iApi.panel.get('details');
                 if (props.uid === removedLayer.uid && !!detailsPanel) {
                     detailsPanel.close();
                 }
@@ -498,7 +530,7 @@ onMounted(() => {
 
     handlers.value.push(
         iApi.event.on(GlobalEvents.PANEL_CLOSED, (panel: PanelInstance) => {
-            if (panel.id == 'details-panel') {
+            if (panel.id === 'details') {
                 detailsClosed();
             }
         })
@@ -506,19 +538,22 @@ onMounted(() => {
 
     handlers.value.push(
         iApi.event.on(GlobalEvents.PANEL_MINIMIZED, (panel: PanelInstance) => {
-            if (panel.id == 'details-panel') {
+            if (panel.id === 'details') {
                 detailsMinimized();
             }
         })
     );
 
     handlers.value.push(
-        iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, () => {
-            if (hilightToggle.value) {
-                // will just wipe and re-apply the highlight
-                updateHighlight();
+        iApi.event.on(
+            GlobalEvents.MAP_BASEMAPCHANGE,
+            (payload: BasemapChange) => {
+                if (hilightToggle.value && payload.schemaChanged) {
+                    // will just wipe and re-apply the highlight
+                    updateHighlight();
+                }
             }
-        })
+        )
     );
 
     el.value?.addEventListener('blur', blurEvent);
@@ -527,17 +562,60 @@ onMounted(() => {
 
 onBeforeMount(() => {
     // Keep an eye to see if the currently selected identify item has been changed.
+    // Use a watcher to account for the async nature of results appearing in the
+    // IdentifyItems object
     watchers.value.push(
         watch(
-            () => getLayerIdentifyItems(),
+            currentIdentifyItem,
             () => {
-                // Re-initialize the details panel if the layer has changed.
-                initDetails();
+                // ignore stuff in list mode. we manually work the highlights in that mode.
+                if (!showList.value) {
+                    // Re-initialize the details panel if the content has changed.
+                    initDetails();
 
-                // If the identifyItem is undefined, clear any hilights.
-                // this occurs when the bound layer has no results.
-                if (currentIdentifyItem.value === undefined) {
-                    detailsFixture.value.removeDetailsHilight();
+                    // If the identifyItem is undefined, clear any hilights.
+                    // this occurs when the bound layer has no results.
+                    if (currentIdentifyItem.value === undefined) {
+                        detailsFixture.value.removeDetailsHilight();
+                    }
+                }
+            },
+            {
+                deep: false,
+                immediate: true
+            }
+        )
+    );
+
+    // handle the case where the layer changes and we are in list mode.
+    // that change comes from `details-screen.vue` updating the props of this component,
+    // to there is no "manual update" of the highlight from local button event handlers.
+    watchers.value.push(
+        watch(
+            uidCompute,
+            () => {
+                const localUid = props.uid;
+
+                if (showList.value && localUid) {
+                    // we're in list mode, and a valid layer is linked
+
+                    // find layer result, wait for outer request to finish (need items to pass to hilighter)
+                    const layerIR = getBoundLayerResult();
+                    if (layerIR) {
+                        layerIR.loading.then(() => {
+                            if (props.uid === localUid && showList.value) {
+                                // Still on the same layer. User didn't pick diff layer during the loading wait.
+                                // Still in list mode. User didn't pick diff layer, change to detail mode, then come back.
+                                //
+                                // If user switches to a different layer, stays in list mode, and comes back to this prior to either layer being loaded,
+                                // will probably get a double hilight request on this layer (first visit & second vist resolve at same time),
+                                // but will just spam warnings on the console. Requires slow layers and fidgity user.
+                                // If we really don't like that, need to think of some wilder solution to track async stuff across components.
+
+                                updateHighlight();
+                            }
+                        });
+                    }
                 }
             },
             {

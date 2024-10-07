@@ -31,7 +31,7 @@ export class DetailsAPI extends FixtureInstance {
         // Save the provided identify result in the store.
         this.detailsStore.payload = payload;
 
-        const panel = this.$iApi.panel.get('details-panel');
+        const panel = this.$iApi.panel.get('details');
         // Indicate this request for the details panel comes from clicking on the map
         this.detailsStore.origin = 'identify';
         panel.button.tooltip = 'details.layers.title.identifyOrigin';
@@ -46,10 +46,10 @@ export class DetailsAPI extends FixtureInstance {
         });
 
         // Open the details panel.
-        const detailsPanel = this.$iApi.panel.get('details-panel');
+        const detailsPanel = this.$iApi.panel.get('details');
         if (!detailsPanel.isOpen) {
             this.$iApi.panel.open({
-                id: 'details-panel'
+                id: 'details'
             });
         }
     }
@@ -78,7 +78,7 @@ export class DetailsAPI extends FixtureInstance {
         },
         open: boolean | undefined
     ): void {
-        const panel = this.$iApi.panel.get('details-panel');
+        const panel = this.$iApi.panel.get('details');
 
         if (open === false) {
             // close panel and run away. allows a close without providing featureData
@@ -155,8 +155,8 @@ export class DetailsAPI extends FixtureInstance {
             this.detailsStore.defaultTemplates = config.templates;
         }
 
-        this.handlePanelWidths(['details-panel']);
-        this.handlePanelTeleports(['details-panel']);
+        this.handlePanelWidths(['details']);
+        this.handlePanelTeleports(['details']);
 
         // get all layer fixture configs
         const layerDetailsConfigs: any = this.getLayerFixtureConfigs();

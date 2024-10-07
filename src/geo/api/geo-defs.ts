@@ -311,6 +311,9 @@ export const enum IdentifyResultFormat {
 // way they should be exposed from the main app as well (like, exported? in one of those .d.ts files?)?
 // same question probably applies to a number of other interfaces here.
 
+/**
+ * Event payload for a Map Click
+ */
 export interface MapClick {
     mapPoint: Point;
     screenX: number;
@@ -320,11 +323,29 @@ export interface MapClick {
     clickTime: number;
 }
 
+/**
+ * Event payload for a Map Move
+ */
 export interface MapMove {
     screenX: number;
     screenY: number;
     button: number;
     moveTime: number;
+}
+
+/**
+ * Event payload for a Basemap Change
+ */
+export interface BasemapChange {
+    /**
+     * New basemap id
+     */
+    basemapId: string;
+
+    /**
+     * True if new basemap caused the map schema to change
+     */
+    schemaChanged: boolean;
 }
 
 export interface LayerTimes {
