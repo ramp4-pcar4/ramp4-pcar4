@@ -23,6 +23,7 @@ export class LayerItem extends LegendItem {
     _origLayerDisabledControls: Array<LayerControl> | undefined;
     _layerControls: Array<LayerControl>;
     _layerDisabledControls: Array<LayerControl>;
+    _maxLines: number | undefined; // number of lines this item can take up
 
     _symbologyRenderStyle: string;
     _symbologyStack: Array<LegendSymbology>;
@@ -59,6 +60,10 @@ export class LayerItem extends LegendItem {
                 lastVisibility: true
             };
         });
+        this._maxLines =
+            config.maxLines && [1, 2, 3, 4, 5, 6].includes(config.maxLines)
+                ? config.maxLines
+                : undefined;
     }
 
     /** Returns the id of the parent layer if this item is a sublayer. Otherwise undefined */
@@ -180,6 +185,10 @@ export class LayerItem extends LegendItem {
         return this._symbologyStack;
     }
 
+    get maxLines(): number | undefined {
+        return this._maxLines;
+    }
+
     /**
      * Returns a legend config representation of this item.
      */
@@ -191,7 +200,8 @@ export class LayerItem extends LegendItem {
             disabledLayerControls: this._layerDisabledControls,
             symbologyExpanded: this._symbologyExpanded,
             coverIcon: this._coverIcon,
-            description: this._description
+            description: this._description,
+            maxLines: this._maxLines
         };
         return { ...super.getConfig(), ...config };
     }
