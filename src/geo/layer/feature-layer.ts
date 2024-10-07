@@ -130,13 +130,15 @@ export class FeatureLayer extends AttribLayer {
                 this.tooltipField =
                     this.origRampConfig.tooltipField || this.nameField;
 
-            this.$iApi.geo.attributes.applyFieldMetadata(
-                this,
-                this.origRampConfig.fieldMetadata
-            );
-            this.attribs.attLoader.updateFieldList(this.fieldList);
-            this.attribs.attLoader.updateFieldsToTrim(this.getFieldsToTrim());
-        }
+                this.$iApi.geo.attributes.applyFieldMetadata(
+                    this,
+                    this.origRampConfig.fieldMetadata
+                );
+                this.attribs.attLoader.updateFieldList(this.fieldList);
+                this.attribs.attLoader.updateFieldsToTrim(
+                    this.getFieldsToTrim()
+                );
+            }
         });
 
         const pFC = this.$iApi.geo.layer
@@ -178,6 +180,7 @@ export class FeatureLayer extends AttribLayer {
             loaded: false,
             errored: false,
             uid: this.uid,
+            layerId: this.id,
             requestTime: Date.now()
         });
 

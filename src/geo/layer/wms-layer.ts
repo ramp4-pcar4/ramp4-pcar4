@@ -211,6 +211,7 @@ export class WmsLayer extends MapLayer {
             loaded: false,
             errored: false,
             uid: this.uid,
+            layerId: this.id,
             requestTime: Date.now()
         });
 
