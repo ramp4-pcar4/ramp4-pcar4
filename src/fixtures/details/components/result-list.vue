@@ -398,11 +398,12 @@ const initDetails = () => {
 };
 
 /**
- * Advance the item index by direction (an integer)
+ * Advance the item index by direction (an integer). Singular in detail mode, by a page in list mode
  */
 const advanceItemIndex = (direction: number) => {
     if (showList.value) {
         currentIdx.value += direction * itemsPerPage.value;
+        updateHighlight();
     } else {
         currentIdx.value += direction;
     }
@@ -416,7 +417,7 @@ const updateHighlight = () => {
 
     if (
         hilightToggle.value &&
-        isLayerResultLoaded &&
+        isLayerResultLoaded.value &&
         resultItems.length > 0 &&
         canHighlight.value
     ) {
@@ -425,8 +426,7 @@ const updateHighlight = () => {
         // that any stale loads will not be drawn / removed when users spam their highlights real fast.
 
         if (showList.value) {
-            // highlight entire list
-            // TODO once pagination becomes a thing, this needs to just highlight what is on current page of the list.
+            // highlight what is on current page of the list.
             detailsFixture.value.hilightDetailsItems(
                 resultItems.slice(currentIdx.value, endIdx.value),
                 props.uid
@@ -451,6 +451,7 @@ const updateHighlight = () => {
  */
 const clickShowList = () => {
     showList.value = true;
+
     currentIdx.value =
         Math.floor(currentIdx.value / itemsPerPage.value) * itemsPerPage.value;
     updateHighlight();
@@ -478,8 +479,15 @@ const detailsMinimized = () => {
  * @param idx the index of the point that was clicked.
  */
 const clickListItem = (idx: number) => {
+    const secretIdx = currentIdx.value;
     currentIdx.value = idx;
     showList.value = false;
+    if (secretIdx === idx) {
+        // we clicked on the row that currentIdx was secretly tracking.
+        // as such, the watcher on the current item won't trigger, so
+        // need to update the highlight
+        updateHighlight();
+    }
 };
 
 onMounted(() => {
@@ -527,17 +535,22 @@ onMounted(() => {
 
 onBeforeMount(() => {
     // Keep an eye to see if the currently selected identify item has been changed.
+    // Use a watcher to account for the async nature of results appearing in the
+    // IdentifyItems object
     watchers.value.push(
         watch(
-            () => getLayerIdentifyItems(),
+            currentIdentifyItem,
             () => {
-                // Re-initialize the details panel if the layer has changed.
-                initDetails();
+                // ignore stuff in list mode. we manually work the highlights in that mode.
+                if (!showList.value) {
+                    // Re-initialize the details panel if the content has changed.
+                    initDetails();
 
-                // If the identifyItem is undefined, clear any hilights.
-                // this occurs when the bound layer has no results.
-                if (currentIdentifyItem.value === undefined) {
-                    detailsFixture.value.removeDetailsHilight();
+                    // If the identifyItem is undefined, clear any hilights.
+                    // this occurs when the bound layer has no results.
+                    if (currentIdentifyItem.value === undefined) {
+                        detailsFixture.value.removeDetailsHilight();
+                    }
                 }
             },
             {
