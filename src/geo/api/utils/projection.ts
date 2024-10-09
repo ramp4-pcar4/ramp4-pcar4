@@ -127,12 +127,12 @@ export class ProjectionAPI {
     }
 
     /**
-     * Convert a projection to an string that is compatible with proj4.  If it is an ESRI SpatialReference or an integer it will be converted.
-     * @param {Object|Integer|String} proj an ESRI SpatialReference, integer or string.  Strings will be unchanged and unchecked,
+     * Convert a projection to an string that is compatible with proj4.  If it is an SpatialReference or an integer it will be converted.
+     * @param {SpatialReference|Integer|String} proj an SpatialReference, integer or string.  Strings will be unchanged and unchecked,
      * ints and SpatialReference objects will be converted.
-     * @return {String} A string in the form EPSG:#### or a WKT
+     * @return {String} A proj4 friendly projection, in the form EPSG:#### or a WKT
      */
-    normalizeProj(proj: any): string {
+    normalizeProj(proj: SpatialReference | string | number): string {
         if (typeof proj === 'object') {
             if (proj.wkid) {
                 // TODO consider checking for .latestWkid first, then using .wkid as backup
@@ -153,24 +153,30 @@ export class ProjectionAPI {
     /**
      * Check whether or not a spatialReference is supported by proj4 library. Attempt to load from epsg source if not.
      *
-     * @param {Object} spatialReference to be checked to see if it's supported by proj4. Can be ESRI SR object or a EPSG string.
+     * @param {SpatialReference | string | number} spatialReference to be checked to see if it's supported by proj4. Can be ESRI SR object, WKID integer, EPSG string or WKT.
      * @returns {Promise<boolean>} true if proj was defined or was able to download definition. false if out of luck
      */
-    async checkProj(spatialReference: any): Promise<boolean> {
+    async checkProj(
+        spatialReference: SpatialReference | string | number
+    ): Promise<boolean> {
         let srcProj: string;
         let latestProj = ''; // falsey!
-
-        if (spatialReference.wkt) {
-            // WKT is fine to use raw. quick exit.
-            return true;
-        }
 
         try {
             srcProj = this.normalizeProj(spatialReference);
         } catch {
             return false;
         }
-        if (spatialReference.latestWkid) {
+
+        // fast check for WKT
+        if (!srcProj.startsWith('EPSG:')) {
+            return true;
+        }
+
+        if (
+            typeof spatialReference === 'object' &&
+            spatialReference.latestWkid
+        ) {
             latestProj = this.normalizeProj(spatialReference.latestWkid);
         }
 
@@ -230,7 +236,12 @@ export class ProjectionAPI {
         }
     }
 
-    // utility for checking a set of spatial references, and accepting an error bomb if they cannot be used
+    /**
+     * Utility for checking a set of spatial references, rejects if one cannot be used
+     *
+     * @param {Array<SpatialReference | string | number>} spatialReferences set of Spatial references to be checked. Can be ESRI SR object, WKID integer, EPSG string or WKT.
+     * @returns {Promise<void>} resolves after all references succeed the check. rejects if any test fails.
+     */
     async checkProjBomber(spatialReferences: Array<any>): Promise<void> {
         if (spatialReferences.length > 0) {
             const prj = spatialReferences.pop();
@@ -253,37 +264,37 @@ export class ProjectionAPI {
     /**
      * Reproject a GeoJSON object in place.
      * Note the .crs of the object will not be updated or corrected.
+     * Valid formats for the spatial reference parameters are: RAMP SpatialReference, WKID number,
+     * WKT string, or EPSG:#### string
      *
      * @param {Object} geojson the GeoJSON to be reprojected, this will be modified in place
-     * @param {String|Number} outputSpatialReference the target spatial reference,
-     * 'EPSG:4326' (lat-long) is used by default; if a number is suppied it will be used as an EPSG code
-     * @param {String|Number} inputSpatialReference same rules as outputSpatialReference if suppied
-     * if missing it will attempt to find it encoded in the GeoJSON
+     * @param {SpatialReference | String | Number} inputSR spatial reference of the GeoJSON. If missing it will attempt to use any crs data in the GeoJSON, defaulting to Lat Long.
+     * @param {SpatialReference | String | Number} outputSR spatial reference to project to. If missing, will use Lat Long.
      * @returns {Promise<Object>} resolves with projected geoJson
      */
     async projectGeoJson(
         geoJson: any,
-        inputSR: string | number,
-        outputSR: string | number
+        inputSR?: SpatialReference | string | number,
+        outputSR?: SpatialReference | string | number
     ): Promise<any> {
-        // TODO revist the types on the SR params. figure out what we're really supporting, and what terraformer can support
+        let inSr: string;
+        let outSr: string;
 
-        let inSr: string = this.normalizeProj(inputSR);
-        let outSr: string = this.normalizeProj(outputSR);
-
-        if (!inSr && geoJson.crs && geoJson.crs.type === 'name') {
+        if (inputSR) {
+            inSr = this.normalizeProj(inputSR);
+        } else {
+            // get from geojson
             inSr = SpatialReference.parseGeoJsonCrs(geoJson.crs);
         }
 
-        if (!inSr) {
-            inSr = latLongProj;
-        }
-
-        if (!outSr) {
+        if (outputSR) {
+            outSr = this.normalizeProj(outputSR);
+        } else {
             outSr = latLongProj;
         }
 
         if (outSr === inSr) {
+            // no projection needed.
             return geoJson;
         }
 

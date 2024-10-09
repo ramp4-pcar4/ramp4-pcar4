@@ -51,8 +51,11 @@ This indicates which layer types can support certain sets of abilities
 | OGC WMS Layer |  Yes  | Yes | No | No | Raster |
 | OGC WFS 3.0 Layer |  Yes  | Yes | Yes | Yes | Vector |
 | GeoJSON Layer |  Yes  | Yes | Yes | Yes | Vector |
+| Zipped GeoJSON Layer |  Yes  | Yes | Yes | Yes | Vector |
 | CSV Layer |  Yes  | Yes | Yes | Yes | Vector |
 | Shapefile Layer |  Yes  | Yes | Yes | Yes | Vector |
+| FlatGeobuf Layer |  Yes  | Yes | Yes | Yes | Vector |
+| Zipped FlatGeobuf Layer |  Yes  | Yes | Yes | Yes | Vector |
 | OpenStreetMap Tile Layer |  Yes  | No | No | No | Raster |
 | ESRI Table Layer |  No  | No | Yes | No | N/A |
 | Non Spatial CSV Layer |  No  | No | Yes | Yes | N/A |

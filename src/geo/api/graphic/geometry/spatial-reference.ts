@@ -117,12 +117,20 @@ export class SpatialReference {
         }
     }
 
+    /**
+     * Parse the typical RAMP formats for spatial references into an RAMP SpatialReference object
+     * @param {SpatialReference | string | number} sr can be RAMP SpatialReference, WKID integer, WKT string, or ESPG:#### string
+     * @returns {SpatialReference} Spatial Reference object
+     */
     static parseSR(sr?: SrDef): SpatialReference {
         if (!sr) {
             // default to lat long if no SR is provided
             return SpatialReference.latLongSR();
         } else if (sr instanceof SpatialReference) {
             return sr.clone();
+        } else if (typeof sr === 'string' && sr.startsWith('EPSG:')) {
+            // convert epsg code to wkid
+            return new SpatialReference(parseInt(sr.substring(5).trim()));
         } else {
             // cheating typescript. this will pass a string wkt or number wkid
             return new SpatialReference(<any>sr);
@@ -162,7 +170,7 @@ export class SpatialReference {
     /**
      * Convert a GeoJSON styled co-ord reference to an EPSG styled string
      * @param {GeoJson.CoordinateReferenceSystem} crs GeoJSON crs object
-     * @returns {string} EPSG projection string, either EPSG code or wkt
+     * @returns {string} A proj4 friendly projection, in the form EPSG:#### or a WKT
      */
     static parseGeoJsonCrs(
         crs: GeoJson.CoordinateReferenceSystem | undefined

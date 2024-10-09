@@ -168,8 +168,11 @@ export const enum LayerType {
 
     // File Based
     GEOJSON = 'file-geojson',
+    GEOJSONZIPPED = 'file-zip-geojson',
     CSV = 'file-csv',
     SHAPEFILE = 'file-shape',
+    FLATGEOBUF = 'file-fgb',
+    FLATGEOBUFZIPPED = 'file-zip-fgb',
 
     // Other
     OSM = 'osm-tile', // open street map
@@ -545,13 +548,43 @@ export interface UrlQueryMap {
     [name: string]: string;
 }
 
+/**
+ * Options for converting GeoJson to EsriJson
+ */
 export interface GeoJsonOptions {
+    /**
+     * Will use this layerid on the EsriJson
+     */
     layerId?: string;
+
+    /**
+     * Will use this colour in the basic default symbol
+     */
     colour?: string;
+
+    /**
+     * Any layer fieldMetadata configuration to apply
+     */
     fieldMetadata?: RampLayerFieldMetadataConfig;
-    sourceProjection?: string;
-    targetSR?: string | number | SpatialReference | Record<any, unknown>;
+
+    /**
+     * Projection of incoming GeoJson. If missing, will use geojson crs, LatLong if no crs.
+     */
+    sourceProjection?: string | number | SpatialReference;
+
+    /**
+     * Spatial Reference of output Esri Json geometry
+     */
+    targetSR?: string | number | SpatialReference;
+
+    /**
+     * Latitude field name if exists in the GeoJson. Typically from a CSV conversion. Ensures field gets encoded as a number.
+     */
     latField?: string;
+
+    /**
+     * Longitude field name if exists in the GeoJson. Typically from a CSV conversion. Ensures field gets encoded as a number.
+     */
     lonField?: string;
 }
 

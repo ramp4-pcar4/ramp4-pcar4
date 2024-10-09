@@ -4,9 +4,13 @@ import ArcGIS from 'terraformer-arcgis-parser';
 import { csv2geojson, dsv } from 'csv2geojson';
 import shp from 'shpjs/dist/shp.min.js';
 import axios from 'redaxios';
+import JSZip from 'jszip';
+import { geojson as fgbgeojson } from 'flatgeobuf';
+import type { CrsMeta } from 'flatgeobuf';
 
-import { EsriSimpleRenderer, EsriSpatialReference } from '@/geo/esri';
-import { Colour, FieldType, LayerType } from '@/geo/api';
+import { EsriSimpleRenderer } from '@/geo/esri';
+import { Colour, FieldType, LayerType, SpatialReference } from '@/geo/api';
+import type { RampLayerConfig } from '@/geo/api';
 
 import type {
     CsvOptions,
@@ -202,18 +206,18 @@ export class FileUtils extends APIScope {
         switch (fileType) {
             case LayerType.GEOJSON:
             case LayerType.DATAJSON:
-                return JSON.parse(
-                    new TextDecoder('utf-8').decode(
-                        new Uint8Array(response.data)
-                    )
-                );
+                // data converted to JSON
+                return JSON.parse(this.arbToStr(response.data));
             case LayerType.SHAPEFILE:
+            case LayerType.GEOJSONZIPPED:
+            case LayerType.FLATGEOBUF:
+            case LayerType.FLATGEOBUFZIPPED:
+                // data as ArrayBuffer
                 return response.data;
             case LayerType.CSV:
             case LayerType.DATACSV:
-                return new TextDecoder('utf-8').decode(
-                    new Uint8Array(response.data)
-                );
+                // data as string
+                return this.arbToStr(response.data);
             default:
                 console.error(
                     `Unsupported file type passed to fetchFileData- '${fileType}'`
@@ -403,7 +407,7 @@ export class FileUtils extends APIScope {
         options: GeoJsonOptions
     ): Promise<__esri.FeatureLayerProperties> {
         let targetSR: any;
-        let srcProj = 'EPSG:4326'; // 4326 is the default for GeoJSON with no projection defined
+        let srcProj = '';
         let layerId: string;
         const configPackage: __esri.FeatureLayerProperties = {
             objectIdField: 'OBJECTID',
@@ -432,15 +436,12 @@ export class FileUtils extends APIScope {
             JSON.stringify(defaultRenderers[value])
         );
 
-        // attempt to get spatial reference from geoJson
-        if (geoJson.crs && geoJson.crs.type === 'name') {
-            srcProj = geoJson.crs.properties.name;
-        }
-
         // pluck treats from options parameter
         if (options) {
             if (options.sourceProjection) {
-                srcProj = options.sourceProjection;
+                srcProj = this.$iApi.geo.proj.normalizeProj(
+                    options.sourceProjection
+                );
             }
 
             if (options.targetSR) {
@@ -464,6 +465,12 @@ export class FileUtils extends APIScope {
             }
         } else {
             throw new Error('geoJsonToEsriJson - missing opts arguement');
+        }
+
+        if (!srcProj) {
+            // the options did not include a source projection.
+            // attempt to get it from the geoJson object, LatLon if doesn't exist
+            srcProj = SpatialReference.parseGeoJsonCrs(geoJson.crs);
         }
 
         // Note: while this appears to always give the layer a simple renderer,
@@ -529,20 +536,12 @@ export class FileUtils extends APIScope {
         }
 
         // look up projection definitions if they don't already exist and we have enough info
-
-        // note we need to use the SR object, not the normalized string, as checkProj cant handle a raw WKT
-        //      and this function won't have a raw EPSG code / proj4 string coming from param targetSR.
-        //      if this becomes a problem, we can change checkProj to test if the start of a string is `EPSG`, and if not, assume it's wkt.
-        //      nicer solution would be find a wkt regex to validate, but lazy search didnt reveal one.
-
-        // TODO if we want/need, we can put an error handler on the promise to deal with incompatible projections.
-        //      e.g. maybe we want to catch it and then build a dummy layer set to error state?
         await this.$iApi.geo.proj.checkProjBomber([srcProj, targetSR]);
 
         // generate a nicely formatted object that that esri feature layer constructor can accept to make a local layer
 
         // project data and convert to esri json format
-        const fancySR = new EsriSpatialReference(targetSR);
+        const fancySR = SpatialReference.parseSR(targetSR).toESRI();
 
         await this.$iApi.geo.proj.projectGeoJson(geoJson, srcProj, destProj);
 
@@ -669,11 +668,90 @@ export class FileUtils extends APIScope {
 
     /**
      * Converts Shapefile data to geojson.
+     *
      * @param {ArrayBuffer} shapeData an ArrayBuffer of the Shapefile in zip format
      * @returns {Promise} a promise resolving with geojson
      */
     async shapefileToGeoJson(shapeData: ArrayBuffer): Promise<any> {
         return shp(shapeData);
+    }
+
+    /**
+     * Converts FlatGeobuf data to geojson.
+     *
+     * @param {ArrayBuffer} fgbData an ArrayBuffer of a FlatGeobuf file
+     * @param {number} maxLoadTime how long we are will permit this to run, in milliseconds
+     * @returns {Promise} a promise resolving with geojson
+     */
+    fgbToGeoJson(fgbData: ArrayBuffer, maxLoadTime: number): Promise<any> {
+        // the polling only waits for the header information callback to return.
+        // the header should be tiny, thus very fast. The bulk of file content
+        // blocks the thread before the polling loop can start. So using a small number
+        // here as it will only hit the interval once unless something goes horribly wrong.
+        const pollingSpeed = 60;
+        return new Promise(resolve => {
+            let headerDone = false;
+            let projection: CrsMeta | null = null; // fgb lib returns null, so we disrespect convention here
+
+            // Uint8Array variant of deserialize is synchronous
+            const geoJson = fgbgeojson.deserialize(
+                new Uint8Array(fgbData),
+                undefined,
+                headerMeta => {
+                    projection = headerMeta.crs;
+                    headerDone = true;
+                }
+            );
+
+            let kickTimer = 0;
+
+            // wait for file content and header to appear
+            const waitingFun = setInterval(() => {
+                if (geoJson && headerDone) {
+                    clearInterval(waitingFun);
+
+                    // pick apart spatial reference.
+
+                    let customProj: SpatialReference | undefined;
+
+                    if (projection) {
+                        if (
+                            projection.code &&
+                            projection.code !== 4326 &&
+                            projection.org === 'EPSG'
+                        ) {
+                            // has an EPSG code that is not lat lon
+                            customProj = new SpatialReference(projection.code);
+                        } else if (projection.wkt) {
+                            // no code or non-ESPG code, but there is a wkt. use it.
+                            customProj = new SpatialReference(projection.wkt);
+                        } else {
+                            // no idea what this could be. log it and add support later as need arises.
+                            // currently code will act as if Lat Lon, likely will not show geometry.
+                            console.error(
+                                'Encountered FlatGeobuf with non-EPSG org: ',
+                                projection
+                            );
+                        }
+                    }
+
+                    if (customProj) {
+                        // we found something that appears valid and is not lat lon. Add CRS to geojson object
+                        geoJson.crs = customProj.toGeoJSON();
+                    } // else it's lat lon or ???, default to lat lon (do nothing)
+
+                    resolve(geoJson);
+                } else {
+                    kickTimer += pollingSpeed;
+                    if (kickTimer > maxLoadTime) {
+                        // took too long. stop.
+                        // handling code will ignore bogus result
+                        clearInterval(waitingFun);
+                        resolve({});
+                    }
+                }
+            }, pollingSpeed);
+        });
     }
 
     /**
@@ -718,5 +796,57 @@ export class FileUtils extends APIScope {
         }
 
         return realJson;
+    }
+
+    /**
+     * Unzip a single zipped file.
+     *
+     * @param {ArrayBuffer} zippedData zipped file as ArrayBuffer
+     * @returns {Promise<ArrayBuffer>} contents of the unzipped file as ArrayBuffer
+     */
+    async unzipSingleFile(zippedData: ArrayBuffer): Promise<ArrayBuffer> {
+        const zipper = new JSZip();
+        const unzippedData = await zipper.loadAsync(zippedData);
+        const fileName = Object.keys(unzippedData.files)[0];
+        if (fileName && unzippedData.file(fileName)) {
+            return await unzippedData.file(fileName)!.async('arraybuffer');
+        } else {
+            throw new Error('Could not find file in zipfile data.');
+        }
+    }
+
+    /**
+     * Helper method for extracting binary-encoded file source from a layer config.
+     *
+     * @param {RampLayerConfig} layerConfig a ramp layer config. Should be layer type that is a binary format.
+     */
+    async binaryInitHelper(layerConfig: RampLayerConfig): Promise<ArrayBuffer> {
+        if (layerConfig.rawData && layerConfig.rawData instanceof ArrayBuffer) {
+            // payload has been passed in as static data.
+            // Only way this would be used is some other code generated the array buffer
+            // and tacked it onto the layer config it creates in memory at runtime.
+
+            return layerConfig.rawData;
+        } else if (layerConfig.url) {
+            // source is on interweb, fetch it
+            return this.$iApi.geo.layer.files.fetchFileData(
+                layerConfig.url,
+                layerConfig.layerType
+            );
+        } else {
+            throw new Error(
+                `${layerConfig.layerType} config contains no url or invalid/missing raw data`
+            );
+        }
+    }
+
+    /**
+     * Convert an ArrayBuffer to a UTF-8 string
+     *
+     * @param {ArrayBuffer} input binary input
+     * @returns {string} input in string form
+     */
+    arbToStr(input: ArrayBuffer): string {
+        return new TextDecoder('utf-8').decode(new Uint8Array(input));
     }
 }
