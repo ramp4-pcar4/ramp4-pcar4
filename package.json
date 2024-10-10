@@ -3,9 +3,9 @@
     "version": "4.9.0-beta",
     "description": "RAMP4 - The Reusable Accessible Mapping Platform, is a Javascript based web mapping platform that provides a reusable, responsive and WCAG 2.1 AA compliant common viewer for the Government of Canada. ",
     "type": "module",
-    "module": "./dist/lib/ramp.bundle.es.js",
-    "browser": "./dist/lib/ramp.browser.es.js",
-    "style": "./dist/lib/ramp.css",
+    "module": "./dist/ramp.bundle.es.js",
+    "browser": "./dist/esDynamic/ramp.js",
+    "style": "./dist/esDynamic/ramp.css",
     "types": "./dist/ts/main.d.ts",
     "files": [
         "dist"
@@ -17,8 +17,8 @@
         "build": "rm -rf dist && run-p -c -s build:* ts:generate",
         "postbuild": "(rm dist/bad.css || true) && cp -a public/. dist/",
         "build:npm": "vite build --mode npm",
-        "build:cdn": "vite build --mode cdn",
-        "build:prod": "vite build --mode prod",
+        "build:esDynamic": "vite build --mode esDynamic",
+        "build:inline": "vite build --mode inline",
         "build:demos": "vite build --mode demos",
         "preview": "vite preview --port 5050",
         "test:e2e": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress open'",
