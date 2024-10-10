@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import type { PropType } from 'vue';
 
 import BasemapItem from './item.vue';
@@ -50,12 +50,13 @@ import type {
     RampMapConfig,
     RampTileSchemaConfig
 } from '@/geo/api';
-import type { PanelInstance } from '@/api';
+import type { InstanceAPI, PanelInstance } from '@/api';
 import { useI18n } from 'vue-i18n';
 import { useConfigStore } from '@/stores/config';
 
 const { t } = useI18n();
 const configStore = useConfigStore();
+const iApi = inject('iApi') as InstanceAPI;
 
 defineProps({
     panel: {

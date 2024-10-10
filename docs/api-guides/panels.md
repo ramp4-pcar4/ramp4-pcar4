@@ -355,6 +355,9 @@ The API provides the following methods:
 
     Additionally, the `PanelRegistrationOptions` object has one optional property of `i18n`, where you should include the localized strings for the panel. For more details on localization, please see the [localization documentation](../using-ramp4/config-language.md)
 * `isRegistered(panelId: string | string[]): Promise<void>` - provides a promise that resolves when panels with the specified panel ID(s) have completed registration.
+* `registerHTML(html: { en: string | HTMLElement; fr: string | HTMLElement }, id: string, alertName: string, style?: PanelConfigStyle, options?: PanelRegistrationOptions)` - Registers a new panel containing a screen of HTML content and returns the PanelInstance.
+* `updateHTML(panel: PanelInstance, html: { en: string | HTMLElement; fr: string | HTMLElement }, id?: string)` - Updates the content of a specific HTML-based screen of a panel, using HTML content 
+* `isRegistered(panelId: string | string[]): Promise<any>` - provides a promise that resolves when panels with the specified panel ID(s) have completed registration.
 * `remove(value: string | PanelInstance): void` - removes the specified panel from the panel stack.
 * `get(value: string | PanelInstance): PanelInstance` - finds and returns the specified panel.
 * `open(value: string | PanelInstance | PanelInstancePath)` - opens the specified panel.

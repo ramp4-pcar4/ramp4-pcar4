@@ -651,7 +651,7 @@ export class EventAPI extends APIScope {
         let zeHandler: Function;
         switch (handlerName) {
             case DefEH.CONFIG_CHANGE_UPDATES_MAP_ATTRIBS:
-                // update any basemap attribution in the map caption when the config changes (likely langauge switch)
+                // update any basemap attribution in the map caption when the config changes (likely language switch)
                 zeHandler = (payload: RampConfig) => {
                     const currentBasemapConfig: RampBasemapConfig | undefined =
                         payload.map.basemaps.find(
@@ -664,6 +664,7 @@ export class EventAPI extends APIScope {
                         currentBasemapConfig?.attribution
                     );
                 };
+
                 this.$iApi.event.on(
                     GlobalEvents.CONFIG_CHANGE,
                     zeHandler,
