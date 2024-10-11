@@ -53,13 +53,23 @@ Legacy Samples: `https://localhost:5173/demos/index-samples.html`.
 npm run dev-http
 ```
 
-### Build for production
+### Building the application
 
 ```sh
 npm run build
 ```
 
-The production files will be placed in the `dist` folder.
+This command runs four parallel builds, each with a different target mode and use case. This is done because Vite and Rollup do not support multiple build configurations at the same time. The modes are:
+
+- `npm run build:npm`: This build generates the `dist/ramp.bundle.es.js` file which is the file that would be used if ramp is installed via npm. All `package.json` dependencies are excluded from this file, the consuming applications npm manager and build process will handle this.
+
+- `npm run build:esDynamic`: This build generates the `dist/esDynamic` folder which contains the ramp library split into ES modules. This is useful for web applications that want dynamic imports to reduce the size of the initial bundle.
+
+- `npm run build:inline`: This build generates the `dist/ramp.browser.es.js` and `dist/ramp.browser.iife.js` files which contain the entire ramp library as a single file. These files don't support dynamic imports and should only be used if the consuming environment doesn't support ES modules (use iife) and/or only one ramp file can be hosted.
+
+- `npm run build:demos`: This build generates the `dist/demos` folder which contains the demo files. These files are the closest representation of a local develop serve.
+
+You can also run these commands separately if you only need to build one of the modes.
 
 ### Preview production build (after running build)
 
@@ -115,7 +125,7 @@ npm run preview
 
 Then open `http://localhost:5050/index.html` in your browser.
 
-The `demos` folder **is** processed by vite and can therefore reference any source file in the repo. This is the starting point for local development. For example, the `demos/starter-scripts/main.js` file imports `{ createInstance, geo } from '@/main';` whereas `public/starter-scripts/index.js` doesn't since RAMP is globally defined by the `index.html` file when it loads `<script src="./lib/ramp.js"></script>`.
+The `demos` folder **is** processed by vite and can therefore reference any source file in the repo. This is the starting point for local development. For example, the `demos/starter-scripts/main.js` file imports `{ createInstance, geo } from '@/main';` whereas `public/starter-scripts/index.js` doesn't since RAMP is globally defined by the `index.html` file when it loads `<script src="./ramp.browser.iife.js"></script>`.
 
 Run `npm run dev` then open `http://localhost:3000/demos/index.html` in your browser.
 

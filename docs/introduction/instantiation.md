@@ -61,14 +61,14 @@ The HTML template below shows a very basic example of how to setup and use RAMP 
         <title>Basic RAMP Sample</title>
 
         <!-- Load RAMP stylesheet -->
-        <link rel="stylesheet" href="./lib/ramp.css" />
+        <link rel="stylesheet" href="./ramp.css" />
     </head>
     <body style="margin: 0">
         <!-- The page element that the RAMP instance will be created in -->
         <div id="ramp-instance" style="height: 100vh; max-height: -webkit-fill-available"></div>
 
         <!-- Load the compiled RAMP script-->
-        <script src="./lib/ramp.js"></script>
+        <script src="./ramp.browser.iife.js"></script>
 
         <!-- Create simple RAMP instance-->
         <script>
