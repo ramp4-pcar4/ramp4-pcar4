@@ -168,8 +168,11 @@ export const enum LayerType {
 
     // File Based
     GEOJSON = 'file-geojson',
+    GEOJSONZIPPED = 'file-zip-geojson',
     CSV = 'file-csv',
     SHAPEFILE = 'file-shape',
+    FLATGEOBUF = 'file-fgb',
+    FLATGEOBUFZIPPED = 'file-zip-fgb',
 
     // Other
     OSM = 'osm-tile', // open street map

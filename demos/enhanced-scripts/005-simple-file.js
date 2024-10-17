@@ -17,19 +17,41 @@ const runPreTest = (config, options, utils) => {
         id: 'GeoJson',
         name: 'GeoJson',
         layerType: 'file-geojson',
+        nameField: 'name',
         url: '../file-layers/geojson.json',
         caching: true
     };
     const shape = {
         id: 'Shape',
         name: 'Shape',
+        nameField: 'name',
         layerType: 'file-shape',
         url: '../file-layers/shape.zip'
     };
+    const zipGeoJson = {
+        id: 'GeoZipson',
+        name: 'Zipped GeoJson',
+        nameField: 'zappy_name',
+        colour: '#FF6E00',
+        layerType: 'file-zip-geojson',
+        url: '../file-layers/zgeojson.zip'
+    };
 
-    utils.addLayerLegend(csv);
+    const zipFgb = {
+        id: 'zfgb',
+        name: 'Zipped FlatGeobeuf',
+        nameField: 'STATE_NAME',
+        colour: '#ff1493',
+        layerType: 'file-zip-fgb',
+        url: '../file-layers/states-fgb.zip',
+        state: { opacity: 0.6 }
+    };
+
+    utils.addLayerLegend(zipFgb);
     utils.addLayerLegend(geoJson);
+    utils.addLayerLegend(csv);
     utils.addLayerLegend(shape);
+    utils.addLayerLegend(zipGeoJson);
 
     return { config, options };
 };
