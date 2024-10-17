@@ -31,6 +31,14 @@ const runPreTest = (config, options, utils) => {
     utils.addLayerLegend(geoJson);
     utils.addLayerLegend(shape);
 
+    // remove ~@~
+    config.configs.en.map.layerTimeDefault = {
+        expectedLoadTime: 25000,
+        expectedDrawTime: 25000
+    };
+    options.initDelay = 4000;
+    options.loadDelay = 4000;
+
     return { config, options };
 };
 
