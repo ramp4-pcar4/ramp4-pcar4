@@ -68,7 +68,7 @@ import {
     ref
 } from 'vue';
 
-import type { Extent, RampBasemapConfig } from '@/geo/api';
+import type { BasemapChange, Extent, RampBasemapConfig } from '@/geo/api';
 import { GlobalEvents, InstanceAPI, OverviewMapAPI } from '@/api/internal';
 import { useOverviewmapStore } from './store';
 import { debounce } from 'throttle-debounce';
@@ -143,10 +143,7 @@ onMounted(() => {
         handlers.push(
             iApi.event.on(
                 GlobalEvents.MAP_BASEMAPCHANGE,
-                async (payload: {
-                    basemapId: string;
-                    schemaChanged: boolean;
-                }) => {
+                async (payload: BasemapChange) => {
                     if (!payload.schemaChanged && overviewMap.created) {
                         if (
                             activeBasemap.value &&

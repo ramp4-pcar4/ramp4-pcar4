@@ -11,6 +11,7 @@ let config = {
         'geosearch',
         'grid',
         'help',
+        'hilight',
         'layer-reorder',
         'legend',
         'mapnav',
