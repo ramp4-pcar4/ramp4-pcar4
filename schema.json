@@ -1318,7 +1318,14 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": ["file-geojson", "file-csv", "file-shape"],
+                    "enum": [
+                        "file-csv",
+                        "file-fgb",
+                        "file-geojson",
+                        "file-shape",
+                        "file-zip-fgb",
+                        "file-zip-geojson"
+                    ],
                     "description": "Format type for file layers."
                 },
                 "latField": {
