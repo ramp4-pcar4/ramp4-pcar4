@@ -57,9 +57,15 @@ const handlers = ref<Array<string>>([]);
 const watchers = ref<Array<Function>>([]);
 const layerResults = ref<Array<IdentifyResult>>([]);
 const noResults = ref<boolean>(false);
-const selectedLayer = ref<string>('');
-const userSelectedLayer = ref<boolean>(false);
 
+/**
+ * UID of the layer "selected" into the detail/list section. Empty string when panel is freshly opened.
+ */
+const selectedLayer = ref<string>('');
+
+/**
+ * Contains the timestamp of the most recent payload. 0 if we are not watching for a greedy open
+ */
 const activeGreedy = computed<number>(() => detailsStore.activeGreedy);
 const payload = computed<IdentifyResult[]>(() => detailsStore.payload);
 const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(() => detailsStore.properties);
@@ -70,10 +76,18 @@ defineProps({
     }
 });
 
+/**
+ * Handles user picking a new layer from the "symbol stack" list
+ */
 const changeLayerSelection = (uid: string) => {
     selectedLayer.value = uid;
-    userSelectedLayer.value = true;
 };
+
+/**
+ * Finds the result object for a layer uid, or undefined if no result exists
+ * @param uid logical layer uid
+ */
+const findLayerResult = (uid: string): IdentifyResult | undefined => layerResults.value.find(item => item.uid === uid);
 
 /**
  * Load identify result items after all item's load promise has resolved
@@ -98,17 +112,15 @@ const loadPayloadItems = (newPayload: Array<IdentifyResult>): void => {
     // Would like to revist, as this current solution is unintuitive,
     // nobody writing a new layer type is going to have a clue they need
     // to wrap their identify outputs in reactive() due to disrespectful code.
+
     // if no payload, just return
     if (newPayload === undefined) {
         return;
     }
 
-    // track last identify request timestamp and add to payload items. If details items panel does not exist, no new results,
-    // app is in mobile mode, or if there is not enough space available to open the detail items panel,
-    // then disable the greedy identify.
-    const greedyMode = newPayload.length === 0 ? 0 : newPayload[0].requestTime;
-    detailsStore.activeGreedy = greedyMode;
-    detailsStore.slowLoadingFlag = false;
+    // track last identify request timestamp and add to payload items. If no new results,
+    // disable the greedy identify.
+    detailsStore.activeGreedy = newPayload.length === 0 ? 0 : newPayload[0].requestTime;
 
     layerResults.value = newPayload;
 
@@ -116,79 +128,70 @@ const loadPayloadItems = (newPayload: Array<IdentifyResult>): void => {
 };
 
 /**
- * Multiple greedy approach to auto-open identify item panel explained as follows:
- * A new array of promises (loadingResults) is created that resolves for each item when it is done loading and contains non-empty results count, and is rejected otherwise.
- * Case 1 - if no identify panels are open or only the identify summary panel is open:
- *              wait for any of the promises to resolve and open the item screen for the first that does, track this layer ID (also tracked if item screen opened manually)
- *              if no promises resolve, user clicked on empty map point with no data so reset last layer ID to none and close items screen
- * Case 2 - if item panel is already open for a layer:
- *              this layer takes priority so wait for it to resolve first, if there are new results refresh the panel to update
- *              otherwise if there are no results for this previously open layer, follow the same steps as for case 1
+ * Auto-selects which layer to show in the detail section when a new payload of identify results arrive.
+ *
+ * 1. If a layer is already the active layer in the details view, we wait for it to report its findings.
+ *    If it has a result, it remains the active layer.
+ * 2. If no active layer (freshly opened panel or old active layer was deleted), or the active layer had
+ *    no results in 1., we then watch identify results for all candidate layers. First layer to report
+ *    a hit becomes the active layer.
  */
 const autoOpen = (newPayload: Array<IdentifyResult>): void => {
-    // if the item panel is already open for a layer, wait on that layer to resolve first
-    if (userSelectedLayer.value) {
-        const lastIdx = layerResults.value.findIndex((item: IdentifyResult) => item.uid === selectedLayer.value);
+    // if the detail panel is already showing details of a specific layer,
+    // wait on that layer to resolve first
+    if (selectedLayer.value) {
+        const selectedResult = findLayerResult(selectedLayer.value);
 
-        if (lastIdx !== -1) {
-            const lastIdentify = layerResults.value[lastIdx];
-            // wait on last opened layer to see if it resolves with new results
-            lastIdentify.loading.then(() => {
+        if (selectedResult) {
+            // wait on the currently selected layer to see if it resolves with new results
+            selectedResult.loading.then(() => {
                 // new identify request came in while loading old results, exit greedy algo
-                if (lastIdentify.requestTime !== activeGreedy.value) {
+                if (selectedResult.requestTime !== activeGreedy.value) {
                     return;
                 }
 
-                // update items screen with new results for that layer and turn off greedy loading and abort flags
-                if (lastIdentify.items.length > 0) {
+                if (selectedResult.items.length > 0) {
+                    // got a hit. update items screen with new results and turn off greedy loading
                     detailsStore.activeGreedy = 0;
-                    userSelectedLayer.value = false;
                     noResults.value = false;
                 } else {
-                    // otherwise proceed as normal in case 1
+                    // current layer has no hits, fall back to examining all.
                     autoOpenAny(newPayload);
                 }
             });
         } else {
-            // if last opened layer no longer exists proceed with case 1
+            // last opened layer no longer exists, proceed examine all layers
             autoOpenAny(newPayload);
         }
     } else {
-        // if no identify item panel was open or no last layer is tracked, proceed with case 1
+        // panel was freshly opened. show first layer with results
         autoOpenAny(newPayload);
     }
-
-    // after a set time period, if greedy mode is still running for current identify request turn on loading flag
-    setTimeout(() => {
-        if (activeGreedy.value !== 0 && newPayload[0].requestTime === activeGreedy.value) {
-            detailsStore.slowLoadingFlag = true;
-        }
-    }, 500);
 };
 
 /**
- * Helper function for greedy auto-open function, implementation for case 1.
+ * Will watch all the result items. First layer to resolve with a valid result will become
+ * the active layer in the details view.
  */
 const autoOpenAny = (newPayload: Array<IdentifyResult>): void => {
-    const loadingResults = newPayload.map((item: IdentifyResult) =>
+    const loadingResults = newPayload.map(item =>
         item.loading.then(() => (item.items.length > 0 ? Promise.resolve(item) : Promise.reject()))
     );
     const lastTime = newPayload.length === 0 ? 0 : newPayload[0].requestTime;
 
     // wait on any layer promise to resolve first with new identify results
-    // @ts-ignore
     Promise.any(loadingResults)
-        .then((res: IdentifyResult) => {
+        .then(res => {
             // new identify request came in while loading old results, exit greedy algo
             if (res.requestTime !== activeGreedy.value) {
                 return;
             }
 
             // open results item screen and turn off greedy loading and abort flags
-            const idx = layerResults.value.find((item: IdentifyResult) => item.uid === res.uid);
+            const winningResult = findLayerResult(res.uid);
             detailsStore.activeGreedy = 0;
-            if (idx !== undefined) {
-                selectedLayer.value = idx.uid;
+            if (winningResult) {
+                selectedLayer.value = winningResult.uid;
                 noResults.value = false;
             }
         })
@@ -220,15 +223,6 @@ onBeforeMount(() => {
                 immediate: true
             }
         )
-    );
-
-    watchers.value.push(
-        watch(activeGreedy, (newGreedy: Number) => {
-            // watch to turn off greedy loading flag if greedy mode is turned off
-            if (newGreedy === 0) {
-                detailsStore.slowLoadingFlag = false;
-            }
-        })
     );
 });
 
