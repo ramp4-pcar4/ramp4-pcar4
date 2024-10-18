@@ -29,12 +29,7 @@ export class MultiLineString extends BaseGeometry {
     constructor(id: IdDef, line: LineString);
     constructor(id: IdDef, multiPoint: MultiPoint);
     // from arrays of lines that can be interpreted as a set of lines
-    constructor(
-        id: IdDef,
-        listOfListOfCoords: Array<Array<Array<number>>>,
-        sr?: SrDef,
-        raw?: boolean
-    );
+    constructor(id: IdDef, listOfListOfCoords: Array<Array<Array<number>>>, sr?: SrDef, raw?: boolean);
     constructor(id: IdDef, listOfLines: Array<LineString>, sr?: SrDef);
     constructor(id: IdDef, listOfMultiPoints: Array<MultiPoint>, sr?: SrDef);
     constructor(id: IdDef, listOfListOfPoints: Array<Array<Point>>, sr?: SrDef);
@@ -72,31 +67,16 @@ export class MultiLineString extends BaseGeometry {
 
     /** Returns an array of the contained lines formatted as API LineString objects. A new array is returned each time this is called. */
     get lineArray(): Array<LineString> {
-        return this.rawArray.map(
-            (line, i) =>
-                new LineString(this.childIdGenerator(i), line, this.sr, true)
-        );
+        return this.rawArray.map((line, i) => new LineString(this.childIdGenerator(i), line, this.sr, true));
     }
 
     /** Returns a copy of the n-th contained line. */
     getAt(n: number): LineString {
-        return new LineString(
-            this.childIdGenerator(n),
-            this.rawArray[n],
-            this.sr,
-            true
-        );
+        return new LineString(this.childIdGenerator(n), this.rawArray[n], this.sr, true);
     }
 
     /** Will update the n-th contained line with the values of the line parameter. It is assumed the line is in the same spatial reference as the Multipoint */
-    updateAt(
-        line:
-            | PointSet
-            | Array<Array<Point>>
-            | Array<Array<number>>
-            | Array<Array<object>>,
-        n: number
-    ) {
+    updateAt(line: PointSet | Array<Array<Point>> | Array<Array<number>> | Array<Array<object>>, n: number) {
         // TODO probably want some type of "my geometry has updated" event triggering on the multilinestring. if on a map would need to redraw itself.
         this.rawArray[n] = PointSet.parsePointSet(line);
     }
@@ -118,23 +98,13 @@ export class MultiLineString extends BaseGeometry {
         return MultiLineString.arrayDeepCopy(this.rawArray);
     }
 
-    private static arrayDeepCopy(
-        a: Array<Array<Array<number>>>
-    ): Array<Array<Array<number>>> {
+    private static arrayDeepCopy(a: Array<Array<Array<number>>>): Array<Array<Array<number>>> {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
         return a.map(l => l.map(p => p.slice()));
     }
 
-    static fromESRI(
-        esriLine: EsriPolyline,
-        id?: number | string
-    ): MultiLineString {
-        return new MultiLineString(
-            id,
-            esriLine.paths,
-            SpatialReference.fromESRI(esriLine.spatialReference),
-            true
-        );
+    static fromESRI(esriLine: EsriPolyline, id?: number | string): MultiLineString {
+        return new MultiLineString(id, esriLine.paths, SpatialReference.fromESRI(esriLine.spatialReference), true);
     }
 
     toESRI(): EsriPolyline {
@@ -144,10 +114,7 @@ export class MultiLineString extends BaseGeometry {
         });
     }
 
-    static fromGeoJSON(
-        geoJsonMultiLine: GeoJson.MultiLineString,
-        id?: number | string
-    ): MultiLineString {
+    static fromGeoJSON(geoJsonMultiLine: GeoJson.MultiLineString, id?: number | string): MultiLineString {
         return new MultiLineString(
             id,
             geoJsonMultiLine.coordinates,
@@ -157,8 +124,6 @@ export class MultiLineString extends BaseGeometry {
     }
 
     toGeoJSON(): GeoJson.MultiLineString {
-        return <GeoJson.MultiLineString>(
-            this.geoJsonFactory(GeoJsonGeomType.MULTILINESTRING, this.toArray())
-        );
+        return <GeoJson.MultiLineString>this.geoJsonFactory(GeoJsonGeomType.MULTILINESTRING, this.toArray());
     }
 }

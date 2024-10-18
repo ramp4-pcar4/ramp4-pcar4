@@ -3,5 +3,6 @@
     "singleQuote": true,
     "trailingComma": "none",
     "arrowParens": "avoid",
-    "endOfLine": "auto"
+    "endOfLine": "auto",
+    "printWidth": 120
 }

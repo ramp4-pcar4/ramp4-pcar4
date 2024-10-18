@@ -62,11 +62,7 @@ let options = {
     loadDefaultEvents: false
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 rInstance.fixture.addDefaultFixtures(['mapnav']);
 
 window.debugInstance = rInstance;

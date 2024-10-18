@@ -6,8 +6,7 @@ import type { ExportConfig } from '../export/store';
 
 class ExportMapFixture extends FixtureInstance implements ExportSubFixture {
     get config(): any {
-        const fixtureConfig: ExportConfig | undefined =
-            this.$iApi.fixture.get<ExportAPI>('export').config;
+        const fixtureConfig: ExportConfig | undefined = this.$iApi.fixture.get<ExportAPI>('export').config;
         return fixtureConfig?.map;
     }
 
@@ -22,9 +21,7 @@ class ExportMapFixture extends FixtureInstance implements ExportSubFixture {
         const img = new Image();
         img.src = screenshot.dataUrl;
 
-        const esriImage = await new Promise<HTMLImageElement>(
-            resolve => (img.onload = () => resolve(img))
-        );
+        const esriImage = await new Promise<HTMLImageElement>(resolve => (img.onload = () => resolve(img)));
 
         return new fabric.Image(esriImage, options);
     }

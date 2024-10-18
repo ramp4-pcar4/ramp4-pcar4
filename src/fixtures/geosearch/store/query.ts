@@ -18,23 +18,14 @@ export function make(config: IGeosearchConfig, query: string): Query {
         /^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)(\s*[,|;\s]\s*)[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)[*]$/;
     const ntsReg = /^\d{2,3}[A-P]/;
     const fsaReg = /^[ABCEGHJKLMNPRSTVXY]\d[A-Z]/;
-    if (
-        latLngRegDD.test(query) &&
-        !config.disabledSearchTypes.includes('LAT/LNG')
-    ) {
+    if (latLngRegDD.test(query) && !config.disabledSearchTypes.includes('LAT/LNG')) {
         const queryStr = query.slice(0, -1);
         // Lat/Long search in decimal degrees format
         return new LatLongQuery(config, queryStr);
-    } else if (
-        fsaReg.test(query) &&
-        !config.disabledSearchTypes.includes('FSA')
-    ) {
+    } else if (fsaReg.test(query) && !config.disabledSearchTypes.includes('FSA')) {
         // FSA search (postal area code)
         return new FSAQuery(config, query);
-    } else if (
-        ntsReg.test(query) &&
-        !config.disabledSearchTypes.includes('NTS')
-    ) {
+    } else if (ntsReg.test(query) && !config.disabledSearchTypes.includes('NTS')) {
         // NTS search
         return new NTSQuery(config, query.substring(0, 6).toUpperCase());
     } else {
@@ -68,12 +59,7 @@ export class Query {
             });
     }
 
-    private getUrl(
-        useLocate?: boolean,
-        restrict?: number[],
-        lat?: number,
-        lon?: number
-    ): string {
+    private getUrl(useLocate?: boolean, restrict?: number[], lat?: number, lon?: number): string {
         let url = '';
         if (useLocate) {
             // URL for FSA and NFA search
@@ -125,10 +111,7 @@ export class Query {
             xobj.responseType = 'json';
             xobj.onload = () => {
                 if (xobj.status === 200) {
-                    const rawResponse =
-                        typeof xobj.response === 'string'
-                            ? JSON.parse(xobj.response)
-                            : xobj.response;
+                    const rawResponse = typeof xobj.response === 'string' ? JSON.parse(xobj.response) : xobj.response;
                     resolve(rawResponse);
                 } else {
                     reject('Could not load results from remote service.');
@@ -139,15 +122,11 @@ export class Query {
     }
 
     locateByQuery(): Promise<LocateResponseList> {
-        return <Promise<LocateResponseList>>(
-            this.jsonRequest(this.getUrl(true, undefined))
-        );
+        return <Promise<LocateResponseList>>this.jsonRequest(this.getUrl(true, undefined));
     }
 
     nameByLatLon(lat: number, lon: number, restrict?: number[]): any {
-        return (<Promise<IRawNameResult>>(
-            this.jsonRequest(this.getUrl(false, restrict, lat, lon))
-        ))
+        return (<Promise<IRawNameResult>>this.jsonRequest(this.getUrl(false, restrict, lat, lon)))
             .then(r => {
                 return this.normalizeNameItems(r.items);
             })
@@ -174,12 +153,7 @@ export class LatLongQuery extends Query {
 
         // apply buffer to create bbox from point coordinates
         const buff = 0.015;
-        const boundingBox = [
-            coords[1] - buff,
-            coords[0] - buff,
-            coords[1] + buff,
-            coords[0] + buff
-        ];
+        const boundingBox = [coords[1] - buff, coords[0] - buff, coords[1] + buff, coords[0] + buff];
         // prep the lat/long result that needs to be generated along with name based results
         this.latLongResult = {
             name: `${coords[0]},${coords[1]}`,
@@ -237,9 +211,7 @@ export class FSAQuery extends Query {
             .then(locateResponseList => {
                 // query check added since it can be null but will never be in this case (make TS happy)
                 if (locateResponseList.length === 1 && this.query) {
-                    const provList = this.config.provinces.fsaToProvinces(
-                        this.query
-                    );
+                    const provList = this.config.provinces.fsaToProvinces(this.query);
                     return <IFSAResult>{
                         fsa: this.query,
                         code: 'FSA',
@@ -303,10 +275,7 @@ export class NTSQuery extends Query {
 
                         this.featureResults.push(this.unit);
 
-                        this.nameByLatLon(
-                            this.unit.LatLon.lat,
-                            this.unit.LatLon.lon
-                        ).then((r: any) => {
+                        this.nameByLatLon(this.unit.LatLon.lat, this.unit.LatLon.lon).then((r: any) => {
                             this.results = r;
                             resolve(this);
                         });
@@ -373,10 +342,7 @@ export class AddressQuery extends Query {
     }
 
     locateToResult(lrl: LocateResponseList): AddressResultList {
-        if (
-            this.config.categories.length > 0 &&
-            !this.config.categories.includes('ADDR')
-        ) {
+        if (this.config.categories.length > 0 && !this.config.categories.includes('ADDR')) {
             return [];
         }
         const results = lrl

@@ -19,10 +19,7 @@
                     See Gazebo 2
                 </button>
                 <br />
-                <img
-                    src="https://c.tenor.com/RJ3ZG5beDhIAAAAC/napoleon-dynamite-napoleon.gif"
-                    alt="Gazebo1"
-                />
+                <img src="https://c.tenor.com/RJ3ZG5beDhIAAAAC/napoleon-dynamite-napoleon.gif" alt="Gazebo1" />
             </div>
         </template>
     </panel-screen>

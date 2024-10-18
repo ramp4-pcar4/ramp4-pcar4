@@ -58,10 +58,7 @@ let config = {
                         name: 'Lambert Maps',
                         extentSetId: 'EXT_NRCAN_Lambert_3978',
                         lodSetId: 'LOD_NRCAN_Lambert_3978',
-                        thumbnailTileUrls: [
-                            '/tile/8/285/268',
-                            '/tile/8/285/269'
-                        ],
+                        thumbnailTileUrls: ['/tile/8/285/268', '/tile/8/285/269'],
                         hasNorthPole: true
                     },
                     {
@@ -86,8 +83,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseSimple',
@@ -101,8 +97,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/Simple/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseCBME_CBCE_HS_RO_3978',
@@ -117,8 +112,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseCBMT_CBCT_GEOM_3978',
@@ -133,8 +127,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseEsriWorld',
@@ -149,8 +142,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                         attribution: {
                             text: {
                                 disabled: true
@@ -173,8 +165,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseEsriRelief',
@@ -189,14 +180,12 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseEsriStreet',
                         name: 'World Street Map',
-                        description:
-                            'This worldwide street map presents highway-level data for the world.',
+                        description: 'This worldwide street map presents highway-level data for the world.',
                         altText: 'ESWorld Street Map',
                         layers: [
                             {
@@ -205,8 +194,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseEsriTerrain',
@@ -221,8 +209,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseEsriTopo',
@@ -237,8 +224,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseOpenStreetMap',
@@ -253,8 +239,7 @@ let config = {
                         ],
                         thumbnailUrl:
                             'https://www.openstreetmap.org/assets/about/osm-a74d2c94082260032c133b9d206ee2fdd911e5c82bf03daae10393a02d7b4809.png',
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     }
                 ],
                 initialBasemapId: 'baseEsriWorld'
@@ -285,8 +270,7 @@ let config = {
                         children: [
                             {
                                 layerId: 'Happy',
-                                description:
-                                    'Icon render style with SQL queries specified.',
+                                description: 'Icon render style with SQL queries specified.',
                                 symbologyStack: [
                                     {
                                         image: 'https://i.imgur.com/uAo3o6l.jpg',
@@ -307,15 +291,13 @@ let config = {
                             },
                             {
                                 layerId: 'EthyleneGlycol',
-                                description:
-                                    'Image render style with SQL queries specified.',
+                                description: 'Image render style with SQL queries specified.',
                                 symbologyRenderStyle: 'images',
                                 symbologyStack: [
                                     {
                                         image: 'https://cdn.pixabay.com/photo/2013/08/06/19/13/plane-170272_960_720.jpg',
                                         text: 'Airports',
-                                        sqlQuery:
-                                            "Sector = 'Airports and Services to Airports'"
+                                        sqlQuery: "Sector = 'Airports and Services to Airports'"
                                     },
                                     {
                                         image: 'https://cdn.pixabay.com/photo/2013/11/24/11/10/lab-217043_960_720.jpg',
@@ -325,14 +307,12 @@ let config = {
                                     {
                                         image: 'https://cdn.pixabay.com/photo/2018/08/24/23/33/oil-rig-3629119__340.jpg',
                                         text: 'Oil and Gas',
-                                        sqlQuery:
-                                            "Sector = 'Oil and Gas (Conventional and Non-Conventional)'"
+                                        sqlQuery: "Sector = 'Oil and Gas (Conventional and Non-Conventional)'"
                                     },
                                     {
                                         image: 'https://cdn.pixabay.com/photo/2016/11/21/15/42/disposal-1846033__340.jpg',
                                         text: 'Waste',
-                                        sqlQuery:
-                                            "Sector = 'Waste Treatment and Disposal'"
+                                        sqlQuery: "Sector = 'Waste Treatment and Disposal'"
                                     },
                                     {
                                         image: 'https://cdn.pixabay.com/photo/2018/03/23/22/11/knowledge-3255140__340.jpg',
@@ -343,8 +323,7 @@ let config = {
                             },
                             {
                                 layerId: 'WFSLayer',
-                                description:
-                                    'Image render style. Only pictures and text.',
+                                description: 'Image render style. Only pictures and text.',
                                 symbologyRenderStyle: 'images',
                                 symbologyStack: [
                                     {
@@ -365,24 +344,10 @@ let config = {
                     }
                 },
                 appbar: {
-                    items: [
-                        'legend',
-                        'geosearch',
-                        'basemap',
-                        'export',
-                        'layer-reorder'
-                    ]
+                    items: ['legend', 'geosearch', 'basemap', 'export', 'layer-reorder']
                 },
                 mapnav: {
-                    items: [
-                        'fullscreen',
-                        'geolocator',
-                        'help',
-                        'home',
-                        'basemap',
-                        'legend',
-                        'geosearch'
-                    ]
+                    items: ['fullscreen', 'geolocator', 'help', 'home', 'basemap', 'legend', 'geosearch']
                 },
                 export: {
                     title: {
@@ -412,11 +377,7 @@ let options = {
     startRequired: false
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 
 // add export fixtures
 rInstance.fixture.add('export');

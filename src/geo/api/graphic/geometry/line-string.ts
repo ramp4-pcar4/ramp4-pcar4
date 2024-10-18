@@ -1,11 +1,4 @@
-import {
-    GeoJsonGeomType,
-    GeometryType,
-    MultiPoint,
-    Point,
-    PointSet,
-    SpatialReference
-} from '@/geo/api';
+import { GeoJsonGeomType, GeometryType, MultiPoint, Point, PointSet, SpatialReference } from '@/geo/api';
 
 import type { SrDef, IdDef } from '@/geo/api';
 import { EsriPolyline } from '@/geo/esri';
@@ -24,12 +17,7 @@ export class LineString extends PointSet {
     constructor(id: IdDef, line: LineString);
     constructor(id: IdDef, multiPoint: MultiPoint);
     // from arrays of verticies that can be interpreted as a line
-    constructor(
-        id: IdDef,
-        listOfCoords: Array<Array<number>>,
-        sr?: SrDef,
-        raw?: boolean
-    );
+    constructor(id: IdDef, listOfCoords: Array<Array<number>>, sr?: SrDef, raw?: boolean);
     constructor(id: IdDef, listOfPoints: Array<Point>, sr?: SrDef);
     constructor(id: IdDef, listOfXY: Array<object>, sr?: SrDef);
     constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
@@ -47,12 +35,7 @@ export class LineString extends PointSet {
 
     static fromESRI(esriLine: EsriPolyline, id?: number | string): LineString {
         // TODO warn/error if mulitline is provided?
-        return new LineString(
-            id,
-            esriLine.paths[0],
-            SpatialReference.fromESRI(esriLine.spatialReference),
-            true
-        );
+        return new LineString(id, esriLine.paths[0], SpatialReference.fromESRI(esriLine.spatialReference), true);
     }
 
     toESRI(): EsriPolyline {
@@ -62,21 +45,11 @@ export class LineString extends PointSet {
         });
     }
 
-    static fromGeoJSON(
-        geoJsonLine: GeoJson.LineString,
-        id?: number | string
-    ): LineString {
-        return new LineString(
-            id,
-            geoJsonLine.coordinates,
-            SpatialReference.fromGeoJSON(geoJsonLine.crs),
-            true
-        );
+    static fromGeoJSON(geoJsonLine: GeoJson.LineString, id?: number | string): LineString {
+        return new LineString(id, geoJsonLine.coordinates, SpatialReference.fromGeoJSON(geoJsonLine.crs), true);
     }
 
     toGeoJSON(): GeoJson.LineString {
-        return <GeoJson.LineString>(
-            this.geoJsonFactory(GeoJsonGeomType.LINESTRING, this.toArray())
-        );
+        return <GeoJson.LineString>this.geoJsonFactory(GeoJsonGeomType.LINESTRING, this.toArray());
     }
 }

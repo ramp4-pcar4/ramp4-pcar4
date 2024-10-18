@@ -44,8 +44,7 @@ const props = defineProps({
     }
 });
 
-const onClick = () =>
-    iApi?.event.emit(GlobalEvents.APPBAR_BUTTON_CLICK, props.id);
+const onClick = () => iApi?.event.emit(GlobalEvents.APPBAR_BUTTON_CLICK, props.id);
 </script>
 
 <style lang="scss" scoped>

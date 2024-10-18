@@ -172,16 +172,10 @@ let options = {
     loadDefaultEvents: true
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
-rInstance.fixture
-    .addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details'])
-    .then(() => {
-        rInstance.panel.open('legend');
-    });
+const rInstance = createInstance(document.getElementById('app'), config, options);
+rInstance.fixture.addDefaultFixtures(['mapnav', 'legend', 'appbar', 'grid', 'details']).then(() => {
+    rInstance.panel.open('legend');
+});
 
 rInstance.$element.component('Details-Default-Template-Esri', {
     props: ['identifyData', 'fields'],
@@ -210,10 +204,7 @@ rInstance.$element.component('Details-Default-Template-Esri', {
             });
             Object.keys(helper).map(key => {
                 helper[key] = {
-                    value:
-                        typeof helper[key] === 'number'
-                            ? this.$iApi.$i18n.n(helper[key], 'number')
-                            : helper[key],
+                    value: typeof helper[key] === 'number' ? this.$iApi.$i18n.n(helper[key], 'number') : helper[key],
                     alias: aliases[key] || key
                 };
             });

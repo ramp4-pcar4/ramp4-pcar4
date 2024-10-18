@@ -52,10 +52,7 @@ export class ReactiveIdentifyFactory {
      * @param {any} payload the data for the item
      * @returns {IdentifyItem} a loaded identify item
      */
-    static makeRawItem(
-        format: IdentifyResultFormat,
-        payload: any
-    ): IdentifyItem {
+    static makeRawItem(format: IdentifyResultFormat, payload: any): IdentifyItem {
         const doneThanksPromise = Promise.resolve();
         const vanillaItem: IdentifyItem = {
             format,

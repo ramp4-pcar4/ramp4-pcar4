@@ -4,7 +4,7 @@ export type DetailsItemSet = { [name: string]: DetailsItemInstance };
 
 /**
  * Types of requests for the details panel. Currently, consists of requests
- * from the toggle events, such as the grid (details for a single item) and 
+ * from the toggle events, such as the grid (details for a single item) and
  * requests from a map click (details for all items at a point).
  */
 export type DetailsRequestOrigin = 'toggleEvent' | 'identify';
@@ -88,15 +88,8 @@ export class DetailsItemInstance implements DetailsConfigItem {
 
     constructor(value: string | DetailsConfigItem) {
         const params = {
-            ...(typeof value === 'string'
-                ? { id: value, template: '', name: '' }
-                : value)
+            ...(typeof value === 'string' ? { id: value, template: '', name: '' } : value)
         };
-        ({
-            template: this.template,
-            id: this.id,
-            name: this.name,
-            fields: this.fields
-        } = params);
+        ({ template: this.template, id: this.id, name: this.name, fields: this.fields } = params);
     }
 }

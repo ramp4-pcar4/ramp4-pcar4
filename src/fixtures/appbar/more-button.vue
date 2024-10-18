@@ -11,11 +11,7 @@
             v-tippy="{ placement: 'right-end' }"
             ref="dropdownTrigger"
         >
-            <svg
-                class="fill-current w-24 h-24 m-auto"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-            >
+            <svg class="fill-current w-24 h-24 m-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <path d="M0 0h24v24H0z" fill="none" />
                 <path
                     d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
@@ -131,36 +127,32 @@ const popperSetUp = () => {
 
     if (dropdownTrigger.value && dropdown.value) {
         numRenders.value++;
-        createPopper(
-            dropdownTrigger.value as Element,
-            dropdown.value as HTMLElement,
-            {
-                placement: (props.position || 'right-end') as Placement,
-                modifiers: [
-                    {
-                        ...maxSize,
-                        options: {
-                            boundary: innerShell
-                        }
-                    },
-                    applyMaxSize as Modifier<'applyMaxsize', {}>,
-                    {
-                        name: 'offset',
-                        options: {
-                            offset: [0, 5]
-                        }
-                    },
-                    {
-                        name: 'preventOverflow',
-                        enabled: true,
-                        options: {
-                            boundary: innerShell
-                        }
+        createPopper(dropdownTrigger.value as Element, dropdown.value as HTMLElement, {
+            placement: (props.position || 'right-end') as Placement,
+            modifiers: [
+                {
+                    ...maxSize,
+                    options: {
+                        boundary: innerShell
                     }
-                ],
-                ...props.popperOptions
-            }
-        );
+                },
+                applyMaxSize as Modifier<'applyMaxsize', {}>,
+                {
+                    name: 'offset',
+                    options: {
+                        offset: [0, 5]
+                    }
+                },
+                {
+                    name: 'preventOverflow',
+                    enabled: true,
+                    options: {
+                        boundary: innerShell
+                    }
+                }
+            ],
+            ...props.popperOptions
+        });
     }
 
     // if this is the first time the popper is being rendered, re-render it
@@ -171,10 +163,7 @@ onMounted(() => {
     window.addEventListener(
         'click',
         event => {
-            if (
-                event.target instanceof HTMLElement &&
-                !el.value?.contains(event.target)
-            ) {
+            if (event.target instanceof HTMLElement && !el.value?.contains(event.target)) {
                 open.value = false;
             }
         },
@@ -186,10 +175,7 @@ onBeforeUnmount(() => {
     window.removeEventListener(
         'click',
         event => {
-            if (
-                event.target instanceof HTMLElement &&
-                !el.value?.contains(event.target)
-            ) {
+            if (event.target instanceof HTMLElement && !el.value?.contains(event.target)) {
                 open.value = false;
             }
         },

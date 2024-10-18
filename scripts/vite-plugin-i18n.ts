@@ -20,11 +20,7 @@ export default function vueI18nPlugin(): Plugin {
 
             const valueField = 'Value';
             const res: CsvRows = dsvFormat(',').parse(
-                src
-                    .replace('export default "', '')
-                    .replace(/"$/, '')
-                    .replace(/\\n/g, '\n')
-                    .replace(/\\"/g, '"')
+                src.replace('export default "', '').replace(/"$/, '').replace(/\\n/g, '\n').replace(/\\"/g, '"')
             );
             // pick columns that have the value suffixes (they contain actual text);
             const locales = res.columns

@@ -35,17 +35,10 @@ export class LayerSource extends APIScope {
      * @param {ArrayBuffer} [fileData] raw file data buffer
      * @returns {Promise<LayerInfo | undefined>} LayerInfo object
      */
-    async fetchFileInfo(
-        url: string,
-        fileType: LayerType,
-        fileData?: ArrayBuffer
-    ): Promise<LayerInfo | undefined> {
+    async fetchFileInfo(url: string, fileType: LayerType, fileData?: ArrayBuffer): Promise<LayerInfo | undefined> {
         if (!fileData) {
             // if given a url, load data so we can get fields
-            fileData = await this.$iApi.geo.layer.files.fetchFileData(
-                url,
-                fileType
-            );
+            fileData = await this.$iApi.geo.layer.files.fetchFileData(url, fileType);
         }
 
         switch (fileType) {
@@ -56,20 +49,13 @@ export class LayerSource extends APIScope {
             case LayerType.CSV:
                 return this.getCsvInfo(url, fileData!);
             default:
-                console.error(
-                    `Unsupported file type passed to fetchFileInfo - '${fileType}'`
-                );
+                console.error(`Unsupported file type passed to fetchFileInfo - '${fileType}'`);
         }
     }
 
-    async getGeojsonInfo(
-        url: string,
-        fileData: ArrayBuffer | object
-    ): Promise<LayerInfo> {
+    async getGeojsonInfo(url: string, fileData: ArrayBuffer | object): Promise<LayerInfo> {
         if (fileData instanceof ArrayBuffer) {
-            fileData = JSON.parse(
-                new TextDecoder('utf-8').decode(new Uint8Array(fileData))
-            );
+            fileData = JSON.parse(new TextDecoder('utf-8').decode(new Uint8Array(fileData)));
         }
 
         const config = {
@@ -90,14 +76,9 @@ export class LayerSource extends APIScope {
         };
     }
 
-    async getCsvInfo(
-        url: string,
-        fileData: ArrayBuffer | string
-    ): Promise<LayerInfo> {
+    async getCsvInfo(url: string, fileData: ArrayBuffer | string): Promise<LayerInfo> {
         if (fileData instanceof ArrayBuffer) {
-            fileData = new TextDecoder('utf-8').decode(
-                new Uint8Array(fileData)
-            );
+            fileData = new TextDecoder('utf-8').decode(new Uint8Array(fileData));
         }
         const config = {
             id: `csv#${++this.layerCount}`,
@@ -110,29 +91,14 @@ export class LayerSource extends APIScope {
 
         return {
             config,
-            fields: [{ name: 'OBJECTID', type: 'oid' }].concat(
-                this.$iApi.geo.layer.files.extractCsvFields(fileData)
-            ),
-            latLonFields:
-                this.$iApi.geo.layer.files.filterCsvLatLonFields(fileData),
-            configOptions: [
-                'name',
-                'nameField',
-                'tooltipField',
-                'latField',
-                'longField',
-                'colour'
-            ]
+            fields: [{ name: 'OBJECTID', type: 'oid' }].concat(this.$iApi.geo.layer.files.extractCsvFields(fileData)),
+            latLonFields: this.$iApi.geo.layer.files.filterCsvLatLonFields(fileData),
+            configOptions: ['name', 'nameField', 'tooltipField', 'latField', 'longField', 'colour']
         };
     }
 
-    async getShapfileInfo(
-        url: string,
-        fileData: ArrayBuffer
-    ): Promise<LayerInfo> {
-        const jsonData = await this.$iApi.geo.layer.files.shapefileToGeoJson(
-            fileData
-        );
+    async getShapfileInfo(url: string, fileData: ArrayBuffer): Promise<LayerInfo> {
+        const jsonData = await this.$iApi.geo.layer.files.shapefileToGeoJson(fileData);
 
         return this.getGeojsonInfo(url, jsonData);
     }
@@ -144,11 +110,7 @@ export class LayerSource extends APIScope {
      * @param {string} serviceType type of layer
      * @returns {Promise<LayerInfo | undefined>} LayerInfo object
      */
-    async fetchServiceInfo(
-        url: string,
-        serviceType: string,
-        nested: boolean
-    ): Promise<LayerInfo | undefined> {
+    async fetchServiceInfo(url: string, serviceType: string, nested: boolean): Promise<LayerInfo | undefined> {
         switch (serviceType) {
             case LayerType.FEATURE:
                 return this.getFeatureInfo(url);
@@ -236,11 +198,7 @@ export class LayerSource extends APIScope {
         const opts: Array<SublayerInfo> = [];
 
         const parentIds = new Set(
-            layers
-                .filter(
-                    layer => layer.subLayerIds && layer.subLayerIds.length > 0
-                )
-                .map(layer => layer.id)
+            layers.filter(layer => layer.subLayerIds && layer.subLayerIds.length > 0).map(layer => layer.id)
         );
 
         for (const layer of layers) {
@@ -317,10 +275,7 @@ export class LayerSource extends APIScope {
             parseInt(limit) || 1000
         );
 
-        return this.getGeojsonInfo(
-            url.match(/\/([^/]+)\/items/)?.[1] || 'Layer',
-            wfsJson
-        );
+        return this.getGeojsonInfo(url.match(/\/([^/]+)\/items/)?.[1] || 'Layer', wfsJson);
     }
 
     /**
@@ -330,9 +285,7 @@ export class LayerSource extends APIScope {
      * @returns {Promise<LayerInfo>} data configuration
      */
     async getWmsInfo(url: string, nested: boolean): Promise<LayerInfo> {
-        const capabilities = await this.$iApi.geo.layer.ogc.parseCapabilities(
-            url
-        );
+        const capabilities = await this.$iApi.geo.layer.ogc.parseCapabilities(url);
 
         const config = {
             id: `${LayerType.WMS}#${++this.layerCount}`,
@@ -367,10 +320,7 @@ export class LayerSource extends APIScope {
                 return {
                     id: `${layer.name}#${++this.sublayerCount}`,
                     label: layer.title,
-                    children:
-                        layer.layers.length > 0
-                            ? this.mapWmsLayerList(layer.layers, nested)
-                            : undefined
+                    children: layer.layers.length > 0 ? this.mapWmsLayerList(layer.layers, nested) : undefined
                 };
             });
         } else {

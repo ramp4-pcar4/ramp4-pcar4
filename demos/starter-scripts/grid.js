@@ -114,22 +114,10 @@ let options = {
     loadDefaultEvents: true
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 
-rInstance.fixture
-    .addDefaultFixtures([
-        'legend',
-        'appbar',
-        'grid',
-        'layer-reorder',
-        'details'
-    ])
-    .then(() => {
-        rInstance.panel.open('legend');
-    });
+rInstance.fixture.addDefaultFixtures(['legend', 'appbar', 'grid', 'layer-reorder', 'details']).then(() => {
+    rInstance.panel.open('legend');
+});
 
 window.debugInstance = rInstance;

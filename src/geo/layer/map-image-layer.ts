@@ -57,9 +57,7 @@ export class MapImageLayer extends MapLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        this.esriLayer = markRaw(
-            new EsriMapImageLayer(this.makeEsriLayerConfig(this.origRampConfig))
-        );
+        this.esriLayer = markRaw(new EsriMapImageLayer(this.makeEsriLayerConfig(this.origRampConfig)));
 
         await super.onInitiate();
     }
@@ -70,13 +68,10 @@ export class MapImageLayer extends MapLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(
-        rampLayerConfig: RampLayerConfig
-    ): __esri.MapImageLayerProperties {
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.MapImageLayerProperties {
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
-        const esriConfig: __esri.MapImageLayerProperties =
-            super.makeEsriLayerConfig(rampLayerConfig);
+        const esriConfig: __esri.MapImageLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         // if we have a definition at load, apply it here to avoid cancellation errors on
 
@@ -148,16 +143,11 @@ export class MapImageLayer extends MapLayer {
                 })
             );
 
-            throw new Error(
-                'Service does not support Map Image Layer, Map Export is not enabled'
-            );
+            throw new Error('Service does not support Map Image Layer, Map Export is not enabled');
         }
-        this.isDynamic =
-            this.esriLayer!.capabilities.exportMap.supportsDynamicLayers;
+        this.isDynamic = this.esriLayer!.capabilities.exportMap.supportsDynamicLayers;
 
-        this.extent =
-            this.extent ??
-            Extent.fromESRI(this.esriLayer!.fullExtent, this.id + '_extent');
+        this.extent = this.extent ?? Extent.fromESRI(this.esriLayer!.fullExtent, this.id + '_extent');
 
         const findSublayer = (targetIndex: number): __esri.Sublayer => {
             const finder = this.esriLayer?.allSublayers.find(s => {
@@ -174,12 +164,12 @@ export class MapImageLayer extends MapLayer {
             [key: number]: RampLayerMapImageSublayerConfig;
         } = {};
 
-        (<Array<RampLayerMapImageSublayerConfig>>(
-            this.origRampConfig.sublayers
-        )).forEach((sublayer: RampLayerMapImageSublayerConfig) => {
-            // TODO the || 0 is there to handle missing index. probably will never happen. add an error check?
-            subConfigs[sublayer.index || 0] = sublayer;
-        });
+        (<Array<RampLayerMapImageSublayerConfig>>this.origRampConfig.sublayers).forEach(
+            (sublayer: RampLayerMapImageSublayerConfig) => {
+                // TODO the || 0 is there to handle missing index. probably will never happen. add an error check?
+                subConfigs[sublayer.index || 0] = sublayer;
+            }
+        );
 
         // shortcut var to track all leafs that need attention
         // in the loading process
@@ -189,10 +179,7 @@ export class MapImageLayer extends MapLayer {
         // it will generate MIL Sublayer objects for all leafs under the sublayer
         // we also generate a tree structure of our layer that is in a format
         // that makes the client happy
-        const processSublayer = (
-            subLayer: __esri.Sublayer,
-            parentTreeNode: TreeNode
-        ): void => {
+        const processSublayer = (subLayer: __esri.Sublayer, parentTreeNode: TreeNode): void => {
             const sid: number = subLayer.id;
             const subC = subConfigs[sid];
 
@@ -238,8 +225,7 @@ export class MapImageLayer extends MapLayer {
                             controls: subC?.controls,
                             disabledControls: subC?.disabledControls,
                             initialFilteredQuery: subC?.initialFilteredQuery,
-                            permanentFilteredQuery:
-                                subC?.permanentFilteredQuery,
+                            permanentFilteredQuery: subC?.permanentFilteredQuery,
                             labels: subC?.labels
                         },
                         this.$iApi,
@@ -258,48 +244,31 @@ export class MapImageLayer extends MapLayer {
                 leafsToInit.push(_sublayer);
 
                 // check if parent's children have already been initialized
-                if (
-                    !parentTreeNode.children
-                        .map(node => node.layerIdx)
-                        .includes(sid)
-                ) {
-                    const treeLeaf = new TreeNode(
-                        sid,
-                        _sublayer.uid,
-                        (_sublayer as MapLayer).name,
-                        false
-                    );
+                if (!parentTreeNode.children.map(node => node.layerIdx).includes(sid)) {
+                    const treeLeaf = new TreeNode(sid, _sublayer.uid, (_sublayer as MapLayer).name, false);
                     parentTreeNode.children.push(treeLeaf);
                 }
                 _sublayer.esriWatches.push(
                     subLayer.watch('visible', () => {
-                        this.$iApi.event.emit(
-                            GlobalEvents.LAYER_VISIBILITYCHANGE,
-                            {
-                                visibility: _sublayer.visibility,
-                                layer: _sublayer
-                            }
-                        );
+                        this.$iApi.event.emit(GlobalEvents.LAYER_VISIBILITYCHANGE, {
+                            visibility: _sublayer.visibility,
+                            layer: _sublayer
+                        });
                         (_sublayer.parentLayer as MapLayer) // the parent of a MapImageSublayer must be a MapLayer
                             ?.checkVisibility();
                     }),
                     subLayer.watch('opacity', (newval: number) => {
-                        this.$iApi.event.emit(
-                            GlobalEvents.LAYER_OPACITYCHANGE,
-                            {
-                                opacity: newval,
-                                layer: _sublayer
-                            }
-                        );
+                        this.$iApi.event.emit(GlobalEvents.LAYER_OPACITYCHANGE, {
+                            opacity: newval,
+                            layer: _sublayer
+                        });
                     })
                 );
             }
         };
 
         // process the child layers our config is insested in, and all their children.
-        (<Array<RampLayerMapImageSublayerConfig>>(
-            this.origRampConfig.sublayers
-        )).forEach(sublayer => {
+        (<Array<RampLayerMapImageSublayerConfig>>this.origRampConfig.sublayers).forEach(sublayer => {
             if (!sublayer.cosmetic) {
                 const rootSub = findSublayer(sublayer.index || 0);
                 processSublayer(rootSub, this.layerTree);
@@ -328,19 +297,12 @@ export class MapImageLayer extends MapLayer {
             // setting custom renderer here (if one is provided)
             // this code applies esri renderer. loadLayerMetadata will
             // generate the RAMP wrapper on the layer.
-            const hasCustRed =
-                miSL.esriSubLayer && config?.customRenderer?.type;
+            const hasCustRed = miSL.esriSubLayer && config?.customRenderer?.type;
             if (hasCustRed) {
-                miSL.esriSubLayer!.renderer = EsriRendererFromJson(
-                    config.customRenderer
-                );
+                miSL.esriSubLayer!.renderer = EsriRendererFromJson(config.customRenderer);
             }
 
-            await miSL.loadLayerMetadata(
-                hasCustRed
-                    ? { customRenderer: miSL.esriSubLayer?.renderer }
-                    : {}
-            );
+            await miSL.loadLayerMetadata(hasCustRed ? { customRenderer: miSL.esriSubLayer?.renderer } : {});
 
             if (startTime < this.lastCancel) {
                 // cancelled, kickout.
@@ -360,19 +322,13 @@ export class MapImageLayer extends MapLayer {
                     ? false
                     : (subC.state?.visibility ??
                       (this.origState.visibility
-                          ? (miSL._serverVisibility ??
-                            this.origState.visibility)
-                          : (this.origState.visibility ??
-                            miSL._serverVisibility)) ??
+                          ? (miSL._serverVisibility ?? this.origState.visibility)
+                          : (this.origState.visibility ?? miSL._serverVisibility)) ??
                       true);
-                miSL.opacity =
-                    subC.state?.opacity ?? this.origState.opacity ?? 1;
+                miSL.opacity = subC.state?.opacity ?? this.origState.opacity ?? 1;
                 miSL.nameField = subC.nameField || miSL.nameField || '';
 
-                this.$iApi.geo.attributes.applyFieldMetadata(
-                    miSL,
-                    subC.fieldMetadata
-                );
+                this.$iApi.geo.attributes.applyFieldMetadata(miSL, subC.fieldMetadata);
 
                 if (!miSL.canModifyLayer) {
                     this.$iApi.notify.show(
@@ -416,10 +372,7 @@ export class MapImageLayer extends MapLayer {
         // any sublayers lurking in the ESRI layer that are not in our set of sublayers,
         // we need to deal with.
         this.esriLayer!.allSublayers.forEach(s => {
-            if (
-                !s.sublayers &&
-                !leafsToInit.find(sublayer => sublayer.layerIdx === s.id)
-            ) {
+            if (!s.sublayers && !leafsToInit.find(sublayer => sublayer.layerIdx === s.id)) {
                 // this sublayer is not a group, and doesn't exist in our initialization array.
                 // make sure it doesn't appear on the map
 
@@ -442,9 +395,7 @@ export class MapImageLayer extends MapLayer {
     updateLayerState(newState: LayerState, userCancel: boolean = false): void {
         // force any sublayers to also update their state and raise events
         super.updateLayerState(newState, userCancel);
-        this.sublayers.forEach(sublayer =>
-            sublayer.updateLayerState(newState, userCancel)
-        );
+        this.sublayers.forEach(sublayer => sublayer.updateLayerState(newState, userCancel));
     }
 
     updateDrawState(newState: DrawState): void {
@@ -472,29 +423,23 @@ export class MapImageLayer extends MapLayer {
 
         // change any sublayer ids that are server indices to sublayer uids.
         if (options.sublayerIds) {
-            options.sublayerIds = options.sublayerIds.map(
-                (id: number | string) => {
-                    if (typeof id === 'number') {
-                        return <string>this.layerTree?.findChildByIdx(id)?.uid;
-                    }
-                    return id;
+            options.sublayerIds = options.sublayerIds.map((id: number | string) => {
+                if (typeof id === 'number') {
+                    return <string>this.layerTree?.findChildByIdx(id)?.uid;
                 }
-            );
+                return id;
+            });
         }
 
         const activeSublayers: Array<MapImageSublayer> = options.sublayerIds
-            ? (<Array<MapImageSublayer>>this._sublayers).filter(
-                  (sublayer: MapImageSublayer) => {
-                      // query for only the given sublayers
-                      return options.sublayerIds?.includes(sublayer.uid);
-                  }
-              )
-            : (<Array<MapImageSublayer>>this._sublayers).filter(
-                  (sublayer: MapImageSublayer) => {
-                      // query for visible, identifiable, on-scale sublayers
-                      return sublayer.canIdentify();
-                  }
-              );
+            ? (<Array<MapImageSublayer>>this._sublayers).filter((sublayer: MapImageSublayer) => {
+                  // query for only the given sublayers
+                  return options.sublayerIds?.includes(sublayer.uid);
+              })
+            : (<Array<MapImageSublayer>>this._sublayers).filter((sublayer: MapImageSublayer) => {
+                  // query for visible, identifiable, on-scale sublayers
+                  return sublayer.canIdentify();
+              });
 
         // early kickout check. all sublayers are one of: not visible; not identifiable; off scale; a raster layer
         if (activeSublayers.length === 0) {
@@ -506,10 +451,7 @@ export class MapImageLayer extends MapLayer {
 
         let pointBuffer: Extent;
         if (options.geometry.type === GeometryType.POINT) {
-            pointBuffer = this.$iApi.geo.query.makeClickBuffer(
-                <Point>options.geometry,
-                options.tolerance
-            );
+            pointBuffer = this.$iApi.geo.query.makeClickBuffer(<Point>options.geometry, options.tolerance);
         }
 
         // loop over active sublayers. call query on each and generate an IdentifyItem to track it
@@ -544,12 +486,7 @@ export class MapImageLayer extends MapLayer {
                 .then(results => {
                     results.forEach(hitOid => {
                         // push, incase something was bound to the array
-                        result.items.push(
-                            ReactiveIdentifyFactory.makeOidItem(
-                                hitOid,
-                                sublayer
-                            )
-                        );
+                        result.items.push(ReactiveIdentifyFactory.makeOidItem(hitOid, sublayer));
                     });
 
                     // Resolve the loading promise, set the flag

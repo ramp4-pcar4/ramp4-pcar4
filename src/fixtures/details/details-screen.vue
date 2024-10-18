@@ -22,18 +22,8 @@
 
                 <!-- Main Details Panel -->
                 <div class="detailsContentSection overflow-y-auto h-full">
-                    <ResultList
-                        :uid="selectedLayer"
-                        :results="layerResults"
-                        v-if="!noResults"
-                    ></ResultList>
-                    <div
-                        :class="[
-                            'text-center',
-                            { 'ml-42': layerResults.length > 1 }
-                        ]"
-                        v-else
-                    >
+                    <ResultList :uid="selectedLayer" :results="layerResults" v-if="!noResults"></ResultList>
+                    <div :class="['text-center', { 'ml-42': layerResults.length > 1 }]" v-else>
                         {{
                             layerResults.length >= 1
                                 ? t('details.layers.results.empty')
@@ -47,14 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-    computed,
-    onBeforeMount,
-    onBeforeUnmount,
-    ref,
-    inject,
-    watch
-} from 'vue';
+import { computed, onBeforeMount, onBeforeUnmount, ref, inject, watch } from 'vue';
 
 import SymbologyList from './components/symbology-list.vue';
 import ResultList from './components/result-list.vue';
@@ -79,9 +62,7 @@ const userSelectedLayer = ref<boolean>(false);
 
 const activeGreedy = computed<number>(() => detailsStore.activeGreedy);
 const payload = computed<IdentifyResult[]>(() => detailsStore.payload);
-const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(
-    () => detailsStore.properties
-);
+const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(() => detailsStore.properties);
 
 defineProps({
     panel: {
@@ -147,9 +128,7 @@ const loadPayloadItems = (newPayload: Array<IdentifyResult>): void => {
 const autoOpen = (newPayload: Array<IdentifyResult>): void => {
     // if the item panel is already open for a layer, wait on that layer to resolve first
     if (userSelectedLayer.value) {
-        const lastIdx = layerResults.value.findIndex(
-            (item: IdentifyResult) => item.uid === selectedLayer.value
-        );
+        const lastIdx = layerResults.value.findIndex((item: IdentifyResult) => item.uid === selectedLayer.value);
 
         if (lastIdx !== -1) {
             const lastIdentify = layerResults.value[lastIdx];
@@ -181,10 +160,7 @@ const autoOpen = (newPayload: Array<IdentifyResult>): void => {
 
     // after a set time period, if greedy mode is still running for current identify request turn on loading flag
     setTimeout(() => {
-        if (
-            activeGreedy.value !== 0 &&
-            newPayload[0].requestTime === activeGreedy.value
-        ) {
+        if (activeGreedy.value !== 0 && newPayload[0].requestTime === activeGreedy.value) {
             detailsStore.slowLoadingFlag = true;
         }
     }, 500);
@@ -195,9 +171,7 @@ const autoOpen = (newPayload: Array<IdentifyResult>): void => {
  */
 const autoOpenAny = (newPayload: Array<IdentifyResult>): void => {
     const loadingResults = newPayload.map((item: IdentifyResult) =>
-        item.loading.then(() =>
-            item.items.length > 0 ? Promise.resolve(item) : Promise.reject()
-        )
+        item.loading.then(() => (item.items.length > 0 ? Promise.resolve(item) : Promise.reject()))
     );
     const lastTime = newPayload.length === 0 ? 0 : newPayload[0].requestTime;
 
@@ -211,9 +185,7 @@ const autoOpenAny = (newPayload: Array<IdentifyResult>): void => {
             }
 
             // open results item screen and turn off greedy loading and abort flags
-            const idx = layerResults.value.find(
-                (item: IdentifyResult) => item.uid === res.uid
-            );
+            const idx = layerResults.value.find((item: IdentifyResult) => item.uid === res.uid);
             detailsStore.activeGreedy = 0;
             if (idx !== undefined) {
                 selectedLayer.value = idx.uid;

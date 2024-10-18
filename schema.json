@@ -349,12 +349,7 @@
             "properties": {
                 "headerControls": {
                     "$ref": "legendHeaderControls",
-                    "default": [
-                        "wizard",
-                        "layerReorder",
-                        "groupToggle",
-                        "visibilityToggle"
-                    ]
+                    "default": ["wizard", "layerReorder", "groupToggle", "visibilityToggle"]
                 },
                 "panelWidth": {
                     "$ref": "#/$defs/panelWidth"
@@ -546,12 +541,7 @@
             "description": "All possible controls to show in the legend header.",
             "items": {
                 "type": "string",
-                "enum": [
-                    "groupToggle",
-                    "layerReorder",
-                    "visibilityToggle",
-                    "wizard"
-                ]
+                "enum": ["groupToggle", "layerReorder", "visibilityToggle", "wizard"]
             },
             "uniqueItems": true
         },
@@ -624,25 +614,11 @@
                 },
                 "items": {
                     "type": "array",
-                    "default": [
-                        "fullscreen",
-                        "help",
-                        "home",
-                        "geolocator",
-                        "basemap"
-                    ],
+                    "default": ["fullscreen", "help", "home", "geolocator", "basemap"],
                     "description": "Map navigation buttons displayed on mapnav. These will be displayed in addition to the zoom buttons, which are always visible.",
                     "items": {
                         "type": "string",
-                        "enum": [
-                            "geolocator",
-                            "home",
-                            "basemap",
-                            "help",
-                            "fullscreen",
-                            "geosearch",
-                            "legend"
-                        ]
+                        "enum": ["geolocator", "home", "basemap", "help", "fullscreen", "geosearch", "legend"]
                     },
                     "uniqueItems": true
                 }
@@ -926,15 +902,7 @@
                 },
                 "controls": {
                     "$ref": "#/$defs/layerControls",
-                    "default": [
-                        "opacity",
-                        "visibility",
-                        "metadata",
-                        "boundaryZoom",
-                        "reload",
-                        "remove",
-                        "settings"
-                    ]
+                    "default": ["opacity", "visibility", "metadata", "boundaryZoom", "reload", "remove", "settings"]
                 },
                 "disabledControls": {
                     "$ref": "#/$defs/layerControls",
@@ -1052,17 +1020,7 @@
                 },
                 "imageFormat": {
                     "type": "string",
-                    "enum": [
-                        "png",
-                        "png8",
-                        "png24",
-                        "png32",
-                        "jpg",
-                        "pdf",
-                        "bmp",
-                        "gif",
-                        "svg"
-                    ],
+                    "enum": ["png", "png8", "png24", "png32", "jpg", "pdf", "bmp", "gif", "svg"],
                     "description": "The format of the layer image output. Default service setting used if not supplied (usually png32)"
                 },
                 "fixtures": {
@@ -1318,14 +1276,7 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": [
-                        "file-csv",
-                        "file-fgb",
-                        "file-geojson",
-                        "file-shape",
-                        "file-zip-fgb",
-                        "file-zip-geojson"
-                    ],
+                    "enum": ["file-csv", "file-fgb", "file-geojson", "file-shape", "file-zip-fgb", "file-zip-geojson"],
                     "description": "Format type for file layers."
                 },
                 "latField": {
@@ -1455,14 +1406,7 @@
                 },
                 "controls": {
                     "$ref": "#/$defs/layerControls",
-                    "default": [
-                        "datatable",
-                        "visibility",
-                        "metadata",
-                        "reload",
-                        "remove",
-                        "symbology"
-                    ]
+                    "default": ["datatable", "visibility", "metadata", "reload", "remove", "symbology"]
                 },
                 "disabledControls": {
                     "$ref": "#/$defs/layerControls",
@@ -2244,11 +2188,7 @@
                             "layerType": {
                                 "type": "string",
                                 "description": "Base layer's type",
-                                "enum": [
-                                    "esri-map-image",
-                                    "esri-tile",
-                                    "osm-tile"
-                                ]
+                                "enum": ["esri-map-image", "esri-tile", "osm-tile"]
                             },
                             "url": {
                                 "type": "string",
@@ -2268,14 +2208,7 @@
                     "$ref": "#/$defs/attribution"
                 }
             },
-            "required": [
-                "id",
-                "name",
-                "description",
-                "layers",
-                "altText",
-                "tileSchemaId"
-            ],
+            "required": ["id", "name", "description", "layers", "altText", "tileSchemaId"],
             "unevaluatedProperties": false
         },
         "attribution": {
@@ -2504,14 +2437,7 @@
                             "type": "object",
                             "description": "Specifies a custom Vue component to render as the default details template for each identify result format.",
                             "propertyNames": {
-                                "enum": [
-                                    "esri",
-                                    "text",
-                                    "image",
-                                    "html",
-                                    "xml",
-                                    "json"
-                                ]
+                                "enum": ["esri", "text", "image", "html", "xml", "json"]
                             },
                             "additionalProperties": {
                                 "type": "string"
@@ -2628,13 +2554,7 @@
                     "$ref": "#/$defs/mapnav",
                     "default": {
                         "zoom": "buttons",
-                        "items": [
-                            "fullscreen",
-                            "home",
-                            "geolocator",
-                            "help",
-                            "basemap"
-                        ]
+                        "items": ["fullscreen", "home", "geolocator", "help", "basemap"]
                     },
                     "description": "Provides configuration to the appbar. If not supplied, default appbar controls are displayed."
                 },

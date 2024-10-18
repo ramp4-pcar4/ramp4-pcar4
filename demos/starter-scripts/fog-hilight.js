@@ -78,10 +78,7 @@ let config = {
                         name: 'Lambert Maps',
                         extentSetId: 'EXT_NRCAN_Lambert_3978',
                         lodSetId: 'LOD_NRCAN_Lambert_3978',
-                        thumbnailTileUrls: [
-                            '/tile/8/285/268',
-                            '/tile/8/285/269'
-                        ],
+                        thumbnailTileUrls: ['/tile/8/285/268', '/tile/8/285/269'],
                         hasNorthPole: true
                     },
                     {
@@ -98,8 +95,7 @@ let config = {
                         name: 'Canada Base Map - Transportation (CBMT)',
                         description:
                             'The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.',
-                        altText:
-                            'altText - The Canada Base Map - Transportation (CBMT)',
+                        altText: 'altText - The Canada Base Map - Transportation (CBMT)',
                         layers: [
                             {
                                 id: 'CBMT',
@@ -107,8 +103,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseSimple',
@@ -122,8 +117,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/Simple/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseCBME_CBCE_HS_RO_3978',
@@ -138,16 +132,14 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseCBMT_CBCT_GEOM_3978',
                         name: 'Canada Base Map - Transportation (CBMT)',
                         description:
                             ' The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.',
-                        altText:
-                            'altText - Canada Base Map - Transportation (CBMT)',
+                        altText: 'altText - Canada Base Map - Transportation (CBMT)',
                         layers: [
                             {
                                 id: 'CBMT_CBCT_GEOM_3978',
@@ -155,8 +147,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseEsriWorld',
@@ -171,8 +162,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseEsriPhysical',
@@ -187,8 +177,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseEsriRelief',
@@ -203,14 +192,12 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseEsriStreet',
                         name: 'World Street Map',
-                        description:
-                            'This worldwide street map presents highway-level data for the world.',
+                        description: 'This worldwide street map presents highway-level data for the world.',
                         altText: 'altText - ESWorld Street Map',
                         layers: [
                             {
@@ -219,8 +206,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseEsriTerrain',
@@ -235,8 +221,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseEsriTopo',
@@ -251,8 +236,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     }
                 ],
                 initialBasemapId: 'baseNrCan'
@@ -263,10 +247,8 @@ let config = {
                     name: 'Greenhouse gas emissions from large facilities',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/',
-                    metadataUrl:
-                        'https://indicators-map.ec.gc.ca/metadata/en/Ammonia%20emissions%20by%20facility.xml',
-                    catalogueUrl:
-                        'https://open.canada.ca/data/en/dataset/4221c508-00c9-4011-aca6-b0a017fc90dc',
+                    metadataUrl: 'https://indicators-map.ec.gc.ca/metadata/en/Ammonia%20emissions%20by%20facility.xml',
+                    catalogueUrl: 'https://open.canada.ca/data/en/dataset/4221c508-00c9-4011-aca6-b0a017fc90dc',
                     state: {
                         visibility: true,
                         opacity: 1
@@ -307,8 +289,7 @@ let config = {
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/18',
                     metadataUrl:
                         'https://indicators-map.ec.gc.ca/metadata/en/Sulphur%20oxide%20emissions%20by%20facility.xml',
-                    catalogueUrl:
-                        'https://open.canada.ca/data/en/dataset/f4fb2aee-2d1b-4c75-aea1-2a7760cc4b58',
+                    catalogueUrl: 'https://open.canada.ca/data/en/dataset/f4fb2aee-2d1b-4c75-aea1-2a7760cc4b58',
                     state: {
                         visibility: false
                     },
@@ -341,8 +322,7 @@ let config = {
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/26',
                     metadataUrl:
                         'https://indicators-map.ec.gc.ca/metadata/en/Average%20ambient%20fine%20particulate%20matter%20concentrations%20at%20monitoring%20stations.xml',
-                    catalogueUrl:
-                        'https://open.canada.ca/data/en/dataset/e6cc3ae2-92b1-4df6-87ff-698a1cd5a7bd',
+                    catalogueUrl: 'https://open.canada.ca/data/en/dataset/e6cc3ae2-92b1-4df6-87ff-698a1cd5a7bd',
                     state: {
                         visibility: false
                     },
@@ -371,8 +351,7 @@ let config = {
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/28',
                     metadataUrl:
                         'https://indicators-map.ec.gc.ca/metadata/en/Average%20ambient%20sulphur%20dioxide%20concentrations%20at%20monitoring%20stations.xml',
-                    catalogueUrl:
-                        'https://open.canada.ca/data/en/dataset/5f1b78ab-999a-41f0-82e9-351d236010ca',
+                    catalogueUrl: 'https://open.canada.ca/data/en/dataset/5f1b78ab-999a-41f0-82e9-351d236010ca',
                     state: {
                         visibility: false
                     },
@@ -431,8 +410,7 @@ let config = {
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/38',
                     metadataUrl:
                         'https://indicators-map.ec.gc.ca/metadata/en/Releases%20of%20lead%20to%20water%20by%20facility.xml',
-                    catalogueUrl:
-                        'https://open.canada.ca/data/en/dataset/334f4740-c9bd-4193-ba69-04c21443d2b6',
+                    catalogueUrl: 'https://open.canada.ca/data/en/dataset/334f4740-c9bd-4193-ba69-04c21443d2b6',
                     state: {
                         visibility: false
                     },
@@ -462,10 +440,8 @@ let config = {
                     name: 'Conserved areas',
                     layerType: 'esri-map-image',
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    metadataUrl:
-                        'https://indicators-map.ec.gc.ca/metadata/en/Protected%20Areas.xml',
-                    catalogueUrl:
-                        'https://open.canada.ca/data/en/dataset/2888ff57-a21c-448c-a4fa-570c4cabd956',
+                    metadataUrl: 'https://indicators-map.ec.gc.ca/metadata/en/Protected%20Areas.xml',
+                    catalogueUrl: 'https://open.canada.ca/data/en/dataset/2888ff57-a21c-448c-a4fa-570c4cabd956',
                     state: {
                         visibility: false,
                         opacity: 1
@@ -507,8 +483,7 @@ let config = {
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/5',
                     metadataUrl:
                         'https://indicators-map.ec.gc.ca/metadata/en/Water%20quality%20at%20monitoring%20sites.xml',
-                    catalogueUrl:
-                        'https://open.canada.ca/data/en/dataset/b6b6d5a6-bded-4b6e-9e8a-17f6e1b538dc',
+                    catalogueUrl: 'https://open.canada.ca/data/en/dataset/b6b6d5a6-bded-4b6e-9e8a-17f6e1b538dc',
                     state: {
                         visibility: false
                     }
@@ -521,8 +496,7 @@ let config = {
                     url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer/1',
                     metadataUrl:
                         'https://indicators-map.ec.gc.ca/metadata/en/Water%20quantity%20at%20monitoring%20stations.xml',
-                    catalogueUrl:
-                        'https://open.canada.ca/data/en/dataset/c7cd1178-c72b-4a5a-aa63-9ae59d5bc532',
+                    catalogueUrl: 'https://open.canada.ca/data/en/dataset/c7cd1178-c72b-4a5a-aa63-9ae59d5bc532',
                     state: {
                         visibility: false
                     },
@@ -573,9 +547,7 @@ let config = {
                             },
                             fixtures: {
                                 grid: {
-                                    columns: [
-                                        { name: 'OBJECTID_2', visible: false }
-                                    ]
+                                    columns: [{ name: 'OBJECTID_2', visible: false }]
                                 }
                             }
                         }
@@ -668,10 +640,6 @@ let options = {
     loadDefaultEvents: true
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 
 window.debugInstance = rInstance;

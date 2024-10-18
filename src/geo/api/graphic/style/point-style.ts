@@ -2,12 +2,7 @@
 
 import { BaseStyle, Colour, LineStyle, PointStyleType } from '@/geo/api';
 import type { PointIconStyleOptions, PointMarkerStyleOptions } from '@/geo/api';
-import {
-    EsriColour,
-    EsriPictureMarkerSymbol,
-    EsriSimpleMarkerSymbol,
-    EsriSymbolFromJson
-} from '@/geo/esri';
+import { EsriColour, EsriPictureMarkerSymbol, EsriSimpleMarkerSymbol, EsriSymbolFromJson } from '@/geo/esri';
 
 export class PointStyle extends BaseStyle {
     protected _height: number;
@@ -48,8 +43,7 @@ export class PointStyle extends BaseStyle {
             this._size = BaseStyle.convToPoints(mopts.size) || 12;
             this._colour = new Colour(mopts.colour ?? '#ffffff40');
             this._outline = new LineStyle(mopts.outline);
-            this._path =
-                this._style === PointStyleType.PATH ? mopts.path || '' : '';
+            this._path = this._style === PointStyleType.PATH ? mopts.path || '' : '';
 
             // defaults to chill
             this._height = 0;
@@ -127,9 +121,7 @@ export class PointStyle extends BaseStyle {
     protected propGrouse(forIcon: boolean): void {
         if (!((this._style === PointStyleType.ICON) === forIcon)) {
             // mismatch, make a grouse
-            console.warn(
-                `Accessed a point style property that is invalid for the style type ${this._style}`
-            );
+            console.warn(`Accessed a point style property that is invalid for the style type ${this._style}`);
         }
     }
 
@@ -195,9 +187,7 @@ export class PointStyle extends BaseStyle {
         return symbol;
     }
 
-    static fromESRI(
-        e: EsriSimpleMarkerSymbol | EsriPictureMarkerSymbol
-    ): PointStyle {
+    static fromESRI(e: EsriSimpleMarkerSymbol | EsriPictureMarkerSymbol): PointStyle {
         const opts: any = {
             xOffset: e.xoffset,
             yOffset: e.yoffset,
@@ -222,11 +212,7 @@ export class PointStyle extends BaseStyle {
     }
 
     static fromArcServer(json: any): PointStyle {
-        return PointStyle.fromESRI(
-            <EsriSimpleMarkerSymbol | EsriPictureMarkerSymbol>(
-                EsriSymbolFromJson(json)
-            )
-        );
+        return PointStyle.fromESRI(<EsriSimpleMarkerSymbol | EsriPictureMarkerSymbol>EsriSymbolFromJson(json));
     }
 
     /**

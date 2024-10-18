@@ -82,14 +82,7 @@ export class OgcUtils extends APIScope {
         if (totalCount === -1) {
             totalCount = response.data.numberMatched;
             // note we pass url and not requestUrl here, becuase requestUrl is currently a count request
-            return this.loadWfsData(
-                url,
-                totalCount,
-                offset,
-                limit,
-                wfsData,
-                xyInAttribs
-            );
+            return this.loadWfsData(url, totalCount, offset, limit, wfsData, xyInAttribs);
         }
 
         // update the received features array.
@@ -99,10 +92,7 @@ export class OgcUtils extends APIScope {
         // check if all the requested features are downloaded
         if (data.features.length < totalCount - offset) {
             // the next limit is either the provided limit or the number of remaining features
-            const newLimit = Math.min(
-                limit,
-                totalCount - offset - data.features.length
-            );
+            const newLimit = Math.min(limit, totalCount - offset - data.features.length);
             return this.loadWfsData(
                 requestUrl,
                 totalCount,
@@ -190,9 +180,7 @@ export class OgcUtils extends APIScope {
                 .then((data: any) => resolve(data)) // if successful, pass straight back
                 .catch(() => {
                     // if errors, try again; see fgpv-vpgf/fgpv-vpgf#908 issue
-                    console.error(
-                        'Get capabilities failed; trying the second time;'
-                    );
+                    console.error('Get capabilities failed; trying the second time;');
                     resolve(getCapabilities());
                 });
         });
@@ -240,10 +228,7 @@ export class OgcUtils extends APIScope {
                             // Yucky naming means no dot notation
                             const styleURL = resource['@_xlink:href'];
                             // decode '&amp;' -> '&', which was encoded by XMLSerializer
-                            styleToURL[styleName] = styleURL.replaceAll(
-                                '&amp;',
-                                '&'
-                            );
+                            styleToURL[styleName] = styleURL.replaceAll('&amp;', '&');
                         }
                     });
                 }
@@ -277,9 +262,7 @@ export class OgcUtils extends APIScope {
             if (!xmlNode) {
                 return [];
             }
-            const xmlData: string = new XMLSerializer().serializeToString(
-                xmlNode
-            );
+            const xmlData: string = new XMLSerializer().serializeToString(xmlNode);
             const options: Object = {
                 ignoreAttributes: false // check for tag attributes
             };

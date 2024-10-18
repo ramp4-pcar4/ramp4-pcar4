@@ -71,11 +71,7 @@ let options = {
     startRequired: false
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 
 window.debugInstance = rInstance;
 

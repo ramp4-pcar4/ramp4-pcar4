@@ -1,19 +1,8 @@
 <template>
-    <dropdown-menu
-        v-focus-item
-        :position="dropdownPlacement"
-        :tooltip="t('export.menu')"
-        tooltipPlacement="top"
-    >
+    <dropdown-menu v-focus-item :position="dropdownPlacement" :tooltip="t('export.menu')" tooltipPlacement="top">
         <template #header>
-            <div
-                class="flex items-center text-gray-400 w-full h-full hover:text-black p-4 sm:p-8"
-            >
-                <svg
-                    class="fill-current w-24 h-24 m-auto"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                >
+            <div class="flex items-center text-gray-400 w-full h-full hover:text-black p-4 sm:p-8">
+                <svg class="fill-current w-24 h-24 m-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <g>
                         <path d="M0,0h24v24H0V0z" fill="none" />
                         <path
@@ -29,9 +18,7 @@
                 :key="component.name"
                 @click="toggleComponent(component)"
                 href="javascript:;"
-                :class="`text-left text-sm sm:text-base ${
-                    component.selectable ? 'cursor-pointer' : 'cursor-default'
-                }`"
+                :class="`text-left text-sm sm:text-base ${component.selectable ? 'cursor-pointer' : 'cursor-default'}`"
                 :aria-label="component.name"
             >
                 <div class="md-icon-small inline">
@@ -39,24 +26,16 @@
                         height="20"
                         width="20"
                         viewBox="0 0 24 24"
-                        :class="`inline mx-8 ${
-                            !component.selected ? 'invisible' : ''
-                        }`"
+                        :class="`inline mx-8 ${!component.selected ? 'invisible' : ''}`"
                     >
                         <g>
-                            <path
-                                d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
-                            />
+                            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                         </g>
                     </svg>
                     <span
-                        :class="`inline ${
-                            !component.selectable ? 'text-gray-300' : ''
-                        }
+                        :class="`inline ${!component.selectable ? 'text-gray-300' : ''}
                     `"
-                        >{{
-                            t(`export.menu.component.${component.name}`)
-                        }}</span
+                        >{{ t(`export.menu.component.${component.name}`) }}</span
                     >
                 </div>
             </a>
@@ -81,9 +60,7 @@ defineProps({
     }
 });
 
-const dropdownPlacement = computed<string>(() =>
-    panelStore.mobileView ? 'top-end' : 'left-end'
-);
+const dropdownPlacement = computed<string>(() => (panelStore.mobileView ? 'top-end' : 'left-end'));
 
 const toggleComponent = (component: any): void => {
     if (!component.selectable) {

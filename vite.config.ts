@@ -35,9 +35,7 @@ const baseConfig = {
             output: {
                 inlineDynamicImports: true,
                 assetFileNames: (assetInfo: any) => {
-                    return assetInfo.name === 'style.css'
-                        ? 'bad.css'
-                        : assetInfo.name;
+                    return assetInfo.name === 'style.css' ? 'bad.css' : assetInfo.name;
                 }
             }
         }
@@ -61,9 +59,7 @@ function inlineConfig() {
             rollupOptions: {
                 output: {
                     assetFileNames: (assetInfo: any) => {
-                        return assetInfo.name === 'style.css'
-                            ? 'ramp.css'
-                            : assetInfo.name;
+                        return assetInfo.name === 'style.css' ? 'ramp.css' : assetInfo.name;
                     }
                 }
             }
@@ -86,9 +82,7 @@ function esDynamicConfig() {
                 output: {
                     inlineDynamicImports: false,
                     assetFileNames: (assetInfo: any) => {
-                        return assetInfo.name === 'style.css'
-                            ? 'ramp.css'
-                            : assetInfo.name;
+                        return assetInfo.name === 'style.css' ? 'ramp.css' : assetInfo.name;
                     }
                 }
             }
@@ -97,9 +91,7 @@ function esDynamicConfig() {
 }
 
 function npmBundleConfig() {
-    const externalImports = Object.keys(pkg.dependencies).map(
-        dep => new RegExp(`^${dep}`)
-    );
+    const externalImports = Object.keys(pkg.dependencies).map(dep => new RegExp(`^${dep}`));
 
     const config = mergeConfig(baseConfig, {
         build: {

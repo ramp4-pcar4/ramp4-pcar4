@@ -1,8 +1,5 @@
 <template>
-    <div
-        class="crosshairs absolute duration-150 top-1/2 left-1/2 h-230 w-230"
-        :class="{ 'opacity-0': !visible }"
-    >
+    <div class="crosshairs absolute duration-150 top-1/2 left-1/2 h-230 w-230" :class="{ 'opacity-0': !visible }">
         <svg
             xmlns="http://www.w3.org/2000/svg"
             fit=""
@@ -13,14 +10,7 @@
             focusable="false"
         >
             <g fill="#545353" stroke="#fff" id="crosshairs">
-                <ellipse
-                    ry=".254"
-                    rx=".262"
-                    id="path3808"
-                    cx="12"
-                    cy="12"
-                    stroke-width=".076"
-                ></ellipse>
+                <ellipse ry=".254" rx=".262" id="path3808" cx="12" cy="12" stroke-width=".076"></ellipse>
                 <path
                     d="M.045 12.047l6.093.051 4.264.068v-.332l-4.264.067-6.093.064v.039z"
                     id="rect4632-6"

@@ -6,45 +6,26 @@
                 <!-- the :class line calculates margin-left for each of the 3 symbols, and gives a margin-top to symbols that arent the first -->
                 <div
                     class="absolute"
-                    :class="[
-                        idx == 0 ? 'symbol-0' : idx == 1 ? 'left-3' : 'left-6'
-                    ]"
+                    :class="[idx == 0 ? 'symbol-0' : idx == 1 ? 'left-3' : 'left-6']"
                     :style="{ 'z-index': 3 - idx }"
                     v-for="(item, idx) in stack.slice(0, 3).reverse()"
                     :key="idx"
                 >
-                    <span
-                        v-if="stack[idx].svgcode"
-                        class="symbologyIcon w-28 h-28"
-                        v-html="stack[idx].svgcode"
-                    ></span>
-                    <img
-                        v-else-if="stack[idx].imgUrl"
-                        class="symbologyIcon w-28 h-28"
-                        :src="stack[idx].imgUrl"
-                    />
+                    <span v-if="stack[idx].svgcode" class="symbologyIcon w-28 h-28" v-html="stack[idx].svgcode"></span>
+                    <img v-else-if="stack[idx].imgUrl" class="symbologyIcon w-28 h-28" :src="stack[idx].imgUrl" />
                 </div>
             </div>
 
             <!-- Only one icon to display. -->
             <div v-else-if="stack.length > 0" class="w-32 h-32">
                 <div class="symbologyIcon">
-                    <span
-                        v-if="stack[0].svgcode"
-                        v-html="stack[0].svgcode"
-                    ></span>
-                    <img
-                        v-else-if="stack[0].imgUrl"
-                        class="symbologyIcon w-full h-full"
-                        :src="stack[0].imgUrl"
-                    />
+                    <span v-if="stack[0].svgcode" v-html="stack[0].svgcode"></span>
+                    <img v-else-if="stack[0].imgUrl" class="symbologyIcon w-full h-full" :src="stack[0].imgUrl" />
                 </div>
             </div>
         </div>
         <!-- result counter -->
-        <div
-            class="badge z-50 rounded-full text-white absolute h-10 w-10 p-8 inline-flex items-center justify-center"
-        >
+        <div class="badge z-50 rounded-full text-white absolute h-10 w-10 p-8 inline-flex items-center justify-center">
             <div v-if="result.loaded" class="px-5">
                 {{ result.items.length }}
             </div>

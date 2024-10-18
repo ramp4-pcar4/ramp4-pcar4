@@ -65,21 +65,14 @@ const props = defineProps(['params']);
 
 const minVal = ref<string>('');
 const maxVal = ref<string>('');
-const fixed = ref<boolean>(
-    props.params.stateManager.columns[props.params.column.colDef.field].filter
-        .static
-);
+const fixed = ref<boolean>(props.params.stateManager.columns[props.params.column.colDef.field].filter.static);
 
 const minValChanged = () => {
     props.params.parentFilterInstance((instance: any) => {
         setFilterModel(instance);
         // Save the new filter value in the state manager. Allows for quick recovery if the grid is
         // closed and re-opened.
-        props.params.stateManager.setColumnFilterValue(
-            props.params.column.colDef.field,
-            minVal.value,
-            'min'
-        );
+        props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, minVal.value, 'min');
     });
 };
 
@@ -88,11 +81,7 @@ const maxValChanged = () => {
         setFilterModel(instance);
         // Save the new filter value in the state manager. Allows for quick recovery if the grid is
         // closed and re-opened.
-        props.params.stateManager.setColumnFilterValue(
-            props.params.column.colDef.field,
-            maxVal.value,
-            'max'
-        );
+        props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, maxVal.value, 'max');
     });
 };
 
@@ -143,16 +132,8 @@ const setFilterModel = (instance: any) => {
 
 onBeforeMount(() => {
     // Load previously stored values (if saved in table state manager)
-    minVal.value =
-        props.params.stateManager.getColumnFilterValue(
-            props.params.column.colDef.field,
-            'min'
-        ) || '';
-    maxVal.value =
-        props.params.stateManager.getColumnFilterValue(
-            props.params.column.colDef.field,
-            'max'
-        ) || '';
+    minVal.value = props.params.stateManager.getColumnFilterValue(props.params.column.colDef.field, 'min') || '';
+    maxVal.value = props.params.stateManager.getColumnFilterValue(props.params.column.colDef.field, 'max') || '';
     // Apply the default values to the column filter.
     minValChanged();
     maxValChanged();

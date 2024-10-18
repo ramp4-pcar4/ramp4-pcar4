@@ -195,11 +195,7 @@ export class ExportAPI extends FixtureInstance {
             fbTitle.width = DEFAULT_WIDTH;
         }
 
-        this.options.scale =
-            panelWidth /
-            ((fbMap?.width ?? DEFAULT_WIDTH) +
-                GLOBAL_MARGIN.LEFT +
-                GLOBAL_MARGIN.RIGHT);
+        this.options.scale = panelWidth / ((fbMap?.width ?? DEFAULT_WIDTH) + GLOBAL_MARGIN.LEFT + GLOBAL_MARGIN.RIGHT);
 
         if (selectedState.mapElements && exportScaleBarFixture) {
             fbScaleBar = await exportScaleBarFixture.make({
@@ -226,10 +222,7 @@ export class ExportAPI extends FixtureInstance {
 
         if (selectedState.legend && exportLegendFixture) {
             fbLegend = await exportLegendFixture.make({
-                width:
-                    exportLegendFixture.config?.columnWidth ??
-                    fbMap?.width ??
-                    DEFAULT_WIDTH
+                width: exportLegendFixture.config?.columnWidth ?? fbMap?.width ?? DEFAULT_WIDTH
             });
             fbLegend.top = this.options.runningHeight;
             this.options.runningHeight += fbLegend.height!;
@@ -243,9 +236,7 @@ export class ExportAPI extends FixtureInstance {
             });
 
             this.options.runningHeight +=
-                !selectedState.footnote || !exportFootnoteFixture
-                    ? fbTimestamp.height! + 40
-                    : fbTimestamp.height! + 20;
+                !selectedState.footnote || !exportFootnoteFixture ? fbTimestamp.height! + 40 : fbTimestamp.height! + 20;
             selectedFabricObjects.timestamp = fbTimestamp;
         }
 
@@ -263,10 +254,7 @@ export class ExportAPI extends FixtureInstance {
                 // CASE: Timestamp exists. Detect if the footnote overlaps with the timestamp
                 // If they overlap, put footnote on next line; else keep side-by-side
                 if (
-                    panelWidth -
-                        (
-                            selectedFabricObjects.timestamp as fabric.Textbox
-                        ).getMinWidth() <=
+                    panelWidth - (selectedFabricObjects.timestamp as fabric.Textbox).getMinWidth() <=
                     (fbFootnote as fabric.Textbox).getMinWidth() + BUFFER
                 ) {
                     // CASE: Overlap
@@ -301,11 +289,7 @@ export class ExportAPI extends FixtureInstance {
                 fabric: fabric
             };
 
-            await this.customRendererFunc(
-                this.fcFabric,
-                selectedFabricObjects,
-                options
-            );
+            await this.customRendererFunc(this.fcFabric, selectedFabricObjects, options);
 
             this.fcFabric.renderAll();
 
@@ -318,13 +302,10 @@ export class ExportAPI extends FixtureInstance {
                 this.fcFabricDownload.renderAll();
             });
         } else {
-            const fbGroup = new fabric.Group(
-                Object.values(selectedFabricObjects),
-                {
-                    top: GLOBAL_MARGIN.TOP * this.options.scale,
-                    left: GLOBAL_MARGIN.LEFT * this.options.scale
-                }
-            );
+            const fbGroup = new fabric.Group(Object.values(selectedFabricObjects), {
+                top: GLOBAL_MARGIN.TOP * this.options.scale,
+                left: GLOBAL_MARGIN.LEFT * this.options.scale
+            });
 
             // clone items for download canvas
             const fbGroupDownload: fabric.Group = await new Promise(resolve => {
@@ -341,23 +322,13 @@ export class ExportAPI extends FixtureInstance {
 
             this.fcFabric.setDimensions({
                 width: panelWidth,
-                height:
-                    (this.options.runningHeight +
-                        GLOBAL_MARGIN.TOP +
-                        GLOBAL_MARGIN.BOTTOM) *
-                    this.options.scale
+                height: (this.options.runningHeight + GLOBAL_MARGIN.TOP + GLOBAL_MARGIN.BOTTOM) * this.options.scale
             });
             this.fcFabric.renderAll();
 
             this.fcFabricDownload!.setDimensions({
-                width:
-                    (fbMap?.width! ?? DEFAULT_WIDTH) +
-                    GLOBAL_MARGIN.LEFT +
-                    GLOBAL_MARGIN.RIGHT,
-                height:
-                    this.options.runningHeight +
-                    GLOBAL_MARGIN.TOP +
-                    GLOBAL_MARGIN.BOTTOM
+                width: (fbMap?.width! ?? DEFAULT_WIDTH) + GLOBAL_MARGIN.LEFT + GLOBAL_MARGIN.RIGHT,
+                height: this.options.runningHeight + GLOBAL_MARGIN.TOP + GLOBAL_MARGIN.BOTTOM
             });
             this.fcFabricDownload.renderAll();
         }

@@ -1,12 +1,4 @@
-import {
-    GeoJsonGeomType,
-    GeometryType,
-    LineString,
-    MultiPoint,
-    Point,
-    PointSet,
-    SpatialReference
-} from '@/geo/api';
+import { GeoJsonGeomType, GeometryType, LineString, MultiPoint, Point, PointSet, SpatialReference } from '@/geo/api';
 
 import type { SrDef, IdDef } from '@/geo/api';
 
@@ -27,12 +19,7 @@ export class LinearRing extends PointSet {
     constructor(id: IdDef, line: LineString);
     constructor(id: IdDef, multiPoint: MultiPoint);
     // from arrays of verticies that can be interpreted as a ring
-    constructor(
-        id: IdDef,
-        listOfCoords: Array<Array<number>>,
-        sr?: SrDef,
-        raw?: boolean
-    );
+    constructor(id: IdDef, listOfCoords: Array<Array<number>>, sr?: SrDef, raw?: boolean);
     constructor(id: IdDef, listOfPoints: Array<Point>, sr?: SrDef);
     constructor(id: IdDef, listOfXY: Array<object>, sr?: SrDef);
     constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
@@ -43,9 +30,7 @@ export class LinearRing extends PointSet {
         LinearRing.closeRing(this.rawArray);
 
         if (this.length < 4) {
-            throw new Error(
-                'Linear Ring must have at least 3 distinct vertices.'
-            );
+            throw new Error('Linear Ring must have at least 3 distinct vertices.');
         }
     }
 
@@ -88,12 +73,7 @@ export class LinearRing extends PointSet {
 
     static fromESRI(esriPoly: EsriPolygon, id?: number | string): LinearRing {
         // TODO warn/error if poly has more than one ring?
-        return new LinearRing(
-            id,
-            esriPoly.rings[0],
-            SpatialReference.fromESRI(esriPoly.spatialReference),
-            true
-        );
+        return new LinearRing(id, esriPoly.rings[0], SpatialReference.fromESRI(esriPoly.spatialReference), true);
     }
 
     toESRI(): EsriPolygon {
@@ -103,22 +83,12 @@ export class LinearRing extends PointSet {
         });
     }
 
-    static fromGeoJSON(
-        geoJsonLine: GeoJson.LineString,
-        id?: number | string
-    ): LinearRing {
-        return new LinearRing(
-            id,
-            geoJsonLine.coordinates,
-            SpatialReference.fromGeoJSON(geoJsonLine.crs),
-            true
-        );
+    static fromGeoJSON(geoJsonLine: GeoJson.LineString, id?: number | string): LinearRing {
+        return new LinearRing(id, geoJsonLine.coordinates, SpatialReference.fromGeoJSON(geoJsonLine.crs), true);
     }
 
     toGeoJSON(): GeoJson.Polygon {
         // GeoJson has no Linear Ring.
-        return <GeoJson.Polygon>(
-            this.geoJsonFactory(GeoJsonGeomType.POLYGON, [this.toArray()])
-        );
+        return <GeoJson.Polygon>this.geoJsonFactory(GeoJsonGeomType.POLYGON, [this.toArray()]);
     }
 }

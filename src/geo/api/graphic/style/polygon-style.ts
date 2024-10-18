@@ -4,11 +4,7 @@ import type { PolygonStyleOptions } from '@/geo/api';
 
 import { BaseStyle, Colour, FillStyleType, LineStyle } from '@/geo/api';
 
-import {
-    EsriColour,
-    EsriSimpleFillSymbol,
-    EsriSymbolFromJson
-} from '@/geo/esri';
+import { EsriColour, EsriSimpleFillSymbol, EsriSymbolFromJson } from '@/geo/esri';
 
 export class PolygonStyle extends BaseStyle {
     protected _outlineStyle: LineStyle;
@@ -78,8 +74,6 @@ export class PolygonStyle extends BaseStyle {
     }
 
     static fromArcServer(json: any): PolygonStyle {
-        return PolygonStyle.fromESRI(
-            <EsriSimpleFillSymbol>EsriSymbolFromJson(json)
-        );
+        return PolygonStyle.fromESRI(<EsriSimpleFillSymbol>EsriSymbolFromJson(json));
     }
 }

@@ -15,19 +15,10 @@
                 <h2 class="text-xl">{{ t('keyboardInstructions.title') }}</h2>
                 <close class="ml-auto" @click="open = false" />
             </div>
-            <p
-                class="whitespace-pre-line pb-10"
-                v-for="section in instructionSections"
-                :key="section"
-            >
+            <p class="whitespace-pre-line pb-10" v-for="section in instructionSections" :key="section">
                 {{ t(`keyboardInstructions.${section}`) }}
             </p>
-            <button
-                type="button"
-                class="mt-auto self-end mr-10 mb-10 px-20 py-10"
-                @click="open = false"
-                ref="lastEl"
-            >
+            <button type="button" class="mt-auto self-end mr-10 mb-10 px-20 py-10" @click="open = false" ref="lastEl">
                 {{ t('keyboardInstructions.OK') }}
             </button>
         </div>

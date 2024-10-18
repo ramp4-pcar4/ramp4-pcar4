@@ -13,10 +13,7 @@
                     See Gazebo 1
                 </button>
                 <br />
-                <img
-                    src="http://nesn.com/wp-content/uploads/2014/09/jeternephew.gif"
-                    alt="Gazebo2"
-                />
+                <img src="http://nesn.com/wp-content/uploads/2014/09/jeternephew.gif" alt="Gazebo2" />
             </div>
         </template>
     </panel-screen>

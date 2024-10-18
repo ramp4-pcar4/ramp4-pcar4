@@ -1,8 +1,5 @@
 import { defineStore } from 'pinia';
-import type {
-    DetailsItemInstance,
-    DetailsRequestOrigin
-} from './details-state';
+import type { DetailsItemInstance, DetailsRequestOrigin } from './details-state';
 import type { IdentifyResult, LayerInstance } from '@/api';
 import { ref } from 'vue';
 

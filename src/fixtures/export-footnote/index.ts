@@ -5,13 +5,9 @@ import { FixtureInstance } from '@/api/internal';
 import type { ExportAPI, ExportSubFixture } from '@/fixtures/export/api/export';
 import type { ExportConfig } from '../export/store';
 
-class ExportFootnoteFixture
-    extends FixtureInstance
-    implements ExportSubFixture
-{
+class ExportFootnoteFixture extends FixtureInstance implements ExportSubFixture {
     get config(): any {
-        const fixtureConfig: ExportConfig | undefined =
-            this.$iApi.fixture.get<ExportAPI>('export').config;
+        const fixtureConfig: ExportConfig | undefined = this.$iApi.fixture.get<ExportAPI>('export').config;
         return fixtureConfig?.footnote;
     }
 
@@ -20,8 +16,7 @@ class ExportFootnoteFixture
 
         const fabricTextConfig: any = {
             text: 'RAMP-PCAR',
-            fontFamily:
-                'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif',
+            fontFamily: 'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif',
             fill: '#000',
             fontSize: 20,
             top: 0

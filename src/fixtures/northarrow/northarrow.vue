@@ -14,14 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-    computed,
-    inject,
-    onBeforeUnmount,
-    onMounted,
-    reactive,
-    ref
-} from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 
 import { useNortharrowStore } from './store';
 import { GlobalEvents, CommonGraphicLayer, InstanceAPI } from '@/api/internal';
@@ -82,12 +75,7 @@ onMounted(() => {
         updateNortharrow(iApi.geo.map.getExtent());
     }
 
-    handlers.push(
-        iApi.event.on(
-            GlobalEvents.MAP_EXTENTCHANGE,
-            debounce(300, updateNortharrow)
-        )
-    );
+    handlers.push(iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, debounce(300, updateNortharrow)));
 });
 
 onBeforeUnmount(() => {
@@ -106,23 +94,15 @@ const updateNortharrow = async (newExtent: Extent) => {
     }
 
     const innerShell = document.querySelector('.inner-shell')!;
-    const arrowWidth = el.value
-        .querySelector('.northarrow')!
-        .getBoundingClientRect().width;
+    const arrowWidth = el.value.querySelector('.northarrow')!.getBoundingClientRect().width;
     const appbarWidth = document.querySelector('.appbar')?.clientWidth || 0;
     const sr = newExtent.sr;
 
-    if (
-        hasNorthPole ||
-        (typeof hasNorthPole === 'undefined' && !sr.isWebMercator())
-    ) {
+    if (hasNorthPole || (typeof hasNorthPole === 'undefined' && !sr.isWebMercator())) {
         // set up northpole if it is configured or if it isn't configured and the map isn't mercator
         // north value (set longitude to be half of Canada extent (141° W, 52° W))
         const pole: Point = new Point('pole', { x: -96, y: 90 });
-        const projPole = (await iApi.geo.proj.projectGeometry(
-            sr,
-            pole
-        )) as Point;
+        const projPole = (await iApi.geo.proj.projectGeometry(sr, pole)) as Point;
         const poleScreenPos = iApi.geo.map.mapPointToScreenPoint(projPole);
         if (poleScreenPos.screenY < 0) {
             // draw arrow if pole not visibile
@@ -134,23 +114,18 @@ const updateNortharrow = async (newExtent: Extent) => {
             };
             angle.value =
                 (Math.atan(
-                    (poleScreenPos.screenX - bcScreenPos.screenX) /
-                        (bcScreenPos.screenY - poleScreenPos.screenY)
+                    (poleScreenPos.screenX - bcScreenPos.screenX) / (bcScreenPos.screenY - poleScreenPos.screenY)
                 ) *
                     180) /
                 Math.PI;
             arrowLeft.value =
                 innerShell.clientWidth / 2 +
-                innerShell.clientHeight *
-                    Math.tan((angle.value * Math.PI) / 180) -
+                innerShell.clientHeight * Math.tan((angle.value * Math.PI) / 180) -
                 arrowWidth / 2;
             // make sure arrow is within visible part of map
             arrowLeft.value = Math.max(
                 appbarWidth - arrowWidth / 2,
-                Math.min(
-                    iApi.geo.map.getPixelWidth() - arrowWidth / 2,
-                    arrowLeft.value
-                )
+                Math.min(iApi.geo.map.getPixelWidth() - arrowWidth / 2, arrowLeft.value)
             );
         } else {
             // add pole marker if visible
@@ -187,9 +162,7 @@ const updateNortharrow = async (newExtent: Extent) => {
                 poleLayer.loadPromise().then(() => {
                     const poleGraphic = new Graphic(projPole, 'northpole');
                     const poleStyle = new PointStyle(
-                        poleStyleParams as
-                            | PointIconStyleOptions
-                            | PointMarkerStyleOptions
+                        poleStyleParams as PointIconStyleOptions | PointMarkerStyleOptions
                     );
                     poleGraphic.style = poleStyle;
 
@@ -201,9 +174,7 @@ const updateNortharrow = async (newExtent: Extent) => {
         // don't specify a northpole if it isn't configured or if the map is mercator
         displayArrow.value = true;
         angle.value = 0;
-        arrowLeft.value =
-            appbarWidth +
-            (innerShell.clientWidth - appbarWidth - arrowWidth) / 2;
+        arrowLeft.value = appbarWidth + (innerShell.clientWidth - appbarWidth - arrowWidth) / 2;
     }
 };
 </script>

@@ -57,10 +57,7 @@ let config = {
                         name: 'Lambert Maps',
                         extentSetId: 'EXT_NRCAN_Lambert_3978',
                         lodSetId: 'LOD_NRCAN_Lambert_3978',
-                        thumbnailTileUrls: [
-                            '/tile/8/285/268',
-                            '/tile/8/285/269'
-                        ],
+                        thumbnailTileUrls: ['/tile/8/285/268', '/tile/8/285/269'],
                         hasNorthPole: true
                     },
                     {
@@ -85,8 +82,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseSimple',
@@ -100,8 +96,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/Simple/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseCBME_CBCE_HS_RO_3978',
@@ -116,8 +111,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseCBMT_CBCT_GEOM_3978',
@@ -132,8 +126,7 @@ let config = {
                                 url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
+                        tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
                     },
                     {
                         id: 'baseEsriWorld',
@@ -148,8 +141,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                         attribution: {
                             text: {
                                 disabled: true
@@ -172,8 +164,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseEsriRelief',
@@ -188,14 +179,12 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseEsriStreet',
                         name: 'World Street Map',
-                        description:
-                            'This worldwide street map presents highway-level data for the world.',
+                        description: 'This worldwide street map presents highway-level data for the world.',
                         altText: 'ESWorld Street Map',
                         layers: [
                             {
@@ -204,8 +193,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseEsriTerrain',
@@ -220,8 +208,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseEsriTopo',
@@ -236,8 +223,7 @@ let config = {
                                 url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                             }
                         ],
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
                         id: 'baseOpenStreetMap',
@@ -252,8 +238,7 @@ let config = {
                         ],
                         thumbnailUrl:
                             'https://www.openstreetmap.org/assets/about/osm-a74d2c94082260032c133b9d206ee2fdd911e5c82bf03daae10393a02d7b4809.png',
-                        tileSchemaId:
-                            'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     }
                 ],
                 initialBasemapId: 'baseEsriWorld'
@@ -274,11 +259,7 @@ let options = {
     loadDefaultFixtures: false,
     loadDefaultEvents: true
 };
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 rInstance.fixture.addDefaultFixtures().then(() => {
     rInstance.panel.open('legend');
 });

@@ -16,19 +16,14 @@ export class GeoJsonZipLayer extends FileLayer {
 
         const startTime = Date.now();
 
-        const zippedData = await this.$iApi.geo.layer.files.binaryInitHelper(
-            this.origRampConfig
-        );
+        const zippedData = await this.$iApi.geo.layer.files.binaryInitHelper(this.origRampConfig);
 
         // unzip to string, parse to geojson, store in property for FileLayer to consume.
         if (startTime > this.lastCancel) {
-            const gjBinary =
-                await this.$iApi.geo.layer.files.unzipSingleFile(zippedData);
+            const gjBinary = await this.$iApi.geo.layer.files.unzipSingleFile(zippedData);
 
             if (startTime > this.lastCancel) {
-                this.sourceGeoJson = JSON.parse(
-                    this.$iApi.geo.layer.files.arbToStr(gjBinary)
-                );
+                this.sourceGeoJson = JSON.parse(this.$iApi.geo.layer.files.arbToStr(gjBinary));
 
                 await super.onInitiate();
             }

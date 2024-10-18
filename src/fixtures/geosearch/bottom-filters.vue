@@ -6,11 +6,7 @@
                     type="checkbox"
                     class="border-2 mx-8 border-gray-600 cursor-pointer"
                     :checked="resultsVisible"
-                    @change="
-                        updateMapExtent(
-                            ($event.target as HTMLInputElement).checked
-                        )
-                    "
+                    @change="updateMapExtent(($event.target as HTMLInputElement).checked)"
                     @keypress.enter.prevent
                 />{{ t('geosearch.visible') }}</label
             >
@@ -75,11 +71,7 @@ onMounted(() => {
     //      ^ not entirely true. a person can still unhook the event, however our public documentation will
     //        have no mention of the event handler name. A person would need to discover it.
     // TODO also consider if this handler requires debounce because MAP_EXTENTCHANGE fires at a high rate
-    iApi.event.on(
-        GlobalEvents.MAP_EXTENTCHANGE,
-        onMapExtentChange,
-        'geosearch_map_extent'
-    );
+    iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, onMapExtentChange, 'geosearch_map_extent');
 });
 
 /**

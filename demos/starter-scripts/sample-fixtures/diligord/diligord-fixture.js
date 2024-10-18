@@ -55,11 +55,7 @@ export class DiligordFixture {
                                         },
                                         [h('span', this.count)]
                                     ),
-                                    h(
-                                        'label',
-                                        { class: 'mt-16' },
-                                        this.$iApi.$i18n.t('changeTitle')
-                                    ),
+                                    h('label', { class: 'mt-16' }, this.$iApi.$i18n.t('changeTitle')),
                                     h('input', {
                                         class: 'border-2  p-8 mb-10',
                                         // bind title to the input value
@@ -68,10 +64,7 @@ export class DiligordFixture {
                                             this.title = $event.target.value;
                                         }
                                     }),
-                                    h(
-                                        'label',
-                                        'Hint: Change title to fight for a surprise.'
-                                    ),
+                                    h('label', 'Hint: Change title to fight for a surprise.'),
                                     // A gif will show if the title is changed to "fight"
                                     this.title === 'fight'
                                         ? h('img', {

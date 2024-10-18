@@ -1,45 +1,31 @@
 <template>
     <panel-screen :panel="panel" ref="el">
-        <template #header>
-            {{ t('metadata.title') }}: {{ payload.layerName }}
-        </template>
+        <template #header> {{ t('metadata.title') }}: {{ payload.layerName }} </template>
 
         <template #content>
             <div v-if="layerExists">
                 <div class="flex justify-center">
                     <!-- Loading Screen -->
-                    <div
-                        v-if="status == 'loading'"
-                        class="flex flex-col justify-center text-center"
-                    >
+                    <div v-if="status == 'loading'" class="flex flex-col justify-center text-center">
                         {{ t('metadata.loading') }}
                     </div>
 
                     <!-- Found Screen, XML -->
                     <div
-                        v-else-if="
-                            payload.type === 'xml' && status == 'success'
-                        "
+                        v-else-if="payload.type === 'xml' && status == 'success'"
                         v-html="response"
                         class="flex flex-col justify-center xml-content"
                     ></div>
 
                     <!-- Found Screen, HTML -->
                     <div
-                        v-else-if="
-                            (payload.type === 'html' ||
-                                payload.type === 'md') &&
-                            status == 'success'
-                        "
+                        v-else-if="(payload.type === 'html' || payload.type === 'md') && status == 'success'"
                         v-html="response"
                         class="flex flex-col justify-center max-w-full metadata-view"
                     ></div>
 
                     <!-- Error Screen -->
-                    <div
-                        v-else
-                        class="flex flex-col justify-center text-center"
-                    >
+                    <div v-else class="flex flex-col justify-center text-center">
                         <img src="https://i.imgur.com/fA5EqV6.png" />
 
                         <span class="text-xl mt-20">
@@ -56,22 +42,8 @@
 </template>
 
 <script setup lang="ts">
-import {
-    computed,
-    inject,
-    onBeforeUnmount,
-    onMounted,
-    reactive,
-    ref,
-    watch,
-    type PropType
-} from 'vue';
-import {
-    GlobalEvents,
-    InstanceAPI,
-    LayerInstance,
-    type PanelInstance
-} from '@/api';
+import { computed, inject, onBeforeUnmount, onMounted, reactive, ref, watch, type PropType } from 'vue';
+import { GlobalEvents, InstanceAPI, LayerInstance, type PanelInstance } from '@/api';
 import type { MetadataCache, MetadataPayload, MetadataResult } from './store';
 import { useMetadataStore } from './store';
 import { marked } from 'marked';
@@ -108,14 +80,11 @@ onMounted(() => {
 
     // if layer is removed with its metadata open close this panel
     handlers.push(
-        iApi.event.on(
-            GlobalEvents.LAYER_REMOVE,
-            (removedLayer: LayerInstance) => {
-                if (props.payload.layer?.uid === removedLayer.uid) {
-                    props.panel.close();
-                }
+        iApi.event.on(GlobalEvents.LAYER_REMOVE, (removedLayer: LayerInstance) => {
+            if (props.payload.layer?.uid === removedLayer.uid) {
+                props.panel.close();
             }
-        )
+        })
     );
 
     // watch for when metadata is opened for a new layer
@@ -140,8 +109,7 @@ onBeforeUnmount(() => {
 
 const loadMetadata = () => {
     // check if layer has not been removed
-    layerExists.value =
-        props.payload.layer !== undefined && !props.payload.layer!.isRemoved;
+    layerExists.value = props.payload.layer !== undefined && !props.payload.layer!.isRemoved;
 
     if (props.payload.type === 'xml') {
         loadFromURL(props.payload.url, []).then((r: any) => {
@@ -151,17 +119,11 @@ const loadMetadata = () => {
             if (r !== null) {
                 const textContainer = document.createElement('div');
 
-                textContainer.appendChild(
-                    stringToFragment(`${r.firstElementChild.outerHTML}`)
-                );
+                textContainer.appendChild(stringToFragment(`${r.firstElementChild.outerHTML}`));
 
                 if (props.payload.catalogueUrl || props.payload.url) {
                     textContainer.appendChild(
-                        stringToFragment(
-                            `<h5 class="text-xl font-bold mb-3">${t(
-                                'metadata.xslt.metadata'
-                            )}</h5>`
-                        )
+                        stringToFragment(`<h5 class="text-xl font-bold mb-3">${t('metadata.xslt.metadata')}</h5>`)
                     );
                 }
 
@@ -169,9 +131,7 @@ const loadMetadata = () => {
                 if (props.payload.catalogueUrl) {
                     textContainer.appendChild(
                         stringToFragment(
-                            `<p><a style="color: blue;" href="${
-                                props.payload.catalogueUrl
-                            }" target="_blank">${t(
+                            `<p><a style="color: blue;" href="${props.payload.catalogueUrl}" target="_blank">${t(
                                 'metadata.xslt.cataloguePage'
                             )}</a></p>`
                         )
@@ -181,9 +141,7 @@ const loadMetadata = () => {
                 // Append raw XML link
                 textContainer.appendChild(
                     stringToFragment(
-                        `<p><a style="color: blue;" href="${
-                            props.payload.url
-                        }" target="_blank">${t(
+                        `<p><a style="color: blue;" href="${props.payload.url}" target="_blank">${t(
                             'metadata.xslt.metadataPage'
                         )}</a> (xml)</p>`
                     )
@@ -220,9 +178,7 @@ const loadFromURL = (xmlUrl: string, params: any[]) => {
     let XSLT = iApi.language === 'en' ? XSLT_en : XSLT_fr;
 
     // Translate headers.
-    XSLT = XSLT.replace(/\{\{([\w.]+)\}\}/g, (_: string, tag: string) =>
-        t(tag)
-    );
+    XSLT = XSLT.replace(/\{\{([\w.]+)\}\}/g, (_: string, tag: string) => t(tag));
 
     if (!cache[xmlUrl]) {
         return requestContent(xmlUrl).then(xmlData => {
@@ -256,9 +212,7 @@ const applyXSLT = (xmlString: string, xslString: string, params: any[]) => {
         xsltProc.importStylesheet(xslDoc);
         // [patched from ECDMP] Add parameters to xsl document (setParameter = Chrome/FF/Others)
         if (params) {
-            params.forEach(p =>
-                xsltProc.setParameter('', p.key, p.value || '')
-            );
+            params.forEach(p => xsltProc.setParameter('', p.key, p.value || ''));
         }
         output = xsltProc.transformToFragment(xmlDoc, document);
     }

@@ -22,86 +22,44 @@
                 <option value="map-image-layer">05. Map Image Layer</option>
                 <option value="wms-layer">06. WMS Layer</option>
                 <option value="custom-renderer">07. Custom renderer</option>
-                <option value="custom-overviewmap">
-                    08. Custom Overview Map
-                </option>
-                <option value="custom-appbar-button">
-                    09. Custom Appbar Button
-                </option>
+                <option value="custom-overviewmap">08. Custom Overview Map</option>
+                <option value="custom-appbar-button">09. Custom Appbar Button</option>
                 <option value="custom-arrow">10. Custom North Arrow</option>
                 <option value="grid">11. Grid</option>
                 <option value="geosearch">12. Geosearch</option>
                 <option value="help">13. Help</option>
                 <option value="mapnav">14. Mapnav</option>
-                <option value="simple-feature">
-                    15. Basic Map with Feature Layers
-                </option>
-                <option value="simple-mil">
-                    16. Basic Map with Map Image Layers
-                </option>
-                <option value="r2-config-upgraded">
-                    17. RAMP 2 config upgraded
-                </option>
+                <option value="simple-feature">15. Basic Map with Feature Layers</option>
+                <option value="simple-mil">16. Basic Map with Map Image Layers</option>
+                <option value="r2-config-upgraded">17. RAMP 2 config upgraded</option>
                 <option value="error-layers">18. Layers in error state</option>
-                <option value="disabled-options">
-                    19. Layers with disabled options
-                </option>
+                <option value="disabled-options">19. Layers with disabled options</option>
                 <option value="layer-metadata">20. Layer with metadata</option>
                 <option value="section-item">21. Section Items</option>
                 <option value="info-section">22. Info Sections</option>
                 <option value="cam">23. Climate Action Map (CAM)</option>
-                <option value="cesi">
-                    24. Canadian Environmental Sustainability Indicators (CESI)
-                </option>
-                <option value="cccs">
-                    25. Canadian Centre for Climate Services (CCCS)
-                </option>
-                <option value="fog-hilight">
-                    26. Feature Highlighting with Fog Hilighter
-                </option>
-                <option value="simple-file">
-                    27. Basic Map with File Layers
-                </option>
-                <option value="exclusive-fields">
-                    28. Layers with exclusive fields
-                </option>
-                <option value="grid-config">
-                    29. Layer with configured datatable
-                </option>
-                <option value="tree-grow">
-                    30. Map Image Layers with groups
-                </option>
-                <option value="custom-symbology">
-                    31. Custom symbology stack
-                </option>
+                <option value="cesi">24. Canadian Environmental Sustainability Indicators (CESI)</option>
+                <option value="cccs">25. Canadian Centre for Climate Services (CCCS)</option>
+                <option value="fog-hilight">26. Feature Highlighting with Fog Hilighter</option>
+                <option value="simple-file">27. Basic Map with File Layers</option>
+                <option value="exclusive-fields">28. Layers with exclusive fields</option>
+                <option value="grid-config">29. Layer with configured datatable</option>
+                <option value="tree-grow">30. Map Image Layers with groups</option>
+                <option value="custom-symbology">31. Custom symbology stack</option>
                 <option value="offscale-layer">32. Offscale Layer</option>
                 <option value="delayed-start">33. Delayed Start</option>
                 <option value="perm-filter">34. Permanent Layer Filters</option>
-                <option value="geosearch-filtered">
-                    35. Geosearch with filtered results
-                </option>
-                <option value="basemaps">
-                    36. Basemap fixture with configured thumbnails
-                </option>
+                <option value="geosearch-filtered">35. Geosearch with filtered results</option>
+                <option value="basemaps">36. Basemap fixture with configured thumbnails</option>
                 <option value="custom-store">37. Custom Store</option>
                 <option value="merge-grid">38. Merge Grid</option>
                 <option value="old-main">39. Old Default Sample</option>
-                <option value="grid-custom-template">
-                    40. Grid Custom Cell Template
-                </option>
-                <option value="simple-data">
-                    41. Basic Map with Data Layers
-                </option>
-                <option value="cumulative-effects">
-                    42. Cumulative Effects Mirror
-                </option>
-                <option value="custom-grid-buttons">
-                    43. Custom Grid Row Buttons
-                </option>
+                <option value="grid-custom-template">40. Grid Custom Cell Template</option>
+                <option value="simple-data">41. Basic Map with Data Layers</option>
+                <option value="cumulative-effects">42. Cumulative Effects Mirror</option>
+                <option value="custom-grid-buttons">43. Custom Grid Row Buttons</option>
                 <option value="basemap-fail">44. Failing Basemap</option>
-                <option value="export-custom-renderer">
-                    45. Custom Export
-                </option>
+                <option value="export-custom-renderer">45. Custom Export</option>
                 <option value="no-layers">46. Normal Map with No Layers</option>
             </select>
             <nav class="linky-container">
@@ -112,8 +70,8 @@
 
         <noscript>
             <strong
-                >We're sorry but ramp-core doesn't work properly without
-                JavaScript enabled. Please enable it to continue.</strong
+                >We're sorry but ramp-core doesn't work properly without JavaScript enabled. Please enable it to
+                continue.</strong
             >
         </noscript>
 
@@ -179,24 +137,17 @@
             var SAMPLE_KEY = 'sample';
             var currentUrl = new URL(window.location.href);
 
-            document
-                .getElementById('selectConfig')
-                .addEventListener('change', onConfigSelect);
+            document.getElementById('selectConfig').addEventListener('change', onConfigSelect);
             initialLoad();
 
             async function loadScript(scriptName) {
                 // vite dynamic import. requires assigning to a variable to be recognized.
-                const dummy = await import(
-                    `./starter-scripts/${scriptName}.js`
-                );
+                const dummy = await import(`./starter-scripts/${scriptName}.js`);
             }
 
             function onConfigSelect(event) {
                 // refresh page with new selection in URL
-                currentUrl.searchParams.set(
-                    SAMPLE_KEY,
-                    document.getElementById('selectConfig').selectedIndex + 1
-                );
+                currentUrl.searchParams.set(SAMPLE_KEY, document.getElementById('selectConfig').selectedIndex + 1);
                 window.location.href = currentUrl;
             }
 
@@ -204,11 +155,7 @@
                 var params = new URLSearchParams(currentUrl.search);
                 var sampleIndex = params.get(SAMPLE_KEY) - 1;
                 var selectElem = document.getElementById('selectConfig');
-                if (
-                    params.has(SAMPLE_KEY) &&
-                    sampleIndex >= 1 &&
-                    selectElem.item(sampleIndex)
-                ) {
+                if (params.has(SAMPLE_KEY) && sampleIndex >= 1 && selectElem.item(sampleIndex)) {
                     selectElem.options[sampleIndex].selected = 'selected';
                     loadScript(selectElem.options[sampleIndex].value);
                 } else {

@@ -30,11 +30,7 @@ export class SharedUtilsAPI {
      * @param {Boolean} crossOrigin [optional = true] when set, tries to fetch an image with crossOrigin = anonymous
      * @return {Promise} conversion promise resolving into a canvas of the image
      */
-    convertImageToCanvas(
-        url: string,
-        canvas?: HTMLCanvasElement,
-        crossOrigin = true
-    ): Promise<any> {
+    convertImageToCanvas(url: string, canvas?: HTMLCanvasElement, crossOrigin = true): Promise<any> {
         const c = canvas ?? window.document.createElement('canvas');
 
         const image = window.document.createElement('img'); // create image node
@@ -70,10 +66,7 @@ export class SharedUtilsAPI {
      * @param {String} imageType [optional = 'image/png'] format of the image representation
      * @return {Promise} promise resolving with the dataURL of the image
      */
-    async convertImagetoDataURL(
-        imageUri: string,
-        imageType = 'image/png'
-    ): Promise<string> {
+    async convertImagetoDataURL(imageUri: string, imageType = 'image/png'): Promise<string> {
         // this is already a dataUrl, just return
         if (imageUri.startsWith('data')) {
             return imageUri;
@@ -85,11 +78,7 @@ export class SharedUtilsAPI {
                 return canvas.toDataURL(imageType);
             })
             .catch(error => {
-                console.error(
-                    'Failed to load crossorigin image',
-                    imageUri,
-                    error
-                );
+                console.error('Failed to load crossorigin image', imageUri, error);
                 return imageUri;
             });
     }
@@ -116,9 +105,7 @@ export class SharedUtilsAPI {
 
         if (matches) {
             const idxStr: string = matches[1];
-            result.index = isNaN(parseInt(idxStr))
-                ? undefined
-                : parseInt(idxStr);
+            result.index = isNaN(parseInt(idxStr)) ? undefined : parseInt(idxStr);
             result.rootUrl = url.substr(0, url.length - matches[0].length); // will drop trailing slash
         } else {
             // give up, dont crash with error.
@@ -169,13 +156,11 @@ export class UrlWrapper {
         [this._base, this._query] = url.split('?').concat('');
 
         // convert the query part into a mapped object
-        this._queryMap = this._query
-            .split('&')
-            .reduce((map: UrlQueryMap, parameter: string) => {
-                const [key, value] = parameter.split('=');
-                map[key] = value;
-                return map;
-            }, {});
+        this._queryMap = this._query.split('&').reduce((map: UrlQueryMap, parameter: string) => {
+            const [key, value] = parameter.split('=');
+            map[key] = value;
+            return map;
+        }, {});
     }
 
     get query(): string {
@@ -208,15 +193,10 @@ export class UrlWrapper {
      * @memberof UrlWrapper
      */
     updateQuery(queryMapUpdate: UrlQueryMap): string {
-        const requestQueryMap: UrlQueryMap = <UrlQueryMap>(
-            deepmerge.all([{}, this.queryMap, queryMapUpdate])
-        );
+        const requestQueryMap: UrlQueryMap = <UrlQueryMap>deepmerge.all([{}, this.queryMap, queryMapUpdate]);
         const requestUrl = `${this.base}${Object.entries(requestQueryMap)
             .filter(([, value]) => value !== undefined)
-            .map(
-                ([key, value], index) =>
-                    `${index === 0 ? '?' : ''}${key}=${value}`
-            )
+            .map(([key, value], index) => `${index === 0 ? '?' : ''}${key}=${value}`)
             .join('&')}`;
 
         return requestUrl;

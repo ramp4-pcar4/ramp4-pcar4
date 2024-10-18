@@ -23,10 +23,7 @@ const TRIGGER_ATTR = 'truncate-trigger';
  */
 export const Truncate: Directive = {
     beforeMount(el: HTMLElement, binding: DirectiveBinding) {
-        if (
-            !el.classList.contains('truncate') &&
-            !binding.value?.noTruncateClass
-        ) {
+        if (!el.classList.contains('truncate') && !binding.value?.noTruncateClass) {
             el.classList.add('truncate');
         }
 

@@ -35,21 +35,13 @@ describe('Mapnav', () => {
         cy.window().then(window => {
             cy.get('.mapnav .mapnav-section .w-full').eq(3).click();
             cy.wait(1000);
-            cy.wrap(window.debugInstance.geo.map.getExtent())
-                .its('xmin')
-                .should('eq', -16632697.354854);
+            cy.wrap(window.debugInstance.geo.map.getExtent()).its('xmin').should('eq', -16632697.354854);
 
-            cy.wrap(window.debugInstance.geo.map.getExtent())
-                .its('xmax')
-                .should('eq', -5007771.626060756);
+            cy.wrap(window.debugInstance.geo.map.getExtent()).its('xmax').should('eq', -5007771.626060756);
 
-            cy.wrap(window.debugInstance.geo.map.getExtent())
-                .its('ymin')
-                .should('eq', 5022907.964742964);
+            cy.wrap(window.debugInstance.geo.map.getExtent()).its('ymin').should('eq', 5022907.964742964);
 
-            cy.wrap(window.debugInstance.geo.map.getExtent())
-                .its('ymax')
-                .should('eq', 10015875.184845109);
+            cy.wrap(window.debugInstance.geo.map.getExtent()).its('ymax').should('eq', 10015875.184845109);
         });
     });
 });

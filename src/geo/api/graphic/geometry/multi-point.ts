@@ -1,10 +1,4 @@
-import {
-    GeoJsonGeomType,
-    GeometryType,
-    Point,
-    PointSet,
-    SpatialReference
-} from '@/geo/api';
+import { GeoJsonGeomType, GeometryType, Point, PointSet, SpatialReference } from '@/geo/api';
 import type { SrDef, IdDef } from '@/geo/api';
 import { EsriMultipoint } from '@/geo/esri';
 import type GeoJson from 'geojson';
@@ -21,12 +15,7 @@ export class MultiPoint extends PointSet {
     // from existing geometry that can be interpreted as a set of points
     constructor(id: IdDef, multiPoint: MultiPoint);
     // from arrays of verticies that can be interpreted as a set of points
-    constructor(
-        id: IdDef,
-        listOfCoords: Array<Array<number>>,
-        sr?: SrDef,
-        raw?: boolean
-    );
+    constructor(id: IdDef, listOfCoords: Array<Array<number>>, sr?: SrDef, raw?: boolean);
     constructor(id: IdDef, listOfPoints: Array<Point>, sr?: SrDef);
     constructor(id: IdDef, listOfXY: Array<object>, sr?: SrDef);
     constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
@@ -41,10 +30,7 @@ export class MultiPoint extends PointSet {
 
     // TODO make an .addPoint? .removePoint?
 
-    static fromESRI(
-        esriMultiPoint: EsriMultipoint,
-        id?: number | string
-    ): MultiPoint {
+    static fromESRI(esriMultiPoint: EsriMultipoint, id?: number | string): MultiPoint {
         return new MultiPoint(
             id,
             esriMultiPoint.points,
@@ -60,10 +46,7 @@ export class MultiPoint extends PointSet {
         });
     }
 
-    static fromGeoJSON(
-        geoJsonMultiPoint: GeoJson.MultiPoint,
-        id?: number | string
-    ): MultiPoint {
+    static fromGeoJSON(geoJsonMultiPoint: GeoJson.MultiPoint, id?: number | string): MultiPoint {
         return new MultiPoint(
             id,
             geoJsonMultiPoint.coordinates,
@@ -73,8 +56,6 @@ export class MultiPoint extends PointSet {
     }
 
     toGeoJSON(): GeoJson.MultiPoint {
-        return <GeoJson.MultiPoint>(
-            this.geoJsonFactory(GeoJsonGeomType.MULTIPOINT, this.toArray())
-        );
+        return <GeoJson.MultiPoint>this.geoJsonFactory(GeoJsonGeomType.MULTIPOINT, this.toArray());
     }
 }

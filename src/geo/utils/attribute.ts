@@ -67,9 +67,7 @@ export class AttributeAPI extends APIScope {
         }
 
         // construct additional filter if we have a permanent filter
-        const permFilter = details.permanentFilter
-            ? ` AND ${details.permanentFilter}`
-            : '';
+        const permFilter = details.permanentFilter ? ` AND ${details.permanentFilter}` : '';
 
         // make a web call that downloads a chonk of attributes.
         const params: __esri.RequestOptions = {
@@ -87,25 +85,14 @@ export class AttributeAPI extends APIScope {
         );
         if (!serviceResult) {
             // case where service request was unsuccessful
-            console.error(
-                `ArcGIS batch load error: ${details.serviceUrl}`,
-                err
-            );
-            return Promise.reject(
-                new Error(`ArcGIS batch load error: ${details.serviceUrl}`)
-            );
+            console.error(`ArcGIS batch load error: ${details.serviceUrl}`, err);
+            return Promise.reject(new Error(`ArcGIS batch load error: ${details.serviceUrl}`));
         }
 
         if (!serviceResult.data || !serviceResult.data.features) {
             // case where service request was successful, but missing data
-            console.error(
-                `ArcGIS batch load gave no data/features: ${details.serviceUrl}`
-            );
-            return Promise.reject(
-                new Error(
-                    `ArcGIS batch load gave no data/features: ${details.serviceUrl}`
-                )
-            );
+            console.error(`ArcGIS batch load gave no data/features: ${details.serviceUrl}`);
+            return Promise.reject(new Error(`ArcGIS batch load gave no data/features: ${details.serviceUrl}`));
         }
 
         let feats: Array<any> = serviceResult.data.features;
@@ -127,10 +114,7 @@ export class AttributeAPI extends APIScope {
             }
 
             // Trim values in current batch
-            feats = this.trimFeatureSetAttributes(
-                feats,
-                details.fieldsToTrim ?? []
-            );
+            feats = this.trimFeatureSetAttributes(feats, details.fieldsToTrim ?? []);
 
             if (moreDataToLoad) {
                 // call the service again for the next batch of data.
@@ -138,15 +122,10 @@ export class AttributeAPI extends APIScope {
 
                 details.maxId = feats[len - 1].attributes[details.oidField];
 
-                const futureFeats = await this.arcGisBatchLoad(
-                    details,
-                    controller
-                );
+                const futureFeats = await this.arcGisBatchLoad(details, controller);
                 // take our current batch, append on everything the recursive call loaded, and return
                 // return empty list if aborted
-                return controller.loadAbortFlag
-                    ? []
-                    : feats.concat(futureFeats);
+                return controller.loadAbortFlag ? [] : feats.concat(futureFeats);
             } else {
                 // done thanks
                 // return empty list if aborted
@@ -172,10 +151,7 @@ export class AttributeAPI extends APIScope {
         details.maxId = -1;
         details.batchSize = -1;
 
-        const serverResult: Array<any> = await this.arcGisBatchLoad(
-            details,
-            controller
-        );
+        const serverResult: Array<any> = await this.arcGisBatchLoad(details, controller);
 
         // hoist the attributes from the .attributes property
         const attSet: AttributeSet = {
@@ -201,9 +177,7 @@ export class AttributeAPI extends APIScope {
         controller: AsynchAttribController
     ): Promise<AttributeSet> {
         if (!details.sourceGraphics) {
-            throw new Error(
-                'No .sourceGraphics provided to file layer attribute loader'
-            );
+            throw new Error('No .sourceGraphics provided to file layer attribute loader');
         }
 
         // Ideally we would have a way to strip out any graphics/attributes that do not pass a
@@ -224,9 +198,7 @@ export class AttributeAPI extends APIScope {
         // NOTE: All attribute string trimming is done at layer creation, not here.
         // See file-utils.js --> geoJsonToEsriJson() for details/implementation.
 
-        const pluckedAttributes = details.sourceGraphics.map(
-            g => toRaw(g).attributes
-        );
+        const pluckedAttributes = details.sourceGraphics.map(g => toRaw(g).attributes);
 
         const attSet: AttributeSet = {
             features: pluckedAttributes.toArray(),
@@ -252,9 +224,7 @@ export class AttributeAPI extends APIScope {
         controller: AsynchAttribController
     ): Promise<AttributeSet> {
         if (!details.sourceDataJson) {
-            throw new Error(
-                'No .sourceDataJson provided to file data-layer attribute loader'
-            );
+            throw new Error('No .sourceDataJson provided to file data-layer attribute loader');
         }
 
         const fields = details.sourceDataJson.fields;
@@ -262,20 +232,15 @@ export class AttributeAPI extends APIScope {
         const fieldsToTrim = details.fieldsToTrim ?? [];
 
         // TODO is there a more efficient way to translate from compact json to attribute objects? Do we care?
-        const rampAttributes: Array<Attributes> =
-            details.sourceDataJson.data.map(attRow => {
-                const attNugget: any = {};
-                attRow.forEach((val: any, i: number) => {
-                    // Can just trim the values directly here
-                    attNugget[fields[i]] =
-                        typeof val === 'string' &&
-                        fieldsToTrim.includes(fields[i])
-                            ? val.trim()
-                            : val;
-                });
-
-                return attNugget;
+        const rampAttributes: Array<Attributes> = details.sourceDataJson.data.map(attRow => {
+            const attNugget: any = {};
+            attRow.forEach((val: any, i: number) => {
+                // Can just trim the values directly here
+                attNugget[fields[i]] = typeof val === 'string' && fieldsToTrim.includes(fields[i]) ? val.trim() : val;
             });
+
+            return attNugget;
+        });
 
         const attSet: AttributeSet = {
             features: rampAttributes,
@@ -297,9 +262,7 @@ export class AttributeAPI extends APIScope {
         return attSet;
     }
 
-    async loadSingleFeature(
-        details: GetGraphicServiceDetails
-    ): Promise<Graphic> {
+    async loadSingleFeature(details: GetGraphicServiceDetails): Promise<Graphic> {
         const params: __esri.RequestOptions = {
             query: {
                 f: 'json',
@@ -316,10 +279,7 @@ export class AttributeAPI extends APIScope {
         }
 
         // set geometry precision if value is a non-negative integer
-        if (
-            typeof details.geometryPrecision !== 'undefined' &&
-            details.geometryPrecision >= 0
-        ) {
+        if (typeof details.geometryPrecision !== 'undefined' && details.geometryPrecision >= 0) {
             params.query.geometryPrecision = details.geometryPrecision;
         }
 
@@ -328,42 +288,25 @@ export class AttributeAPI extends APIScope {
         );
         if (!serviceResult) {
             // case where service request was unsuccessful
-            console.error(
-                `ArcGIS single feature load error: ${details.serviceUrl}`,
-                err
-            );
-            return Promise.reject(
-                new Error(
-                    `ArcGIS single feature load error: ${details.serviceUrl}`
-                )
-            );
+            console.error(`ArcGIS single feature load error: ${details.serviceUrl}`, err);
+            return Promise.reject(new Error(`ArcGIS single feature load error: ${details.serviceUrl}`));
         }
 
         if (!serviceResult.data || !serviceResult.data.features) {
             // case where service request was successful, but missing data
-            console.error(
-                `Could not locate feature ${details.oid} for layer ${details.serviceUrl}`
-            );
-            return Promise.reject(
-                new Error(
-                    `Could not locate feature ${details.oid} for layer ${details.serviceUrl}`
-                )
-            );
+            console.error(`Could not locate feature ${details.oid} for layer ${details.serviceUrl}`);
+            return Promise.reject(new Error(`Could not locate feature ${details.oid} for layer ${details.serviceUrl}`));
         }
 
         const feats: Array<any> = serviceResult.data.features;
         if (feats.length > 0) {
             let geom: BaseGeometry;
 
-            let feat = this.trimFeatureSetAttributes(
-                [feats[0]],
-                details.fieldsToTrim ?? []
-            )[0];
+            let feat = this.trimFeatureSetAttributes([feats[0]], details.fieldsToTrim ?? [])[0];
 
             if (details.includeGeometry) {
                 // server result omits spatial reference
-                feat.geometry.spatialReference =
-                    serviceResult.data.spatialReference;
+                feat.geometry.spatialReference = serviceResult.data.spatialReference;
                 const localEsriGeom = EsriGeometryFromJson(feat.geometry);
                 geom = this.$iApi.geo.geom.geomEsriToRamp(localEsriGeom);
             } else {
@@ -375,11 +318,7 @@ export class AttributeAPI extends APIScope {
         }
 
         // We got no features, so throw error
-        return Promise.reject(
-            new Error(
-                `Could not locate feature ${details.oid} for layer ${details.serviceUrl}`
-            )
-        );
+        return Promise.reject(new Error(`Could not locate feature ${details.oid} for layer ${details.serviceUrl}`));
     }
 
     /**
@@ -388,17 +327,13 @@ export class AttributeAPI extends APIScope {
      * @param fieldsToTrim Array of string names of the attributes to be trimmed.
      * @returns The featureset, trimmed.
      */
-    trimFeatureSetAttributes(
-        features: Array<any>,
-        fieldsToTrim: Array<string>
-    ): Array<any> {
+    trimFeatureSetAttributes(features: Array<any>, fieldsToTrim: Array<string>): Array<any> {
         // For each attribute (column) to be trimmed, trim all fields in that column
         fieldsToTrim.forEach(attrToTrim => {
             features.forEach(feat => {
                 // Only trim if value is a string
                 if (typeof feat.attributes[attrToTrim] === 'string') {
-                    feat.attributes[attrToTrim] =
-                        feat.attributes[attrToTrim].trim();
+                    feat.attributes[attrToTrim] = feat.attributes[attrToTrim].trim();
                 }
             });
         });
@@ -417,15 +352,10 @@ export class AttributeAPI extends APIScope {
     ): Array<FieldDefinition> {
         const magicFinder = (sauce: Array<any>, targetName: string): number => {
             // finds index of matching name, -1 if not in array.
-            return sauce.findIndex(
-                (protoField: any) => protoField.name === targetName
-            );
+            return sauce.findIndex((protoField: any) => protoField.name === targetName);
         };
 
-        const magicSorter = (
-            field1: FieldDefinition,
-            field2: FieldDefinition
-        ) => {
+        const magicSorter = (field1: FieldDefinition, field2: FieldDefinition) => {
             // return value:
             // negative if f1 is less than f2; positive if f1 is greater than f2; zero if they are equal (should be impossible)
 
@@ -435,10 +365,7 @@ export class AttributeAPI extends APIScope {
 
             if (ordF1 === -1 && ordF2 === -1) {
                 // neither have order. fallback to source order,
-                return (
-                    magicFinder(currentFields, field1.name) -
-                    magicFinder(currentFields, field2.name)
-                );
+                return magicFinder(currentFields, field1.name) - magicFinder(currentFields, field2.name);
             } else if (ordF1 === -1) {
                 // field 1 is unordered, so field 2 must come before
                 return 1;
@@ -474,9 +401,7 @@ export class AttributeAPI extends APIScope {
         }
 
         // Find the fields that should be trimmed (have trim = true)...
-        let fieldsToTrim = fieldMetadata.fieldInfo
-            .filter(elem => elem.trim)
-            .map(elem => elem.name);
+        let fieldsToTrim = fieldMetadata.fieldInfo.filter(elem => elem.trim).map(elem => elem.name);
 
         // ...and set their trim properties on the layer
         layer.fields.forEach(field => {
@@ -486,19 +411,10 @@ export class AttributeAPI extends APIScope {
         });
 
         // if order enforced, order the fields first before doing exclusive fields check
-        if (
-            fieldMetadata?.enforceOrder &&
-            fieldMetadata?.fieldInfo &&
-            fieldMetadata?.fieldInfo.length > 0
-        ) {
+        if (fieldMetadata?.enforceOrder && fieldMetadata?.fieldInfo && fieldMetadata?.fieldInfo.length > 0) {
             // demand respect for order
-            layer.fields = this.orderFields(
-                layer.fields,
-                fieldMetadata.fieldInfo
-            );
-            layer.fieldList = fieldMetadata.fieldInfo
-                .map(f => f.name)
-                .join(',');
+            layer.fields = this.orderFields(layer.fields, fieldMetadata.fieldInfo);
+            layer.fieldList = fieldMetadata.fieldInfo.map(f => f.name).join(',');
         }
 
         // if exlusive fields, only respect fields in the field info array
@@ -517,9 +433,7 @@ export class AttributeAPI extends APIScope {
             //      "coreHidden" that indicates the field has to exist, but should not be shown
             //      on things like details panes or grids
 
-            layer.fieldList = fieldMetadata.fieldInfo
-                .map(f => f.name)
-                .join(',');
+            layer.fieldList = fieldMetadata.fieldInfo.map(f => f.name).join(',');
             const tempFI = fieldMetadata.fieldInfo; // required because typescript is throwing a fit about undefineds inside the .filter
             layer.fields = layer.fields.filter(origField => {
                 return tempFI.find(fInfo => fInfo.name === origField.name);
@@ -549,10 +463,7 @@ export class AttributeAPI extends APIScope {
      * @param originalName field name as defined in the source
      * @returns a valid field name to use. Empty string if none found
      */
-    fieldValidator(
-        fields: Array<FieldDefinition>,
-        originalName: string
-    ): string {
+    fieldValidator(fields: Array<FieldDefinition>, originalName: string): string {
         if (fields.findIndex(f => f.name === originalName) === -1) {
             // no direct match found.
             const validField = fields.find(f => f.alias === originalName);
@@ -561,9 +472,7 @@ export class AttributeAPI extends APIScope {
             } else {
                 // give warning and return OBJECTID, which is guaranteed to exist in file layer.
                 // Issue is not critical enough to blow up the app with an error
-                console.warn(
-                    `Cannot find name field in layer field list: ${originalName}`
-                );
+                console.warn(`Cannot find name field in layer field list: ${originalName}`);
                 return '';
             }
         } else {
@@ -583,17 +492,13 @@ export class AttributeAPI extends APIScope {
      * @param layer the layer owning the attributes and the attribute source
      * @param attSource the attribute source for the attributes to transform
      */
-    async generateTabularAttributes(
-        layer: LayerInstance,
-        attSource: AttribSource
-    ): Promise<TabularAttributeSet> {
+    async generateTabularAttributes(layer: LayerInstance, attSource: AttribSource): Promise<TabularAttributeSet> {
         if (!attSource.attLoader.tabularAttributesCache) {
             // do not use await here. we want to store the promise and pass it on, not block until the promise resolves.
-            attSource.attLoader.tabularAttributesCache =
-                this.$iApi.geo.attributes.generateTabularAttributesWorker(
-                    layer,
-                    attSource
-                );
+            attSource.attLoader.tabularAttributesCache = this.$iApi.geo.attributes.generateTabularAttributesWorker(
+                layer,
+                attSource
+            );
         }
 
         return attSource.attLoader.tabularAttributesCache;
@@ -639,10 +544,7 @@ export class AttributeAPI extends APIScope {
             .filter(field =>
                 // assuming there is at least one attribute - empty attribute bundle promises should be rejected, so it never even gets this far
                 // filter out fields where there is no corresponding attribute data
-                Object.prototype.hasOwnProperty.call(
-                    attSet.features[0],
-                    toRaw(field).name
-                )
+                Object.prototype.hasOwnProperty.call(attSet.features[0], toRaw(field).name)
             )
             .map(field => ({
                 data: toRaw(field).name, // TODO calling this data is really unintuitive. consider global rename to fieldName, name, attribName, etc.
@@ -724,9 +626,7 @@ export class AttribSource {
             return this._attribLoader;
         } else {
             console.trace();
-            throw new Error(
-                'Attempted to load attributes prior to layer being loaded.'
-            );
+            throw new Error('Attempted to load attributes prior to layer being loaded.');
         }
     }
 
@@ -742,9 +642,7 @@ export class AttribSource {
             return this._quickCache;
         } else {
             console.trace();
-            throw new Error(
-                'Attempted to access attribute cache prior to layer being loaded.'
-            );
+            throw new Error('Attempted to access attribute cache prior to layer being loaded.');
         }
     }
 
@@ -856,11 +754,7 @@ export class AttributeLoaderBase extends APIScope {
     // so one function for arcgis server. another for baked featurelayer. another for json file source
     protected loadPromiseGenerator(): Promise<AttributeSet> {
         // this should never run
-        return Promise.reject(
-            new Error(
-                'Subclass of AttributeLoaderBase did not implement loadPromiseGenerator'
-            )
-        );
+        return Promise.reject(new Error('Subclass of AttributeLoaderBase did not implement loadPromiseGenerator'));
     }
 }
 
@@ -875,10 +769,7 @@ export class ArcServerAttributeLoader extends AttributeLoaderBase {
     }
 
     protected loadPromiseGenerator(): Promise<AttributeSet> {
-        return this.$iApi.geo.attributes.loadArcGisServerAttributes(
-            this.details,
-            this.aac
-        );
+        return this.$iApi.geo.attributes.loadArcGisServerAttributes(this.details, this.aac);
     }
 }
 
@@ -893,10 +784,7 @@ export class FileLayerAttributeLoader extends AttributeLoaderBase {
     }
 
     protected loadPromiseGenerator(): Promise<AttributeSet> {
-        return this.$iApi.geo.attributes.loadGraphicsAttributes(
-            this.details,
-            this.aac
-        );
+        return this.$iApi.geo.attributes.loadGraphicsAttributes(this.details, this.aac);
     }
 }
 
@@ -911,10 +799,7 @@ export class DataLayerAttributeLoader extends AttributeLoaderBase {
     }
 
     protected loadPromiseGenerator(): Promise<AttributeSet> {
-        return this.$iApi.geo.attributes.loadCompactJsonAttributes(
-            this.details,
-            this.aac
-        );
+        return this.$iApi.geo.attributes.loadCompactJsonAttributes(this.details, this.aac);
     }
 }
 
@@ -944,9 +829,7 @@ export class QuickCache {
         this.attribs = {};
         this.geoms = {};
         this.extents = {};
-        this.isPoint =
-            geomType === GeometryType.POINT ||
-            geomType === GeometryType.MULTIPOINT;
+        this.isPoint = geomType === GeometryType.POINT || geomType === GeometryType.MULTIPOINT;
     }
 
     private getScaleStore(scale: number): { [key: number]: any } {
@@ -967,9 +850,7 @@ export class QuickCache {
             return this.geoms;
         } else {
             if (typeof scale === 'undefined') {
-                throw new Error(
-                    'Attempted to access geometry store for non-point layer without providing a map scale'
-                );
+                throw new Error('Attempted to access geometry store for non-point layer without providing a map scale');
             }
             return this.getScaleStore(scale);
         }
@@ -989,11 +870,7 @@ export class QuickCache {
         return this.getGeomStore(scale)[key];
     }
 
-    setGeom(
-        key: number,
-        geom: BaseGeometry,
-        scale: number | undefined = undefined
-    ): void {
+    setGeom(key: number, geom: BaseGeometry, scale: number | undefined = undefined): void {
         const store = this.getGeomStore(scale);
         store[key] = geom;
     }

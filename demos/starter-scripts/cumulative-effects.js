@@ -142,8 +142,7 @@ const enConfig = {
                         url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                 attribution: {
                     text: {
                         disabled: true
@@ -166,8 +165,7 @@ const enConfig = {
                         url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseEsriRelief',
@@ -182,14 +180,12 @@ const enConfig = {
                         url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseEsriStreet',
                 name: 'World Street Map',
-                description:
-                    'This worldwide street map presents highway-level data for the world.',
+                description: 'This worldwide street map presents highway-level data for the world.',
                 altText: 'ESWorld Street Map',
                 layers: [
                     {
@@ -198,8 +194,7 @@ const enConfig = {
                         url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseEsriTerrain',
@@ -214,8 +209,7 @@ const enConfig = {
                         url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseEsriTopo',
@@ -230,8 +224,7 @@ const enConfig = {
                         url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseOpenStreetMap',
@@ -246,8 +239,7 @@ const enConfig = {
                 ],
                 thumbnailUrl:
                     'https://www.openstreetmap.org/assets/about/osm-a74d2c94082260032c133b9d206ee2fdd911e5c82bf03daae10393a02d7b4809.png',
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             }
         ],
         initialBasemapId: 'baseNrCan'
@@ -431,14 +423,10 @@ const enConfig = {
         },
         geosearch: {
             serviceUrls: {
-                geoNames:
-                    'https://geogratis.gc.ca/services/geoname/@{language}/geonames.json',
-                geoLocation:
-                    'https://geogratis.gc.ca/services/geolocation/@{language}/locate',
-                geoTypes:
-                    'https://geogratis.gc.ca/services/geoname/@{language}/codes/concise.json',
-                geoProvince:
-                    'https://geogratis.gc.ca/services/geoname/@{language}/codes/province.json'
+                geoNames: 'https://geogratis.gc.ca/services/geoname/@{language}/geonames.json',
+                geoLocation: 'https://geogratis.gc.ca/services/geolocation/@{language}/locate',
+                geoTypes: 'https://geogratis.gc.ca/services/geoname/@{language}/codes/concise.json',
+                geoProvince: 'https://geogratis.gc.ca/services/geoname/@{language}/codes/province.json'
             }
         }
     },
@@ -517,8 +505,7 @@ const frConfig = {
                 name: 'Carte de base du Canada - transport (CBCT) avec étiquettes',
                 description:
                     "La carte de base du Canada - transport (CBCT) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
-                altText:
-                    'altText - La carte de base du Canada - transport (CBCT)',
+                altText: 'altText - La carte de base du Canada - transport (CBCT)',
                 layers: [
                     {
                         id: 'CBCT',
@@ -552,8 +539,7 @@ const frConfig = {
                 name: 'Carte de base du Canada - élévation (CBCE)',
                 description:
                     "La carte de base du Canada - élévation (CBCE) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
-                altText:
-                    'altText - La carte de base du Canada - élévation (CBCE)',
+                altText: 'altText - La carte de base du Canada - élévation (CBCE)',
                 layers: [
                     {
                         id: 'CBME_CBCE_HS_RO_3978',
@@ -568,8 +554,7 @@ const frConfig = {
                 name: 'Carte de base du Canada - transport (CBCT)',
                 description:
                     "La carte de base du Canada - transport (CBCT) du Secteur des sciences de la Terre de Ressources naturelles Canada est un service Internet qui s'adresse principalement aux utilisateurs et développeurs d'applications cartographiques en ligne.",
-                altText:
-                    'altText - La carte de base du Canada - transport (CBCT)',
+                altText: 'altText - La carte de base du Canada - transport (CBCT)',
                 layers: [
                     {
                         id: 'CBMT_CBCT_GEOM_3978',
@@ -592,8 +577,7 @@ const frConfig = {
                         url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseEsriPhysical',
@@ -608,8 +592,7 @@ const frConfig = {
                         url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Physical_Map/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseEsriRelief',
@@ -624,14 +607,12 @@ const frConfig = {
                         url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Shaded_Relief/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseEsriStreet',
                 name: 'Monde routier',
-                description:
-                    'La carte du monde routier présente des données au niveau des autoroutes pour le monde.',
+                description: 'La carte du monde routier présente des données au niveau des autoroutes pour le monde.',
                 altText: 'altText - La carte du monde routier',
                 layers: [
                     {
@@ -640,8 +621,7 @@ const frConfig = {
                         url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseEsriTerrain',
@@ -656,8 +636,7 @@ const frConfig = {
                         url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Terrain_Base/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
                 id: 'baseEsriTopo',
@@ -672,8 +651,7 @@ const frConfig = {
                         url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
                     }
                 ],
-                tileSchemaId:
-                    'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             }
         ],
         initialBasemapId: 'baseNrCan'
@@ -835,14 +813,10 @@ const frConfig = {
         },
         geosearch: {
             serviceUrls: {
-                geoNames:
-                    'https://geogratis.gc.ca/services/geoname/@{language}/geonames.json',
-                geoLocation:
-                    'https://geogratis.gc.ca/services/geolocation/@{language}/locate',
-                geoTypes:
-                    'https://geogratis.gc.ca/services/geoname/@{language}/codes/concise.json',
-                geoProvince:
-                    'https://geogratis.gc.ca/services/geoname/@{language}/codes/province.json'
+                geoNames: 'https://geogratis.gc.ca/services/geoname/@{language}/geonames.json',
+                geoLocation: 'https://geogratis.gc.ca/services/geolocation/@{language}/locate',
+                geoTypes: 'https://geogratis.gc.ca/services/geoname/@{language}/codes/concise.json',
+                geoProvince: 'https://geogratis.gc.ca/services/geoname/@{language}/codes/province.json'
             }
         }
     },
@@ -865,11 +839,7 @@ let options = {
     startRequired: false
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 
 // add export fixtures
 rInstance.fixture.add('export');

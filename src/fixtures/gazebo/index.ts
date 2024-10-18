@@ -71,11 +71,9 @@ class GazeboFixture extends FixtureInstance {
                             return new Promise<AsyncComponentEh>(resolve =>
                                 setTimeout(
                                     () =>
-                                        import(`./p2-screen-1.vue`).then(
-                                            data => {
-                                                resolve(data);
-                                            }
-                                        ),
+                                        import(`./p2-screen-1.vue`).then(data => {
+                                            resolve(data);
+                                        }),
                                     2000
                                 )
                             );
@@ -92,9 +90,7 @@ class GazeboFixture extends FixtureInstance {
                          * returning a `VueConstructor` in a promise
                          */
                         'p-2-screen-3': () => {
-                            return new Promise<AsyncComponentEh>(resolve =>
-                                resolve(markRaw(GazeboP2Screen3V))
-                            );
+                            return new Promise<AsyncComponentEh>(resolve => resolve(markRaw(GazeboP2Screen3V)));
                         }
                     },
                     style: {

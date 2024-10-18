@@ -19,20 +19,8 @@
                     tabindex="0"
                     class="cursor-pointer absolute h-full w-full"
                     @click="minimized = !minimized"
-                    :content="
-                        t(
-                            minimized
-                                ? 'overviewmap.expand'
-                                : 'overviewmap.minimize'
-                        )
-                    "
-                    :aria-label="
-                        t(
-                            minimized
-                                ? 'overviewmap.expand'
-                                : 'overviewmap.minimize'
-                        )
-                    "
+                    :content="t(minimized ? 'overviewmap.expand' : 'overviewmap.minimize')"
+                    :aria-label="t(minimized ? 'overviewmap.expand' : 'overviewmap.minimize')"
                     v-tippy="{ placement: 'left', hideOnClick: false }"
                 >
                     <svg
@@ -59,14 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-    computed,
-    inject,
-    onBeforeUnmount,
-    onMounted,
-    reactive,
-    ref
-} from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 
 import type { BasemapChange, Extent, RampBasemapConfig } from '@/geo/api';
 import { GlobalEvents, InstanceAPI, OverviewMapAPI } from '@/api/internal';
@@ -81,13 +62,9 @@ const iApi = inject('iApi') as InstanceAPI;
 const configStore = useConfigStore();
 const el = ref();
 
-const activeBasemap = computed<RampBasemapConfig>(
-    () => configStore.activeBasemapConfig as RampBasemapConfig
-);
+const activeBasemap = computed<RampBasemapConfig>(() => configStore.activeBasemapConfig as RampBasemapConfig);
 const mapConfig = computed(() => overviewmapStore.mapConfig);
-const basemaps = computed(
-    () => overviewmapStore.basemaps as { [key: string]: RampBasemapConfig }
-);
+const basemaps = computed(() => overviewmapStore.basemaps as { [key: string]: RampBasemapConfig });
 const startMinimized = computed(() => overviewmapStore.startMinimized);
 let overviewMap = reactive(new OverviewMapAPI(iApi));
 const minimized = ref(true);
@@ -97,10 +74,7 @@ const handlers = reactive<Array<string>>([]);
 onMounted(() => {
     iApi.geo.map.viewPromise.then(async () => {
         _adaptBasemap();
-        overviewMap.createMap(
-            mapConfig.value!,
-            el.value.querySelector('.overviewmap') as HTMLDivElement
-        );
+        overviewMap.createMap(mapConfig.value!, el.value.querySelector('.overviewmap') as HTMLDivElement);
 
         await overviewMap.viewPromise;
 
@@ -109,9 +83,7 @@ onMounted(() => {
         minimized.value = startMinimized.value!;
 
         // update the overview map with the current map extent
-        let updatePromise = overviewMap.updateOverview(
-            iApi.geo.map.getExtent()
-        );
+        let updatePromise = overviewMap.updateOverview(iApi.geo.map.getExtent());
         // update the overview map whenever the extent changes
         handlers.push(
             iApi.event.on(
@@ -141,22 +113,15 @@ onMounted(() => {
         // adapt the overview map's basemap when the main map's basemap changes
         // note that this handler is for the same schema basemap change case where the overview map is using the main map's basemap
         handlers.push(
-            iApi.event.on(
-                GlobalEvents.MAP_BASEMAPCHANGE,
-                async (payload: BasemapChange) => {
-                    if (!payload.schemaChanged && overviewMap.created) {
-                        if (
-                            activeBasemap.value &&
-                            basemaps.value[activeBasemap.value.tileSchemaId] ===
-                                undefined
-                        ) {
-                            await overviewMap.removeMapGraphicLayer();
-                            overviewMap.setBasemap(payload.basemapId);
-                            await overviewMap.addMapGraphicLayer();
-                        }
+            iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, async (payload: BasemapChange) => {
+                if (!payload.schemaChanged && overviewMap.created) {
+                    if (activeBasemap.value && basemaps.value[activeBasemap.value.tileSchemaId] === undefined) {
+                        await overviewMap.removeMapGraphicLayer();
+                        overviewMap.setBasemap(payload.basemapId);
+                        await overviewMap.addMapGraphicLayer();
                     }
                 }
-            )
+            })
         );
     });
 });
@@ -169,8 +134,7 @@ onBeforeUnmount(() => {
 });
 
 const cursorHitTest = async (e: MouseEvent) => {
-    hoverOnExtent.value =
-        !minimized.value && (await overviewMap.cursorHitTest(e));
+    hoverOnExtent.value = !minimized.value && (await overviewMap.cursorHitTest(e));
 };
 
 const mapStyle = () => {
@@ -201,20 +165,15 @@ const _adaptBasemap = () => {
     // try to find a suitable basemap
 
     if (!activeBasemap.value) {
-        console.error(
-            'Overview Map could not obtain the basemap config used by the main map'
-        );
+        console.error('Overview Map could not obtain the basemap config used by the main map');
         return;
     }
 
     try {
-        const tileSchemaId: string | undefined =
-            activeBasemap.value?.tileSchemaId;
+        const tileSchemaId: string | undefined = activeBasemap.value?.tileSchemaId;
 
         if (!tileSchemaId) {
-            throw new Error(
-                'Overview Map could not obtain the tile schema of the main map'
-            );
+            throw new Error('Overview Map could not obtain the tile schema of the main map');
         }
 
         // find a basemap in this tile schema
@@ -233,9 +192,7 @@ const _adaptBasemap = () => {
 
         // set the basemap if the map has been created
         if (overviewMap.created) {
-            overviewMap.viewPromise.then(() =>
-                overviewMap.setBasemap(basemap.id)
-            );
+            overviewMap.viewPromise.then(() => overviewMap.setBasemap(basemap.id));
         }
     } catch (err) {
         // if we errored above, just use the main map's basemap
@@ -252,9 +209,7 @@ const _adaptBasemap = () => {
         }
 
         // set the basemap once the map loads
-        overviewMap.viewPromise.then(() =>
-            overviewMap.setBasemap(activeBasemap.value.id)
-        );
+        overviewMap.viewPromise.then(() => overviewMap.setBasemap(activeBasemap.value.id));
     }
 };
 </script>

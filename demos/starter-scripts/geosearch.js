@@ -65,11 +65,7 @@ let options = {
     loadDefaultEvents: true
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 
 rInstance.fixture.addDefaultFixtures(['appbar', 'geosearch']).then(() => {
     rInstance.panel.open('geosearch');

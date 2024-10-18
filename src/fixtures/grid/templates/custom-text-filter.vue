@@ -16,16 +16,8 @@
                 }
             "
             enterkeyhint="done"
-            :placeholder="
-                t('grid.filters.column.label.text', [
-                    params.column.colDef.headerName
-                ])
-            "
-            :aria-label="
-                t('grid.filters.column.label.text', [
-                    params.column.colDef.headerName
-                ])
-            "
+            :placeholder="t('grid.filters.column.label.text', [params.column.colDef.headerName])"
+            :aria-label="t('grid.filters.column.label.text', [params.column.colDef.headerName])"
             :disabled="fixed"
         />
     </div>
@@ -48,10 +40,7 @@ const { t } = useI18n();
 const props = defineProps(['params']);
 
 const filterValue = ref<string>('');
-const fixed = ref<boolean>(
-    props.params.stateManager.columns[props.params.column.colDef.field].filter
-        .static
-);
+const fixed = ref<boolean>(props.params.stateManager.columns[props.params.column.colDef.field].filter.static);
 
 const valueChanged = (): void => {
     props.params.parentFilterInstance((instance: any) => {
@@ -65,10 +54,7 @@ const valueChanged = (): void => {
 
         // Save the new filter value in the state manager. Allows for quick recovery if the grid is
         // closed and re-opened.
-        props.params.stateManager.setColumnFilterValue(
-            props.params.column.colDef.field,
-            filterValue.value
-        );
+        props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, filterValue.value);
 
         props.params.api.onFilterChanged();
     });
@@ -90,9 +76,7 @@ const valueChanged = (): void => {
 
 onBeforeMount(() => {
     // Load previously stored value (if saved in table state manager)
-    filterValue.value = props.params.stateManager.getColumnFilterValue(
-        props.params.column.colDef.field
-    );
+    filterValue.value = props.params.stateManager.getColumnFilterValue(props.params.column.colDef.field);
 
     // Apply the default value to the column filter.
     valueChanged();

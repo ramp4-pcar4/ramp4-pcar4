@@ -1,15 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { CommonLayer, GlobalEvents, InstanceAPI } from '@/api/internal';
-import {
-    DefPromise,
-    DrawState,
-    Extent,
-    InitiationState,
-    LayerState,
-    ScaleSet,
-    SpatialReference
-} from '@/geo/api';
+import { DefPromise, DrawState, Extent, InitiationState, LayerState, ScaleSet, SpatialReference } from '@/geo/api';
 
 import type { DrawOrder, RampLayerConfig } from '@/geo/api';
 
@@ -40,23 +32,15 @@ export class MapLayer extends CommonLayer {
 
         this._scaleSet = new ScaleSet();
 
-        this._mouseTolerance =
-            rampConfig.mouseTolerance != undefined
-                ? rampConfig.mouseTolerance
-                : 5; // use default value of 5 if mouse tolerance is undefined
-        this._touchTolerance =
-            rampConfig.touchTolerance != undefined
-                ? rampConfig.touchTolerance
-                : 15; // use default value of 15 if touch tolerance is undefined
+        this._mouseTolerance = rampConfig.mouseTolerance != undefined ? rampConfig.mouseTolerance : 5; // use default value of 5 if mouse tolerance is undefined
+        this._touchTolerance = rampConfig.touchTolerance != undefined ? rampConfig.touchTolerance : 15; // use default value of 15 if touch tolerance is undefined
 
         this._drawOrder = [];
 
         this._serverVisibility = undefined;
 
         this.isCosmetic = rampConfig.cosmetic || false;
-        this.extent = rampConfig.extent
-            ? Extent.fromConfig(`${this.id}_extent`, rampConfig.extent)
-            : undefined;
+        this.extent = rampConfig.extent ? Extent.fromConfig(`${this.id}_extent`, rampConfig.extent) : undefined;
 
         this.viewDefProm = new DefPromise();
 
@@ -72,10 +56,7 @@ export class MapLayer extends CommonLayer {
     }
 
     protected notLoadedErr(): void {
-        console.error(
-            'Attempted to manipulate the layer before it was loaded. Layer id ' +
-                this.id
-        );
+        console.error('Attempted to manipulate the layer before it was loaded. Layer id ' + this.id);
         console.trace();
     }
 
@@ -149,20 +130,15 @@ export class MapLayer extends CommonLayer {
             })
         );
 
-        this.esriLayer.on(
-            'layerview-create',
-            (e: __esri.LayerLayerviewCreateEvent) => {
-                this.esriView = e.layerView;
-                this.esriWatches.push(
-                    e.layerView.watch('updating', (newval: boolean) => {
-                        this.updateDrawState(
-                            newval ? DrawState.REFRESH : DrawState.UP_TO_DATE
-                        );
-                    })
-                );
-                this.viewDefProm.resolveMe();
-            }
-        );
+        this.esriLayer.on('layerview-create', (e: __esri.LayerLayerviewCreateEvent) => {
+            this.esriView = e.layerView;
+            this.esriWatches.push(
+                e.layerView.watch('updating', (newval: boolean) => {
+                    this.updateDrawState(newval ? DrawState.REFRESH : DrawState.UP_TO_DATE);
+                })
+            );
+            this.viewDefProm.resolveMe();
+        });
 
         // initiate sublayers last (top down intiation)
         this.sublayers.forEach(s => s.initiate());
@@ -195,9 +171,7 @@ export class MapLayer extends CommonLayer {
         const startTime = Date.now();
 
         this.$iApi.event.emit(GlobalEvents.LAYER_RELOAD_START, this);
-        this.sublayers.forEach(sublayer =>
-            this.$iApi.event.emit(GlobalEvents.LAYER_RELOAD_START, sublayer)
-        );
+        this.sublayers.forEach(sublayer => this.$iApi.event.emit(GlobalEvents.LAYER_RELOAD_START, sublayer));
 
         // need to terminate even if initiation failed. Termination
         // does cleanups that are required.
@@ -222,9 +196,7 @@ export class MapLayer extends CommonLayer {
         this.$iApi.geo.map.insertToEsriMap(this);
 
         this.$iApi.event.emit(GlobalEvents.LAYER_RELOAD_END, this);
-        this.sublayers.forEach(sublayer =>
-            this.$iApi.event.emit(GlobalEvents.LAYER_RELOAD_END, sublayer)
-        );
+        this.sublayers.forEach(sublayer => this.$iApi.event.emit(GlobalEvents.LAYER_RELOAD_END, sublayer));
     }
 
     /**
@@ -253,9 +225,7 @@ export class MapLayer extends CommonLayer {
     removeEsriLayer(): void {
         if (this.esriLayer && this.$iApi.geo.map.esriMap) {
             // attempt to find esri layer in esri map. remove if found
-            const tempPosition = this.$iApi.geo.map.esriMap.layers.findIndex(
-                l => l.id === this.id
-            );
+            const tempPosition = this.$iApi.geo.map.esriMap.layers.findIndex(l => l.id === this.id);
             if (tempPosition > -1) {
                 this.$iApi.geo.map.esriMap.layers.remove(this.esriLayer);
             }
@@ -273,22 +243,19 @@ export class MapLayer extends CommonLayer {
         }
 
         if (!this.isCosmetic) {
-            this.identify =
-                this.config.state?.identify ?? this.supportsIdentify;
+            this.identify = this.config.state?.identify ?? this.supportsIdentify;
         }
 
         // layer base class doesnt have spatial ref, but we will assume all our layers do.
         // consider adding fancy checks if its missing, and if so just promise.resolve .
         // given the layer is dead without a success, we don't bother with any cancel-checking here.
-        const lookupPromise = this.$iApi.geo.proj
-            .checkProj(this.getSR())
-            .then(goodSR => {
-                if (goodSR) {
-                    return Promise.resolve();
-                } else {
-                    return Promise.reject();
-                }
-            });
+        const lookupPromise = this.$iApi.geo.proj.checkProj(this.getSR()).then(goodSR => {
+            if (goodSR) {
+                return Promise.resolve();
+            } else {
+                return Promise.reject();
+            }
+        });
 
         proms.push(lookupPromise);
 
@@ -308,9 +275,7 @@ export class MapLayer extends CommonLayer {
         if (this.$iApi.geo.map.created) {
             return true;
         } else {
-            console.error(
-                'Attempting to use map-dependent logic before the layer has been added to the map'
-            );
+            console.error('Attempting to use map-dependent logic before the layer has been added to the map');
             console.trace();
             return false;
         }
@@ -383,9 +348,7 @@ export class MapLayer extends CommonLayer {
      */
     zoomToLayerBoundary(): Promise<void> {
         if (!this.extent) {
-            console.error(
-                `Attempted to zoom to boundary of a layer with no extent (Layer Id: ${this.id})`
-            );
+            console.error(`Attempted to zoom to boundary of a layer with no extent (Layer Id: ${this.id})`);
             return Promise.resolve();
         }
 
@@ -412,9 +375,7 @@ export class MapLayer extends CommonLayer {
      */
     set mouseTolerance(tolerance: number) {
         if (!this.supportsIdentify) {
-            console.warn(
-                "Attempted to set click tolerance on a layer that doesn't support identify"
-            );
+            console.warn("Attempted to set click tolerance on a layer that doesn't support identify");
             return;
         }
 
@@ -443,9 +404,7 @@ export class MapLayer extends CommonLayer {
      */
     set touchTolerance(tolerance: number) {
         if (!this.supportsIdentify) {
-            console.warn(
-                "Attempted to set touch tolerance on a layer that doesn't support identify"
-            );
+            console.warn("Attempted to set touch tolerance on a layer that doesn't support identify");
             return;
         }
 
@@ -461,10 +420,7 @@ export class MapLayer extends CommonLayer {
      * Indicates if the Esri map layer exists
      */
     get layerExists(): boolean {
-        return (
-            this.initiationState === InitiationState.INITIATED &&
-            !!this.esriLayer
-        );
+        return this.initiationState === InitiationState.INITIATED && !!this.esriLayer;
     }
 
     /**
@@ -510,9 +466,7 @@ export class MapLayer extends CommonLayer {
      */
     checkVisibility(): void {
         if (this.supportsSublayers && this.layerExists) {
-            this.visibility = this.sublayers.some(
-                sublayer => sublayer.visibility
-            );
+            this.visibility = this.sublayers.some(sublayer => sublayer.visibility);
         }
     }
 
@@ -551,9 +505,7 @@ export class MapLayer extends CommonLayer {
      */
     getSR(): SpatialReference {
         if (this.esriLayer) {
-            return SpatialReference.fromESRI(
-                (<any>this.esriLayer).spatialReference!
-            );
+            return SpatialReference.fromESRI((<any>this.esriLayer).spatialReference!);
         } else {
             this.noLayerErr();
             return SpatialReference.latLongSR();

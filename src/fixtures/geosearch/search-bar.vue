@@ -6,9 +6,7 @@
             :class="{ 'border-yellow-500': badChars }"
             :placeholder="t('geosearch.searchText')"
             :value="searchVal"
-            @input="
-                onSearchTermChange(($event.target as HTMLInputElement).value)
-            "
+            @input="onSearchTermChange(($event.target as HTMLInputElement).value)"
             @keyup.enter="
                 if (panelStore.mobileView) {
                     ($event.target as HTMLInputElement).blur();

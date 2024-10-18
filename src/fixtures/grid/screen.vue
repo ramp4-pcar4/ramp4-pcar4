@@ -2,11 +2,7 @@
     <panel-screen :panel="panel">
         <template #header>{{ t('grid.title') }} </template>
         <template #content>
-            <table-component
-                class="rv-grid"
-                :gridId="currentId"
-                :panel="panel"
-            ></table-component>
+            <table-component class="rv-grid" :gridId="currentId" :panel="panel"></table-component>
         </template>
     </panel-screen>
 </template>
