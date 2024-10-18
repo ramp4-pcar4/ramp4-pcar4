@@ -144,6 +144,15 @@ export class CommonLayer extends LayerInstance {
         });
     }
 
+    // remove ~@~
+    async sleep(millsecs: number): Promise<void> {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve();
+            }, millsecs);
+        });
+    }
+
     // need this so initiate encapsulates the entire initiation process regardless of which inherited layer type is being initiated
     async initiate(): Promise<void> {
         this.updateInitiationState(InitiationState.INITIATING);
@@ -183,6 +192,11 @@ export class CommonLayer extends LayerInstance {
             }
         }, this.expectedTime.fail);
 
+        // remove ~@~
+        if (!this.isCosmetic) {
+            await this.sleep(this.$iApi.initDelay);
+        }
+
         const [initiateErr] = await to(this.onInitiate()); // Need this because some layers don't do error handling things
 
         // we're done timing regardless. a) already timed out. b) init ok. c) init errored so already errored.
@@ -198,6 +212,14 @@ export class CommonLayer extends LayerInstance {
                 );
             } else {
                 this.updateInitiationState(InitiationState.INITIATED);
+            }
+
+            // remove ~@~
+            if (!this.isCosmetic) {
+                this.$iApi.notify.show(
+                    NotificationType.INFO,
+                    'Finished init phase: ' + (this.name || this.id)
+                );
             }
         }
     }
@@ -280,6 +302,14 @@ export class CommonLayer extends LayerInstance {
                                 sublayer.onLoad()
                             );
                             this.updateLayerState(LayerState.LOADED);
+
+                            // remove ~@~
+                            if (!this.isCosmetic) {
+                                this.$iApi.notify.show(
+                                    NotificationType.INFO,
+                                    'Finished load phase: ' + this.name
+                                );
+                            }
                         }
                     } else {
                         this.visibility = false;
@@ -347,7 +377,12 @@ export class CommonLayer extends LayerInstance {
         // currently nothing, but we have the option to insert
         // an async setup that is global for all layers
 
-        return [];
+        // remove ~@~
+        if (this.isCosmetic) {
+            return [];
+        } else {
+            return [this.sleep(this.$iApi.loadDelay)];
+        }
     }
 
     cancelLoad(): void {

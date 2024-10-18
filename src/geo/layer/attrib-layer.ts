@@ -255,13 +255,6 @@ export class AttribLayer extends MapLayer {
             .map(field => field.name);
     }
 
-    /**
-     * Invokes the process to get the full set of attribute values for the layer,
-     * formatted in a tabular format. Additional data properties are also included.
-     * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
-     *
-     * @returns {Promise} resolves with set of tabular attribute values
-     */
     getTabularAttributes(): Promise<TabularAttributeSet> {
         // this call will generate the tabular format, or return the cache if
         // it exists
