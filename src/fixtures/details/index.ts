@@ -10,7 +10,7 @@ class DetailsFixture extends DetailsAPI {
     async added() {
         this.$iApi.panel.register(
             {
-                'details-panel': {
+                details: {
                     screens: {
                         'details-screen': markRaw(DetailsScreenV)
                     },
@@ -41,11 +41,11 @@ class DetailsFixture extends DetailsAPI {
             // console.log(`[fixture] ${this.id} removed`);
             unwatch();
 
-            this.$iApi.panel.remove('details-panel');
+            this.$iApi.panel.remove('details');
 
             if (this.$iApi.fixture.exists('appbar')) {
                 const appbarStore = useAppbarStore(this.$vApp.$pinia);
-                appbarStore.removeButton('details-panel');
+                appbarStore.removeButton('details');
             }
 
             const detailsStore = useDetailsStore(this.$vApp.$pinia);

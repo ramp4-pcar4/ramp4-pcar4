@@ -2521,15 +2521,7 @@
                             "$ref": "#/$defs/panelWidth"
                         },
                         "panelTeleport": {
-                            "type": "object",
-                            "properties": {
-                                "details-layers": {
-                                    "$ref": "#/$defs/panelTeleport"
-                                },
-                                "details-items": {
-                                    "$ref": "#/$defs/panelTeleport"
-                                }
-                            }
+                            "$ref": "#/$defs/panelTeleport"
                         }
                     },
                     "required": ["templates"]

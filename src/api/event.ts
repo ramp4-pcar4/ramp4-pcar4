@@ -20,6 +20,7 @@ import { useAppbarStore } from '@/fixtures/appbar/store';
 import { useGridStore } from '@/fixtures/grid/store';
 import { LayerState, LayerType } from '@/geo/api';
 import type {
+    BasemapChange,
     IdentifyResultFormat,
     MapClick,
     MapMove,
@@ -832,13 +833,15 @@ export class EventAPI extends APIScope {
 
             case DefEH.MAP_BASEMAP_CHECKS_TILE_PROJ:
                 // check for any tile layer projection mismatches when the basemap changes
-                zeHandler = () => {
-                    this.$iApi.geo.layer
-                        .allLayers()
-                        .filter(l => l.layerType === LayerType.TILE)
-                        .forEach(tl => {
-                            (tl as TileLayer).checkProj();
-                        });
+                zeHandler = (payload: BasemapChange) => {
+                    if (payload.schemaChanged) {
+                        this.$iApi.geo.layer
+                            .allLayers()
+                            .filter(l => l.layerType === LayerType.TILE)
+                            .forEach(tl => {
+                                (tl as TileLayer).checkProj();
+                            });
+                    }
                 };
                 this.$iApi.event.on(
                     GlobalEvents.MAP_BASEMAPCHANGE,

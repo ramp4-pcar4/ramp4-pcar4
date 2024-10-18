@@ -1,4 +1,5 @@
 import { Extent } from '@/geo/api';
+import type { BasemapChange } from '@/geo/api';
 import { ExtentguardAPI } from './api/extentguard';
 import { type ExtentguardConfig, useExtentguardStore } from './store';
 import { GlobalEvents } from '@/api';
@@ -98,7 +99,7 @@ class ExtentguardFixture extends ExtentguardAPI {
         // watch for basemap schema changes
         this.schemaEH = this.$iApi.event.on(
             GlobalEvents.MAP_BASEMAPCHANGE,
-            (payload: { basemapId: string; schemaChanged: boolean }) => {
+            (payload: BasemapChange) => {
                 if (payload.schemaChanged) {
                     // make sure new schema wants the fixture active
                     this.checkActive();
