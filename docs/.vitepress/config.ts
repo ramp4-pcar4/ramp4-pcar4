@@ -76,7 +76,7 @@ export default {
                         items: [
                             { text: "Appbar", link: "/using-ramp4/fixtures/appbar" },
                             { text: "Data Grid", link: "/using-ramp4/fixtures/grid" },
-                            { text: "Details Custom Templating", link: "/using-ramp4/fixtures/details" },
+                            { text: "Details", link: "/using-ramp4/fixtures/details" },
                             { text: "Extent Guard", link: "/using-ramp4/fixtures/extentguard" },
                             { text: "Geosearch", link: "/using-ramp4/fixtures/geosearch" },
                             { text: "Layer Settings", link: "/using-ramp4/fixtures/layer-settings" },

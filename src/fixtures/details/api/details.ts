@@ -24,6 +24,13 @@ export class DetailsAPI extends FixtureInstance {
      * @memberof DetailsAPI
      */
     openDetails(payload: IdentifyResult[]): void {
+        // Check to see if each layer has a fixture config in the store.
+        // This needs to happen prior to setting the payload, as the watcher
+        // on the payload property will require this information in the store.
+        payload.forEach(p => {
+            this._loadDetailsConfig(this.$iApi.geo.layer.getLayer(p.uid));
+        });
+
         // Save the provided identify result in the store.
         this.detailsStore.payload = payload;
 
@@ -31,13 +38,6 @@ export class DetailsAPI extends FixtureInstance {
         // Indicate this request for the details panel comes from clicking on the map
         this.detailsStore.origin = 'identify';
         panel.button.tooltip = 'details.layers.title.identifyOrigin';
-
-        // Check to see if each layer has a fixture config in the store.
-        payload.forEach(p => {
-            const layer: LayerInstance | undefined = (this as any).$iApi.useStore('layer').getLayerByUid(p.uid);
-
-            this._loadDetailsConfig(layer);
-        });
 
         // Open the details panel.
         const detailsPanel = this.$iApi.panel.get('details');
@@ -149,7 +149,8 @@ export class DetailsAPI extends FixtureInstance {
                 id: layerId,
                 name: layerDetailsConfigs[layerId].name,
                 template: layerDetailsConfigs[layerId].template,
-                fields: layerDetailsConfigs[layerId].fields
+                fields: layerDetailsConfigs[layerId].fields,
+                priority: layerDetailsConfigs[layerId].priority ?? 50
             });
         });
 
@@ -164,6 +165,13 @@ export class DetailsAPI extends FixtureInstance {
         this._validateItems();
     }
 
+    /**
+     * Will see if we have this layer's detail fixture config cached, and if not,
+     * cache it.
+     *
+     * @param layer the layer to check
+     * @private
+     */
     _loadDetailsConfig(layer: LayerInstance | undefined) {
         // Check to see if the layer has a fixture config in the store.
         if (layer) {
@@ -172,14 +180,20 @@ export class DetailsAPI extends FixtureInstance {
 
             // If we haven't and the layer has a details config set, add it to the details store.
             if (detailsItem === undefined) {
+                // Dev note: this is pretty inefficient, as getLayerFixtureConfigs() processes every layer.
+                //           but it also abstracts some ugly code with lots of `any` types. Since we're
+                //           caching we can live with it. Noting for future potential code cleanup.
                 const layerDetailsConfigs: any = this.getLayerFixtureConfigs();
 
-                if (layerDetailsConfigs[layer.id] !== undefined) {
+                const thisLayerConfig = layerDetailsConfigs[layer.id];
+
+                if (thisLayerConfig) {
                     this.detailsStore.addConfigProperty({
                         id: layer.id,
-                        name: layerDetailsConfigs[layer.id].name,
-                        template: layerDetailsConfigs[layer.id].template,
-                        fields: layerDetailsConfigs[layer.id].fields
+                        name: thisLayerConfig.name,
+                        template: thisLayerConfig.template,
+                        fields: thisLayerConfig.fields,
+                        priority: thisLayerConfig.priority ?? 50
                     });
                 }
             }
