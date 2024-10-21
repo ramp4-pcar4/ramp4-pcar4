@@ -90,7 +90,7 @@ const changeLayerSelection = (uid: string) => {
 const findLayerResult = (uid: string): IdentifyResult | undefined => layerResults.value.find(item => item.uid === uid);
 
 /**
- * Load identify result items after all item's load promise has resolved
+ * Intake a new identify result set, initiate auto-open logic.
  */
 const loadPayloadItems = (newPayload: Array<IdentifyResult>): void => {
     // NOTE: the incoming payload array needs to be made reactive at the source,
@@ -172,38 +172,75 @@ const autoOpen = (newPayload: Array<IdentifyResult>): void => {
 /**
  * Will watch all the result items. First layer to resolve with a valid result will become
  * the active layer in the details view.
+ *
+ * @param newPayload the identify result payload we're watching
+ * @param priorityStack helper param for priority recursion. Is omitted on initial call
  */
-const autoOpenAny = (newPayload: Array<IdentifyResult>): void => {
-    const loadingResults = newPayload.map(item =>
-        item.loading.then(() => (item.items.length > 0 ? Promise.resolve(item) : Promise.reject()))
-    );
+const autoOpenAny = (newPayload: Array<IdentifyResult>, priorityStack?: Array<[number, Array<string>]>): void => {
+    /**
+     * Array of [priority, [layerIds]], sorted by highest to lowest priority value (low number goes first)
+     */
+    let priStack: Array<[number, Array<string>]>;
+    if (priorityStack) {
+        // recursive call, use previously generated stack
+        priStack = priorityStack;
+    } else {
+        const layerDetailsConfigs = detailsStore.properties;
+
+        // list of [priority, layerId]
+        const layerPriorities = newPayload.map((idRes): [number, string] => [
+            (layerDetailsConfigs[idRes.layerId]?.priority as number) ?? 50,
+            idRes.layerId
+        ]);
+        // unique priorities
+        const setMagic = new Set(layerPriorities.map(lp => lp[0]));
+        priStack = [];
+        // layers into unique buckets
+        setMagic.forEach(uniquePriority => {
+            const matchingLayerIds = layerPriorities.filter(lp => lp[0] === uniquePriority).map(lp => lp[1]);
+            priStack.push([uniquePriority, matchingLayerIds]);
+        });
+        // sort in descending order
+        priStack.sort((a, b) => b[0] - a[0]);
+    }
+
+    if (priStack.length === 0) {
+        // handles case of no identifiable layers (either from initial conditions, or all priorities have been popped).
+        // Stop & exit.
+        detailsStore.activeGreedy = 0;
+        noResults.value = true;
+        return;
+    }
+
+    // watch the priority layers
+    const currentPriorites = priStack[priStack.length - 1][1];
+    const loadingResults = newPayload
+        .filter(payloadIR => currentPriorites.includes(payloadIR.layerId))
+        .map(payloadIR =>
+            payloadIR.loading.then(() => (payloadIR.items.length > 0 ? Promise.resolve(payloadIR) : Promise.reject()))
+        );
     const lastTime = newPayload.length === 0 ? 0 : newPayload[0].requestTime;
 
     // wait on any layer promise to resolve first with new identify results
     Promise.any(loadingResults)
-        .then(res => {
+        .then(winningResult => {
             // new identify request came in while loading old results, exit greedy algo
-            if (res.requestTime !== activeGreedy.value) {
+            if (winningResult.requestTime !== activeGreedy.value) {
                 return;
             }
 
-            // open results item screen and turn off greedy loading and abort flags
-            const winningResult = findLayerResult(res.uid);
+            // open results item screen and turn off greedy loading
             detailsStore.activeGreedy = 0;
-            if (winningResult) {
-                selectedLayer.value = winningResult.uid;
-                noResults.value = false;
-            }
+            selectedLayer.value = winningResult.uid;
+            noResults.value = false;
         })
         .catch(() => {
-            // new identify request came in while loading old results, exit greedy algo
-            if (lastTime !== activeGreedy.value) {
-                return;
+            if (lastTime === activeGreedy.value) {
+                // this process is still the active greedy result.
+                // try next priority bucket. recursive call will also handle the no-result empty array case
+                priStack.pop();
+                autoOpenAny(newPayload, priStack);
             }
-
-            // no promise resolved, clicked on empty map point with no identify results.
-            detailsStore.activeGreedy = 0;
-            noResults.value = true;
         });
 };
 
