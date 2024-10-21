@@ -229,7 +229,12 @@
             "properties": {
                 "name": {
                     "type": "string",
-                    "description": "Display name of the identified layer"
+                    "description": "Display name field of the identified layer. Only applies to layers that support attributes and do not have an overriding template."
+                },
+                "priority": {
+                    "type": "number",
+                    "description": "Specifies a priority ranking for the layer result being initially selected. Smaller number has higher priority.",
+                    "default": 50
                 },
                 "template": {
                     "type": "string",
@@ -237,7 +242,7 @@
                 },
                 "fields": {
                     "type": "array",
-                    "description": "An array to specify how the layer data fields are defined. Only applies to attribute layers that do not have an overriding template.",
+                    "description": "An array to specify alternate display settings for layer fields. Only applies to layers that support attributes and do not have an overriding template.",
                     "items": {
                         "$ref": "#/$defs/detailsField"
                     }

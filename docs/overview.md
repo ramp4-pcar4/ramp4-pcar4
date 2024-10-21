@@ -22,7 +22,7 @@ The [Instantiation](introduction/instantiation.md) page provides examples of how
 - The [Layers Configuration](using-ramp4/layer-config.md) page is fairly complete.
 - Configuration for various fixtures
   - [Appbar](using-ramp4/fixtures/appbar.md#configuration)
-  - [Details Custom Templating](using-ramp4/fixtures/details.md#creating-a-custom-template)
+  - [Details](using-ramp4/fixtures/details.md)
   - [Geosearch](using-ramp4/fixtures/geosearch.md#configuration)
   - [Grid](using-ramp4/fixtures/grid.md#configuration)
   - [Layer Settings](using-ramp4/fixtures/layer-settings.md#configuration)
