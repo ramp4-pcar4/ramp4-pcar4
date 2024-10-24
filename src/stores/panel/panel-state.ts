@@ -17,7 +17,7 @@ export interface PanelState {
      * @type {{ [name: string]: DefPromise }}
      * @memberof PanelState
      */
-    regPromises: { [name: string]: DefPromise };
+    regPromises: { [name: string]: DefPromise<PanelInstance> };
 
     /**
      * A list of all panels in the arrangement they would be put on screen.

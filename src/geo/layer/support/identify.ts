@@ -85,7 +85,7 @@ export class ReactiveIdentifyFactory {
         // The method params also use the same secret reference, allowing the
         // layer to not fall under reactive().
 
-        const sneakyDeferred = new DefPromise();
+        const sneakyDeferred = new DefPromise<void>();
 
         const vanillaItem: IdentifyItem = {
             format: IdentifyResultFormat.ESRI,

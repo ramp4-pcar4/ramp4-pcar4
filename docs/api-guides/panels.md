@@ -353,8 +353,8 @@ The API provides the following methods:
 
     These properties are the same as the ones described in the [`PanelInstance` object](#panelinstance-object).
 
-    Additionally, the `PanelRegistrationOptions` object has one optional property of `i18n`, where you should include the localized strings for the panel. For more details on localization, please see the [localization documentation](../using-ramp4/config-language.md)
-* `isRegistered(panelId: string | string[]): Promise<void>` - provides a promise that resolves when panels with the specified panel ID(s) have completed registration.
+    Additionally, the `PanelRegistrationOptions` object has one optional property of `i18n`, where you should include the localized strings for the panel. For more details on localization, please see the [localization documentation](../using-ramp4/config-language.md) 
+* `isRegistered(panelId: string | string[]): Promise<PanelInstance | PanelInstance[]>` - provides a promise that resolves to the `PanelInstance` object (if `panelId` is a string) or the array of `PanelInstance` objects (if `panelId` is an array) when panel(s) with the specified panel ID(s) have completed registration.
 * `remove(value: string | PanelInstance): void` - removes the specified panel from the panel stack.
 * `get(value: string | PanelInstance): PanelInstance` - finds and returns the specified panel.
 * `open(value: string | PanelInstance | PanelInstancePath)` - opens the specified panel.

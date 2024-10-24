@@ -196,17 +196,19 @@ export class FixtureAPI extends APIScope {
      * @param {(string | string[])} fixtureId the fixture ID(s) for which the promise is requested
      * @memberof FixtureAPI
      */
-    isLoaded(fixtureId: string | string[]): Promise<any> {
+    isLoaded<T extends string | string[]>(fixtureId: T): Promise<T extends string ? FixtureBase : FixtureBase[]> {
         const fixtureStore = useFixtureStore(this.$vApp.$pinia);
         // We first create loadPromises for fixtures that don't have one
-        const idsToCheck = Array.isArray(fixtureId) ? fixtureId : [fixtureId];
+        const idsToCheck: Array<string> = Array.isArray(fixtureId) ? fixtureId : [fixtureId];
         idsToCheck.forEach((id: string) => {
             if (fixtureStore.loadPromises[id] === undefined) {
                 fixtureStore.addLoadPromise(id);
             }
         });
         // Now, get all the promises and return
-        return Promise.all(fixtureStore.getLoadPromises(idsToCheck));
+        const proms = fixtureStore.getLoadPromises(idsToCheck);
+        // @ts-ignore I give up, TS is hopeless
+        return Array.isArray(fixtureId) ? Promise.all(proms) : proms[0];
     }
 
     /**
