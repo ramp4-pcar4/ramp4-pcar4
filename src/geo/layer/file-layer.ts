@@ -216,7 +216,7 @@ export class FileLayer extends AttribLayer {
             return [];
         }
 
-        const dProm = new DefPromise();
+        const dProm = new DefPromise<void>();
 
         const result: IdentifyResult = reactive({
             items: [],

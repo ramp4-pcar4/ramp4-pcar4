@@ -25,7 +25,7 @@ export class LegendItem extends APIScope {
     _children: Array<LegendItem> = []; // list of child legend items
     _parent?: LegendItem | undefined = undefined; // parent of legend item
 
-    _loadPromise: DefPromise; // deferred promise that resolves when legend item is loaded
+    _loadPromise: DefPromise<void>; // deferred promise that resolves when legend item is loaded
 
     _hidden: boolean; // indicates if item (and its children) should be hidden from the legend
     _expanded: boolean; // expanded state of item
@@ -52,7 +52,7 @@ export class LegendItem extends APIScope {
         this._parent = parent;
         this._children = [];
 
-        this._loadPromise = new DefPromise();
+        this._loadPromise = new DefPromise<void>();
 
         this._hidden = config.hidden ?? false;
         this._expanded = config.expanded ?? true;
@@ -359,7 +359,7 @@ export class LegendItem extends APIScope {
      */
     reload(): void {
         this._type = LegendType.Placeholder;
-        this._loadPromise = new DefPromise();
+        this._loadPromise = new DefPromise<void>();
     }
 
     /**

@@ -72,7 +72,7 @@ export class PanelAPI extends APIScope {
      * @param {(string | string[])} panelId the panel ID(s) for which the promise is requested
      * @memberof PanelAPI
      */
-    async isRegistered(panelId: string | string[]): Promise<void> {
+    async isRegistered(panelId: string | string[]): Promise<PanelInstance[]> {
         // We first need to create a registration promise for all panels that currently don't have one
         const idsToCheck = Array.isArray(panelId) ? panelId : [panelId];
         idsToCheck.forEach((id: string) => {
@@ -82,9 +82,7 @@ export class PanelAPI extends APIScope {
         });
 
         // Wait for all promises
-        await Promise.all(this.panelStore.getRegPromises(idsToCheck));
-
-        // return nothing (stops a nonsense array from appearing in the result promise)
+        return Promise.all(this.panelStore.getRegPromises(idsToCheck));
     }
 
     /**

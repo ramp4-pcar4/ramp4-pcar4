@@ -440,7 +440,7 @@ export class MapAPI extends CommonMapAPI {
             const center = this.getExtent().center();
             const scale = this.getScale();
 
-            this._viewPromise = new DefPromise();
+            this._viewPromise = new DefPromise<void>();
             this.created = false;
             this.$iApi.event.emit(GlobalEvents.MAP_REFRESH_START);
             this.destroyMapView();

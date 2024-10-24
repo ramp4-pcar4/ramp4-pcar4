@@ -5,9 +5,9 @@ import { markRaw, ref } from 'vue';
 
 export const useFixtureStore = defineStore('fixture', () => {
     const items = ref<{ [name: string]: FixtureBase }>({});
-    const loadPromises = ref<{ [name: string]: DefPromise }>({});
+    const loadPromises = ref<{ [name: string]: DefPromise<FixtureBase> }>({});
 
-    function getLoadPromises(fixtureIds: string[]): Promise<void>[] {
+    function getLoadPromises(fixtureIds: string[]): Promise<FixtureBase>[] {
         return fixtureIds.map(id => loadPromises.value[id].getPromise());
     }
 
@@ -15,14 +15,14 @@ export const useFixtureStore = defineStore('fixture', () => {
         items.value = { ...items.value, [value.id]: markRaw(value) };
         // since fixture has successfully loaded, resolve its associated load promise
         if (!(value.id in loadPromises.value)) {
-            const loadPromise = new DefPromise();
-            loadPromise.resolveMe();
+            const loadPromise = new DefPromise<FixtureBase>();
+            loadPromise.resolveMe(markRaw(value));
             loadPromises.value = {
                 ...loadPromises.value,
                 [value.id]: loadPromise
             };
         } else {
-            loadPromises.value[value.id].resolveMe();
+            loadPromises.value[value.id].resolveMe(markRaw(value));
         }
         // call the `added` life hook if available
         if (typeof value.added === 'function') {
@@ -44,7 +44,7 @@ export const useFixtureStore = defineStore('fixture', () => {
     function addLoadPromise(fixtureId: string) {
         loadPromises.value = {
             ...loadPromises.value,
-            [fixtureId]: new DefPromise()
+            [fixtureId]: new DefPromise<FixtureBase>()
         };
     }
 
