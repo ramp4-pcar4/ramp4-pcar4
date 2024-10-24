@@ -1,8 +1,6 @@
 import { GridAPI } from './api/grid';
 import { markRaw } from 'vue';
 
-import GridScreenV from './screen.vue';
-
 import messages from './lang/lang.csv?raw';
 import { useAppbarStore } from '../appbar/store';
 import { useGridStore } from './store';
@@ -13,7 +11,7 @@ class GridFixture extends GridAPI {
             {
                 grid: {
                     screens: {
-                        'grid-screen': markRaw(GridScreenV)
+                        'grid-screen': () => markRaw(import('./screen.vue'))
                     },
                     style: {
                         width: '450px'
