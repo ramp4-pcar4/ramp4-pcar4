@@ -196,7 +196,7 @@ export class FixtureAPI extends APIScope {
      * @param {(string | string[])} fixtureId the fixture ID(s) for which the promise is requested
      * @memberof FixtureAPI
      */
-    isLoaded(fixtureId: string | string[]): Promise<any> {
+    isLoaded(fixtureId: string | string[]): Promise<FixtureBase[]> {
         const fixtureStore = useFixtureStore(this.$vApp.$pinia);
         // We first create loadPromises for fixtures that don't have one
         const idsToCheck = Array.isArray(fixtureId) ? fixtureId : [fixtureId];

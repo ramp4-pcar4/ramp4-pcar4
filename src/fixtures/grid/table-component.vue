@@ -549,7 +549,7 @@ const systemCols = ref<Set<string>>(new Set<string>());
 
 // manages fast incoming filter change events. Forces them to finish
 // in order to avoid race conditions
-const filterQueue = ref<Array<DefPromise>>([]);
+const filterQueue = ref<Array<DefPromise<void>>>([]);
 
 const onGridReady = (params: any) => {
     agGridApi.value = params.api;
@@ -1032,7 +1032,7 @@ const applyLayerFilters = async () => {
     // recent/accurate result. Would end up with the grid's store of "filtered oids" not
     // matching reality; would match the random order that calls resolved.
 
-    const thisFilterDef = new DefPromise();
+    const thisFilterDef = new DefPromise<void>();
     // we make a copy so any filters that come after do not change our local array.
     // this array does not contain thisFilterDef.
     const activeFilterPromises = filterQueue.value.slice().map(d => d.getPromise());

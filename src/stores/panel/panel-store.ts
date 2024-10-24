@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
-import type { PanelInstance } from '@/api';
+import { PanelInstance } from '@/api';
 import { DefPromise } from '@/geo/api';
 import type { PanelDirection } from './panel-state';
 import type { PanelConfig } from '@/stores/panel';
@@ -14,13 +14,13 @@ export interface PanelStore {
     mobileView: Ref<boolean>;
     reorderable: Ref<boolean>;
     items: Ref<{ [name: string]: PanelInstance }>;
-    regPromises: Ref<{ [name: string]: DefPromise }>;
+    regPromises: Ref<{ [name: string]: DefPromise<PanelInstance> }>;
     orderedItems: Ref<[]>;
     teleported: Ref<[]>;
     visible: Ref<[]>;
     getRemainingWidth: ComputedRef<number>;
     getVisible: (screenSize: string) => PanelConfig[];
-    getRegPromises: (panelIds: string[]) => Promise<void>[];
+    getRegPromises: (panelIds: string[]) => Promise<PanelInstance>[];
     openPanel: (panel: PanelInstance) => void;
     closePanel: (panel: PanelInstance) => void;
     movePanel: (panel: PanelInstance, direction: PanelDirection) => void;
@@ -44,7 +44,7 @@ export const usePanelStore = defineStore('panel', () => {
     const mobileView = ref(false);
     const reorderable = ref(true);
     const items = ref<{ [name: string]: PanelInstance }>({});
-    const regPromises = ref<{ [name: string]: DefPromise }>({});
+    const regPromises = ref<{ [name: string]: DefPromise<PanelInstance> }>({});
     const orderedItems = ref<PanelInstance[]>([]);
     const teleported = ref<PanelInstance[]>([]);
     const visible = ref<PanelInstance[]>([]);
@@ -76,8 +76,8 @@ export const usePanelStore = defineStore('panel', () => {
      * Should ideally be called when all panelIds have a promise associated with them.
      * @param panelIds the panel Ids for which promises should be returned
      */
-    function getRegPromises(panelIds: string[]): Promise<void>[] {
-        const reguPromises: Promise<void>[] = [];
+    function getRegPromises(panelIds: string[]): Promise<PanelInstance>[] {
+        const reguPromises: Promise<PanelInstance>[] = [];
         panelIds.forEach((panelId: string) => {
             if (panelId in regPromises.value) {
                 reguPromises.push(regPromises.value[panelId].getPromise());
@@ -218,14 +218,14 @@ export const usePanelStore = defineStore('panel', () => {
         items.value = { ...items.value, [panel.id]: panel };
         // since panel has successfully registered, resolve its associated registration promise
         if (!(panel.id in regPromises.value)) {
-            const regPromise = new DefPromise();
-            regPromise.resolveMe();
+            const regPromise = new DefPromise<PanelInstance>();
+            regPromise.resolveMe(panel);
             regPromises.value = {
                 ...regPromises.value,
                 [panel.id]: regPromise
             };
         } else {
-            regPromises.value[panel.id].resolveMe();
+            regPromises.value[panel.id].resolveMe(panel);
         }
     }
 

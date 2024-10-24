@@ -43,7 +43,7 @@ export class CommonLayer extends LayerInstance {
 
     protected origRampConfig: RampLayerConfig;
 
-    protected loadDefProm: DefPromise; // a deferred promise that resolves when layer is fully ready and safe to use. for convenience of caller
+    protected loadDefProm: DefPromise<void>; // a deferred promise that resolves when layer is fully ready and safe to use. for convenience of caller
 
     /**
      * A boolean to track whether the promise is pending (false) or fulfilled/rejected (true)

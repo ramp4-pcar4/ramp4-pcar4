@@ -456,7 +456,7 @@ export class MapImageLayer extends MapLayer {
 
         // loop over active sublayers. call query on each and generate an IdentifyItem to track it
         return activeSublayers.map(sublayer => {
-            const dProm = new DefPromise();
+            const dProm = new DefPromise<void>();
             const qOpts: QueryFeaturesParams = {};
 
             const result: IdentifyResult = reactive({
