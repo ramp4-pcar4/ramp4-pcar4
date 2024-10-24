@@ -28,21 +28,16 @@ export class MapnavAPI extends FixtureInstance {
             return;
         }
 
-        const mapnavItems: MapnavItem[] = mapnavConfig.items.map(
-            (item: string) => ({
-                id: item
-            })
-        );
+        const mapnavItems: MapnavItem[] = mapnavConfig.items.map((item: string) => ({
+            id: item
+        }));
 
         // save mapnav items as a collection to the store
         // they are saves as a set for easy by-id access
-        this.mapnavStore.items = mapnavItems.reduce<MapnavItemSet>(
-            (map: any, item: any) => {
-                map[item.id] = item;
-                return map;
-            },
-            {}
-        );
+        this.mapnavStore.items = mapnavItems.reduce<MapnavItemSet>((map: any, item: any) => {
+            map[item.id] = item;
+            return map;
+        }, {});
 
         // save an ordered list of item ids to use when rendering components
         this.mapnavStore.order = mapnavItems.map((item: any) => item.id);
@@ -58,12 +53,7 @@ export class MapnavAPI extends FixtureInstance {
      */
     _validateItems() {
         // system mapnav controls that are not tied to a fixture
-        const systemControls: string[] = [
-            'geolocator',
-            'zoom',
-            'home',
-            'fullscreen'
-        ];
+        const systemControls: string[] = ['geolocator', 'zoom', 'home', 'fullscreen'];
 
         // get the ordered list of items and see if any of them are registered
         this.mapnavStore.order.forEach((id: string) => {

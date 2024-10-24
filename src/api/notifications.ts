@@ -54,9 +54,7 @@ export class NotificationAPI extends APIScope {
      */
     addGroup(id: string, type: NotificationType, message: string) {
         if (this.getGroup(id)) {
-            throw new Error(
-                'Duplicate notification group id registration: ' + id
-            );
+            throw new Error('Duplicate notification group id registration: ' + id);
         }
         const group = new NotificationGroup(this.$iApi, id, type, message);
 
@@ -72,8 +70,7 @@ export class NotificationAPI extends APIScope {
      * @memberof NotificationAPI
      */
     getGroup(id: string) {
-        const group: NotificationGroup | undefined =
-            this.notificationStore.groups[id];
+        const group: NotificationGroup | undefined = this.notificationStore.groups[id];
         return group;
     }
 }
@@ -95,12 +92,7 @@ export class NotificationGroup extends APIScope {
      * @param type The type of notification the group will show
      * @param message The main message for the group
      */
-    constructor(
-        $iApi: InstanceAPI,
-        id: string,
-        type: NotificationType,
-        message: string
-    ) {
+    constructor($iApi: InstanceAPI, id: string, type: NotificationType, message: string) {
         super($iApi);
 
         this.id = id;

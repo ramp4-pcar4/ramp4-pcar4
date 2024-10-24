@@ -1,14 +1,6 @@
 // the structure of the geo element of the RAMP API
 
-import {
-    APIScope,
-    AttributeAPI,
-    InstanceAPI,
-    LayerAPI,
-    MapAPI,
-    QueryAPI,
-    SymbologyAPI
-} from '@/api/internal';
+import { APIScope, AttributeAPI, InstanceAPI, LayerAPI, MapAPI, QueryAPI, SymbologyAPI } from '@/api/internal';
 import { geo } from '@/main';
 import type { GeometryAPI, ProjectionAPI, SharedUtilsAPI } from '@/geo/api';
 import { EsriConfig } from '@/geo/esri';
@@ -52,10 +44,7 @@ export class GeoAPI extends APIScope {
         EsriConfig.request.interceptors.push({
             before: prams => {
                 if (prams.url.includes('?blankTile=false')) {
-                    prams.url = prams.url.replace(
-                        '?blankTile=false',
-                        '?blankTile=true'
-                    );
+                    prams.url = prams.url.replace('?blankTile=false', '?blankTile=true');
                 }
             }
         });

@@ -8,11 +8,7 @@
             <stepper :activeStep="step">
                 <!-- Upload data wizard step -->
                 <stepper-item :title="t('wizard.upload.title')" :summary="url">
-                    <form
-                        name="upload"
-                        @submit="onUploadContinue"
-                        @click="layerReady = false"
-                    >
+                    <form name="upload" @submit="onUploadContinue" @click="layerReady = false">
                         <!-- Upload a file -->
                         <wizard-input
                             type="file"
@@ -47,18 +43,12 @@
                 </stepper-item>
 
                 <!-- Select format wizard step -->
-                <stepper-item
-                    :title="t('wizard.format.title')"
-                    :summary="displayFormat"
-                >
+                <stepper-item :title="t('wizard.format.title')" :summary="displayFormat">
                     <form name="format" @submit="onSelectContinue">
                         <!-- List of file/service types based on layer -->
 
                         <!-- Display CORS required warning if needed for this configuration -->
-                        <div
-                            v-if="IsCorsRequired"
-                            class="inline-flex items-center mb-10"
-                        >
+                        <div v-if="IsCorsRequired" class="inline-flex items-center mb-10">
                             <svg
                                 class="inline-block fill-current w-16 h-16"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -69,9 +59,7 @@
                                     d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
                                 />
                             </svg>
-                            <span class="px-5 text-xs">
-                                {{ t('wizard.format.info.cors') }}</span
-                            >
+                            <span class="px-5 text-xs"> {{ t('wizard.format.info.cors') }}</span>
                         </div>
 
                         <wizard-input
@@ -79,37 +67,17 @@
                             name="type"
                             v-model="typeSelection"
                             @select="updateTypeSelection"
-                            :size="
-                                isFileLayer()
-                                    ? fileTypeOptions.length
-                                    : serviceTypeOptions.length
-                            "
-                            :label="
-                                isFileLayer()
-                                    ? t('wizard.format.type.file')
-                                    : t('wizard.format.type.service')
-                            "
-                            :options="
-                                isFileLayer()
-                                    ? fileTypeOptions
-                                    : serviceTypeOptions
-                            "
+                            :size="isFileLayer() ? fileTypeOptions.length : serviceTypeOptions.length"
+                            :label="isFileLayer() ? t('wizard.format.type.file') : t('wizard.format.type.service')"
+                            :options="isFileLayer() ? fileTypeOptions : serviceTypeOptions"
                             :formatError="formatError"
                             :failureError="failureError"
                             :validation="validation"
                             :validation-messages="{
-                                required: t(
-                                    'wizard.format.type.error.required'
-                                ),
+                                required: t('wizard.format.type.error.required'),
                                 invalid: t('wizard.format.type.error.invalid'),
-                                failure: `${t(
-                                    'wizard.format.type.error.failure'
-                                )}.${
-                                    IsCorsRequired
-                                        ? ' ' +
-                                          t('wizard.format.warn.cors') +
-                                          '.'
-                                        : ''
+                                failure: `${t('wizard.format.type.error.failure')}.${
+                                    IsCorsRequired ? ' ' + t('wizard.format.warn.cors') + '.' : ''
                                 }${' ' + t('wizard.format.warn.vpn') + '.'}`
                             }"
                             @keydown.stop
@@ -136,11 +104,7 @@
 
                 <!-- Configure layer wizard step -->
                 <stepper-item :title="t('wizard.configure.title')">
-                    <form
-                        name="configure"
-                        @submit="onConfigureContinue"
-                        ref="formElement"
-                    >
+                    <form name="configure" @submit="onConfigureContinue" ref="formElement">
                         <wizard-input
                             v-if="layerInfo?.configOptions.includes(`name`)"
                             type="text"
@@ -151,15 +115,11 @@
                             :aria-label="t('wizard.configure.name.label')"
                             :validation="true"
                             :validation-messages="{
-                                required: t(
-                                    'wizard.configure.name.error.required'
-                                )
+                                required: t('wizard.configure.name.error.required')
                             }"
                         />
                         <wizard-input
-                            v-if="
-                                layerInfo?.configOptions.includes(`nameField`)
-                            "
+                            v-if="layerInfo?.configOptions.includes(`nameField`)"
                             type="select"
                             name="nameField"
                             v-model="layerInfo.config.nameField"
@@ -169,18 +129,12 @@
                             :options="fieldOptions()"
                         />
                         <wizard-input
-                            v-if="
-                                layerInfo?.configOptions.includes(
-                                    `tooltipField`
-                                )
-                            "
+                            v-if="layerInfo?.configOptions.includes(`tooltipField`)"
                             type="select"
                             name="tooltipField"
                             v-model="layerInfo.config.tooltipField"
                             :label="t('wizard.configure.tooltipField.label')"
-                            :aria-label="
-                                t('wizard.configure.tooltipField.label')
-                            "
+                            :aria-label="t('wizard.configure.tooltipField.label')"
                             :options="fieldOptions()"
                         />
                         <wizard-input
@@ -194,9 +148,7 @@
                             :options="latLonOptions('lat')"
                         />
                         <wizard-input
-                            v-if="
-                                layerInfo?.configOptions.includes(`longField`)
-                            "
+                            v-if="layerInfo?.configOptions.includes(`longField`)"
                             type="select"
                             name="longField"
                             v-model="layerInfo.config.longField"
@@ -206,19 +158,13 @@
                             :options="latLonOptions('lon')"
                         />
                         <!-- For map image layers -->
-                        <div
-                            v-if="
-                                layerInfo?.configOptions.includes(`sublayers`)
-                            "
-                        >
+                        <div v-if="layerInfo?.configOptions.includes(`sublayers`)">
                             <wizard-input
                                 type="checkbox"
                                 name="nested"
                                 @nested="updateNested"
                                 :label="t('wizard.configure.sublayers.nested')"
-                                :aria-label="
-                                    t('wizard.configure.sublayers.nested')
-                                "
+                                :aria-label="t('wizard.configure.sublayers.nested')"
                             />
                             <wizard-input
                                 type="select"
@@ -227,9 +173,7 @@
                                 v-model="layerInfo.config.sublayers"
                                 @select="updateSublayers"
                                 :label="t('wizard.configure.sublayers.label')"
-                                :aria-label="
-                                    t('wizard.configure.sublayers.label')
-                                "
+                                :aria-label="t('wizard.configure.sublayers.label')"
                                 :options="layerInfo.layers!"
                                 :selectedValues="selectedValues"
                                 :sublayerOptions="sublayerOptions"
@@ -237,23 +181,17 @@
                                 :searchable="true"
                                 :validation="true"
                                 :validation-messages="{
-                                    required: t(
-                                        'wizard.configure.sublayers.error.required'
-                                    )
+                                    required: t('wizard.configure.sublayers.error.required')
                                 }"
                                 @keydown.stop
                             />
                         </div>
-                        <label
-                            class="sr-only"
-                            :for="`${colourPickerId}-color-hex`"
-                            >{{ t('wizard.configure.colour.hex') }}</label
-                        >
-                        <label
-                            class="text-base font-bold"
-                            v-if="layerInfo?.configOptions.includes('colour')"
-                            >{{ t('wizard.configure.colour.label') }}</label
-                        >
+                        <label class="sr-only" :for="`${colourPickerId}-color-hex`">{{
+                            t('wizard.configure.colour.hex')
+                        }}</label>
+                        <label class="text-base font-bold" v-if="layerInfo?.configOptions.includes('colour')">{{
+                            t('wizard.configure.colour.label')
+                        }}</label>
                         <ColorPicker
                             v-if="layerInfo?.configOptions.includes('colour')"
                             alpha-channel="hide"
@@ -264,15 +202,11 @@
                             @color-change="updateColour"
                         >
                             <template #hue-range-input-label>
-                                <span class="sr-only">{{
-                                    t('wizard.configure.colour.hue')
-                                }}</span>
+                                <span class="sr-only">{{ t('wizard.configure.colour.hue') }}</span>
                             </template>
 
                             <template #copy-button>
-                                <span class="sr-only">{{
-                                    t('wizard.configure.colour.copy')
-                                }}</span>
+                                <span class="sr-only">{{ t('wizard.configure.colour.copy') }}</span>
 
                                 <svg
                                     aria-hidden="true"
@@ -304,11 +238,7 @@
             <div
                 v-if="layerReady"
                 class="p-3 border-solid border-2"
-                :class="
-                    layerUploaded
-                        ? 'bg-green-100 !border-green-900'
-                        : 'bg-red-100 !border-red-900'
-                "
+                :class="layerUploaded ? 'bg-green-100 !border-green-900' : 'bg-red-100 !border-red-900'"
             >
                 {{ layerName }}
                 {{ t(`wizard.upload.${layerUploaded ? 'success' : 'fail'}`) }}
@@ -498,10 +428,7 @@ const IsCorsRequired = computed(() => {
 });
 
 onErrorCaptured(() => {
-    if (
-        step.value === WizardStep.FORMAT ||
-        step.value === WizardStep.CONFIGURE
-    ) {
+    if (step.value === WizardStep.FORMAT || step.value === WizardStep.CONFIGURE) {
         formatError.value = true;
         wizardStore.goToStep(WizardStep.FORMAT);
     }
@@ -511,19 +438,13 @@ onErrorCaptured(() => {
 
 onMounted(() => {
     handlers.value.push(
-        iApi.event.on(
-            GlobalEvents.LAYER_LAYERSTATECHANGE,
-            (payload: { state: string; layer: LayerInstance }) => {
-                if (payload.layer.userAdded) {
-                    layerName.value = payload.layer.name;
-                    layerReady.value =
-                        payload.state !== LayerState.LOADING &&
-                        payload.state !== LayerState.NEW;
-                    layerUploaded.value =
-                        layerReady.value && payload.state === LayerState.LOADED;
-                }
+        iApi.event.on(GlobalEvents.LAYER_LAYERSTATECHANGE, (payload: { state: string; layer: LayerInstance }) => {
+            if (payload.layer.userAdded) {
+                layerName.value = payload.layer.name;
+                layerReady.value = payload.state !== LayerState.LOADING && payload.state !== LayerState.NEW;
+                layerUploaded.value = layerReady.value && payload.state === LayerState.LOADED;
             }
-        )
+        })
     );
     // runs when the wizard panel was closed on the 'configure' step and reopened
     if (step.value === WizardStep.CONFIGURE) {
@@ -532,9 +453,7 @@ onMounted(() => {
             generateColour();
         }
         // re-enables the confirmation button if the layer name is not empty and sublayer selection is not required
-        finishStep.value =
-            !layerInfo.value?.configOptions.includes(`sublayers`) &&
-            !!layerInfo.value?.config.name;
+        finishStep.value = !layerInfo.value?.configOptions.includes(`sublayers`) && !!layerInfo.value?.config.name;
     }
 });
 
@@ -559,9 +478,7 @@ const onUploadContinue = (event: any) => {
     // Prevent the page from refreshing when pressing ENTER to submit the URL.
     event?.preventDefault();
 
-    typeSelection.value = layerSource.value!.guessFormatFromURL(
-        url.value
-    ) as LayerType;
+    typeSelection.value = layerSource.value!.guessFormatFromURL(url.value) as LayerType;
 
     wizardStore.goToStep(WizardStep.FORMAT);
 };
@@ -574,20 +491,12 @@ const onSelectContinue = async (event: any) => {
     validation.value = true;
 
     displayFormat.value = isFileLayer()
-        ? (fileTypeOptions.find(
-              element => element.value === typeSelection.value
-          )?.label as string)
-        : (serviceTypeOptions.find(
-              element => element.value === typeSelection.value
-          )?.label as string);
+        ? (fileTypeOptions.find(element => element.value === typeSelection.value)?.label as string)
+        : (serviceTypeOptions.find(element => element.value === typeSelection.value)?.label as string);
 
     try {
         layerInfo.value = isFileLayer()
-            ? ((await layerSource.value!.fetchFileInfo(
-                  url.value,
-                  typeSelection.value,
-                  fileData.value
-              )!) as LayerInfo)
+            ? ((await layerSource.value!.fetchFileInfo(url.value, typeSelection.value, fileData.value)!) as LayerInfo)
             : ((await layerSource.value!.fetchServiceInfo(
                   url.value,
                   typeSelection.value,
@@ -603,9 +512,7 @@ const onSelectContinue = async (event: any) => {
     }
 
     // check for incorrect feature service type
-    const featureError =
-        typeSelection.value === LayerType.FEATURE &&
-        !(layerInfo.value && layerInfo.value.fields);
+    const featureError = typeSelection.value === LayerType.FEATURE && !(layerInfo.value && layerInfo.value.fields);
 
     if (!layerInfo.value || featureError) {
         formatError.value = true;
@@ -625,10 +532,7 @@ const onSelectContinue = async (event: any) => {
 
     wizardStore.goToStep(WizardStep.CONFIGURE);
 
-    finishStep.value = !(
-        layerInfo.value.configOptions.includes('sublayers') ||
-        !layerInfo.value!.config.name
-    );
+    finishStep.value = !(layerInfo.value.configOptions.includes('sublayers') || !layerInfo.value!.config.name);
 
     disabled.value = false;
     validation.value = false;
@@ -638,10 +542,7 @@ const onConfigureContinue = async (data: any) => {
     // Prevent the page from refreshing when pressing ENTER.
     data?.preventDefault();
 
-    const config: RampLayerConfig = Object.assign(
-        layerInfo.value!.config,
-        data
-    );
+    const config: RampLayerConfig = Object.assign(layerInfo.value!.config, data);
 
     selectedValues.value = [];
     displayFormat.value = '';
@@ -708,9 +609,7 @@ const updateLayerName = (name: string) => {
 
 const updateSublayers = (sublayer: Array<any>) => {
     layerInfo.value!.config.sublayers = sublayer;
-    sublayer.length > 0 && layerInfo.value?.config.name
-        ? (finishStep.value = true)
-        : (finishStep.value = false);
+    sublayer.length > 0 && layerInfo.value?.config.name ? (finishStep.value = true) : (finishStep.value = false);
 };
 
 const updateNested = (isNested: boolean) => {
@@ -725,9 +624,7 @@ const updateNested = (isNested: boolean) => {
         );
 
         const previouslySelected = new Set<number>(
-            (layerInfo.value?.config?.sublayers ?? []).map(
-                (sl: any) => sl.index
-            )
+            (layerInfo.value?.config?.sublayers ?? []).map((sl: any) => sl.index)
         );
 
         if (wizardStore.nested) populateNested(layerInfo, previouslySelected);
@@ -738,22 +635,16 @@ const updateNested = (isNested: boolean) => {
             wizardStore.nested
         );
 
-        const previouslySelected = new Set<string>(
-            (layerInfo.value?.config?.sublayers ?? []).map((sl: any) => sl.id)
-        );
+        const previouslySelected = new Set<string>((layerInfo.value?.config?.sublayers ?? []).map((sl: any) => sl.id));
 
-        if (wizardStore.nested)
-            populateNestedWMS(layerInfo, previouslySelected);
+        if (wizardStore.nested) populateNestedWMS(layerInfo, previouslySelected);
         else populateFlatWMS(layerInfo, previouslySelected);
     }
 
     updateSublayers(sublayerOptions(selectedValues.value));
 };
 
-const populateNested = (
-    layerInfo: any,
-    previouslySelected: Set<number>
-): void => {
+const populateNested = (layerInfo: any, previouslySelected: Set<number>): void => {
     const parentChildMap = new Map<number, number[]>();
 
     for (const rawLayer of layerInfo.value.layersRaw) {
@@ -769,8 +660,7 @@ const populateNested = (
         if (!children) return false;
 
         return children.every(childId => {
-            if (parentChildMap.has(childId))
-                return allChildrenSelected(childId);
+            if (parentChildMap.has(childId)) return allChildrenSelected(childId);
             return previouslySelected.has(childId);
         });
     };
@@ -791,11 +681,7 @@ const populateNested = (
     for (const parentId of parentChildMap.keys()) addSelectedValues(parentId);
 
     for (const rawLayer of layerInfo.value.layersRaw) {
-        if (
-            rawLayer.parentLayerId === -1 &&
-            !parentChildMap.has(rawLayer.id) &&
-            previouslySelected.has(rawLayer.id)
-        ) {
+        if (rawLayer.parentLayerId === -1 && !parentChildMap.has(rawLayer.id) && previouslySelected.has(rawLayer.id)) {
             selectedValues.value.push(rawLayer.id);
         }
     }
@@ -803,48 +689,33 @@ const populateNested = (
     selectedValues.value = Array.from(new Set(selectedValues.value));
 };
 
-const populateNestedWMS = (
-    layerInfo: any,
-    previouslySelected: Set<string>
-): void => {
+const populateNestedWMS = (layerInfo: any, previouslySelected: Set<string>): void => {
     const allDescendantsSelected = (layer: any): boolean => {
-        if (!layer.layers || layer.layers.length === 0)
-            return previouslySelected.has(layer.name);
-        return layer.layers.every((child: any) =>
-            allDescendantsSelected(child)
-        );
+        if (!layer.layers || layer.layers.length === 0) return previouslySelected.has(layer.name);
+        return layer.layers.every((child: any) => allDescendantsSelected(child));
     };
 
     const addSelectedLayerNames = (layer: any): void => {
-        if (allDescendantsSelected(layer))
-            selectedValues.value.push(layer.name);
+        if (allDescendantsSelected(layer)) selectedValues.value.push(layer.name);
         else if (layer.layers) layer.layers.forEach(addSelectedLayerNames);
     };
 
     const topLayer = layerInfo.value.layersRaw[0];
 
     if (topLayer && topLayer.layers) {
-        topLayer.layers.forEach((parentLayer: any) =>
-            addSelectedLayerNames(parentLayer)
-        );
+        topLayer.layers.forEach((parentLayer: any) => addSelectedLayerNames(parentLayer));
     }
 
     selectedValues.value = Array.from(new Set(selectedValues.value));
 };
 
-const populateFlat = (
-    layerInfo: any,
-    previouslySelected: Set<number>
-): void => {
+const populateFlat = (layerInfo: any, previouslySelected: Set<number>): void => {
     const lowestChildren = (parentId: number) => {
-        const children = layerInfo.value.layersRaw.filter(
-            (rl: any) => rl.parentLayerId === parentId
-        );
+        const children = layerInfo.value.layersRaw.filter((rl: any) => rl.parentLayerId === parentId);
 
         if (children.length > 0) {
             for (const child of children) {
-                if (previouslySelected.has(child.id))
-                    selectedValues.value.push(child.id);
+                if (previouslySelected.has(child.id)) selectedValues.value.push(child.id);
                 else lowestChildren(child.id);
             }
         } else selectedValues.value.push(parentId);
@@ -856,25 +727,18 @@ const populateFlat = (
     selectedValues.value = Array.from(new Set(selectedValues.value));
 };
 
-const populateFlatWMS = (
-    layerInfo: any,
-    previouslySelected: Set<string>
-): void => {
+const populateFlatWMS = (layerInfo: any, previouslySelected: Set<string>): void => {
     const addLeafLayers = (layer: any): void => {
-        if (layer.layers && layer.layers.length > 0)
-            layer.layers.forEach(addLeafLayers);
+        if (layer.layers && layer.layers.length > 0) layer.layers.forEach(addLeafLayers);
         else selectedValues.value.push(layer.name);
     };
 
     const topLayer = layerInfo.value.layersRaw[0];
 
     for (const prev of previouslySelected) {
-        const parentLayer = topLayer.layers.find(
-            (layer: any) => layer.name === prev
-        );
+        const parentLayer = topLayer.layers.find((layer: any) => layer.name === prev);
 
-        if (parentLayer && parentLayer.layers && parentLayer.layers.length > 0)
-            addLeafLayers(parentLayer);
+        if (parentLayer && parentLayer.layers && parentLayer.layers.length > 0) addLeafLayers(parentLayer);
         else if (parentLayer) selectedValues.value.push(parentLayer.name);
     }
 
@@ -914,9 +778,7 @@ const generateColour = () => {
     // generate unique ID for colour picker to prevent multi-ramp collisions
     do {
         colourPickerId.value = Math.random().toString(36).substring(2, 9);
-    } while (
-        document.getElementById(colourPickerId.value + '-hue-slider') !== null
-    );
+    } while (document.getElementById(colourPickerId.value + '-hue-slider') !== null);
 };
 
 const updateColour = (eventData: any) => {
@@ -924,9 +786,7 @@ const updateColour = (eventData: any) => {
     layerInfo.value!.config.colour = eventData.colors.hex.substring(0, 7);
     // manually setting copy button colour because of reset styles on the page and it uses a css variable that I think will mess with multi-ramp
     nextTick(() => {
-        formElement.value.querySelector(
-            '.vacp-copy-button'
-        )!.style.backgroundColor = layerInfo.value?.config.colour;
+        formElement.value.querySelector('.vacp-copy-button')!.style.backgroundColor = layerInfo.value?.config.colour;
     });
 };
 

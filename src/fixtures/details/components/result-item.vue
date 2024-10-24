@@ -1,17 +1,10 @@
 <template>
     <!-- Header including icon, name, zoom button -->
     <div class="relative flex flex-grow truncate">
-        <div
-            class="flex flex-grow items-center truncate"
-            v-if="supportsFeatures"
-        >
+        <div class="flex flex-grow items-center truncate" v-if="supportsFeatures">
             <!-- display symbol if it has loaded, otherwise display a loading spinner -->
             <div class="flex p-8 items-center">
-                <span
-                    v-if="data.loaded && icon"
-                    class="flex-none symbologyIcon"
-                    v-html="icon"
-                ></span>
+                <span v-if="data.loaded && icon" class="flex-none symbologyIcon" v-html="icon"></span>
                 <div class="symbologyIcon p-6" v-else>
                     <div class="animate-spin spinner h-20 w-20"></div>
                 </div>
@@ -36,21 +29,9 @@
             <span class="zoomButton text-center p-3" v-if="data.loaded"
                 ><button
                     type="button"
-                    :content="
-                        t(
-                            `details.item.zoom${
-                                zoomStatus === 'none' ? '' : `.${zoomStatus}`
-                            }`
-                        )
-                    "
+                    :content="t(`details.item.zoom${zoomStatus === 'none' ? '' : `.${zoomStatus}`}`)"
                     v-tippy="{ placement: 'bottom' }"
-                    :aria-label="
-                        t(
-                            `grid.cells.zoom${
-                                zoomStatus === 'none' ? '' : `.${zoomStatus}`
-                            }`
-                        )
-                    "
+                    :aria-label="t(`grid.cells.zoom${zoomStatus === 'none' ? '' : `.${zoomStatus}`}`)"
                     ref="zoomButton"
                     @click="
                         (e: MouseEvent) => {
@@ -61,10 +42,7 @@
                     class="text-gray-600 w-24 h-24 p-2 flex justify-center items-center"
                     v-if="isMapLayer"
                 >
-                    <div
-                        v-if="zoomStatus === 'zooming'"
-                        class="m-auto animate-spin spinner h-20 w-20"
-                    ></div>
+                    <div v-if="zoomStatus === 'zooming'" class="m-auto animate-spin spinner h-20 w-20"></div>
                     <svg
                         v-else-if="zoomStatus === 'zoomed'"
                         xmlns="http://www.w3.org/2000/svg"
@@ -74,11 +52,7 @@
                         stroke="green"
                         class="m-auto w-20 h-20"
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M4.5 12.75l6 6 9-13.5"
-                        />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
                     <svg
                         v-else-if="zoomStatus === 'error'"
@@ -89,11 +63,7 @@
                         stroke="red"
                         class="m-auto w-20 h-20"
                     >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M6 18L18 6M6 6l12 12"
-                        />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                     <span v-else v-html="iApi.ui.getZoomIcon()"></span></button
             ></span>
@@ -117,19 +87,8 @@
 
 import { useLayerStore } from '@/stores/layer';
 import { GeometryType, LayerType } from '@/geo/api';
-import {
-    DetailsItemInstance,
-    useDetailsStore,
-    type DetailsFieldItem
-} from '../store';
-import {
-    computed,
-    ref,
-    inject,
-    onBeforeMount,
-    onBeforeUnmount,
-    watch
-} from 'vue';
+import { DetailsItemInstance, useDetailsStore, type DetailsFieldItem } from '../store';
+import { computed, ref, inject, onBeforeMount, onBeforeUnmount, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import linkifyHtml from 'linkify-html';
 
@@ -168,13 +127,9 @@ const getLayerInfo = () => {
     return layer;
 };
 
-const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(
-    () => detailsStore.properties
-);
+const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(() => detailsStore.properties);
 
-const defaultTemplates = computed<{ [type: string]: string }>(
-    () => detailsStore.defaultTemplates
-);
+const defaultTemplates = computed<{ [type: string]: string }>(() => detailsStore.defaultTemplates);
 
 const supportsFeatures = computed<Boolean>(() => {
     return getLayerInfo()?.supportsFeatures ?? false;
@@ -189,10 +144,7 @@ const isMapLayer = computed<Boolean>(() => {
  */
 const itemName = computed<string>(() => {
     const nameField = getLayerInfo()?.nameField;
-    let returnValue =
-        nameField && props.data.loaded
-            ? props.data.data[nameField]
-            : iApi.$i18n.t('details.items.title');
+    let returnValue = nameField && props.data.loaded ? props.data.data[nameField] : iApi.$i18n.t('details.items.title');
 
     // only replace html special chars if string represents plain text
     if (iApi!.ui.isPlainText(returnValue)) {
@@ -264,9 +216,7 @@ const fetchIcon = () => {
     const layer: LayerInstance | undefined = getLayerInfo();
 
     if (layer === undefined) {
-        console.warn(
-            `could not find layer for uid ${props.uid} during icon lookup`
-        );
+        console.warn(`could not find layer for uid ${props.uid} during icon lookup`);
         return;
     }
 
@@ -287,11 +237,7 @@ const detailsTemplate = computed(() => {
 
     // If there is a custom template binding for this layer in the store, then
     // return its name.
-    if (
-        layer &&
-        detailProperties.value[layer.id] &&
-        detailProperties.value[layer.id].template
-    ) {
+    if (layer && detailProperties.value[layer.id] && detailProperties.value[layer.id].template) {
         return detailProperties.value[layer.id].template;
     }
 
@@ -327,11 +273,7 @@ const fieldsList = computed<Array<FieldDefinition>>(() => {
 const fixtureFields = computed<DetailsFieldItem[] | undefined>(() => {
     const layer: LayerInstance | undefined = getLayerInfo();
 
-    if (
-        layer &&
-        detailProperties.value[layer.id] &&
-        detailProperties.value[layer.id].fields
-    ) {
+    if (layer && detailProperties.value[layer.id] && detailProperties.value[layer.id].fields) {
         return detailProperties.value[layer.id].fields;
     }
     return undefined;
@@ -364,17 +306,13 @@ const zoomToFeature = () => {
     const layer: LayerInstance | undefined = getLayerInfo();
 
     if (layer === undefined || !layer.isLoaded) {
-        console.warn(
-            `Could not find layer for uid ${props.uid} during zoom geometry lookup`
-        );
+        console.warn(`Could not find layer for uid ${props.uid} during zoom geometry lookup`);
         updateZoomStatus('error');
         return;
     }
 
     if (!props.data.loaded) {
-        console.warn(
-            'Details zoomToFeature call on item that is still loading. Should be impossible, alert the devs.'
-        );
+        console.warn('Details zoomToFeature call on item that is still loading. Should be impossible, alert the devs.');
         updateZoomStatus('error');
         return;
     }
@@ -399,10 +337,7 @@ const zoomToFeature = () => {
             });
     };
 
-    if (
-        layer.layerType === LayerType.FEATURE &&
-        layer.geomType !== GeometryType.POINT
-    ) {
+    if (layer.layerType === LayerType.FEATURE && layer.geomType !== GeometryType.POINT) {
         layer
             .getGraphicExtent(oid)
             .then(e => {

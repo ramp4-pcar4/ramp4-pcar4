@@ -21,18 +21,9 @@
             v-if="header"
             class="flex flex-shrink-0 items-center border-b border-solid border-gray-600 px-8 h-48 overflow-hidden"
         >
-            <back
-                :class="
-                    !!panel.teleport ? 'display-none' : 'block sm:display-none'
-                "
-                @click="panel.close()"
-            ></back>
+            <back :class="!!panel.teleport ? 'display-none' : 'block sm:display-none'" @click="panel.close()"></back>
 
-            <h2
-                class="flex-grow text-lg py-16 pl-8 min-w-0"
-                v-truncate
-                tabIndex="0"
-            >
+            <h2 class="flex-grow text-lg py-16 pl-8 min-w-0" v-truncate tabIndex="0">
                 <slot name="header"></slot>
             </h2>
 
@@ -42,16 +33,8 @@
 
             <div :class="!!panel.teleport ? 'flex' : 'display-none sm:flex'">
                 <div class="flex" v-if="!panel.teleport">
-                    <left
-                        v-if="reorderable"
-                        @click="move('left')"
-                        :active="!panel.isLeftMostPanel"
-                    />
-                    <right
-                        v-if="reorderable"
-                        @click="move('right')"
-                        :active="!panel.isRightMostPanel"
-                    />
+                    <left v-if="reorderable" @click="move('left')" :active="!panel.isLeftMostPanel" />
+                    <right v-if="reorderable" @click="move('right')" :active="!panel.isRightMostPanel" />
                     <pin @click="panel.pin()" :active="panel.isPinned" />
                     <expand
                         v-if="panel.controls && panel.controls.expand"
@@ -59,10 +42,7 @@
                         :active="panel.expanded"
                     />
                 </div>
-                <minimize
-                    v-if="panel.button && temporary?.includes(panel.id)"
-                    @click="panel.minimize()"
-                />
+                <minimize v-if="panel.button && temporary?.includes(panel.id)" @click="panel.minimize()" />
                 <close @click="panel.close()" />
             </div>
         </header>
@@ -71,11 +51,7 @@
             <slot name="content"></slot>
         </div>
 
-        <div
-            v-if="footer"
-            class="px-8 py-16 border-t border-gray-400 default-focus-style"
-            v-focus-item
-        >
+        <div v-if="footer" class="px-8 py-16 border-t border-gray-400 default-focus-style" v-focus-item>
             <slot name="footer"></slot>
         </div>
     </div>
@@ -83,14 +59,7 @@
 
 <script setup lang="ts">
 import type { InstanceAPI, PanelInstance } from '@/api';
-import {
-    computed,
-    inject,
-    nextTick,
-    onBeforeUnmount,
-    onMounted,
-    ref
-} from 'vue';
+import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import type { PropType } from 'vue';
 import type { PanelDirection } from '@/stores/panel';
 import { usePanelStore } from '@/stores/panel';
@@ -125,9 +94,7 @@ const props = defineProps({
     }
 });
 
-const temporary = computed((): Array<string> | undefined =>
-    iApi?.fixture.get('appbar') ? appbarStore.temporary : []
-);
+const temporary = computed((): Array<string> | undefined => (iApi?.fixture.get('appbar') ? appbarStore.temporary : []));
 const mobileView = computed(() => panelStore.mobileView);
 const reorderable = computed(() => panelStore.reorderable);
 

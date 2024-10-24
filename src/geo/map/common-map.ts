@@ -5,21 +5,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { toRaw, markRaw } from 'vue';
-import {
-    APIScope,
-    Basemap,
-    InstanceAPI,
-    NotificationType
-} from '@/api/internal';
+import { APIScope, Basemap, InstanceAPI, NotificationType } from '@/api/internal';
 import { EsriMap } from '@/geo/esri';
-import {
-    BaseGeometry,
-    DefPromise,
-    Extent,
-    ExtentSet,
-    GeometryType,
-    SpatialReference
-} from '@/geo/api';
+import { BaseGeometry, DefPromise, Extent, ExtentSet, GeometryType, SpatialReference } from '@/geo/api';
 import type { RampLabelsConfig, RampMapConfig, ZoomEasing } from '@/geo/api';
 
 // Would ideally call this BaseMap, but that would get confused with Basemap.
@@ -111,15 +99,11 @@ export class CommonMapAPI extends APIScope {
     }
 
     protected noMapErr(): void {
-        console.error(
-            'Attempted to manipulate the map before calling createMap()'
-        );
+        console.error('Attempted to manipulate the map before calling createMap()');
     }
 
     protected abstractError(): void {
-        throw new Error(
-            `Attempted to call an abstract method in the parent CommonMapAPI`
-        );
+        throw new Error(`Attempted to call an abstract method in the parent CommonMapAPI`);
     }
 
     /**
@@ -183,10 +167,7 @@ export class CommonMapAPI extends APIScope {
         }
         */
         this.esriMap = markRaw(new EsriMap(esriConfig));
-        this.pointZoomScale =
-            config.pointZoomScale && config.pointZoomScale > 0
-                ? config.pointZoomScale
-                : 50000;
+        this.pointZoomScale = config.pointZoomScale && config.pointZoomScale > 0 ? config.pointZoomScale : 50000;
         this._targetDiv = targetDiv;
         this.createMapView(config.initialBasemapId);
     }
@@ -284,9 +265,7 @@ export class CommonMapAPI extends APIScope {
      * @protected
      */
     findBasemap(id: string): Basemap {
-        const bm: Basemap | undefined = this._basemapStore.find(
-            bms => bms.id === id
-        );
+        const bm: Basemap | undefined = this._basemapStore.find(bms => bms.id === id);
         if (bm) {
             return bm;
         } else {
@@ -307,8 +286,7 @@ export class CommonMapAPI extends APIScope {
             return;
         }
 
-        const bm: Basemap =
-            typeof basemap === 'string' ? this.findBasemap(basemap) : basemap;
+        const bm: Basemap = typeof basemap === 'string' ? this.findBasemap(basemap) : basemap;
         this.esriMap.basemap = toRaw(bm.esriBasemap);
     }
 
@@ -364,9 +342,7 @@ export class CommonMapAPI extends APIScope {
      */
     private geomToMapSR(geom: BaseGeometry): Promise<BaseGeometry> {
         if (!this._rampSR) {
-            throw new Error(
-                'call to map.geomToMapSR before the map spatial ref was created'
-            );
+            throw new Error('call to map.geomToMapSR before the map spatial ref was created');
         }
         if (this._rampSR.isEqual(geom.sr)) {
             return Promise.resolve(geom);
@@ -554,9 +530,7 @@ export class CommonMapAPI extends APIScope {
             this.pointZoomScale = newScale;
             return true;
         }
-        console.error(
-            `Cannot set pointZoomScale to non-positive number: ${newScale}.`
-        );
+        console.error(`Cannot set pointZoomScale to non-positive number: ${newScale}.`);
         return false;
     }
 }

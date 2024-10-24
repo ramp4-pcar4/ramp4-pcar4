@@ -34,20 +34,11 @@ export class GlowHilightMode extends LiftHilightMode {
 
         // apply the esri highlight to the graphics
         const hilightLayer = this.$iApi.geo.layer.getLayer(HILIGHT_LAYER_NAME);
-        if (
-            hilightLayer &&
-            hilightLayer.esriLayer &&
-            hilightLayer.isLoaded &&
-            hilightLayer instanceof GraphicLayer
-        ) {
+        if (hilightLayer && hilightLayer.esriLayer && hilightLayer.isLoaded && hilightLayer instanceof GraphicLayer) {
             const gs = graphics instanceof Array ? graphics : [graphics];
-            this.$iApi.geo.map.esriView
-                ?.whenLayerView(hilightLayer.esriLayer)
-                ?.then(function (layerView) {
-                    layerView.highlight(
-                        gs.map(g => hilightLayer.getEsriGraphic(g.id)!)
-                    );
-                });
+            this.$iApi.geo.map.esriView?.whenLayerView(hilightLayer.esriLayer)?.then(function (layerView) {
+                layerView.highlight(gs.map(g => hilightLayer.getEsriGraphic(g.id)!));
+            });
         }
     }
 

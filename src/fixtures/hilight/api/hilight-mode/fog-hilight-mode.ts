@@ -20,10 +20,7 @@ export class FogHilightMode extends LiftHilightMode {
     constructor(config: any, iApi: InstanceAPI) {
         super(config, iApi);
         this.onOpacity = config.options?.onOpacity ?? 0.75;
-        this.offOpacity =
-            config.options?.offOpacity > 0.02
-                ? config.options.offOpacity
-                : 0.02;
+        this.offOpacity = config.options?.offOpacity > 0.02 ? config.options.offOpacity : 0.02;
 
         if (this.$iApi.geo.map.created) {
             this.hilightSetup();
@@ -49,8 +46,7 @@ export class FogHilightMode extends LiftHilightMode {
     }
 
     private async hilightSetup() {
-        const mapConfig: RampBasemapConfig = useConfigStore(this.$vApp.$pinia)
-            .activeBasemapConfig as RampBasemapConfig;
+        const mapConfig: RampBasemapConfig = useConfigStore(this.$vApp.$pinia).activeBasemapConfig as RampBasemapConfig;
         try {
             const fogLayer = this.$iApi.geo.layer.createLayer({
                 id: FOG_HILIGHT_LAYER_NAME,
@@ -67,9 +63,7 @@ export class FogHilightMode extends LiftHilightMode {
 
             await this.reorderFogLayer();
         } catch {
-            console.error(
-                'Something went wrong while setting up the hilighter.'
-            );
+            console.error('Something went wrong while setting up the hilighter.');
         }
     }
 
@@ -154,9 +148,7 @@ export class FogHilightMode extends LiftHilightMode {
      * Returns the "fog" tile layer.
      */
     private getFogLayer(): TileLayer | undefined {
-        const hilightLayer = this.$iApi.geo.layer.getLayer(
-            FOG_HILIGHT_LAYER_NAME
-        );
+        const hilightLayer = this.$iApi.geo.layer.getLayer(FOG_HILIGHT_LAYER_NAME);
         if (hilightLayer && hilightLayer instanceof TileLayer) {
             return hilightLayer;
         } else {

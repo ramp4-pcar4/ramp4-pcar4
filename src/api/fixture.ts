@@ -7,9 +7,7 @@ import type { FixtureBase } from '@/stores/fixture';
 import { useFixtureStore } from '@/stores/fixture';
 import { usePanelStore } from '@/stores/panel';
 
-const fixtureModules = import.meta.glob<{ default: typeof FixtureInstance }>(
-    '../fixtures/*/index.ts'
-);
+const fixtureModules = import.meta.glob<{ default: typeof FixtureInstance }>('../fixtures/*/index.ts');
 
 /**
  * A constructor returning an object implementing FixtureBase interface.
@@ -67,15 +65,10 @@ export class FixtureAPI extends APIScope {
             }
 
             // run the provided constructor and update the resulting object with FixtureInstance functions/properties
-            fixture = FixtureInstance.updateBaseToInstance(
-                new constructor(),
-                id,
-                this.$iApi
-            );
+            fixture = FixtureInstance.updateBaseToInstance(new constructor(), id, this.$iApi);
         } else {
-            const instanceConstructor: IFixtureInstance = (
-                await fixtureModules[`../fixtures/${id}/index.ts`]()
-            ).default;
+            const instanceConstructor: IFixtureInstance = (await fixtureModules[`../fixtures/${id}/index.ts`]())
+                .default;
 
             fixture = new instanceConstructor(id, this.$iApi);
         }
@@ -98,15 +91,11 @@ export class FixtureAPI extends APIScope {
      * @returns {T}
      * @memberof FixtureAPI
      */
-    remove<T extends FixtureBase = FixtureBase>(
-        fixtureOrId: FixtureBase | string
-    ): T {
+    remove<T extends FixtureBase = FixtureBase>(fixtureOrId: FixtureBase | string): T {
         const fixture = this.get<T>(fixtureOrId);
 
         if (!fixture) {
-            throw new Error(
-                `Could not find fixture ${fixtureOrId} for removal`
-            );
+            throw new Error(`Could not find fixture ${fixtureOrId} for removal`);
         }
 
         useFixtureStore(this.$vApp.$pinia).removeFixture(fixture);
@@ -149,10 +138,7 @@ export class FixtureAPI extends APIScope {
             if (typeof fixture.added === 'function') {
                 fixture.added();
             }
-            if (
-                this.$iApi.geo.map.created &&
-                typeof fixture.initialized === 'function'
-            ) {
+            if (this.$iApi.geo.map.created && typeof fixture.initialized === 'function') {
                 fixture.initialized();
             }
         });
@@ -180,9 +166,7 @@ export class FixtureAPI extends APIScope {
      * @memberof FixtureAPI
      */
     get<T extends FixtureBase = FixtureBase>(item: string[]): T[];
-    get<T extends FixtureBase = FixtureBase>(
-        item: string | FixtureBase | string[]
-    ): T | undefined | (T | undefined)[] {
+    get<T extends FixtureBase = FixtureBase>(item: string | FixtureBase | string[]): T | undefined | (T | undefined)[] {
         const ids: string[] = [];
 
         // parse the input and figure our what it is
@@ -237,9 +221,7 @@ export class FixtureAPI extends APIScope {
      * @returns {Promise<Array<FixtureBase>>} resolves with array of default fixtures
      * @memberof FixtureAPI
      */
-    addDefaultFixtures(
-        fixtureNames?: Array<string>
-    ): Promise<Array<FixtureBase>> {
+    addDefaultFixtures(fixtureNames?: Array<string>): Promise<Array<FixtureBase>> {
         if (!Array.isArray(fixtureNames) || fixtureNames.length === 0) {
             fixtureNames = [
                 'appbar',
@@ -291,11 +273,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      * @returns {FixtureInstance}
      * @memberof FixtureInstance
      */
-    static updateBaseToInstance(
-        rawFixture: FixtureBase,
-        id: string,
-        $iApi: InstanceAPI
-    ): FixtureInstance {
+    static updateBaseToInstance(rawFixture: FixtureBase, id: string, $iApi: InstanceAPI): FixtureInstance {
         const instance = new FixtureInstance(id, $iApi);
 
         Object.defineProperties(rawFixture, {
@@ -403,9 +381,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
         if (app && app._context) {
             vNode.appContext = app._context;
         }
-        el
-            ? render(vNode, el)
-            : render(vNode, (el = document.createElement('div')));
+        el ? render(vNode, el) : render(vNode, (el = document.createElement('div')));
 
         const destroy = () => {
             if (el) {
@@ -442,8 +418,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
      * @returns {any} This fixture's config for the given layer
      */
     getLayerFixtureConfig(layerId: string): any {
-        const fixtureConfigs: { [layerId: string]: any } =
-            this.getLayerFixtureConfigs();
+        const fixtureConfigs: { [layerId: string]: any } = this.getLayerFixtureConfigs();
         return fixtureConfigs[layerId];
     }
 
@@ -467,16 +442,12 @@ export class FixtureInstance extends APIScope implements FixtureBase {
 
             // process child layer entries
             if (layer.sublayers) {
-                layer.sublayers.forEach((sublayer: any) =>
-                    layerCrawler(sublayer, layer)
-                );
+                layer.sublayers.forEach((sublayer: any) => layerCrawler(sublayer, layer));
             }
         };
 
         // Crawl through the layer store and check for layers that may have a custom config.
-        this.$iApi.geo.layer
-            .allLayers()
-            .forEach((layer: LayerInstance) => layerCrawler(layer.config));
+        this.$iApi.geo.layer.allLayers().forEach((layer: LayerInstance) => layerCrawler(layer.config));
 
         return fixtureConfigs;
     }
@@ -531,9 +502,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
             const panelStore = usePanelStore(this.$vApp.$pinia);
             const oneConfig = !!this.config.panelTeleport.target;
             panels.forEach(p => {
-                panelStore.items[p].teleport = oneConfig
-                    ? this.config.panelTeleport
-                    : this.config.panelTeleport[p];
+                panelStore.items[p].teleport = oneConfig ? this.config.panelTeleport : this.config.panelTeleport[p];
                 panelStore.items[p].style.width = '100%';
             });
         }

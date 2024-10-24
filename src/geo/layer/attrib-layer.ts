@@ -57,10 +57,7 @@ export class AttribLayer extends MapLayer {
         this.serviceUrl = '';
         this.fieldList = '';
         this.canModifyLayer = true;
-        this.filter = new Filter(
-            rampConfig.permanentFilteredQuery || '',
-            rampConfig.initialFilteredQuery || ''
-        );
+        this.filter = new Filter(rampConfig.permanentFilteredQuery || '', rampConfig.initialFilteredQuery || '');
         this.hovertips = rampConfig.state?.hovertips ?? true;
         this.attribs = new AttribSource();
     }
@@ -90,9 +87,7 @@ export class AttribLayer extends MapLayer {
      *
      * @param options loading options. Currently only supports custom renderer override
      */
-    async loadLayerMetadata(
-        options: LoadLayerMetadataOptions = {}
-    ): Promise<void> {
+    async loadLayerMetadata(options: LoadLayerMetadataOptions = {}): Promise<void> {
         // generally the implementing class will have populated serviceUrl before calling this.
         if (!this.serviceUrl) {
             // case where a non-server subclass ends up calling this via .super magic.
@@ -103,9 +98,7 @@ export class AttribLayer extends MapLayer {
 
         const startTime = Date.now();
 
-        const sData = await this.$iApi.geo.layer.loadLayerMetadata(
-            this.serviceUrl
-        );
+        const sData = await this.$iApi.geo.layer.loadLayerMetadata(this.serviceUrl);
 
         if (startTime < this.lastCancel) {
             // we cancelled and are already in error state.
@@ -126,10 +119,7 @@ export class AttribLayer extends MapLayer {
             this.supportsFeatures = true;
 
             // Only MILs have sublayers and their filtering is exclusively impacted by the canModifyLayer server flag
-            this.canModifyLayer =
-                this.layerType === LayerType.SUBLAYER
-                    ? sData.canModifyLayer
-                    : true;
+            this.canModifyLayer = this.layerType === LayerType.SUBLAYER ? sData.canModifyLayer : true;
 
             this.fields = sData.fields;
             this.nameField = sData.displayField;
@@ -139,13 +129,8 @@ export class AttribLayer extends MapLayer {
             // drawOrder field check.
             // we won't be fancy enough to pick apart Arcade formulas and field check. Config authors need to do good work.
             this.drawOrder.forEach(d => {
-                if (
-                    d.field &&
-                    this.fields.findIndex(ef => ef.name === d.field) === -1
-                ) {
-                    console.error(
-                        `Draw order for layer ${this.id} references invalid field ${d.field}`
-                    );
+                if (d.field && this.fields.findIndex(ef => ef.name === d.field) === -1) {
+                    console.error(`Draw order for layer ${this.id} references invalid field ${d.field}`);
                 }
             });
 
@@ -158,18 +143,13 @@ export class AttribLayer extends MapLayer {
                     ? options.customRenderer
                     : sData.renderer!;
 
-            this.renderer = this.$iApi.geo.symbology.makeRenderer(
-                esriRenderer,
-                this.fields
-            );
+            this.renderer = this.$iApi.geo.symbology.makeRenderer(esriRenderer, this.fields);
 
             // this array will have a set of promises that resolve when all the legend svg has drawn.
             // for now, will not include that set (promise.all'd) on the layer load blocker;
             // don't want to stop a layer from loading just because an icon won't draw.
             // ideally we'll have placeholder symbol (white square, loading symbol, caution symbol, etc)
-            this.legend = this.$iApi.geo.symbology.rendererToLegend(
-                this.renderer
-            );
+            this.legend = this.$iApi.geo.symbology.rendererToLegend(this.renderer);
 
             // temporarily store things for delayed attributes
             const loadData: AttributeLoaderDetails = {
@@ -182,10 +162,7 @@ export class AttribLayer extends MapLayer {
                 attribs: '*', // NOTE we set to * here for generic case. Some subclasses will later call updateFieldList() after parsing config field settings
                 permanentFilter: this.getSqlFilter(CoreFilter.PERMANENT)
             };
-            this.attribs.attLoader = new ArcServerAttributeLoader(
-                this.$iApi,
-                loadData
-            );
+            this.attribs.attLoader = new ArcServerAttributeLoader(this.$iApi, loadData);
 
             /* See https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-FeatureLayer.html#title
                In particular, if the service has several layers, then the title of each layer will be the concatenation
@@ -265,16 +242,10 @@ export class AttribLayer extends MapLayer {
     getTabularAttributes(): Promise<TabularAttributeSet> {
         // this call will generate the tabular format, or return the cache if
         // it exists
-        return this.$iApi.geo.attributes.generateTabularAttributes(
-            this,
-            this.attribs
-        );
+        return this.$iApi.geo.attributes.generateTabularAttributes(this, this.attribs);
     }
 
-    async getGraphic(
-        objectId: number,
-        options: GetGraphicParams
-    ): Promise<Graphic> {
+    async getGraphic(objectId: number, options: GetGraphicParams): Promise<Graphic> {
         // see https://github.com/fgpv-vpgf/fgpv-vpgf/issues/2190 for reasons why
         // things are done the way they are in this function.
 
@@ -360,32 +331,18 @@ export class AttribLayer extends MapLayer {
                 }
             }
 
-            const webFeat =
-                await this.$iApi.geo.attributes.loadSingleFeature(
-                    serviceParams
-                );
+            const webFeat = await this.$iApi.geo.attributes.loadSingleFeature(serviceParams);
             if (needWebGeom) {
                 // save our result in the cache
-                this.attribs.quickCache.setGeom(
-                    objectId,
-                    webFeat.geometry,
-                    scale
-                );
+                this.attribs.quickCache.setGeom(objectId, webFeat.geometry, scale);
                 resultGeom = webFeat.geometry;
             }
 
-            if (
-                needWebAttr ||
-                typeof this.attribs.quickCache.getAttribs(objectId) ===
-                    'undefined'
-            ) {
+            if (needWebAttr || typeof this.attribs.quickCache.getAttribs(objectId) === 'undefined') {
                 // extra check in the if is for efficiency. attributes get downloaded in the request
                 // regardless if we wanted them. if we didn't want them, but didn't have them cached,
                 // will cache them anyways to save another hit later.
-                this.attribs.quickCache.setAttribs(
-                    objectId,
-                    webFeat.attributes
-                );
+                this.attribs.quickCache.setAttribs(objectId, webFeat.attributes);
 
                 if (needWebAttr) {
                     // only put attribs on the result if requester asked for them
@@ -396,16 +353,10 @@ export class AttribLayer extends MapLayer {
 
         // logic in attribute param - we need attributes if style was requested. So it's possible our
         // resultAttribs has values due to a style request, but caller does not want attributes on the result.
-        const resGraphic = new Graphic(
-            resultGeom,
-            '',
-            options.getAttribs ? resultAttribs : undefined
-        );
+        const resGraphic = new Graphic(resultGeom, '', options.getAttribs ? resultAttribs : undefined);
 
         if (options.getStyle) {
-            const esriSymb = toRaw(
-                this.renderer!.getGraphicSymbol(resultAttribs)
-            );
+            const esriSymb = toRaw(this.renderer!.getGraphicSymbol(resultAttribs));
             resGraphic.style = this.$iApi.geo.geom.styleEsriToRamp(esriSymb);
         }
 
@@ -417,10 +368,7 @@ export class AttribLayer extends MapLayer {
             throw new Error('getIcon called before renderer is defined');
         }
         const g = await this.getGraphic(objectId, { getAttribs: true });
-        return this.$iApi.geo.symbology.getGraphicIcon(
-            g.attributes || {},
-            this.renderer
-        );
+        return this.$iApi.geo.symbology.getGraphicIcon(g.attributes || {}, this.renderer);
     }
 
     setSqlFilter(filterKey: string, whereClause: string): void {
@@ -548,9 +496,7 @@ export class AttribLayer extends MapLayer {
      * @param options {Object} options to provide filters and helpful information.
      * @returns {Promise} resolves in an array of object ids and promises resolving in each feature
      */
-    async queryFeaturesDiscrete(
-        options: QueryFeaturesParams
-    ): Promise<Array<DiscreteGraphicResult>> {
+    async queryFeaturesDiscrete(options: QueryFeaturesParams): Promise<Array<DiscreteGraphicResult>> {
         // TODO potential optimization.
         //      if we have a big array of OIDs returned below, comparable to
         //      layers record count, and this.attLoader.isLoaded is false,
@@ -604,21 +550,14 @@ export class AttribLayer extends MapLayer {
      * @param rampConfig {RampLayerConfig} Ramp layer configuration object.
      * @param rampConfig {Object} ESRI Feature Layer configuration object
      */
-    protected configDrawOrder(
-        rampConfig: RampLayerConfig,
-        esriConfig: __esri.FeatureLayerProperties
-    ): void {
-        if (
-            Array.isArray(rampConfig.drawOrder) &&
-            rampConfig.drawOrder.length > 0
-        ) {
+    protected configDrawOrder(rampConfig: RampLayerConfig, esriConfig: __esri.FeatureLayerProperties): void {
+        if (Array.isArray(rampConfig.drawOrder) && rampConfig.drawOrder.length > 0) {
             // Note esri currently only supports one field, but coding to support multiple when they
             //      enhance the api to handle that.
 
             esriConfig.orderBy = rampConfig.drawOrder.map(dr => {
                 // pick ascending if no value was defined.
-                const order =
-                    (dr.ascending ?? true) ? 'ascending' : 'descending';
+                const order = (dr.ascending ?? true) ? 'ascending' : 'descending';
 
                 if (dr.field) {
                     return {

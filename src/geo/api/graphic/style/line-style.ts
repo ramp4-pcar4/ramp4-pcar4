@@ -1,12 +1,6 @@
 // Style for RAMP Line Graphic
 
-import {
-    BaseStyle,
-    Colour,
-    LineCapType,
-    LineJoinType,
-    LineStyleType
-} from '@/geo/api';
+import { BaseStyle, Colour, LineCapType, LineJoinType, LineStyleType } from '@/geo/api';
 import type { LineStyleOptions } from '@/geo/api';
 import { EsriSimpleLineSymbol, EsriSymbolFromJson } from '@/geo/esri';
 
@@ -97,8 +91,6 @@ export class LineStyle extends BaseStyle {
     }
 
     static fromArcServer(json: any): LineStyle {
-        return LineStyle.fromESRI(
-            <EsriSimpleLineSymbol>EsriSymbolFromJson(json)
-        );
+        return LineStyle.fromESRI(<EsriSimpleLineSymbol>EsriSymbolFromJson(json));
     }
 }

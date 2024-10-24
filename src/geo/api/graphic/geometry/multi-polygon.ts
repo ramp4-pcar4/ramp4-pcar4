@@ -35,38 +35,13 @@ export class MultiPolygon extends BaseGeometry {
     constructor(id: IdDef, line: LineString);
     constructor(id: IdDef, multiPoint: MultiPoint);
     // from arrays of arrays of single line structures that can be interpreted as a multi polygon
-    constructor(
-        id: IdDef,
-        listOflistOfListOfCoords: Array<Array<Array<Array<number>>>>,
-        sr?: SrDef,
-        raw?: boolean
-    );
-    constructor(
-        id: IdDef,
-        listOflistOfListOfPoints: Array<Array<Array<Point>>>,
-        sr?: SrDef
-    );
-    constructor(
-        id: IdDef,
-        listOflistOfListOfXY: Array<Array<Array<object>>>,
-        sr?: SrDef
-    );
+    constructor(id: IdDef, listOflistOfListOfCoords: Array<Array<Array<Array<number>>>>, sr?: SrDef, raw?: boolean);
+    constructor(id: IdDef, listOflistOfListOfPoints: Array<Array<Array<Point>>>, sr?: SrDef);
+    constructor(id: IdDef, listOflistOfListOfXY: Array<Array<Array<object>>>, sr?: SrDef);
     constructor(id: IdDef, listOfPolygons: Array<Polygon>, sr?: SrDef);
-    constructor(
-        id: IdDef,
-        listOflistOfLinearRings: Array<Array<LinearRing>>,
-        sr?: SrDef
-    );
-    constructor(
-        id: IdDef,
-        listOflistOfLines: Array<Array<LineString>>,
-        sr?: SrDef
-    );
-    constructor(
-        id: IdDef,
-        listOflistOfMultiPoints: Array<Array<MultiPoint>>,
-        sr?: SrDef
-    );
+    constructor(id: IdDef, listOflistOfLinearRings: Array<Array<LinearRing>>, sr?: SrDef);
+    constructor(id: IdDef, listOflistOfLines: Array<Array<LineString>>, sr?: SrDef);
+    constructor(id: IdDef, listOflistOfMultiPoints: Array<Array<MultiPoint>>, sr?: SrDef);
     constructor(id: IdDef, listOfMixedFormats: Array<any>, sr?: SrDef);
     constructor(id: IdDef, geometry: any, sr?: SrDef, raw?: boolean) {
         super(id, geometry.sr || sr);
@@ -90,9 +65,7 @@ export class MultiPolygon extends BaseGeometry {
 
     /** Returns an array of the contained polygons. A new array is returned each time this is called. */
     get polygonArray(): Array<Polygon> {
-        return this.rawArray.map(
-            (p, i) => new Polygon(this.childIdGenerator(i), p, this.sr, true)
-        );
+        return this.rawArray.map((p, i) => new Polygon(this.childIdGenerator(i), p, this.sr, true));
     }
 
     /** Returns the string 'MultiPolygon'. */
@@ -114,10 +87,7 @@ export class MultiPolygon extends BaseGeometry {
         } else if (input instanceof Polygon) {
             // fast return, it's already pure
             return [input.toArray()];
-        } else if (
-            input instanceof MultiLineString ||
-            input instanceof PointSet
-        ) {
+        } else if (input instanceof MultiLineString || input instanceof PointSet) {
             // PointSet will also be true for LineString, LinearRing, MultiPoint
             // use polygon parser to ensure rings are closed
             return [Polygon.parsePolygon(input)];
@@ -132,21 +102,14 @@ export class MultiPolygon extends BaseGeometry {
     }
 
     // sing this function definition. epic chorus.
-    static arrayDeepCopy(
-        a: Array<Array<Array<Array<number>>>>
-    ): Array<Array<Array<Array<number>>>> {
+    static arrayDeepCopy(a: Array<Array<Array<Array<number>>>>): Array<Array<Array<Array<number>>>> {
         // speed tests show loops & slice is 3x faster than JSON parse/stringify
         // array of polyGons to array of Lines(rings) to array of Points, copy each point
         return a.map(g => g.map(l => l.map(p => p.slice())));
     }
 
     static fromESRI(esriPoly: EsriPolygon, id?: number | string): MultiPolygon {
-        return new MultiPolygon(
-            id,
-            [esriPoly.rings],
-            SpatialReference.fromESRI(esriPoly.spatialReference),
-            true
-        );
+        return new MultiPolygon(id, [esriPoly.rings], SpatialReference.fromESRI(esriPoly.spatialReference), true);
     }
 
     toESRI(): EsriPolygon {
@@ -166,10 +129,7 @@ export class MultiPolygon extends BaseGeometry {
         });
     }
 
-    static fromGeoJSON(
-        geoJsonMultiPoly: GeoJson.MultiPolygon,
-        id?: number | string
-    ): MultiPolygon {
+    static fromGeoJSON(geoJsonMultiPoly: GeoJson.MultiPolygon, id?: number | string): MultiPolygon {
         return new MultiPolygon(
             id,
             geoJsonMultiPoly.coordinates,
@@ -179,8 +139,6 @@ export class MultiPolygon extends BaseGeometry {
     }
 
     toGeoJSON(): GeoJson.MultiPolygon {
-        return <GeoJson.MultiPolygon>(
-            this.geoJsonFactory(GeoJsonGeomType.MULTIPOLYGON, this.toArray())
-        );
+        return <GeoJson.MultiPolygon>this.geoJsonFactory(GeoJsonGeomType.MULTIPOLYGON, this.toArray());
     }
 }

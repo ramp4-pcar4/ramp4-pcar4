@@ -1,10 +1,4 @@
-import type {
-    BaseGeometry,
-    Extent,
-    Graphic,
-    Point,
-    SpatialReference
-} from '@/geo/api';
+import type { BaseGeometry, Extent, Graphic, Point, SpatialReference } from '@/geo/api';
 import type { EsriRenderer } from '../esri';
 
 // From the supported ESRI field types
@@ -369,12 +363,7 @@ export interface LayerTimes {
 }
 
 // needs to align to esri values for GoToOptions2D.easing
-export type ZoomEasing =
-    | 'linear'
-    | 'ease'
-    | 'ease-in'
-    | 'ease-out'
-    | 'ease-in-out';
+export type ZoomEasing = 'linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out';
 
 export interface ScreenPoint {
     screenX: number;
@@ -752,9 +741,7 @@ export interface RampLayerConfig {
     featureInfoMimeType?: string; // used by WMS layer
     controls?: Array<LayerControl>;
     disabledControls?: Array<LayerControl>;
-    sublayers?:
-        | Array<RampLayerMapImageSublayerConfig>
-        | Array<RampLayerWmsSublayerConfig>;
+    sublayers?: Array<RampLayerMapImageSublayerConfig> | Array<RampLayerWmsSublayerConfig>;
     extent?: RampExtentConfig;
     latField?: string; // csv coord field
     longField?: string; // csv coord field

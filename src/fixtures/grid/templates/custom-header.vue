@@ -1,13 +1,6 @@
 <template>
-    <div
-        class="ag-custom-header flex flex-1 items-center h-full w-full"
-        ref="el"
-    >
-        <div
-            v-if="sortable"
-            class="flex flex-1 items-center min-w-0"
-            truncate-trigger
-        >
+    <div class="ag-custom-header flex flex-1 items-center h-full w-full" ref="el">
+        <div v-if="sortable" class="flex flex-1 items-center min-w-0" truncate-trigger>
             <button
                 type="button"
                 @click="onSortRequested($event)"
@@ -23,40 +16,24 @@
                 </div>
             </button>
         </div>
-        <span v-else class="customHeaderLabel" role="columnheader" v-truncate>{{
-            params.displayName
-        }}</span>
+        <span v-else class="customHeaderLabel" role="columnheader" v-truncate>{{ params.displayName }}</span>
 
         <div v-if="sortable" class="flex">
-            <span
-                v-if="params.enableSorting && sort === 0"
-                class="w-24 inline-block"
-            >
-            </span>
-            <span
-                v-if="params.enableSorting && sort === 1"
-                class="customSortDownLabel"
-            >
+            <span v-if="params.enableSorting && sort === 0" class="w-24 inline-block"> </span>
+            <span v-if="params.enableSorting && sort === 1" class="customSortDownLabel">
                 <div class="md-icon-small">
                     <svg height="24" width="24">
                         <g id="arrow_upward">
-                            <path
-                                d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"
-                            />
+                            <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z" />
                         </g>
                     </svg>
                 </div>
             </span>
-            <span
-                v-if="params.enableSorting && sort === 2"
-                class="customSortUpLabel"
-            >
+            <span v-if="params.enableSorting && sort === 2" class="customSortUpLabel">
                 <div class="md-icon-small">
                     <svg height="24" width="24">
                         <g id="arrow_downward">
-                            <path
-                                d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"
-                            />
+                            <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z" />
                         </g>
                     </svg>
                 </div>
@@ -74,9 +51,7 @@
                 <div class="inline-block">
                     <svg height="24" width="24">
                         <g id="keyboard_arrow_left">
-                            <path
-                                d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"
-                            />
+                            <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z" />
                         </g>
                     </svg>
                 </div>
@@ -94,9 +69,7 @@
                 <div class="inline-block">
                     <svg height="24" width="24">
                         <g id="keyboard_arrow_right">
-                            <path
-                                d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z"
-                            />
+                            <path d="M8.59 16.34l4.58-4.59-4.58-4.59L10 5.75l6 6-6 6z" />
                         </g>
                     </svg>
                 </div>
@@ -129,11 +102,8 @@ const columnApi = ref<any>(null);
 const onColumnReorder = () => {
     const columns: any = columnApi.value.getAllDisplayedColumns();
     const columnIdx: number = columns.indexOf(props.params.column);
-    canMoveLeft.value =
-        columnIdx > 3 && !columns[columnIdx - 1].colDef.isStatic;
-    canMoveRight.value =
-        columnIdx < columns.length - 1 &&
-        !columns[columnIdx + 1].colDef.isStatic;
+    canMoveLeft.value = columnIdx > 3 && !columns[columnIdx - 1].colDef.isStatic;
+    canMoveRight.value = columnIdx < columns.length - 1 && !columns[columnIdx + 1].colDef.isStatic;
 };
 
 // Swap the position of a column with it's left neighbor. If the neighboring column is static,
@@ -141,9 +111,7 @@ const onColumnReorder = () => {
 const moveLeft = (): void => {
     const columns: any = columnApi.value.getAllDisplayedColumns();
     const allColumns: any = columnApi.value.getAllGridColumns();
-    const index: number = allColumns.indexOf(
-        columns[columns.indexOf(props.params.column) - 1]
-    );
+    const index: number = allColumns.indexOf(columns[columns.indexOf(props.params.column) - 1]);
 
     if (canMoveLeft.value) {
         columnApi.value.moveColumn(props.params.column, index);
@@ -167,9 +135,7 @@ const moveLeft = (): void => {
 const moveRight = (): void => {
     const columns: any = columnApi.value.getAllDisplayedColumns();
     const allColumns: any = columnApi.value.getAllGridColumns();
-    const index: number = allColumns.indexOf(
-        columns[columns.indexOf(props.params.column) + 1]
-    );
+    const index: number = allColumns.indexOf(columns[columns.indexOf(props.params.column) + 1]);
 
     if (canMoveRight.value) {
         columnApi.value.moveColumn(props.params.column, index);

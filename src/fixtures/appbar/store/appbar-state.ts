@@ -54,11 +54,7 @@ export class AppbarItemInstance implements AppbarItemConfig {
             options: {},
             ...value
         };
-        ({
-            id: this.id,
-            options: this.options,
-            componentId: this.componentId
-        } = params);
+        ({ id: this.id, options: this.options, componentId: this.componentId } = params);
 
         // this should work too, but it doesn't;
         // ({ id: this.id, options: this.options } = { options: {}, ...(typeof value === 'string' ? { id: value} : value) });

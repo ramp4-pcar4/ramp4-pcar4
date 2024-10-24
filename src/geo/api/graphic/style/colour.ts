@@ -4,9 +4,7 @@ import { EsriColour } from '@/geo/esri';
 export class Colour {
     protected c: Array<number>; // 4 numbers. R,G,B (0-255), A (0-1). This is ESRI and SVG standard
 
-    constructor(
-        colour?: Array<number | string> | string | ColourParams | undefined
-    ) {
+    constructor(colour?: Array<number | string> | string | ColourParams | undefined) {
         if (!colour) {
             this.c = [0, 0, 0, 1];
             return;
@@ -15,22 +13,17 @@ export class Colour {
         if (Array.isArray(colour)) {
             const l = colour.length;
             if (l < 3 || l > 4) {
-                console.error(
-                    'Invalid colour value array passed to Colour class'
-                );
+                console.error('Invalid colour value array passed to Colour class');
                 this.c = [0, 0, 0, 1];
                 return;
             }
-            this.c = (<Array<any>>colour).map((n, i) =>
-                i === 3 ? n : parseInt(n)
-            );
+            this.c = (<Array<any>>colour).map((n, i) => (i === 3 ? n : parseInt(n)));
             if (l === 3) {
                 this.c.push(1); // no opacity given. make opaque
             }
         } else if (typeof colour === 'string') {
             // trim # if its there
-            const s: string =
-                colour.substring(0, 1) === '#' ? colour.substring(1) : colour;
+            const s: string = colour.substring(0, 1) === '#' ? colour.substring(1) : colour;
             this.c = [0, 2, 4, 6].map(i => {
                 const hex = s.substring(i, i + 2);
                 return Colour.hexToInt(hex);

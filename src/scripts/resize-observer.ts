@@ -26,10 +26,8 @@ export default class CustomResizeObserver {
                           // If breakpoints are defined on the observed element,
                           // use them. Otherwise use the defaults.
                           const bp = (entry.target as any).dataset.breakpoints
-                              ? JSON.parse(
-                                    (entry.target as any).dataset.breakpoints
-                                )
-                              : breakpoints ?? defaultBreakpoints;
+                              ? JSON.parse((entry.target as any).dataset.breakpoints)
+                              : (breakpoints ?? defaultBreakpoints);
 
                           // Update the matching breakpoints on the observed element.
                           Object.keys(bp).forEach(function (breakpoint) {

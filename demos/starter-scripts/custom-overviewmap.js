@@ -81,11 +81,7 @@ let options = {
     loadDefaultEvents: true
 };
 
-const rInstance = createInstance(
-    document.getElementById('app'),
-    config,
-    options
-);
+const rInstance = createInstance(document.getElementById('app'), config, options);
 rInstance.fixture.addDefaultFixtures(['overviewmap']);
 
 window.debugInstance = rInstance;

@@ -2,17 +2,11 @@
     <div
         class="map-caption absolute bottom-0 flex justify-end pointer-events-auto cursor-default select-none text-gray-200 bg-black-75 left-0 right-0 py-2 sm:py-6"
     >
-        <about-ramp-dropdown
-            class="sm:block display-none ml-8 mr-4"
-            position="top-end"
-        />
+        <about-ramp-dropdown class="sm:block display-none ml-8 mr-4" position="top-end" />
 
         <notifications-caption-button class="sm:block display-none" />
 
-        <span
-            class="relative top-2 sm:top-1 ml-4 sm:ml-0 shrink-0"
-            v-if="!attribution?.logo!.disabled"
-        >
+        <span class="relative top-2 sm:top-1 ml-4 sm:ml-0 shrink-0" v-if="!attribution?.logo!.disabled">
             <a
                 class="pointer-events-auto cursor-pointer"
                 :href="attribution?.logo!.link"
@@ -68,9 +62,7 @@
                 @click="onScaleClick"
                 :aria-pressed="scale?.isImperialScale"
                 :aria-label="`
-                    ${scale?.label} - ${changeScaleMessage(
-                        scale?.isImperialScale
-                    )}
+                    ${scale?.label} - ${changeScaleMessage(scale?.isImperialScale)}
                 `"
                 v-tippy="{
                     delay: [300, 0],
@@ -96,16 +88,12 @@
                 position="top-end"
                 v-if="!langtoggle?.disabled"
                 :tooltip="t('map.changeLanguage')"
-                :ariaLabel="`${t('map.language.short')} - ${t(
-                    'map.changeLanguage'
-                )}`"
+                :ariaLabel="`${t('map.language.short')} - ${t('map.changeLanguage')}`"
                 tooltipPlacement="top-start"
                 tooltipPlacementAlt="left-end"
             >
                 <template #header>
-                    <span
-                        class="text-gray-200 hover:text-white text-sm sm:text-base pb-5"
-                    >
+                    <span class="text-gray-200 hover:text-white text-sm sm:text-base pb-5">
                         {{ t('map.language.short') }}
                     </span>
                 </template>
@@ -118,10 +106,7 @@
                     @click="changeLang(item)"
                 >
                     {{ t('map.language.' + item) }}
-                    <span
-                        class="sr-only"
-                        v-if="item === iApi.$i18n.locale.value"
-                    >
+                    <span class="sr-only" v-if="item === iApi.$i18n.locale.value">
                         {{ t('map.language.curr') }}
                     </span>
                 </a>
@@ -131,16 +116,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-    computed,
-    inject,
-    nextTick,
-    onBeforeUnmount,
-    onUpdated,
-    reactive,
-    ref,
-    watch
-} from 'vue';
+import { computed, inject, nextTick, onBeforeUnmount, onUpdated, reactive, ref, watch } from 'vue';
 import { useMapCaptionStore } from '@/stores/map-caption';
 import NotificationsCaptionButton from '@/components/notification-center/caption-button.vue';
 import AboutRampDropdown from '@/components/about-ramp/about-ramp-dropdown.vue';
@@ -203,9 +179,7 @@ const onScaleClick = () => {
  * Show different scale messages based on the current scale
  */
 const changeScaleMessage = (isImperialScale: boolean = false) => {
-    return isImperialScale
-        ? t('map.toggleScaleToMetric')
-        : t('map.toggleScaleToImperial');
+    return isImperialScale ? t('map.toggleScaleToMetric') : t('map.toggleScaleToImperial');
 };
 </script>
 

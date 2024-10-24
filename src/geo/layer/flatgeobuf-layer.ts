@@ -16,9 +16,7 @@ export class FlatGeobufLayer extends FileLayer {
 
         const startTime = Date.now();
 
-        const fgbData = await this.$iApi.geo.layer.files.binaryInitHelper(
-            this.origRampConfig
-        );
+        const fgbData = await this.$iApi.geo.layer.files.binaryInitHelper(this.origRampConfig);
 
         // convert flatgeobuf to geojson, store in property for FileLayer to consume.
         if (startTime > this.lastCancel) {
@@ -27,10 +25,7 @@ export class FlatGeobufLayer extends FileLayer {
             // safe threshold to stop that busywait. But method cannot cancel/error the layer. Adding a second
             // allows the initiate watcher to error the layer. Then this method safely exits a second later.
             // It is considered a cancel, so garbage value of gj is ignored.
-            const gj = await this.$iApi.geo.layer.files.fgbToGeoJson(
-                fgbData,
-                this.expectedTime.fail + 1000
-            );
+            const gj = await this.$iApi.geo.layer.files.fgbToGeoJson(fgbData, this.expectedTime.fail + 1000);
 
             if (startTime > this.lastCancel) {
                 this.sourceGeoJson = gj;

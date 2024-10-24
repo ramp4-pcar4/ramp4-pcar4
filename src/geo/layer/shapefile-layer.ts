@@ -13,16 +13,11 @@ export class ShapefileLayer extends FileLayer {
     protected async onInitiate(): Promise<void> {
         const startTime = Date.now();
 
-        const shapefileData = await this.$iApi.geo.layer.files.binaryInitHelper(
-            this.origRampConfig
-        );
+        const shapefileData = await this.$iApi.geo.layer.files.binaryInitHelper(this.origRampConfig);
 
         // convert shapefile to geojson, store in property for FileLayer to consume.
         if (startTime > this.lastCancel) {
-            const gj =
-                await this.$iApi.geo.layer.files.shapefileToGeoJson(
-                    shapefileData
-                );
+            const gj = await this.$iApi.geo.layer.files.shapefileToGeoJson(shapefileData);
 
             if (startTime > this.lastCancel) {
                 this.sourceGeoJson = gj;
