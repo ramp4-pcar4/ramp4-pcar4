@@ -7,8 +7,7 @@ This covers various ways to create fixtures.
 The fixture interface has one optional property: `persist`. This indicates whether the fixture should remain in the instance upon language change. Defaults to `true`. Note that if only one config is provided for all languages, the fixture will remain in the instance on language change, regardless of the value of the flag.
 Here is a code snippet that shows how to use this property:
 ```JS
-rInstance.fixture.isLoaded('basemap').then(() => {
-    const bm = rInstance.fixture.get('basemap');
+rInstance.fixture.isLoaded('basemap').then((bm) => {
     bm.persist = false;
 });
 rInstance.setLanguage('fr') // basemap fixture will be removed

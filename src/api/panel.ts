@@ -142,9 +142,11 @@ export class PanelAPI extends APIScope {
      * @param {(string | string[])} panelId the panel ID(s) for which the promise is requested
      * @memberof PanelAPI
      */
-    async isRegistered(panelId: string | string[]): Promise<void> {
+    async isRegistered<T extends string | string[]>(
+        panelId: T
+    ): Promise<T extends string ? PanelInstance : PanelInstance[]> {
         // We first need to create a registration promise for all panels that currently don't have one
-        const idsToCheck = Array.isArray(panelId) ? panelId : [panelId];
+        const idsToCheck: Array<string> = Array.isArray(panelId) ? panelId : [panelId];
         idsToCheck.forEach((id: string) => {
             if (this.panelStore.regPromises[id] === undefined) {
                 this.panelStore.addRegPromise(id);
@@ -152,9 +154,9 @@ export class PanelAPI extends APIScope {
         });
 
         // Wait for all promises
-        await Promise.all(this.panelStore.getRegPromises(idsToCheck));
-
-        // return nothing (stops a nonsense array from appearing in the result promise)
+        const proms = this.panelStore.getRegPromises(idsToCheck);
+        // @ts-ignore I give up, TS is hopeless
+        return Array.isArray(panelId) ? Promise.all(proms) : proms[0];
     }
 
     /**

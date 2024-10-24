@@ -46,7 +46,7 @@ export class CommonMapAPI extends APIScope {
      * Internal deferred managing the view promise
      * @private
      */
-    protected _viewPromise: DefPromise;
+    protected _viewPromise: DefPromise<void>;
 
     /**
      * A promise that resolves when the map view has been created
