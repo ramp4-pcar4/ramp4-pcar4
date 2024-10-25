@@ -82,7 +82,7 @@ One of the top level sections of the config is `panels`, where you may include t
     - `pin` - a boolean indicating whether to pin the panel as well (in addition to opening).
 * `reorderable` - a boolean indicating whether the panel reorder controls are enabled.
 
-## Creating Your Own Panel
+## Creating Your Own Panel (using Vue)
 
 Naturally, you may want to display your own custom information on a panel in RAMP. A prerequisite to achieving this is to know/learn [Vue](https://vuejs.org/).
 
@@ -276,6 +276,67 @@ myRAMPInstance.panel.register(panelConfig);
 
 Your panel is now ready for use! You should now leverage the [API](#the-panel-api) to perform different functions of your choice. For example, you can display the panel on the screen with the `open` method, pin the panel on the screen with the `pin` method, and so on.
 
+
+## Creating Your Own Panel (using HTML)
+Alternatively, you can display your own custom information within a panel using plain HTML. Steps for creating your own panel, using HTML, and displaying it in the panel stack are detailed below
+
+### Step 1: Create HTML content (for both languages)
+If you want the content of your custom panel to switch on a language change, you must describe the content you want to display for each language. This can be done in two ways: using strings containing the HTML content, or creating `HTMLElement` objects. Examples of each method are shown below.
+
+### Method 1: String containing HTML
+
+```JS
+const englishContent = "<div> This is my English content </div>"
+const frenchContent = "<div> Ceci est mon contenu en français </div>"
+```
+
+
+### Method 2: Defining HTML object
+```JS
+const englishContent = document.createElement("div");
+const englishText = document.createTextNode("This is my English content");
+englishContent.appendChild(englishText);
+
+const frenchContent = document.createElement("div");
+const frenchText = document.createTextNode("Ceci est mon contenu en français");
+frenchContent.appendChild(frenchText);
+```
+
+### Step 2: Register your panel
+Before your panel is ready to use, you need to register it via the `registerHTML` method in the [Panel API](#the-panel-api). Shown below is the way you would register the panel for either of the panel screen
+template creation methods in step 1.
+
+```JS
+const htmlContent = {en: englishContent, fr: frenchContent};
+const panelId = 'panel1';
+const alertName = 'panelName' // should be a key within each lang object of  `panelOptions.i18n.messages` below
+const panelStyle = {
+    'background-color': 'red'
+}; 
+const panelOptions = {
+            i18n: {
+                messages: {
+                    en: {'panelName': "My panel"},
+                    fr: {'panelName': "Mon panneau"}
+                }
+            }
+        };
+
+const htmlPanel = {
+    content: htmlContent,
+    id: panelId,
+    alertName: alertName, 
+    style: panelStyle, 
+    options: panelOptions
+}
+const myCustomPanel = myRAMPInstance.panel.registerHTML(htmlPanel);
+```
+
+### Step 3: Use the API to do stuff with your panel
+Your panel is now ready for use! You should now leverage the [Panel API](#the-panel-api) to perform different functions of your choice. For example, you can display the panel on the screen with the `open` method, pin the panel on the screen with the `pin` method, and so on.
+
+One endpoint within the the [Panel API](#the-panel-api) that is exclusive to HTML panels is `updateHTML`
+
 ## Teleporting panels
 
 Panels that come out of the box can also be rendered outside the panel stack, in the container of your choice. In order to do so, you must provide a teleport configuration inside the fixture config of the fixture that registers the panel. The configuration has four properties:
@@ -355,6 +416,18 @@ The API provides the following methods:
 
     Additionally, the `PanelRegistrationOptions` object has one optional property of `i18n`, where you should include the localized strings for the panel. For more details on localization, please see the [localization documentation](../using-ramp4/config-language.md)
 * `isRegistered(panelId: string | string[]): Promise<void>` - provides a promise that resolves when panels with the specified panel ID(s) have completed registration.
+* `registerHTML(htmlPanel: HTMLPanelInstance)` - Registers a new panel containing a screen of HTML content and returns the PanelInstance. Note: `htmlPanel.options` should be structured as follows:
+```
+i18n: { 
+    messages: {
+        lang1: {key1: lang1-value1, key2: lang1-value2, ...}, 
+        lang2: {key1: lang2-value1, key2: lang2-value2, ...},
+        ...
+    }
+}
+```
+* `updateHTML(panel: PanelInstance | string, html: { [key: string]: string | HTMLElement }, screenId?: string)` - Updates the content of a specific HTML-based screen of a panel, using HTML content 
+* `isRegistered(panelId: string | string[]): Promise<any>` - provides a promise that resolves when panels with the specified panel ID(s) have completed registration.
 * `remove(value: string | PanelInstance): void` - removes the specified panel from the panel stack.
 * `get(value: string | PanelInstance): PanelInstance` - finds and returns the specified panel.
 * `open(value: string | PanelInstance | PanelInstancePath)` - opens the specified panel.

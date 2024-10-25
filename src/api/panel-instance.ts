@@ -4,9 +4,10 @@ import type { Component } from 'vue';
 import {
     APIScope,
     InstanceAPI,
-    isVueConstructor,
     isComponentOptions,
+    isHTMLScreen,
     isTypeofImportVue,
+    isVueConstructor,
     type PanelTeleportObject
 } from './internal';
 
@@ -81,17 +82,22 @@ export class PanelInstance extends APIScope {
      */
     registerScreen(id: string): void {
         const screen = this.screens[id];
-
         let payload: AsyncComponentFactoryEh | Component;
 
-        // the `screen` value can be either a `string` component file path, an component `object`, a component constructor function, or an `AsynComponentFunction`
+        // the `screen` value can be either a `string` component file path, an component `object`, a component constructor function, an `HTMLScreen`, or an `AsynComponentFunction`
         // - `object` or `VueConstructor` => use as is as all the component code is already loaded
+        // - `HTMLScreen` => use it to create a component object
         // - `string` => load fixture file, pass as `component` in `AsyncComponentFactory` function
         // - `AsyncComponentFunction` => execute as it returns a promise, pass the output as `component` in `AsyncComponentFactory` function
         // https://vuejs.org/v2/guide/components-dynamic-async.html#Handling-Loading-State
         if (isComponentOptions(screen) || isVueConstructor(screen)) {
             payload = screen;
             this.loadedScreens.push(id); // mark this screen immediately as loaded
+        } else if (isHTMLScreen(screen)) {
+            payload = {
+                template: `<panel-screen :panel="this" :screenId="'${id}'">
+                           </panel-screen>`
+            };
         } else {
             let asyncComponent: Promise<AsyncComponentEh>;
 

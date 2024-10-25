@@ -24,7 +24,8 @@
             <back :class="!!panel.teleport ? 'display-none' : 'block sm:display-none'" @click="panel.close()"></back>
 
             <h2 class="flex-grow text-lg py-16 pl-8 min-w-0" v-truncate tabIndex="0">
-                <slot name="header"></slot>
+                <slot name="header" v-if="$slots.header"></slot>
+                <div v-else>{{ t(panel.alertName) }}</div>
             </h2>
 
             <panel-options-menu v-if="!!$slots.controls">
@@ -48,7 +49,8 @@
         </header>
 
         <div v-if="content" class="p-8 flex-grow overflow-y-auto">
-            <slot name="content"></slot>
+            <slot name="content" v-if="$slots.content"></slot>
+            <div v-else-if="screenContent" v-html="screenContent.innerHTML"></div>
         </div>
 
         <div v-if="footer" class="px-8 py-16 border-t border-gray-400 default-focus-style" v-focus-item>
@@ -91,9 +93,12 @@ const props = defineProps({
     panel: {
         type: Object as PropType<PanelInstance>,
         required: true
+    },
+    screenId: {
+        type: String,
+        required: false
     }
 });
-
 const temporary = computed((): Array<string> | undefined => (iApi?.fixture.get('appbar') ? appbarStore.temporary : []));
 const mobileView = computed(() => panelStore.mobileView);
 const reorderable = computed(() => panelStore.reorderable);
@@ -108,6 +113,9 @@ const move = (direction: PanelDirection) => {
         });
     }
 };
+const screenContent = computed(() => {
+    return props.screenId ? props.panel.screens[props.screenId][iApi?.$i18n.locale.value ?? 'en'] : null;
+});
 
 onMounted(() => {
     el.value?.addEventListener('blur', () => {
