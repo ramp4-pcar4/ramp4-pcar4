@@ -102,6 +102,7 @@ jobs:
             - name: Publish to NPM for tag releases on main repo only
               if: github.repository == 'ramp4-pcar4/ramp4-pcar4' && startsWith(github.ref, 'refs/tags/v')
               run: |
+                  cd ramp
                   TAG_VERSION=${GITHUB_REF#refs/tags/v}
                   PACKAGE_VERSION=$(node -p "require('./package.json').version")
                   if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
