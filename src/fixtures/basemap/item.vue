@@ -14,7 +14,7 @@
                     :class="!basemap.hideThumbnail ? 'h-180' : 'h-30'"
                 >
                     <!-- text-only mode -->
-                    <img v-if="basemap.hideThumbnail" class="w-full h-30" />
+                    <img v-if="basemap.hideThumbnail" :alt="basemap.altText" class="w-full h-30 hidden" />
                     <!-- Else if, use basemap thumbnail url -->
                     <img
                         v-else-if="basemap.thumbnailUrl"

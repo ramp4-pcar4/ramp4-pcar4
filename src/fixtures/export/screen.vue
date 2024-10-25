@@ -14,7 +14,7 @@
                     <button
                         type="button"
                         @click="fixture?.export()"
-                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-8 px-4 sm:px-16 mr-8 sm:mr-16"
+                        class="bg-green-700 hover:bg-green-800 text-white font-bold py-8 px-4 sm:px-16 mr-8 sm:mr-16"
                         :aria-label="t('export.download')"
                     >
                         {{ t('export.download') }}
