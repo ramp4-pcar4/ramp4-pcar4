@@ -86,7 +86,7 @@ const hasCustomRenderer = computed(() => {
 });
 
 const make = debounce(300, () => {
-    if (!fixture.value) {
+    if (!fixture.value || !el.value) {
         return;
     }
 
