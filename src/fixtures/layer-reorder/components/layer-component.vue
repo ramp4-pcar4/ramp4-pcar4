@@ -18,7 +18,7 @@
                     :class="`
                         mt-4
                         relative
-                        ${element.isExpanded ? 'bg-gray-200' : ''}
+                        ${element.isExpanded ? 'hover:bg-gray-200' : ''}
                         border-2
                         border-gray-300
                         default-focus-style
@@ -80,7 +80,7 @@
 
                     <!-- display children of the parent layer. -->
                     <div
-                        class="items-center bg-gray-200 p-5 pl-30 default-focus-style cursor-pointer"
+                        class="items-center p-5 pl-30 default-focus-style cursor-pointer"
                         v-if="element.isExpanded && element.sublayers.length > 0"
                         v-focus-list
                     >
