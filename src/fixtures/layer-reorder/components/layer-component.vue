@@ -18,6 +18,7 @@
                     :class="`
                         mt-4
                         relative
+                        ${element.isExpanded ? 'bg-gray-200' : ''}
                         border-2
                         border-gray-300
                         default-focus-style
