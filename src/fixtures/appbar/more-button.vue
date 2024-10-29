@@ -192,4 +192,12 @@ defineExpose({
 .dropdown {
     @apply left-full bottom-0;
 }
+
+button {
+    outline: none !important;
+
+    &.focused {
+        @apply bg-blue-900 text-white;
+    }
+}
 </style>
