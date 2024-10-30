@@ -60,7 +60,7 @@ class FocusContainerManager {
         this.element = element;
         this.element.toggleAttribute(CONTAINER_ATTR, true);
         this.element.tabIndex = 0;
-        this.disableTabbing();
+        setTimeout(() => this.disableTabbing(), 600); // elements of container need more time to render, otherwise they wont be detected
 
         const focusManager = this;
         this.element.addEventListener('keypress', function (event: KeyboardEvent) {
