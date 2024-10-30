@@ -86,7 +86,8 @@ function esDynamicConfig() {
                     }
                 }
             }
-        }
+        },
+        esbuild: { legalComments: 'none' }
     });
 }
 
