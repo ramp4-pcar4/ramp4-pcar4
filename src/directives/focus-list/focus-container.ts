@@ -39,6 +39,12 @@ export const FocusContainer: Directive = {
             }
             return true;
         });
+    },
+
+    updated(el: HTMLElement) {
+        console.log(' ');
+        console.log('elements detected on update');
+        console.log(el.querySelectorAll(TABBABLE_TAGS));
     }
 };
 
@@ -60,8 +66,7 @@ class FocusContainerManager {
         this.element = element;
         this.element.toggleAttribute(CONTAINER_ATTR, true);
         this.element.tabIndex = 0;
-        this.disableTabbing();
-
+        setTimeout(() => this.disableTabbing(), 600);
         const focusManager = this;
         this.element.addEventListener('keypress', function (event: KeyboardEvent) {
             focusManager.onKeypress(event);
@@ -139,6 +144,8 @@ class FocusContainerManager {
      * Sets tabindex to -1 for EVERY element under the container element
      */
     disableTabbing() {
+        console.log('on construction - disabling tabbing for');
+        console.log(this.element.querySelectorAll(TABBABLE_TAGS));
         const tab_list = Array.prototype.filter.call(this.element.querySelectorAll(TABBABLE_TAGS), () => {
             return true;
         }) as HTMLElement[];
