@@ -1,6 +1,7 @@
-import { APIScope, GlobalEvents, PanelInstance } from './internal';
+import { APIScope, GlobalEvents, isHTMLScreen, PanelInstance } from './internal';
 import type { PanelConfigStyle, PanelDirection } from '@/stores/panel';
 import { usePanelStore } from '@/stores/panel';
+import type { HTMLPanelInstance } from '@/stores/panel';
 import type { PanelConfig, PanelConfigRoute } from '@/stores/panel';
 
 import type { I18nComponentOptions } from '@/lang';
@@ -8,6 +9,76 @@ import type { I18nComponentOptions } from '@/lang';
 export class PanelAPI extends APIScope {
     panelStore = usePanelStore(this.$vApp.$pinia);
 
+    /** Updates the content of a specific HTML-based screen of a panel, using HTML content
+     *
+     * @param {PanelInstance | string} panel The `PanelInstance` object, or its respective id, that corresponds to
+     * the panel whose content is to be updated.
+     * @param {{ [key: string]: string | HTMLElement }} html keyed language object containing HTML content for each
+     * language, represented as an HTMLElement object or a string.
+     * @param {string} [screenId] id of the screen to be updated. If not provided, it will update the first screen in the panel
+     * @memberof PanelAPI
+     */
+    updateHTML(panel: PanelInstance | string, html: { [key: string]: string | HTMLElement }, screenId?: string): void {
+        // An html-based panel should have only one screen
+        const panelInstance = this.get(panel);
+
+        const screen = screenId ? panelInstance.screens[screenId] : Object.values(panelInstance.screens)[0];
+
+        if (isHTMLScreen(screen)) {
+            for (const lang in html) {
+                screen[lang].innerHTML = html[lang] instanceof HTMLElement ? html[lang].outerHTML : html[lang];
+            }
+        } else {
+            console.error('Screen must be an HTML object');
+        }
+    }
+
+    /**
+     * Helper for `registerHTML()`. Creates and returns the `PanelConfigSet` required to register the HTML panel
+     *
+     * @param {HTMLPanelInstance} htmlPanel a `HTMLPanelInstance` object, excluding its `options` (if it exists), corresponding
+     * to the new html panel
+     * @returns {PanelConfigSet} The `PanelConfigSet` corresponding to the panel that is to be created
+     * @memberof PanelAPI
+     */
+    private registerHTMLConfig(htmlPanel: Omit<HTMLPanelInstance, 'options'>): PanelConfigSet {
+        for (const lang in htmlPanel.content) {
+            if (typeof htmlPanel.content[lang] === 'string') {
+                const newHtml = document.createElement('div');
+                newHtml.innerHTML = htmlPanel.content[lang];
+                htmlPanel.content[lang] = newHtml;
+            }
+        }
+
+        const panelConfig: PanelConfigSet = {};
+        panelConfig[htmlPanel.id] = {
+            screens: {},
+            style: htmlPanel.style ?? {
+                width: '350px'
+            },
+            alertName: htmlPanel.alertName
+        };
+        panelConfig[htmlPanel.id].screens[htmlPanel.id] = htmlPanel.content;
+
+        return panelConfig;
+    }
+
+    /** Registers a new panel containing a screen of HTML content and returns the PanelInstance
+     *
+     * @param {HTMLPanelInstance} htmlPanel a HTMLPanelInstance object corresponding to the new html panel
+     * @memberof PanelAPI
+     */
+    registerHTML(htmlPanel: HTMLPanelInstance): PanelInstance {
+        const existingPanel = this.get(htmlPanel.id);
+        if (existingPanel) {
+            console.error('panel already exist');
+            return existingPanel;
+        }
+        const panelConfig = this.registerHTMLConfig(htmlPanel);
+        const panel: PanelInstance = this.register(panelConfig, htmlPanel.options) as unknown as PanelInstance;
+
+        return panel;
+    }
     /**
      * Registers a provided panel object and returns the resulting `PanelInstance` objects.
      * When the panel is registered, all its screens are added to the Vue as components right away.
@@ -33,7 +104,6 @@ export class PanelAPI extends APIScope {
         options?: PanelRegistrationOptions
     ): PanelInstance | PanelInstanceSet {
         const panelConfigs = isPanelConfigPair(value) ? { [value.id]: value.config } : value;
-
         if (options) {
             const i18n = options.i18n || {};
             const $i18n = this.$iApi.$i18n;
@@ -57,7 +127,7 @@ export class PanelAPI extends APIScope {
 
         // return either a single panel or a set of panels, depending on the function input
         if (panels.length === 1) {
-            return panels[0];
+            return panels[0] as PanelInstance;
         } else {
             return panels.reduce<PanelInstanceSet>((map, panel) => {
                 map[panel.id] = panel;
@@ -169,6 +239,7 @@ export class PanelAPI extends APIScope {
                 screen = Object.keys(panel.screens).pop()!;
             }
         }
+
         if (this.show(panel, { screen, props })) {
             this.panelStore.openPanel(panel);
             this.$iApi.updateAlert(
@@ -410,7 +481,6 @@ export class PanelAPI extends APIScope {
     // TODO: implement panel route history
     show(value: string | PanelInstance, route: PanelConfigRoute): PanelInstance | undefined {
         const panel = this.get(value);
-
         // attempting to show screen on non-existent panel, do nothing
         if (!panel) {
             return panel;

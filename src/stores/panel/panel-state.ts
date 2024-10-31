@@ -1,6 +1,6 @@
 import type { Component, ComponentOptions, ComponentPublicInstance } from 'vue';
 
-import type { PanelInstance } from '@/api';
+import type { PanelInstance, PanelRegistrationOptions } from '@/api';
 import type { DefPromise } from '@/geo/api';
 
 export interface PanelState {
@@ -105,12 +105,68 @@ export type AsyncComponentFactoryEh = () => {
 };
 
 /**
+ * - `string`: a language
+ * - `HTMLElement`: the content for a specific language
+ */
+export type HTMLScreen = {
+    [key: string]: HTMLElement;
+};
+
+export type HTMLPanelInstance = {
+    /**
+     * keyed language object containing HTML content for each language, represented as an HTMLElement
+     * object or a string.
+     *
+     * @type {{ [key: string]: string | HTMLElement }}
+     * @memberof HTMLPanelInstance
+     */
+    content: HTMLScreen;
+
+    /**
+     * id of the panel
+     *
+     * @type {string}
+     * @memberof HTMLPanelInstance
+     */
+    id: string;
+
+    /**
+     * Translation key (or string) to use in panel screen reader alerts
+     *
+     * @type {string}
+     * @memberof HTMLPanelInstance
+     */
+    alertName: string;
+
+    /**
+     * The style object to apply to the panel. If none provided, the default panel styling will be used.
+     *
+     * @type {PanelConfigStyle}
+     * @memberof HTMLPanelInstance
+     */
+    style?: PanelConfigStyle;
+
+    /**
+     * a set of options that will apply to the panel
+     *
+     * @type {PanelRegistrationOptions}
+     * @memberof HTMLPanelInstance
+     */
+    options?: PanelRegistrationOptions;
+};
+
+/**
  * - `string`: a path to the screen component relative to the fixtures home folder
  * - `VueConstructor`: a regular Vue constructor function
  * - `AsyncComponentFunction`: a function returning a promise which resolves into a Vue component
  */
 export type PanelConfigScreens = {
-    [key: string]: string | AsyncComponentFunctionEh | ComponentOptions<any> | ComponentPublicInstance<any>;
+    [key: string]:
+        | string
+        | AsyncComponentFunctionEh
+        | ComponentOptions<any>
+        | ComponentPublicInstance<any>
+        | HTMLScreen;
 };
 export type PanelConfigRoute = { screen: string; props?: object };
 export type PanelConfigStyle = { [key: string]: string };

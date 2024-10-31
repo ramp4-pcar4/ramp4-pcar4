@@ -132,7 +132,7 @@ export const usePanelStore = defineStore('panel', () => {
 
         // add panels until theres no space in the stack
         for (let i = orderedItems.value.length - 1; i >= 0; i--) {
-            let panel = orderedItems.value[i];
+            const panel = orderedItems.value[i];
             let panelWidth = panel.width || defaultWidth;
 
             // if not in mobile view, all panels have a 12px margin to the right
