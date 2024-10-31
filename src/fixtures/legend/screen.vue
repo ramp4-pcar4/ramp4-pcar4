@@ -1,8 +1,6 @@
 <template>
     <panel-screen :panel="panel">
-        <template #header>
-            {{ t('legend.title') }}
-        </template>
+        <template #header> {{ t('legend.title') }} </template>
 
         <template #content>
             <legend-header />
