@@ -1,6 +1,6 @@
 <template>
     <div
-        class="map-caption absolute bottom-0 flex justify-end pointer-events-auto cursor-default select-none text-gray-200 bg-black-75 left-0 right-0 py-2 sm:py-6"
+        class="map-caption absolute bottom-0 h-29 sm:h-38 flex justify-end pointer-events-auto cursor-default select-none text-gray-200 bg-black-75 left-0 right-0 py-2 sm:py-6"
     >
         <about-ramp-dropdown class="sm:block display-none ml-8 mr-4" position="top-end" />
 

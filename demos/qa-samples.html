@@ -5,6 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
         <title>QA RAMP4 Samples</title>
+        <link rel="stylesheet" href="./styles/samples.css" />
     </head>
     <body style="margin: 0">
         <section id="header">
@@ -30,40 +31,6 @@
 
         <div id="IE"></div>
         <div id="app"></div>
-
-        <style>
-            #instance-language {
-                margin-left: 20px;
-            }
-            #container {
-                display: flex;
-                flex-wrap: nowrap;
-                flex-direction: column;
-                height: 100vh;
-                max-height: 100vh;
-                overflow: hidden;
-            }
-            #header {
-                width: 100%;
-                background-color: darkslategrey;
-                display: flex;
-                justify-content: center;
-                height: 36px;
-            }
-            .linky {
-                flex-grow: 0;
-                white-space: nowrap;
-                color: greenyellow;
-                margin: 7px;
-            }
-            #selectConfig {
-                flex-grow: 1;
-                margin: 7px;
-            }
-            #app {
-                height: calc(100vh - 36px);
-            }
-        </style>
 
         <script type="module">
             import { createInstance, geo } from '@/main';

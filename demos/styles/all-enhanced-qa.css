@@ -1,0 +1,11 @@
+body {
+    background-color: black;
+    color: aliceblue;
+}
+a {
+    color: deepskyblue;
+}
+li,
+p {
+    font-size: 1.1rem;
+}
