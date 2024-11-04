@@ -19,7 +19,7 @@ export class MapLayer extends CommonLayer {
     // used to manage debouncing when applying filter updates against a layer. Private! but needs to be seen by FCs.
     _lastFilterUpdate = '';
 
-    protected viewDefProm: DefPromise; // a deferred promise that resolves when a layer view has been created on the map. helps bridge the view handler with the layer load handler
+    protected viewDefProm: DefPromise<void>; // a deferred promise that resolves when a layer view has been created on the map. helps bridge the view handler with the layer load handler
 
     esriWatches: Array<__esri.WatchHandle>;
 

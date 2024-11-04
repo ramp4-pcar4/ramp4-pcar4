@@ -888,8 +888,7 @@ const rInstance = createInstance(document.getElementById('app'), config, options
 //     rInstance.panel.pin('legend');
 // });
 
-rInstance.fixture.isLoaded('basemap').then(() => {
-    const bm = rInstance.fixture.get('basemap');
+rInstance.fixture.isLoaded('basemap').then(bm => {
     bm.persist = false;
 });
 

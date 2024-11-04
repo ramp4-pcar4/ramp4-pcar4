@@ -427,7 +427,7 @@ i18n: {
 }
 ```
 * `updateHTML(panel: PanelInstance | string, html: { [key: string]: string | HTMLElement }, screenId?: string)` - Updates the content of a specific HTML-based screen of a panel, using HTML content 
-* `isRegistered(panelId: string | string[]): Promise<any>` - provides a promise that resolves when panels with the specified panel ID(s) have completed registration.
+* `isRegistered(panelId: string | string[]): Promise<PanelInstance | PanelInstance[]>` - provides a promise that resolves to the `PanelInstance` object (if `panelId` is a string) or the array of `PanelInstance` objects (if `panelId` is an array) when panel(s) with the specified panel ID(s) have completed registration.
 * `remove(value: string | PanelInstance): void` - removes the specified panel from the panel stack.
 * `get(value: string | PanelInstance): PanelInstance` - finds and returns the specified panel.
 * `open(value: string | PanelInstance | PanelInstancePath)` - opens the specified panel.

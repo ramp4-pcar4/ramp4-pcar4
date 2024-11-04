@@ -15,10 +15,10 @@
 //
 // yes, yes, very bad and all -- show me a better solution and I'll consider it.
 
-export class DefPromise {
-    protected realPromise: Promise<void>;
+export class DefPromise<T> {
+    protected realPromise: Promise<T>;
 
-    resolveMe(): void {
+    resolveMe(v?: T): void {
         // i do nothing as i get overwritten;
     }
 
@@ -26,14 +26,16 @@ export class DefPromise {
         // i do nothing as i get overwritten;
     }
 
-    getPromise(): Promise<void> {
+    getPromise(): Promise<T> {
         return this.realPromise;
     }
 
     constructor() {
-        this.realPromise = new Promise((resolve, reject) => {
+        this.realPromise = new Promise<T>((resolve, reject) => {
             // we map the internal functions to our external methods, allowing outsiders to call them.
-            this.resolveMe = resolve;
+            this.resolveMe = (v?: T) => {
+                resolve(v!); // pretend v exists to shut TS
+            };
             this.rejectMe = reject;
         });
     }
