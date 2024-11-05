@@ -1,5 +1,5 @@
 <template>
-    <panel-screen :panel="panel">
+    <panel-screen :panel="panel" ref="thePanel">
         <template #header>
             {{ t('wizard.title') }}
         </template>
@@ -7,7 +7,7 @@
         <template #content>
             <stepper :activeStep="step">
                 <!-- Upload data wizard step -->
-                <stepper-item :title="t('wizard.upload.title')" :summary="url">
+                <stepper-item :title="t('wizard.upload.title')" :summary="url" @focusPanel="refocusPanel">
                     <form name="upload" @submit="onUploadContinue" @click="layerReady = false">
                         <!-- Upload a file -->
                         <wizard-input
@@ -33,6 +33,7 @@
                                 invalid: t('wizard.upload.url.error.url')
                             }"
                             :aria-label="t('wizard.upload.url.label')"
+                            ref="stepOneStart"
                         />
                         <wizard-form-footer
                             @submit="onUploadContinue"
@@ -43,7 +44,7 @@
                 </stepper-item>
 
                 <!-- Select format wizard step -->
-                <stepper-item :title="t('wizard.format.title')" :summary="displayFormat">
+                <stepper-item :title="t('wizard.format.title')" :summary="displayFormat" @focusPanel="refocusPanel">
                     <form name="format" @submit="onSelectContinue">
                         <!-- List of file/service types based on layer -->
 
@@ -82,20 +83,11 @@
                             }"
                             @keydown.stop
                             :aria-label="t('wizard.format.type.service')"
+                            ref="stepTwoStart"
                         />
                         <wizard-form-footer
                             @submit="onSelectContinue"
-                            @cancel="
-                                () => {
-                                    disabled = false;
-                                    formatError = false;
-                                    failureError = false;
-                                    url ? (goNext = true) : (goNext = false);
-                                    validation = false;
-                                    wizardStore.goToStep(0);
-                                    displayFormat = '';
-                                }
-                            "
+                            @cancel="cancelFormatStep"
                             :animation="true"
                             :disabled="disabled"
                         />
@@ -103,7 +95,7 @@
                 </stepper-item>
 
                 <!-- Configure layer wizard step -->
-                <stepper-item :title="t('wizard.configure.title')">
+                <stepper-item :title="t('wizard.configure.title')" @focusPanel="refocusPanel">
                     <form name="configure" @submit="onConfigureContinue" ref="formElement">
                         <wizard-input
                             v-if="layerInfo?.configOptions.includes(`name`)"
@@ -117,6 +109,7 @@
                             :validation-messages="{
                                 required: t('wizard.configure.name.error.required')
                             }"
+                            ref="stepThreeStart"
                         />
                         <wizard-input
                             v-if="layerInfo?.configOptions.includes(`nameField`)"
@@ -260,8 +253,6 @@ import {
     type PropType
 } from 'vue';
 
-// below import is causing error because of revert to old version (from 5.0.1 to 4.1.4)
-//@ts-ignore
 import { ColorPicker } from 'vue-accessible-color-picker';
 
 import type { InstanceAPI, PanelInstance } from '@/api';
@@ -299,6 +290,10 @@ const colour = ref();
 const colourPickerId = ref();
 const componentKey = ref(0);
 const disabled = ref(false);
+const thePanel = ref();
+const stepOneStart = ref();
+const stepTwoStart = ref();
+const stepThreeStart = ref();
 
 const formatError = ref(false);
 const failureError = ref(false);
@@ -461,6 +456,11 @@ onBeforeUnmount(() => {
     handlers.value.forEach(handler => iApi.event.off(handler));
 });
 
+const refocusPanel = () => {
+    const panelContainer = thePanel.value.el;
+    panelContainer.dispatchEvent(new MouseEvent('click'));
+};
+
 // reads uploaded file
 const uploadFile = async (file: File) => {
     const reader = new FileReader();
@@ -481,6 +481,16 @@ const onUploadContinue = (event: any) => {
     typeSelection.value = layerSource.value!.guessFormatFromURL(url.value) as LayerType;
 
     wizardStore.goToStep(WizardStep.FORMAT);
+
+    // set focus to the appropriate input element of the second step
+    setTimeout(() => {
+        for (let inputRef in stepTwoStart.value) {
+            if (stepTwoStart.value[inputRef]) {
+                stepTwoStart.value[inputRef].focus();
+                break;
+            }
+        }
+    });
 };
 
 const onSelectContinue = async (event: any) => {
@@ -536,6 +546,16 @@ const onSelectContinue = async (event: any) => {
 
     disabled.value = false;
     validation.value = false;
+
+    // set focus to the appropriate input element of the third step
+    setTimeout(() => {
+        for (let inputRef in stepThreeStart.value) {
+            if (stepThreeStart.value[inputRef]) {
+                stepThreeStart.value[inputRef].focus();
+                break;
+            }
+        }
+    });
 };
 
 const onConfigureContinue = async (data: any) => {
@@ -557,6 +577,16 @@ const onConfigureContinue = async (data: any) => {
     iApi.event.emit(GlobalEvents.USER_LAYER_ADDED, layer);
     goNext.value = false;
     wizardStore.goToStep(WizardStep.UPLOAD);
+
+    // set focus to the appropriate input element of the first step item
+    setTimeout(() => {
+        for (let inputRef in stepOneStart.value) {
+            if (stepOneStart.value[inputRef]) {
+                stepOneStart.value[inputRef].focus();
+                break;
+            }
+        }
+    });
 };
 
 // default options for fields selectors
@@ -795,10 +825,38 @@ const cancelServiceStep = () => {
     wizardStore.goToStep(0);
 };
 
+const cancelFormatStep = () => {
+    disabled.value = false;
+    formatError.value = false;
+    failureError.value = false;
+    goNext.value = !!url.value;
+    validation.value = false;
+    wizardStore.goToStep(0);
+    displayFormat.value = '';
+    // set focus to the appropriate input element of the first step item
+    setTimeout(() => {
+        for (let inputRef in stepOneStart.value) {
+            if (stepOneStart.value[inputRef]) {
+                stepOneStart.value[inputRef].focus();
+                break;
+            }
+        }
+    });
+};
+
 const cancelNameStep = () => {
     selectedValues.value = [];
     finishStep.value = false;
     wizardStore.goToStep(1);
+    // set focus to the appropriate element of the second step item
+    setTimeout(() => {
+        for (let inputRef in stepTwoStart.value) {
+            if (stepTwoStart.value[inputRef]) {
+                stepTwoStart.value[inputRef].focus();
+                break;
+            }
+        }
+    });
 };
 </script>
 

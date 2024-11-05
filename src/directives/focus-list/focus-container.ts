@@ -114,7 +114,12 @@ class FocusContainerManager {
      * Callback for the `click` event on the container element
      */
     onClick() {
-        this.enableTabbing();
+        // WRT the wizard fixture, the buttons in the footer of each wizard step take longer than expected to
+        // fully render (expecially for the third step). This delay will allow tabbing to be (appropriately)
+        // enabled for them.
+        setTimeout(() => {
+            this.enableTabbing();
+        }, 150);
     }
 
     /**
