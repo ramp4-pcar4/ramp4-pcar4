@@ -32,20 +32,20 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
           python -c "
-            from transformers import pipeline
-            
-            # Step 1: Summarize with a neutral tone
-            summarizer = pipeline('summarization')
-            neutral_summary = summarizer('${{ env.PR_BODY }}', max_length=50, min_length=25, do_sample=False)[0]['summary_text']
-            
-            # Step 2: Rephrase with a cheerful tone using text generation
-            rephrase_prompt = f'Rephrase this in a joking but still professional tone: {neutral_summary}'
-            generator = pipeline('text-generation', model='gpt2')
-            cheerful_summary = generator(rephrase_prompt, max_length=100, num_return_sequences=1)[0]['generated_text']
-            
-            # Output cheerful summary to environment
-            with open('${GITHUB_ENV}', 'a') as env_file:
-                env_file.write(f'CHEERFUL_SUMMARY={cheerful_summary}')
+          from transformers import pipeline
+          
+          # Step 1: Summarize with a neutral tone
+          summarizer = pipeline('summarization')
+          neutral_summary = summarizer('${{ env.PR_BODY }}', max_length=50, min_length=25, do_sample=False)[0]['summary_text']
+          
+          # Step 2: Rephrase with a cheerful tone using text generation
+          rephrase_prompt = f'Rephrase this in a joking but still professional tone: {neutral_summary}'
+          generator = pipeline('text-generation', model='gpt2')
+          cheerful_summary = generator(rephrase_prompt, max_length=100, num_return_sequences=1)[0]['generated_text']
+          
+          # Output cheerful summary to environment
+          with open('${GITHUB_ENV}', 'a') as env_file:
+            env_file.write(f'CHEERFUL_SUMMARY={cheerful_summary}')
           "
 
       - name: Post to a Slack channel
