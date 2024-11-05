@@ -1,7 +1,8 @@
 import { InstanceAPI, MapLayer, NotificationType } from '@/api/internal';
 import { DataFormat, LayerFormat, LayerState, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
-import { EsriTileLayer } from '@/geo/esri';
+import { EsriAPI } from '@/geo/esri';
+import type { EsriTileLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
 
 /**
@@ -20,7 +21,7 @@ export class TileLayer extends MapLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        this.esriLayer = markRaw(new EsriTileLayer(this.makeEsriLayerConfig(this.origRampConfig)));
+        this.esriLayer = markRaw(await EsriAPI.TileLayer(this.makeEsriLayerConfig(this.origRampConfig)));
         await super.onInitiate();
     }
 

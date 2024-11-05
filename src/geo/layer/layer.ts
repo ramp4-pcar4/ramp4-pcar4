@@ -34,7 +34,8 @@ import {
     LayerType,
     SpatialReference
 } from '@/geo/api';
-import { EsriField, EsriRendererFromJson, EsriRequest } from '@/geo/esri';
+import { EsriAPI, EsriRequest } from '@/geo/esri';
+import type { EsriField } from '@/geo/esri';
 import { useLayerStore } from '@/stores/layer';
 import to from 'await-to-js';
 
@@ -382,7 +383,9 @@ export class LayerAPI extends APIScope {
 
             if (Array.isArray(sData.fields)) {
                 // parse fields to our format
-                const esriFields: Array<EsriField> = sData.fields.map((f: any) => EsriField.fromJSON(f));
+                const esriFields: Array<EsriField> = await Promise.all(
+                    sData.fields.map((f: any) => EsriAPI.FieldFromJson(f))
+                );
                 md.fields = esriFields.map(f => {
                     return {
                         name: f.name,
@@ -422,7 +425,7 @@ export class LayerAPI extends APIScope {
                     md.geometryType = this.$iApi.geo.geom.serverGeomTypeToRampGeomType(sData.geometryType);
 
                     if (sData.drawingInfo?.renderer) {
-                        md.renderer = EsriRendererFromJson(sData.drawingInfo.renderer);
+                        md.renderer = await EsriAPI.RendererFromJson(sData.drawingInfo.renderer);
                     }
 
                     if (sData.sourceSpatialReference) {

@@ -2,46 +2,100 @@
 
 import { LayerType } from '@/geo/api';
 import type { Attribution, RampBasemapConfig } from '@/geo/api';
-import { EsriBasemap, EsriMapImageLayer, EsriOpenStreetMapLayer, EsriTileLayer } from '@/geo/esri';
+import { EsriAPI } from '@/geo/esri';
+import type { EsriBasemap } from '@/geo/esri';
 
 export class Basemap {
-    esriBasemap: EsriBasemap;
+    /**
+     * The inner ESRI basemap class
+     */
+    esriBasemap!: EsriBasemap;
+
+    /**
+     * Configuration source object
+     */
     readonly config: RampBasemapConfig;
 
+    /**
+     * Used to inform the instance of any construction errors
+     */
+    createErr: boolean = false;
+
+    /**
+     * This constructor should not be called directly, as it will not populate the
+     * underlying ESRI basemap.
+     * Use static method Basemap.create(rampConfig)
+     */
     constructor(rampConfig: RampBasemapConfig) {
         this.config = rampConfig;
+    }
 
-        this.esriBasemap = new EsriBasemap({
-            // TODO split by type if we have to populate referenceLayers
-            // TODO we can technically support most layer types. Might want to expand a bit.
-            //      Feature would be easy.
-            //      File based trickier but useful. Would throw asynch wrench into this.
-            //      ESRI Image Server would make sense.
-            baseLayers: rampConfig.layers.map(layerConfig => {
-                // convert to switch statement if we add more types?
-                if (layerConfig.layerType === LayerType.TILE) {
-                    return new EsriTileLayer({
-                        url: layerConfig.url,
-                        opacity: layerConfig.opacity
-                    });
-                } else if (layerConfig.layerType === LayerType.MAPIMAGE) {
-                    return new EsriMapImageLayer({
-                        url: layerConfig.url,
-                        opacity: layerConfig.opacity
-                    });
-                } else if (layerConfig.layerType === LayerType.OSM) {
-                    return new EsriOpenStreetMapLayer({
-                        opacity: layerConfig.opacity
-                    });
+    /**
+     * Will generate a populated basemap
+     *
+     * @param rampConfig configuration object for the basemap
+     * @returns {Promise<Basemap>} resolves with generated basemap
+     */
+    static async create(rampConfig: RampBasemapConfig): Promise<Basemap> {
+        const newBM = new Basemap(rampConfig);
+
+        // generate the inner layers (async requests)
+        const baseLayerProms = rampConfig.layers.map(layerConfig => {
+            // convert to switch statement if we add more types?
+            if (layerConfig.layerType === LayerType.TILE) {
+                return EsriAPI.TileLayer({
+                    url: layerConfig.url,
+                    opacity: layerConfig.opacity
+                });
+            } else if (layerConfig.layerType === LayerType.MAPIMAGE) {
+                return EsriAPI.MapImageLayer({
+                    url: layerConfig.url,
+                    opacity: layerConfig.opacity
+                });
+            } else if (layerConfig.layerType === LayerType.OSM) {
+                return EsriAPI.OpenStreetMapLayer({
+                    opacity: layerConfig.opacity
+                });
+            } else {
+                throw new Error(`Unsupported layer type provided to basemap config: ${layerConfig.layerType}`);
+            }
+
+            // TODO maybe add support for WebTileLayer. WMS if that works
+        });
+
+        // wait & watch
+        const baseResults = await Promise.allSettled(baseLayerProms);
+
+        const baseLayers = baseResults
+            .filter(promResult => {
+                if (promResult.status === 'rejected') {
+                    // allows instance know if went sour and generate notification
+                    console.error(promResult.reason);
+                    newBM.createErr = true;
+                    return false;
                 } else {
-                    throw new Error(`Unsupported layer type provided to basemap config: ${layerConfig.layerType}`);
+                    return true;
                 }
+            })
+            .map(promResult => {
+                if (promResult.status === 'fulfilled') {
+                    return promResult.value;
+                } else {
+                    // this block will never run. However typescript cannot detect that only 'fulfilled'
+                    // items passed the filter, so this is the easiest way to make it keep the nice inferred
+                    // types on all the variables.
+                    throw new Error('TS is fun');
+                }
+            });
 
-                // TODO maybe add support for WebTileLayer. WMS if that works
-            }),
+        // finalize internal basemap
+        newBM.esriBasemap = await EsriAPI.Basemap({
+            baseLayers,
             title: rampConfig.name || '',
             id: rampConfig.id
         });
+
+        return newBM;
     }
 
     /**
