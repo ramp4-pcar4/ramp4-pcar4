@@ -73,6 +73,7 @@ const panelStore = usePanelStore();
 const appbarStore = useAppbarStore();
 const iApi = inject<InstanceAPI>('iApi');
 const el = ref<HTMLElement>();
+defineExpose({ el });
 
 const props = defineProps({
     // prop indicating if the `header` slot should be rendered
