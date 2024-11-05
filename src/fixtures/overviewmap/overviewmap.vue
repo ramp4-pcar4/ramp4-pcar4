@@ -71,59 +71,62 @@ const minimized = ref(true);
 const hoverOnExtent = ref(false);
 const handlers = reactive<Array<string>>([]);
 
-onMounted(() => {
-    iApi.geo.map.viewPromise.then(async () => {
-        _adaptBasemap();
-        overviewMap.createMap(mapConfig.value!, el.value.querySelector('.overviewmap') as HTMLDivElement);
+onMounted(async () => {
+    await iApi.geo.map.viewPromise;
 
-        await overviewMap.viewPromise;
+    _adaptBasemap();
 
-        await overviewMap.addMapGraphicLayer();
+    await overviewMap.createMap(mapConfig.value!, el.value.querySelector('.overviewmap') as HTMLDivElement);
 
-        minimized.value = startMinimized.value!;
+    await overviewMap.viewPromise;
+    await overviewMap.addMapGraphicLayer();
 
-        // update the overview map with the current map extent
-        let updatePromise = overviewMap.updateOverview(iApi.geo.map.getExtent());
-        // update the overview map whenever the extent changes
-        handlers.push(
-            iApi.event.on(
-                GlobalEvents.MAP_EXTENTCHANGE,
-                debounce(100, (newExtent: Extent) => {
-                    updatePromise.then(() => {
-                        overviewMap.updateOverview(newExtent);
-                    });
-                })
-            )
-        );
+    minimized.value = startMinimized.value!;
 
-        // adapt the overview map's basemap whenever the main map is created
-        handlers.push(
-            iApi.event.on(GlobalEvents.MAP_CREATED, () => {
-                _adaptBasemap();
+    // update the overview map with the current map extent
+    let updatePromise = overviewMap.updateOverview(iApi.geo.map.getExtent());
+    // update the overview map whenever the extent changes
+    handlers.push(
+        iApi.event.on(
+            GlobalEvents.MAP_EXTENTCHANGE,
+            debounce(100, (newExtent: Extent) => {
+                updatePromise.then(() => {
+                    overviewMap.updateOverview(newExtent);
+                });
             })
-        );
+        )
+    );
 
-        // adapt the overview map's basemap whenever the main map refreshes
-        handlers.push(
-            iApi.event.on(GlobalEvents.MAP_REFRESH_END, () => {
-                _adaptBasemap();
-            })
-        );
+    // dev note: if we ever see wild explosions on these two handlers, consider waiting on the view promise.
+    //           e.g. overviewMap.viewPromise.then(()=> _adaptBasemap())
 
-        // adapt the overview map's basemap when the main map's basemap changes
-        // note that this handler is for the same schema basemap change case where the overview map is using the main map's basemap
-        handlers.push(
-            iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, async (payload: BasemapChange) => {
-                if (!payload.schemaChanged && overviewMap.created) {
-                    if (activeBasemap.value && basemaps.value[activeBasemap.value.tileSchemaId] === undefined) {
-                        await overviewMap.removeMapGraphicLayer();
-                        overviewMap.setBasemap(payload.basemapId);
-                        await overviewMap.addMapGraphicLayer();
-                    }
+    // adapt the overview map's basemap whenever the main map is created
+    handlers.push(
+        iApi.event.on(GlobalEvents.MAP_CREATED, () => {
+            _adaptBasemap();
+        })
+    );
+
+    // adapt the overview map's basemap whenever the main map refreshes
+    handlers.push(
+        iApi.event.on(GlobalEvents.MAP_REFRESH_END, () => {
+            _adaptBasemap();
+        })
+    );
+
+    // adapt the overview map's basemap when the main map's basemap changes
+    // note that this handler is for the same schema basemap change case where the overview map is using the main map's basemap
+    handlers.push(
+        iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, async (payload: BasemapChange) => {
+            if (!payload.schemaChanged && overviewMap.created) {
+                if (activeBasemap.value && basemaps.value[activeBasemap.value.tileSchemaId] === undefined) {
+                    await overviewMap.removeMapGraphicLayer();
+                    await overviewMap.setBasemap(payload.basemapId);
+                    await overviewMap.addMapGraphicLayer();
                 }
-            })
-        );
-    });
+            }
+        })
+    );
 });
 
 onBeforeUnmount(() => {
@@ -185,14 +188,12 @@ const _adaptBasemap = () => {
             );
         }
 
-        // override the intial basemap id in the overview map config
-        if (!overviewMap.created) {
-            overviewmapStore.updateInitialBasemap(basemap.id);
-        }
-
-        // set the basemap if the map has been created
         if (overviewMap.created) {
+            // set the basemap if the map has been created
             overviewMap.viewPromise.then(() => overviewMap.setBasemap(basemap.id));
+        } else {
+            // override the intial basemap id in the overview map config
+            overviewmapStore.updateInitialBasemap(basemap.id);
         }
     } catch (err) {
         // if we errored above, just use the main map's basemap

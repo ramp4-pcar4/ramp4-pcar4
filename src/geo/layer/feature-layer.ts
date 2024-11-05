@@ -10,8 +10,15 @@ import {
     LayerIdentifyMode,
     LayerType
 } from '@/geo/api';
-import type { IdentifyParameters, Point, QueryFeaturesParams, RampLayerConfig } from '@/geo/api';
-import { EsriFeatureLayer, EsriRendererFromJson } from '@/geo/esri';
+import type {
+    IdentifyParameters,
+    LoadLayerMetadataOptions,
+    Point,
+    QueryFeaturesParams,
+    RampLayerConfig
+} from '@/geo/api';
+import { EsriAPI } from '@/geo/esri';
+import type { EsriFeatureLayer } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
 
 /**
@@ -37,7 +44,7 @@ export class FeatureLayer extends AttribLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        markRaw((this.esriLayer = new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig))));
+        markRaw((this.esriLayer = await EsriAPI.FeatureLayer(this.makeEsriLayerConfig(this.origRampConfig))));
 
         await super.onInitiate();
     }
@@ -71,12 +78,6 @@ export class FeatureLayer extends AttribLayer {
         const startTime = Date.now();
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        // setting custom renderer here (if one is provided)
-        const hasCustRed = this.esriLayer && this.origRampConfig.customRenderer?.type;
-        if (hasCustRed) {
-            this.esriLayer!.renderer = EsriRendererFromJson(this.origRampConfig.customRenderer);
-        }
-
         // .url seems to not have the /index ending.  there is parsedUrl.path, but thats not on official definition
         // can also consider changing logic to use origRampConfig.url;
         // const layerUrl: string = (<esri.FeatureLayer>this._innerLayer).url;
@@ -88,11 +89,25 @@ export class FeatureLayer extends AttribLayer {
         // feature has only one layer
         this.serviceUrl = layerUrl;
 
-        // update asynch data
-        const pLD: Promise<void> = this.loadLayerMetadata(
-            hasCustRed ? { customRenderer: this.esriLayer?.renderer } : {}
-        ).then(() => {
+        // renderer generation and metadata load are tied.
+        // sub-method to orchestrate the two with async goodness.
+        const serviceLoader = async () => {
+            // setting custom renderer here (if one is provided)
+
+            let metadataPram: LoadLayerMetadataOptions;
+            if (this.esriLayer && this.origRampConfig.customRenderer?.type) {
+                const esriRenderer = await EsriAPI.RendererFromJson(this.origRampConfig.customRenderer);
+                this.esriLayer!.renderer = esriRenderer;
+                metadataPram = { customRenderer: esriRenderer };
+            } else {
+                metadataPram = {};
+            }
+
+            await this.loadLayerMetadata(metadataPram);
+
             if (startTime > this.lastCancel) {
+                this.layerTree.name = this.name;
+
                 // apply server visibility in case of missing visibility in config
                 this.visibility = this.origRampConfig?.state?.visibility ?? this._serverVisibility ?? true;
 
@@ -104,7 +119,7 @@ export class FeatureLayer extends AttribLayer {
                 this.attribs.attLoader.updateFieldList(this.fieldList);
                 this.attribs.attLoader.updateFieldsToTrim(this.getFieldsToTrim());
             }
-        });
+        };
 
         const pFC = this.$iApi.geo.layer
             .loadFeatureCount(this.serviceUrl, this.getSqlFilter(CoreFilter.PERMANENT))
@@ -114,13 +129,12 @@ export class FeatureLayer extends AttribLayer {
                 }
             });
 
-        this.layerTree.name = this.name;
         this.layerTree.layerIdx = featIdx;
 
         // Note that ESRI 4 seems to self-calculate a layer extent based on the geometry,
         // so we no longer need to worry about generating one (graphicsUtils.graphicsExtent() is depreciated)
 
-        loadPromises.push(pLD, pFC);
+        loadPromises.push(pFC, serviceLoader());
 
         return loadPromises;
     }

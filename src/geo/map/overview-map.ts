@@ -2,7 +2,8 @@ import { markRaw } from 'vue';
 import { Basemap, CommonMapAPI, GraphicLayer, InstanceAPI } from '@/api/internal';
 import { Graphic, LayerType, PolygonStyle } from '@/geo/api';
 import type { Extent, RampMapConfig } from '@/geo/api';
-import { EsriMapView } from '@/geo/esri';
+import { EsriAPI } from '@/geo/esri';
+
 import { useConfigStore } from '@/stores/config';
 import { useOverviewmapStore } from '@/fixtures/overviewmap/store';
 
@@ -30,16 +31,17 @@ export class OverviewMapAPI extends CommonMapAPI {
      * Must provide the basemap or basemap id to be used when creating the map view
      *
      * @param {string | Basemap} basemap the id of the basemap that should be used when creating the map view
+     * @returns {Promise} resolves when the map view has been created.
      * @protected
      */
-    protected createMapView(basemap: string | Basemap): void {
+    protected async createMapView(basemap: string | Basemap): Promise<void> {
         if (!basemap) {
             throw new Error('Attempted to create overview map view without a basemap');
         }
 
-        const bm: Basemap = typeof basemap === 'string' ? this.findBasemap(basemap) : basemap;
+        const bm: Basemap = typeof basemap === 'string' ? await this.findBasemap(basemap) : basemap;
 
-        this.applyBasemap(bm);
+        await this.applyBasemap(bm);
 
         // TODO: This assumes that the overview map will be synced with the main map's tile schema, so it just uses the extent/sr from the main map
         //       Revisit this when enhancing the overview map to be able to use a different tile schema than the main map
@@ -50,7 +52,7 @@ export class OverviewMapAPI extends CommonMapAPI {
 
         // create esri view with config
         this.esriView = markRaw(
-            new EsriMapView({
+            await EsriAPI.MapView({
                 map: this.esriMap,
                 container: this._targetDiv,
                 constraints: {
@@ -192,14 +194,14 @@ export class OverviewMapAPI extends CommonMapAPI {
     }
 
     /**
-     * Searches the local basemap list and main map basemaps for a basemap with the given id
+     * Searches the local basemap list, then the main map basemaps for a basemap with the given id
      * Throws error if basemap could not be found
      *
      * @param {string} id basemap id
-     * @returns {Basemap} the found basemap
+     * @returns {Promise<Basemap>} resolves with the found basemap
      * @protected
      */
-    findBasemap(id: string): Basemap {
+    async findBasemap(id: string): Promise<Basemap> {
         const bm: Basemap | undefined = this._basemapStore.find(bms => bms.id === id);
         if (bm) {
             return bm;
@@ -210,7 +212,7 @@ export class OverviewMapAPI extends CommonMapAPI {
             if (mainMapConfig) {
                 const bmConfig = mainMapConfig.basemaps.find(bm => bm.id === id);
                 if (bmConfig) {
-                    return new Basemap(bmConfig);
+                    return Basemap.create(bmConfig);
                 }
             }
         }
@@ -225,28 +227,28 @@ export class OverviewMapAPI extends CommonMapAPI {
      * Should only be called by the overview map component
      *
      * @param {string} basemapId the basemap id
-     * @returns {boolean} indicates if the schema has changed
+     * @returns {Promise<boolean>} resolves with boolean indicates if the schema has changed
      */
-    setBasemap(basemapId: string): boolean {
+    async setBasemap(basemapId: string): Promise<boolean> {
         if (!this.esriView || !this.esriMap) {
             this.noMapErr();
             return false;
         }
 
-        const bm: Basemap = this.findBasemap(basemapId);
+        const bm: Basemap = await this.findBasemap(basemapId);
 
         // get the current basemap
         const currBm: Basemap | undefined = this.getCurrentBasemapId()
-            ? this.findBasemap(this.getCurrentBasemapId()!)
+            ? await this.findBasemap(this.getCurrentBasemapId()!)
             : undefined;
 
         const differentSchema: boolean = currBm?.tileSchemaId !== bm.tileSchemaId;
 
         if (differentSchema) {
             this.destroyMapView();
-            this.createMapView(bm);
+            await this.createMapView(bm);
         } else {
-            this.applyBasemap(bm);
+            await this.applyBasemap(bm);
         }
 
         return differentSchema;

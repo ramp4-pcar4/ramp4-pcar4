@@ -3,7 +3,7 @@ import { BaseGeometry, Extent, GeometryType, Graphic, NoGeometry, Point, Spatial
 
 import type { QueryFeaturesArcServerParams, QueryFeaturesParams } from '@/geo/api';
 
-import { EsriQuery, EsriQueryByIds } from '@/geo/esri';
+import { EsriAPI } from '@/geo/esri';
 
 // this exists here instead of our main definitions file because it uses `FileLayer` type.
 // the layer inherits from APIScope, causing circular references in the public folder
@@ -31,7 +31,7 @@ export class QueryAPI extends APIScope {
 
         // create and set the esri query parameters
 
-        const query = new EsriQuery();
+        const query = await EsriAPI.Query();
         query.returnGeometry = false;
 
         if (options.filterSql) {
@@ -55,7 +55,7 @@ export class QueryAPI extends APIScope {
             query.spatialRelationship = 'intersects';
         }
 
-        const oids = await EsriQueryByIds(options.url, query);
+        const oids = await EsriAPI.QueryByIds(options.url, query);
         return Array.isArray(oids) ? oids : [];
     }
 
@@ -66,7 +66,7 @@ export class QueryAPI extends APIScope {
      * @returns resolves with array of graphic result objects.
      */
     async geoJsonQuery(options: QueryFeaturesFileParams): Promise<Array<Graphic>> {
-        const query = new EsriQuery();
+        const query = await EsriAPI.Query();
         query.returnGeometry = !!options.includeGeometry;
         query.outFields = ['*']; // TODO look into using the options value. test it well, as the .where gets wonky with outfields
 

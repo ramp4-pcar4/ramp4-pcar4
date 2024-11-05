@@ -193,32 +193,32 @@ export class InstanceAPI {
                     clearInterval(mapDivWatcher);
 
                     // create the map
-                    this.geo.map.createMap(langConfig.map, mapViewElement as HTMLDivElement);
+                    this.geo.map.createMap(langConfig.map, mapViewElement as HTMLDivElement).then(() => {
+                        // Hide hovertip on map creation
+                        //@ts-ignore
+                        mapViewElement._tippy.hide(0);
+                        //@ts-ignore
+                        maptipStore.setMaptipInstance(mapViewElement._tippy);
 
-                    // Hide hovertip on map creation
-                    //@ts-ignore
-                    mapViewElement._tippy.hide(0);
-                    //@ts-ignore
-                    maptipStore.setMaptipInstance(mapViewElement._tippy);
-
-                    if (langConfig.layers && langConfig.layers.length > 0) {
-                        // Add all the config layers to the instance, in order.
-                        // Config layers always get "added first", so we provide order positions here for the map layers.
-                        // Enhanced positioning logic is now handled by map.addLayer()
-                        let mapOrderPos = 0;
-                        langConfig.layers.forEach(layerConfig => {
-                            const layer = this.geo.layer.createLayer(layerConfig);
-                            this.geo.map
-                                .addLayer(layer, mapOrderPos)
-                                // just to silence console about unhandled rejections.
-                                .catch(() => {});
-                            if (layer.mapLayer) {
-                                // we only increment for map layers. Data layers get added but do not live in the map stack.
-                                // so no ++. We pass the param to map.addLayer above out of lazyness. It gets ignored for data layers.
-                                mapOrderPos++;
-                            }
-                        });
-                    }
+                        if (langConfig.layers && langConfig.layers.length > 0) {
+                            // Add all the config layers to the instance, in order.
+                            // Config layers always get "added first", so we provide order positions here for the map layers.
+                            // Enhanced positioning logic is now handled by map.addLayer()
+                            let mapOrderPos = 0;
+                            langConfig.layers.forEach(layerConfig => {
+                                const layer = this.geo.layer.createLayer(layerConfig);
+                                this.geo.map
+                                    .addLayer(layer, mapOrderPos)
+                                    // just to silence console about unhandled rejections.
+                                    .catch(() => {});
+                                if (layer.mapLayer) {
+                                    // we only increment for map layers. Data layers get added but do not live in the map stack.
+                                    // so no ++. We pass the param to map.addLayer above out of lazyness. It gets ignored for data layers.
+                                    mapOrderPos++;
+                                }
+                            });
+                        }
+                    });
                 }
             }, 100);
 

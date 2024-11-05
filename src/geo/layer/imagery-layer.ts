@@ -1,7 +1,8 @@
 import { InstanceAPI, MapLayer } from '@/api/internal';
 import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
-import { EsriImageryLayer } from '@/geo/esri';
+import type { EsriImageryLayer } from '@/geo/esri';
+import { EsriAPI } from '@/geo/esri';
 import { markRaw } from 'vue';
 
 /**
@@ -19,7 +20,7 @@ export class ImageryLayer extends MapLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        this.esriLayer = markRaw(new EsriImageryLayer(this.makeEsriLayerConfig(this.origRampConfig)));
+        this.esriLayer = markRaw(await EsriAPI.ImageryLayer(this.makeEsriLayerConfig(this.origRampConfig)));
         await super.onInitiate();
     }
 

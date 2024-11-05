@@ -28,7 +28,8 @@ import type {
     RampLayerConfig
 } from '@/geo/api';
 
-import { EsriFeatureFilter, EsriFeatureLayer, EsriField, EsriRendererFromJson } from '@/geo/esri';
+import { EsriAPI } from '@/geo/esri';
+import type { EsriFeatureLayer, EsriField } from '@/geo/esri';
 
 import { markRaw, reactive, toRaw } from 'vue';
 
@@ -98,7 +99,7 @@ export class FileLayer extends AttribLayer {
 
         this.esriJson = await this.$iApi.geo.layer.files.geoJsonToEsriJson(this.sourceGeoJson, opts);
 
-        this.esriLayer = markRaw(new EsriFeatureLayer(this.makeEsriLayerConfig(this.origRampConfig)));
+        this.esriLayer = markRaw(await EsriAPI.FeatureLayer(this.makeEsriLayerConfig(this.origRampConfig)));
 
         this.esriJson = undefined;
         if (!this.origRampConfig.caching) {
@@ -157,29 +158,35 @@ export class FileLayer extends AttribLayer {
     protected onLoadActions(): Array<Promise<void>> {
         const loadPromises: Array<Promise<void>> = super.onLoadActions();
 
-        // setting custom renderer here (if one is provided)
-        if (this.esriLayer && this.origRampConfig.customRenderer?.type) {
-            this.esriLayer.renderer = EsriRendererFromJson(this.config.customRenderer);
-        }
+        // renderer generation and metadata extract are tied.
+        // sub-method to orchestrate the two with async goodness.
+        const dataGrinder = async () => {
+            // set custom renderer (if one is provided)
+            if (this.esriLayer && this.origRampConfig.customRenderer?.type) {
+                this.esriLayer!.renderer = await EsriAPI.RendererFromJson(this.config.customRenderer);
+            }
 
-        this.layerTree.name = this.name;
+            this.layerTree.name = this.name;
 
-        // NOTE: call extract, not load, as there is no service involved here
-        this.extractLayerMetadata();
-        // NOTE name field overrides from config have already been applied by this point
-        if (this.origRampConfig.tooltipField) {
-            this.tooltipField =
-                this.$iApi.geo.attributes.fieldValidator(this.fields, this.origRampConfig.tooltipField) ||
-                this.nameField;
-        } else {
-            this.tooltipField = this.nameField;
-        }
+            // NOTE: call extract, not load, as there is no service involved here
+            this.extractLayerMetadata();
+            // NOTE name field overrides from config have already been applied by this point
+            if (this.origRampConfig.tooltipField) {
+                this.tooltipField =
+                    this.$iApi.geo.attributes.fieldValidator(this.fields, this.origRampConfig.tooltipField) ||
+                    this.nameField;
+            } else {
+                this.tooltipField = this.nameField;
+            }
 
-        this.$iApi.geo.attributes.applyFieldMetadata(this, this.origRampConfig.fieldMetadata);
+            this.$iApi.geo.attributes.applyFieldMetadata(this, this.origRampConfig.fieldMetadata);
 
-        this.attribs.attLoader.updateFieldList(this.fieldList);
+            this.attribs.attLoader.updateFieldList(this.fieldList);
 
-        this.featureCount = this.esriLayer?.source.length || 0;
+            this.featureCount = this.esriLayer?.source.length || 0;
+        };
+
+        loadPromises.push(dataGrinder());
 
         // NOTE Our SQL support needs the view in place, so this delays our load promise until the view is ready.
         //      If this becomes problematic (e.g. we want to create a layer and have it "load" without adding it to a map),
@@ -454,8 +461,10 @@ export class FileLayer extends AttribLayer {
 
         // NOTE this can be expanded to have spatial filters as well. if we head to that,
         //      will will need to ensure any spatial elements get included in the new FeatureFilter
-        toRaw(this.esriView).filter = new EsriFeatureFilter({
+        EsriAPI.FeatureFilter({
             where: sql
+        }).then(ff => {
+            toRaw(this.esriView!).filter = ff;
         });
     }
 }
