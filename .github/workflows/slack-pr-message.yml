@@ -1,0 +1,83 @@
+name: slack-PR-message
+on:
+  pull_request:
+
+jobs:
+  post-to-slack:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Get Labels as Comma-Separated List
+        id: get-labels
+        env:
+          PR_LABELS_JSON: ${{ toJSON(github.event.pull_request.labels) }}
+        run: |
+          LABELS=$(echo "$PR_LABELS_JSON" | jq -r 'map(.name) | join(", ")')
+          if [ -z "$LABELS" ]; then
+            LABELS="None"
+          fi
+          echo "labels=$LABELS" >> $GITHUB_ENV
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install transformers library
+        run: |
+          pip install transformers
+
+      - name: Summarize PR Body in a Cheerful Tone
+        id: summarize
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          python -c "
+from transformers import pipeline
+
+# Step 1: Summarize with a neutral tone
+summarizer = pipeline('summarization')
+neutral_summary = summarizer('${{ env.PR_BODY }}', max_length=50, min_length=25, do_sample=False)[0]['summary_text']
+
+# Step 2: Rephrase with a cheerful tone using text generation
+rephrase_prompt = f'Rephrase this in a joking but still professional tone: {neutral_summary}'
+generator = pipeline('text-generation', model='gpt2')
+cheerful_summary = generator(rephrase_prompt, max_length=100, num_return_sequences=1)[0]['generated_text']
+
+# Output cheerful summary to environment
+with open('${GITHUB_ENV}', 'a') as env_file:
+    env_file.write(f'CHEERFUL_SUMMARY={cheerful_summary}')
+          "
+
+      - name: Post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          channel-id: 'C08080W3W0Y'
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "New *ramp4-pcar4* PR by *${{ github.event.pull_request.user.login }}*"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Title*: ${{ github.event.pull_request.title }}\n*Types*: ${{ env.labels }}\n*Link*: ${{ github.event.pull_request.html_url }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Cheerful Summary*:\n${{ env.CHEERFUL_SUMMARY }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
