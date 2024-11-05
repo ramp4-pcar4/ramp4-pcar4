@@ -36,7 +36,7 @@ jobs:
           
           # Step 1: Summarize with a neutral tone
           summarizer = pipeline('summarization')
-          neutral_summary = summarizer('${{ env.PR_BODY }}', max_length=50, min_length=25, do_sample=False)[0]['summary_text']
+          neutral_summary = summarizer('${{ env.PR_BODY.encode('string-escape') }}', max_length=50, min_length=25, do_sample=False)[0]['summary_text']
           
           # Step 2: Rephrase with a cheerful tone using text generation
           rephrase_prompt = f'Rephrase this in a joking but still professional tone: {neutral_summary}'
