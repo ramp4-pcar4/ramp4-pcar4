@@ -1,0 +1,60 @@
+name: slack-PR-message
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  post-to-slack:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python dependency
+        run: pip install -r .github/requirements.txt
+
+      - name: Summarize PR body and process labels
+        id: summarize
+        env:
+          PR_LABELS_JSON: ${{ toJSON(github.event.pull_request.labels) }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: python .github/slack-bot.py
+
+      - name: Post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          channel-id: 'C08080W3W0Y'
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "New *ramp4-pcar4* PR by *${{ github.event.pull_request.user.login }}*"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Title*: ${{ github.event.pull_request.title }}\n*PR Type*: ${{ env.PR_LABEL_STR }}\n*Other labels*: ${{ env.REG_LABEL_STR }}\n*Link*: ${{ github.event.pull_request.html_url }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*PR Summary*:\n${{ env.NEUTRAL_SUMMARY }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
