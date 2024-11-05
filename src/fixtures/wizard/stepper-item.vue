@@ -38,7 +38,7 @@
             </div>
         </div>
         <transition name="step" mode="out-in">
-            <div class="pl-36" v-show="active()">
+            <div class="pl-36" v-show="active()" ref="stepItem">
                 <!-- step content -->
                 <slot></slot>
             </div>
@@ -47,9 +47,11 @@
 </template>
 
 <script setup lang="ts">
-import { inject, onMounted, ref } from 'vue';
+import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
 const stepper = inject('stepper') as any;
+const stepItem = ref<HTMLElement>();
+const emit = defineEmits(['focusPanel']);
 
 defineProps({
     title: {
@@ -65,6 +67,26 @@ const index = ref(-1);
 
 onMounted(() => {
     index.value = stepper.numSteps++;
+
+    stepItem.value?.addEventListener('focusout', event => {
+        // when the respective step item has been passed, the focusout event will have a 'relatedTarget' value of null
+        // which indicates to the FocusContainerManager that focus has exited the panel, so it then disables tabbing for
+        // all elements of the panel. To avoid this, we stop the event from propagating and manually enable tabbing for all
+        // panel elements
+        if (!active()) {
+            event.stopPropagation();
+            emit('focusPanel');
+        }
+    });
+});
+
+onBeforeUnmount(() => {
+    stepItem.value?.removeEventListener('focusout', event => {
+        if (done()) {
+            event.stopPropagation();
+            emit('focusPanel');
+        }
+    });
 });
 
 const done = () => {
