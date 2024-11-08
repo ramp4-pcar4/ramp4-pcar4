@@ -59,7 +59,11 @@ const iApi = inject<InstanceAPI>('iApi')!;
 const exportStore = useExportStore();
 
 const fixture = ref<ExportAPI>();
-const resizeObserver = ref<ResizeObserver | undefined>(undefined);
+
+// we need two resize observers, one for the root element and one for the panel since the panel can resize independently of the root (another panel was closed/opened)
+// changes to the root element impact map boundaries, changes to the panel impact the resolution of the displayed export
+const rootResizeObserver = ref<ResizeObserver | undefined>(undefined);
+const panelResizeObserver = ref<ResizeObserver | undefined>(undefined);
 const watchers = ref<Array<Function>>([]);
 
 const el = useTemplateRef('componentEl');
@@ -108,16 +112,17 @@ onBeforeMount(() => {
 
 onMounted(() => {
     fixture.value = iApi.fixture.get('export') as ExportAPI;
-    resizeObserver.value = new ResizeObserver(() => {
-        make();
-    });
+    rootResizeObserver.value = new ResizeObserver(make);
+    panelResizeObserver.value = new ResizeObserver(make);
     // observe the root element for resize events, not the component itself
-    resizeObserver.value.observe(iApi?.$vApp.$root?.$el);
+    rootResizeObserver.value.observe(iApi?.$vApp.$root?.$el);
+    panelResizeObserver.value.observe(iApi?.$vApp.$root?.$el.querySelector('[data-cy="export"]'));
 });
 
 onBeforeUnmount(() => {
     // remove the resize observer
-    resizeObserver.value!.disconnect();
+    rootResizeObserver.value!.disconnect();
+    panelResizeObserver.value!.disconnect();
     // remove the watchers
     watchers.value.forEach(unwatch => unwatch());
 });
