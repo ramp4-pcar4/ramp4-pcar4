@@ -1,6 +1,7 @@
 name: slack-PR-message
 on:
   pull_request:
+    types: [opened]
 
 jobs:
   post-to-slack:
