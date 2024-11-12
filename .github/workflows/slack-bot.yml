@@ -1,11 +1,29 @@
 name: slack-PR-message
 on:
-  pull_request:
+  pull_request_target:
+    types:
+      - opened
+
+permissions:
+  contents: read
+  pull-requests: read
 
 jobs:
   post-to-slack:
     runs-on: ubuntu-20.04
     steps:
+      - name: Check user permissions (allow only those w/ write access)
+        id: permission_check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          user_permission=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/collaborators/${{ github.event.pull_request.user.login }}/permission" | jq -r .permission)
+          if [[ "$user_permission" != "write" && "$user_permission" != "admin" ]]; then
+            echo "User does not have write access. Exiting."
+            exit 1
+          fi
+
       - name: Checkout
         uses: actions/checkout@v4
 
