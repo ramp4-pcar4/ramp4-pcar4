@@ -1,6 +1,6 @@
 <template>
-    <!-- Yes Notifications -->
     <div>
+        <!-- Yes Notifications -->
         <ul
             v-if="notificationStack.length > 0"
             v-focus-list
