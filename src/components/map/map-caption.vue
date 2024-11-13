@@ -84,7 +84,7 @@
             </button>
 
             <dropdown-menu
-                class="flex-shrink-0 pointer-events-auto focus:outline-none px-4 mr-4 relative top-2 overflow-hidden"
+                class="flex-shrink-0 pointer-events-auto focus:outline-none px-4 mr-4 relative top-2"
                 position="top-end"
                 v-if="!langtoggle?.disabled"
                 :tooltip="t('map.changeLanguage')"
