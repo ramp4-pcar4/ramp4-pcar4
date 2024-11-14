@@ -232,7 +232,7 @@ export class ExportAPI extends FixtureInstance {
         if (selectedState.timestamp && exportTimestampFixture) {
             fbTimestamp = await exportTimestampFixture.make({
                 top: this.options.runningHeight + 40,
-                width: panelWidth
+                width: panelWidth * 1.5 // Magic number 1.5 prevents unnecessary linebreaks when there's still space
             });
 
             this.options.runningHeight +=
