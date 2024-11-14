@@ -31,9 +31,9 @@ export class SharedUtilsAPI {
      * @return {Promise} conversion promise resolving into a canvas of the image
      */
     convertImageToCanvas(url: string, canvas?: HTMLCanvasElement, crossOrigin = true): Promise<any> {
-        const c = canvas ?? window.document.createElement('canvas');
+        const c = canvas ?? document.createElement('canvas');
 
-        const image = window.document.createElement('img'); // create image node
+        const image = document.createElement('img'); // create image node
 
         if (crossOrigin) {
             image.crossOrigin = 'anonymous'; // configure the CORS request
