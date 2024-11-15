@@ -330,25 +330,36 @@
             </div>
         </div>
 
-        <!-- main grid component -->
-        <ag-grid-vue
+        <div
+            :content="t('grid.cells.controls')"
+            v-tippy="{
+                placement: 'top',
+                trigger: 'manual'
+            }"
+            class="w-full h-full flex flex-col"
             v-if="showGrid"
             v-show="!isLoadingGrid && !isErrorGrid"
-            class="ag-theme-material flex-grow"
-            enableCellTextSelection="true"
-            accentedSort="true"
-            :localeText="locale === 'en' ? AG_GRID_LOCALE_EN : AG_GRID_LOCALE_FR"
-            :gridOptions="agGridOptions"
-            :columnDefs="columnDefs"
-            :rowData="rowData"
-            :components="frameworkComponents"
-            @grid-ready="onGridReady"
-            @keydown="stopArrowKeyProp"
-            @firstDataRendered="gridRendered"
-            @cell-key-press="onCellKeyPress"
-            :doesExternalFilterPass="doesExternalFilterPass"
-            :isExternalFilterPresent="isExternalFilterPresent"
-        />
+            ref="gridContainer"
+            tabIndex="-1"
+        >
+            <!-- main grid component -->
+            <ag-grid-vue
+                class="ag-theme-material flex-grow"
+                enableCellTextSelection="true"
+                accentedSort="true"
+                :localeText="locale === 'en' ? AG_GRID_LOCALE_EN : AG_GRID_LOCALE_FR"
+                :gridOptions="agGridOptions"
+                :columnDefs="columnDefs"
+                :rowData="rowData"
+                :components="frameworkComponents"
+                @grid-ready="onGridReady"
+                @keydown="stopArrowKeyProp"
+                @firstDataRendered="gridRendered"
+                @cell-key-press="onCellKeyPress"
+                :doesExternalFilterPass="doesExternalFilterPass"
+                :isExternalFilterPresent="isExternalFilterPresent"
+            />
+        </div>
     </div>
 </template>
 
@@ -361,7 +372,9 @@ import {
     nextTick,
     onBeforeMount,
     onBeforeUnmount,
+    onMounted,
     ref,
+    useTemplateRef,
     watch
 } from 'vue';
 
@@ -493,6 +506,7 @@ const panelStore = usePanelStore();
 const mobileView = computed(() => panelStore.mobileView);
 const pinned = ref<Boolean>(!mobileView.value);
 const el = ref<HTMLElement>();
+const gridContainer = useTemplateRef('gridContainer');
 const { t, locale } = useI18n();
 const forceUpdate = () => getCurrentInstance()?.proxy?.$forceUpdate();
 
@@ -1580,6 +1594,15 @@ const setUpColumns = () => {
     });
 };
 
+onMounted(() => {
+    gridContainer.value?.addEventListener('focus', () => {
+        (gridContainer.value as any)._tippy.show();
+    });
+    gridContainer.value?.addEventListener('blur', () => {
+        (gridContainer.value as any)._tippy.hide();
+    });
+});
+
 onBeforeMount(() => {
     config.value = gridStore.grids[props.gridId];
 
@@ -1670,6 +1693,12 @@ onBeforeUnmount(() => {
     watchers.value.forEach(unwatch => unwatch());
     gridAccessibilityManager.value?.removeAccessibilityListeners();
     gridAccessibilityManager.value?.removeScrollListeners();
+    gridContainer.value?.removeEventListener('focus', () => {
+        (gridContainer.value as any)._tippy.show();
+    });
+    gridContainer.value?.removeEventListener('blur', () => {
+        (gridContainer.value as any)._tippy.hide();
+    });
 });
 </script>
 
