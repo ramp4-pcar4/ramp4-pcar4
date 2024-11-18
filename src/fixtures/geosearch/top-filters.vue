@@ -1,5 +1,5 @@
 <template>
-    <div class="rv-geosearch-top-filters sm:flex items-center w-full ml-8 mb-14">
+    <div class="rv-geosearch-top-filters sm:flex items-center w-full ml-8 mb-14" ref="el">
         <div class="w-fit inline-block sm:w-1/2 h-26 mb-8 sm:mb-0 pr-16 sm:pr-0">
             <select
                 class="border-b border-b-gray-600 w-full h-full py-0 cursor-pointer"
@@ -11,6 +11,12 @@
                     })
                 "
                 v-truncate
+                v-tippy="{
+                    content: t('select.items'),
+                    trigger: 'manual',
+                    placement: 'top-start'
+                }"
+                ref="selectProvince"
             >
                 <option value="" disabled hidden v-truncate>
                     {{ t('geosearch.filters.province') }}
@@ -31,6 +37,12 @@
                     })
                 "
                 v-truncate
+                v-tippy="{
+                    content: t('select.items'),
+                    trigger: 'manual',
+                    placement: 'top-start'
+                }"
+                ref="selectFilter"
             >
                 <option value="" disabled hidden>
                     {{ t('geosearch.filters.type') }}
@@ -62,7 +74,7 @@
 
 <script setup lang="ts">
 import type { InstanceAPI } from '@/api';
-import { computed, inject, onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, inject, onBeforeMount, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import type { GeosearchAPI } from './api/geosearch';
 import { useGeosearchStore } from './store';
 import type { QueryParams } from './store';
@@ -71,6 +83,9 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
 const geosearchStore = useGeosearchStore();
+const el = ref<Element>();
+const selectProvince = ref<Element>();
+const selectFilter = ref<Element>();
 
 const provinces = ref<Array<any>>([]);
 const types = ref<Array<any>>([]);
@@ -116,13 +131,48 @@ const updateProvincesAndTypes = () => {
     });
 };
 
+const blurProvince = () => {
+    (selectProvince.value as any)._tippy.hide();
+};
+const blurFilter = () => {
+    (selectFilter.value as any)._tippy.hide();
+};
+const keyupProvince = (e: Event) => {
+    const evt = e as KeyboardEvent;
+    if (evt.key === 'Tab' && selectProvince.value?.matches(':focus') && navigator.userAgent.includes('Firefox')) {
+        (selectProvince.value as any)._tippy.show();
+    } else {
+        (selectProvince.value as any)._tippy.hide();
+    }
+};
+const keyupFilter = (e: Event) => {
+    const evt = e as KeyboardEvent;
+    if (evt.key === 'Tab' && selectFilter.value?.matches(':focus') && navigator.userAgent.includes('Firefox')) {
+        (selectFilter.value as any)._tippy.show();
+    } else {
+        (selectFilter.value as any)._tippy.hide();
+    }
+};
+
 onBeforeMount(() => {
     updateProvincesAndTypes();
     watchers.value.push(watch(language, updateProvincesAndTypes));
 });
 
+onMounted(() => {
+    selectProvince.value?.addEventListener('blur', blurProvince);
+    selectProvince.value?.addEventListener('keyup', keyupProvince);
+    selectFilter.value?.addEventListener('blur', blurFilter);
+    selectFilter.value?.addEventListener('keyup', keyupFilter);
+});
+
 onBeforeUnmount(() => {
     watchers.value.forEach(unwatch => unwatch());
+
+    selectProvince.value?.removeEventListener('blur', blurProvince);
+    selectProvince.value?.removeEventListener('keyup', keyupProvince);
+    selectFilter.value?.removeEventListener('blur', blurFilter);
+    selectFilter.value?.removeEventListener('keyup', keyupFilter);
 });
 </script>
 
