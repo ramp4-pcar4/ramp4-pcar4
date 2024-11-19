@@ -1,7 +1,6 @@
 import { markRaw } from 'vue';
 import { LegendAPI } from './api/legend';
 import LegendNavButtonV from './nav-button.vue';
-import LegendScreenV from './screen.vue';
 
 import messages from './lang/lang.csv?raw';
 import { useAppbarStore } from '../appbar/store';
@@ -18,7 +17,7 @@ class LegendFixture extends LegendAPI {
             {
                 legend: {
                     screens: {
-                        'legend-screen': markRaw(LegendScreenV)
+                        'legend-screen': () => markRaw(import('./screen.vue'))
                     },
                     style: {
                         width: '350px'

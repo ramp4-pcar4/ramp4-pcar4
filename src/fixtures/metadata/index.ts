@@ -1,6 +1,5 @@
 import { markRaw } from 'vue';
 import { MetadataAPI } from './api/metadata';
-import MetadataScreenV from './screen.vue';
 
 import messages from './lang/lang.csv?raw';
 import { useAppbarStore } from '../appbar/store';
@@ -12,7 +11,7 @@ class MetadataFixture extends MetadataAPI {
             {
                 metadata: {
                     screens: {
-                        'metadata-screen-content': markRaw(MetadataScreenV)
+                        'metadata-screen-content': () => markRaw(import('./screen.vue'))
                     },
                     style: {
                         width: '350px'

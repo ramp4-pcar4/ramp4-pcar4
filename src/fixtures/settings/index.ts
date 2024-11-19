@@ -1,6 +1,5 @@
 import { markRaw } from 'vue';
 import { SettingsAPI } from './api/settings';
-import SettingsScreenV from './screen.vue';
 import messages from './lang/lang.csv?raw';
 import { useAppbarStore } from '../appbar/store';
 
@@ -12,7 +11,7 @@ class SettingsFixture extends SettingsAPI {
             {
                 settings: {
                     screens: {
-                        'settings-screen-content': markRaw(SettingsScreenV)
+                        'settings-screen-content': () => markRaw(import('./screen.vue'))
                     },
                     style: {
                         width: '350px'

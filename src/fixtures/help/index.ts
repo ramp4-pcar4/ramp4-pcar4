@@ -1,6 +1,5 @@
 import { markRaw } from 'vue';
 import { HelpAPI } from './api/help';
-import HelpScreenV from './screen.vue';
 import HelpNavButtonV from './nav-button.vue';
 
 import messages from './lang/lang.csv?raw';
@@ -17,7 +16,7 @@ class HelpFixture extends HelpAPI {
             {
                 help: {
                     screens: {
-                        'help-screen': markRaw(HelpScreenV)
+                        'help-screen': () => markRaw(import('./screen.vue'))
                     },
                     style: {
                         'flex-grow': '1',
