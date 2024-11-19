@@ -16,8 +16,7 @@ const baseConfig = {
     base: './',
     resolve: {
         alias: {
-            '@': resolve(__dirname, 'src'),
-            vue: 'vue/dist/vue.esm-bundler.js'
+            '@': resolve(__dirname, 'src')
         }
     },
     build: {

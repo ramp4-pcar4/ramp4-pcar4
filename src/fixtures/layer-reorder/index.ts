@@ -1,5 +1,4 @@
 import { markRaw } from 'vue';
-import LayerReorderScreenV from './screen.vue';
 import messages from './lang/lang.csv?raw';
 import { LayerReorderAPI } from './api/layer-reorder';
 import { useAppbarStore } from '../appbar/store';
@@ -12,7 +11,7 @@ class LayerReorderFixture extends LayerReorderAPI {
             {
                 'layer-reorder': {
                     screens: {
-                        'layer-reorder-screen': markRaw(LayerReorderScreenV)
+                        'layer-reorder-screen': () => markRaw(import('./screen.vue'))
                     },
                     style: {
                         width: '350px'

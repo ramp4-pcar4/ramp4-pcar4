@@ -5,7 +5,6 @@ import yxList from './reversedAxis.json';
 import { EsriRequest } from '@/geo/esri';
 import axios from 'redaxios';
 import to from 'await-to-js';
-import { XMLParser } from 'fast-xml-parser';
 
 type WFSResponse = {
     data: { numberMatched: number; features: any[] };
@@ -257,27 +256,30 @@ export class OgcUtils extends APIScope {
             return formats;
         };
 
-        return gcPromise.then((xmlNode: any): any => {
-            // Not sure if this check is still needed here.
-            if (!xmlNode) {
-                return [];
-            }
-            const xmlData: string = new XMLSerializer().serializeToString(xmlNode);
-            const options: Object = {
-                ignoreAttributes: false // check for tag attributes
-            };
-            const jsonObj: any = new XMLParser(options).parse(xmlData);
-            // We get an XML with a <ServiceExceptionReport> tag back when something goes wrong with the request.
-            // Might be able to get rid of this now that we are appending missing parameters to the URL.
-            if ('ServiceExceptionReport' in jsonObj) {
-                console.error(jsonObj.ServiceExceptionReport.ServiceException);
-                return [];
-            }
-            const capability: any = jsonObj.WMS_Capabilities.Capability;
-            return {
-                layers: getLayers(capability),
-                queryTypes: getQueryTypes(capability.Request.GetFeatureInfo)
-            };
+        const xmlParser = import('fast-xml-parser');
+        return xmlParser.then(parser => {
+            return gcPromise.then((xmlNode: any): any => {
+                // Not sure if this check is still needed here.
+                if (!xmlNode) {
+                    return [];
+                }
+                const xmlData: string = new XMLSerializer().serializeToString(xmlNode);
+                const options: Object = {
+                    ignoreAttributes: false // check for tag attributes
+                };
+                const jsonObj: any = new parser.XMLParser(options).parse(xmlData);
+                // We get an XML with a <ServiceExceptionReport> tag back when something goes wrong with the request.
+                // Might be able to get rid of this now that we are appending missing parameters to the URL.
+                if ('ServiceExceptionReport' in jsonObj) {
+                    console.error(jsonObj.ServiceExceptionReport.ServiceException);
+                    return [];
+                }
+                const capability: any = jsonObj.WMS_Capabilities.Capability;
+                return {
+                    layers: getLayers(capability),
+                    queryTypes: getQueryTypes(capability.Request.GetFeatureInfo)
+                };
+            });
         });
     }
 }
