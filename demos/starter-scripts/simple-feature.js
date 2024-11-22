@@ -309,7 +309,4 @@ const rInstance = createInstance(document.getElementById('app'), config, options
 // add export fixtures
 rInstance.fixture.add('export');
 
-// load map if startRequired is true
-// rInstance.start();
-
 window.debugInstance = rInstance;
