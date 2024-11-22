@@ -174,7 +174,7 @@ export class LayerAPI extends APIScope {
     async awaitLayer(layerId: string): Promise<LayerInstance> {
         // test immediately
         const fastTest = this.getLayer(layerId);
-        if (fastTest) {
+        if (fastTest && fastTest.esriLayer && fastTest.esriView) {
             return fastTest;
         }
 
@@ -186,7 +186,7 @@ export class LayerAPI extends APIScope {
         const stopExpected = setInterval(() => {
             expectedWait += expectedPingTime;
             const expTest = this.getLayer(layerId);
-            if (expTest) {
+            if (expTest && expTest.esriLayer && expTest.esriView) {
                 clearInterval(stopExpected);
                 defFun.resolveMe(expTest);
             } else if (expectedWait > 8000) {
@@ -196,7 +196,7 @@ export class LayerAPI extends APIScope {
                 // this code is super light, browser perf won't be impacted if a nothingburger request runs forever.
                 const stopSlowpoke = setInterval(() => {
                     const slowTest = this.getLayer(layerId);
-                    if (slowTest) {
+                    if (slowTest && slowTest.esriLayer && slowTest.esriView) {
                         clearInterval(stopSlowpoke);
                         defFun.resolveMe(slowTest);
                     }
