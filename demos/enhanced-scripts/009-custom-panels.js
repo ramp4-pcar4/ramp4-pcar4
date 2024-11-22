@@ -2,7 +2,8 @@
 Test 09: custom html panel
 - Loads Happy.json layer in the legend. Very basic.
 - Creates custom html panels
-- Tests the `persist` fixture property on the basemap and export fixtures, such that on a lang change (for which the configs of each lang are different), the fixtures will not persist
+- Tests the `persist` fixture property on the basemap and export fixtures, such that on a lang change 
+  (for which the configs of each lang are different), the fixtures will not persist
  */
 
 const runPreTest = (config, options, utils) => {

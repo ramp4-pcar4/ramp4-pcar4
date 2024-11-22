@@ -771,6 +771,8 @@ export class EventAPI extends APIScope {
                                 (tl as TileLayer).checkProj();
                             });
                     }
+                    const schemaChangeEvent = new CustomEvent('BasemapSchemaChange'); // used by swipe fixture
+                    window.dispatchEvent(schemaChangeEvent);
                 };
                 this.$iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, zeHandler, handlerName);
                 break;
