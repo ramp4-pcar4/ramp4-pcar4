@@ -45,6 +45,8 @@ import { fromJSON as EsriSymbolFromJson } from '@arcgis/core/symbols/support/jso
 import type EsriFeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
 import type EsriMapView from '@arcgis/core/views/MapView';
 import type EsriColorBackground from '@arcgis/core/webmap/background/ColorBackground';
+import type EsriSwipe from '@arcgis/core/widgets/Swipe.js';
+import type EsriCollection from '@arcgis/core/core/Collection';
 
 // NOTE we need to have explicit strings in the `await import()` calls, as that's
 //      how Vite knows how to optimize the chunks.
@@ -136,6 +138,18 @@ class EsriAPI {
         const { fromJSON } = await import('@arcgis/core/renderers/support/jsonUtils');
         return fromJSON(json);
     }
+
+    // --- Components ---
+
+    static async Swipe(prams: __esri.SwipeProperties): Promise<EsriSwipe> {
+        const lib = await import('@arcgis/core/widgets/Swipe.js');
+        return Reflect.construct(lib.default, [prams]);
+    }
+
+    static async Collection(): Promise<EsriCollection> {
+        const lib = await import('@arcgis/core/core/Collection');
+        return Reflect.construct(lib.default, []);
+    }
 }
 
 // sorted by name
@@ -180,5 +194,7 @@ export {
     type EsriUniqueValueInfo,
     type EsriUniqueValueRenderer,
     type EsriWMSLayer,
-    type EsriWMSSublayer
+    type EsriWMSSublayer,
+    type EsriSwipe,
+    type EsriCollection
 };
