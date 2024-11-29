@@ -3,14 +3,14 @@ import mkcert from 'vite-plugin-mkcert';
 import vue from '@vitejs/plugin-vue';
 import VitePluginI18n from './scripts/vite-plugin-i18n';
 import VitePluginVersion from './scripts/vite-plugin-version';
-import ViteRemoveCommentsPlugin from './scripts/vite-remove-comments-plugin';
+import ViteMinifyEsPlugin from './scripts/vite-minify-es-plugin';
 import { resolve } from 'path';
 import pkg from './package.json';
 
 const distName = resolve(__dirname, process.env.DIST_NAME || 'dist');
 
 const baseConfig = {
-    plugins: [vue(), VitePluginI18n(), VitePluginVersion(), mkcert(), ViteRemoveCommentsPlugin()],
+    plugins: [vue(), VitePluginI18n(), VitePluginVersion(), mkcert()],
     define: {
         'process.env': process.env
     },
@@ -56,7 +56,7 @@ function inlineConfig() {
 }
 
 function esDynamicConfig() {
-    return mergeConfig(baseConfig, {
+    const config = mergeConfig(baseConfig, {
         build: {
             outDir: `${distName}/esDynamic`,
             copyPublicDir: false,
@@ -67,6 +67,8 @@ function esDynamicConfig() {
         },
         esbuild: { legalComments: 'none' }
     });
+    config.plugins.push(ViteMinifyEsPlugin());
+    return config;
 }
 
 function npmBundleConfig() {
