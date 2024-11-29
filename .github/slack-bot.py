@@ -11,6 +11,9 @@ pr_labels = json.loads(pr_labels_json)
 summarizer = pipeline('summarization', model='tuner007/pegasus_summarizer')
 neutral_summary = summarizer(pr_body, max_length=200, min_length=25, do_sample=False)[0]['summary_text']
 
+# Replace all double quotes with single quotes in the summary
+neutral_summary = neutral_summary.replace('"', "'")
+
 # PR label types with associated metadata
 pr_label_types = {
     'PR: Active': ['Active', 'https://github.com/search?q=org%3Aramp4-pcar4+state%3A%22open%22+type%3A%22pr%22+label%3A%22PR%3A+Active%22&type=pullrequests'],
