@@ -405,7 +405,7 @@ let config = {
                     }
                 },
                 appbar: {
-                    items: ['legend', 'geosearch']
+                    items: ['legend', 'geosearch', 'basemap', 'export', 'layer-reorder']
                 },
                 mapnav: {
                     items: ['fullscreen', 'geolocator', 'help', 'home', 'basemap']
@@ -1258,7 +1258,7 @@ let config3 = {
 };
 
 let options = {
-    loadDefaultFixtures: false,
+    loadDefaultFixtures: true,
     loadDefaultEvents: true,
     startRequired: false
 };
@@ -1268,15 +1268,15 @@ let options2 = {
     startRequired: false
 };
 
-const rInstance = createInstance(document.getElementById('app'), config, options);
-createInstance(document.getElementById('app2'), config2, options2);
-createInstance(document.getElementById('app3'), config3, options2);
+const rInstance1 = createInstance(document.getElementById('app'), config, options);
+const rInstance2 = createInstance(document.getElementById('app2'), config2, options2);
+const rInstance3 = createInstance(document.getElementById('app3'), config3, options2);
 
-rInstance.fixture.addDefaultFixtures().then(() => {
-    rInstance.panel.open('legend');
+rInstance1.fixture.addDefaultFixtures().then(() => {
+    rInstance1.panel.open('legend');
 });
 
-rInstance.$element.component('WFSLayer-Custom', {
+rInstance1.$element.component('WFSLayer-Custom', {
     props: ['identifyData'],
     template: `
         <div>
@@ -1286,7 +1286,7 @@ rInstance.$element.component('WFSLayer-Custom', {
     `
 });
 
-rInstance.$element.component('Water-Quantity-Template', {
+rInstance1.$element.component('Water-Quantity-Template', {
     props: ['identifyData'],
     template: `
         <div style="align-items: center; justify-content: center; font-size: 14px; font-family: Arial, sans-serif;">
@@ -1360,7 +1360,9 @@ rInstance.$element.component('Water-Quantity-Template', {
 });
 
 // add export fixtures
-rInstance.fixture.add('export');
+rInstance1.fixture.add('export');
+rInstance2.fixture.add('export');
+rInstance3.fixture.add('export');
 
 // load map if startRequired is true
 // rInstance.start();
@@ -1384,4 +1386,6 @@ rInstance.fixture.add('export');
 //         'Animate: ' + rInstance.animate;
 // }
 
-window.debugInstance = rInstance;
+window.debugInstance = rInstance1;
+window.debugInstance2 = rInstance2;
+window.debugInstance3 = rInstance3;
