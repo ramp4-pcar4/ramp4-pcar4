@@ -778,7 +778,7 @@ const generateColour = () => {
     // generate unique ID for colour picker to prevent multi-ramp collisions
     do {
         colourPickerId.value = Math.random().toString(36).substring(2, 9);
-    } while (document.getElementById(colourPickerId.value + '-hue-slider') !== null);
+    } while (iApi.$vApp.$el.getElementById(colourPickerId.value + '-hue-slider') !== null);
 };
 
 const updateColour = (eventData: any) => {

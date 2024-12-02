@@ -567,7 +567,9 @@ const onGridReady = (params: any) => {
     }
 
     const addAriaLabels = () => {
-        const checkboxInputs = document.querySelectorAll('.ag-input-field-input.ag-checkbox-input');
+        const checkboxInputs = iApi.$vApp.$el.querySelectorAll(
+            '.ag-input-field-input.ag-checkbox-input'
+        ) as NodeListOf<Element>;
         checkboxInputs.forEach((input, index) => {
             const allColumns = columnApi.value.getAllDisplayedColumns();
             const column = allColumns[index].getColDef();
@@ -1617,7 +1619,7 @@ onBeforeMount(() => {
         },
         onBodyScroll: () => {
             // prevent tooltips from leaving grid panel on scroll
-            [...document.querySelectorAll('[id^=tippy]')].forEach((element: any) => {
+            [...iApi.$vApp.$el.querySelectorAll('[id^=tippy]')].forEach((element: any) => {
                 if (element._tippy && el.value?.contains(element._tippy.reference)) {
                     element._tippy.hide();
                 }

@@ -93,9 +93,9 @@ const updateNortharrow = async (newExtent: Extent) => {
         }
     }
 
-    const innerShell = document.querySelector('.inner-shell')!;
+    const innerShell = iApi.$vApp.$el.querySelector('.inner-shell')!;
     const arrowWidth = el.value.querySelector('.northarrow')!.getBoundingClientRect().width;
-    const appbarWidth = document.querySelector('.appbar')?.clientWidth || 0;
+    const appbarWidth = iApi.$vApp.$el.querySelector('.appbar')?.clientWidth || 0;
     const sr = newExtent.sr;
 
     if (hasNorthPole || (typeof hasNorthPole === 'undefined' && !sr.isWebMercator())) {

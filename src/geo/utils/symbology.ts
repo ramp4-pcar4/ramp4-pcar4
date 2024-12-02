@@ -91,7 +91,7 @@ export class SymbologyAPI extends APIScope {
      * @return {Promise} a promise resolving with symbology svg code and its label
      */
     async generateWMSSymbology(imageUri: string): Promise<Object> {
-        const draw = svgjs(window.document.createElement('div'))
+        const draw = svgjs(document.createElement('div'))
             .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
             .viewbox(0, 0, 0, 0);
 
@@ -167,7 +167,7 @@ export class SymbologyAPI extends APIScope {
      */
     async renderSymbologyImage(imageUri: string, draw: any = null): Promise<string> {
         if (draw === null) {
-            draw = svgjs(window.document.createElement('div'))
+            draw = svgjs(document.createElement('div'))
                 .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
                 .viewbox(0, 0, 0, 0);
         }
@@ -202,9 +202,9 @@ export class SymbologyAPI extends APIScope {
     async renderSymbologyIcon(imageUri: string, draw: any = null): Promise<string> {
         if (draw === null) {
             // create a temporary svg element and add it to the page; if not added, the element's bounding box cannot be calculated correctly
-            const container = window.document.createElement('div');
+            const container = document.createElement('div');
             container.setAttribute('style', 'opacity:0;position:fixed;left:100%;top:100%;overflow:hidden');
-            window.document.body.appendChild(container);
+            document.body.appendChild(container);
 
             draw = svgjs(container)
                 .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
@@ -233,7 +233,7 @@ export class SymbologyAPI extends APIScope {
      * @return {Object} symbology svg code and its label
      */
     generatePlaceholderSymbology(name: string, colour = '#000'): any {
-        const draw = svgjs(window.document.createElement('div'))
+        const draw = svgjs(document.createElement('div'))
             .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
             .viewbox(0, 0, this.CONTAINER_SIZE, this.CONTAINER_SIZE);
 
@@ -263,7 +263,7 @@ export class SymbologyAPI extends APIScope {
     }
 
     async generateBlankSymbology(): Promise<string> {
-        return svgjs(window.document.createElement('div')).size(this.CONTAINER_SIZE, this.CONTAINER_SIZE).svg();
+        return svgjs(document.createElement('div')).size(this.CONTAINER_SIZE, this.CONTAINER_SIZE).svg();
     }
 
     /**
@@ -294,9 +294,9 @@ export class SymbologyAPI extends APIScope {
         const pts2Pxl = 1.33333; // points to pixels factor
 
         // create a temporary svg element and add it to the page; if not added, the element's bounding box cannot be calculated correctly
-        const container = window.document.createElement('div');
+        const container = document.createElement('div');
         container.setAttribute('style', 'opacity:0;position:fixed;left:100%;top:100%;overflow:hidden');
-        window.document.body.appendChild(container);
+        document.body.appendChild(container);
 
         const draw = svgjs(container)
             .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
@@ -606,7 +606,7 @@ export class SymbologyAPI extends APIScope {
             await Promise.resolve(symbolTypes[symbol.type]());
 
             // remove element from the page
-            window.document.body.removeChild(container);
+            document.body.removeChild(container);
             return draw.svg();
         } catch (error) {
             console.error(error);
