@@ -579,7 +579,13 @@ export class InstanceAPI {
             return;
         }
         const configStore = useConfigStore(this.$vApp.$pinia);
+        const notificationStore = useNotificationStore(this.$vApp.$pinia);
         const langs = configStore.registeredLangs;
+
+        // If monoconfig, clear all notifications (notification language isn't changed on lang change)
+        if (Object.keys(configStore.registeredConfigs).length === 1) {
+            notificationStore.clearAll();
+        }
 
         const old = this.$i18n.locale.value;
         this.$i18n.locale.value = language;
