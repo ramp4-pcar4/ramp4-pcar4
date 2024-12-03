@@ -60,6 +60,7 @@ function esDynamicConfig() {
         build: {
             outDir: `${distName}/esDynamic`,
             copyPublicDir: false,
+            sourcemap: true,
             lib: {
                 fileName: `ramp`,
                 formats: ['es']

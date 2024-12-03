@@ -8,7 +8,11 @@
     "style": "./dist/esDynamic/ramp.css",
     "types": "./dist/ts/main.d.ts",
     "files": [
-        "dist"
+        "dist/esDynamic",
+        "dist/bundler",
+        "dist/help",
+        "dist/*.js",
+        "dist/*.css"
     ],
     "scripts": {
         "dev": "vite",
