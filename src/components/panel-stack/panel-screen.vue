@@ -48,7 +48,7 @@
             </div>
         </header>
 
-        <div v-if="content" class="p-8 flex-grow overflow-y-auto">
+        <div v-if="content" class="p-8 flex-grow overflow-y-auto" ref="contentEl">
             <slot name="content" v-if="$slots.content"></slot>
             <div v-else-if="screenContent" v-html="screenContent.innerHTML"></div>
         </div>
@@ -73,6 +73,8 @@ const panelStore = usePanelStore();
 const appbarStore = useAppbarStore();
 const iApi = inject<InstanceAPI>('iApi');
 const el = ref<HTMLElement>();
+const contentEl = ref<HTMLElement>();
+const contentResizeObserver = ref<ResizeObserver | null>();
 
 const props = defineProps({
     // prop indicating if the `header` slot should be rendered
@@ -103,6 +105,10 @@ const temporary = computed((): Array<string> | undefined => (iApi?.fixture.get('
 const mobileView = computed(() => panelStore.mobileView);
 const reorderable = computed(() => panelStore.reorderable);
 
+const isScrollable = (element: HTMLElement) => {
+    return element.scrollHeight > element.clientHeight;
+};
+
 const checkMode = () => !mobileView.value && !props.panel.teleport;
 const move = (direction: PanelDirection) => {
     props.panel.move(direction);
@@ -127,6 +133,15 @@ onMounted(() => {
             (el.value as any)._tippy.show();
         }
     });
+
+    contentResizeObserver.value = new ResizeObserver(() => {
+        if (isScrollable(contentEl.value!)) {
+            contentEl.value?.setAttribute('tabIndex', '0');
+        } else {
+            contentEl.value?.removeAttribute('tabIndex');
+        }
+    });
+    contentResizeObserver.value.observe(contentEl.value!);
 });
 
 onBeforeUnmount(() => {
@@ -139,6 +154,7 @@ onBeforeUnmount(() => {
             (el.value as any)._tippy.show();
         }
     });
+    contentResizeObserver.value!.disconnect();
 });
 </script>
 
