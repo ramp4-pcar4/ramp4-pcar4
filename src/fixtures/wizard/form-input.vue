@@ -2,7 +2,7 @@
     <div class="input-wrapper mb-12" ref="el">
         <div v-if="type === 'file'">
             <label class="text-base font-bold">{{ label }}</label>
-            <div class="relative py-8 mb-0.5 h-75" data-type="file">
+            <div class="relative py-8 mb-0.5 h-75 hover:bg-gray-200 focus-within:bg-gray-200" data-type="file">
                 <input
                     class="absolute w-full opacity-0 inset-0 cursor-pointer"
                     type="file"
@@ -43,6 +43,7 @@
                             handleUrlInput(event);
                         }
                     "
+                    ref="urlInput"
                 />
             </div>
             <div v-if="urlError" class="text-red-900 text-xs">
@@ -125,7 +126,7 @@
                             trigger: 'manual',
                             placement: 'top-start'
                         }"
-                        ref="wizardSelect"
+                        ref="selectInput"
                     >
                         <option class="p-6" v-for="option in options" :key="option.label" :value="option.value">
                             {{ option.label }}
@@ -170,6 +171,7 @@
                             handleNameInput(event);
                         }
                     "
+                    ref="textInput"
                 />
             </div>
             <div v-if="validation && !modelValue" class="text-red-900 text-xs">
@@ -181,7 +183,7 @@
 
 <script setup lang="ts">
 import type { InstanceAPI } from '@/api';
-import { inject, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+import { inject, onBeforeUnmount, onMounted, reactive, ref, useTemplateRef, watch } from 'vue';
 import type { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import Treeselect from '@ramp4-pcar4/vue3-treeselect';
@@ -194,11 +196,16 @@ interface ValidationMsgs {
 }
 
 const iApi = inject<InstanceAPI>('iApi');
+
 const { t } = useI18n();
 
-const emit = defineEmits(['update:modelValue', 'link', 'select', 'upload', 'text', 'nested']);
+const emit = defineEmits(['update:modelValue', 'link', 'select', 'upload', 'text', 'nested', 'focusElement']);
 
 const props = defineProps({
+    activeStep: {
+        type: Number,
+        default: 0
+    },
     defaultOption: {
         type: Boolean,
         default: false
@@ -255,6 +262,10 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    step: {
+        type: Number,
+        default: 0
+    },
     type: {
         type: String,
         default: 'text'
@@ -277,6 +288,11 @@ const props = defineProps({
 });
 
 const el = ref();
+const textInput = useTemplateRef('textInput');
+const selectInput = useTemplateRef('selectInput');
+const urlInput = useTemplateRef('urlInput');
+defineExpose({ selectInput, textInput, urlInput });
+
 const valid = ref(false);
 const urlError = ref(false);
 const nameError = ref(false);
@@ -287,7 +303,6 @@ const optionLabel = ref('option-label');
 const resizeObserver = ref<ResizeObserver | undefined>(undefined);
 const treeWrapper = ref<HTMLElement | null>(null);
 const watchers = reactive<Array<Function>>([]);
-const wizardSelect = ref<Element>();
 
 if (props.defaultOption && props.modelValue === '' && props.options.length) {
     // regex to guess closest default value for lat/long fields
@@ -403,25 +418,26 @@ const addAriaLabel = () => {
 };
 
 const blurEvent = () => {
-    (wizardSelect.value as any)._tippy.hide();
+    (selectInput.value as any)._tippy.hide();
 };
 
 const keyupEvent = (e: Event) => {
     const evt = e as KeyboardEvent;
-    if (
-        evt.key === 'Tab' &&
-        wizardSelect.value?.matches(':focus') &&
-        navigator.userAgent.includes('Firefox')
-    ) {
-        (wizardSelect.value as any)._tippy.show();
+    if (evt.key === 'Tab' && selectInput.value?.matches(':focus') && navigator.userAgent.includes('Firefox')) {
+        (selectInput.value as any)._tippy.show();
     } else {
-        (wizardSelect.value as any)._tippy.hide();
+        (selectInput.value as any)._tippy.hide();
     }
 };
 
 onMounted(() => {
-    wizardSelect.value?.addEventListener('blur', blurEvent);
-    wizardSelect.value?.addEventListener('keyup', keyupEvent);
+    selectInput.value?.addEventListener('blur', blurEvent);
+    selectInput.value?.addEventListener('keyup', keyupEvent);
+
+    // only needed for wizard step 3, which takes longer to mount than the other steps
+    if (props.step === 2 && props.step === props.activeStep) {
+        emit('focusElement');
+    }
 });
 
 onBeforeUnmount(() => {
@@ -429,8 +445,8 @@ onBeforeUnmount(() => {
     resizeObserver.value!.disconnect();
     watchers.forEach(unwatch => unwatch());
 
-    wizardSelect.value?.removeEventListener('blur', blurEvent);
-    wizardSelect.value?.removeEventListener('keyup', keyupEvent);
+    selectInput.value?.removeEventListener('blur', blurEvent);
+    selectInput.value?.removeEventListener('keyup', keyupEvent);
 });
 </script>
 

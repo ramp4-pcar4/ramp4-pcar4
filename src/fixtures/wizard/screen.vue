@@ -1,5 +1,5 @@
 <template>
-    <panel-screen :panel="panel">
+    <panel-screen :panel="panel" ref="thePanel">
         <template #header>
             {{ t('wizard.title') }}
         </template>
@@ -7,7 +7,12 @@
         <template #content>
             <stepper :activeStep="step">
                 <!-- Upload data wizard step -->
-                <stepper-item :title="t('wizard.upload.title')" :summary="url">
+                <stepper-item
+                    :title="t('wizard.upload.title')"
+                    :summary="url"
+                    @focusPanel="refocusPanel"
+                    @focusFirstElement="focusFirst"
+                >
                     <form name="upload" @submit="onUploadContinue" @click="layerReady = false">
                         <!-- Upload a file -->
                         <wizard-input
@@ -33,6 +38,7 @@
                                 invalid: t('wizard.upload.url.error.url')
                             }"
                             :aria-label="t('wizard.upload.url.label')"
+                            ref="stepOneStart"
                         />
                         <wizard-form-footer
                             @submit="onUploadContinue"
@@ -43,7 +49,11 @@
                 </stepper-item>
 
                 <!-- Select format wizard step -->
-                <stepper-item :title="t('wizard.format.title')" :summary="displayFormat">
+                <stepper-item
+                    :title="t('wizard.format.title')"
+                    :summary="displayFormat"
+                    @focusFirstElement="focusFirst"
+                >
                     <form name="format" @submit="onSelectContinue">
                         <!-- List of file/service types based on layer -->
 
@@ -82,20 +92,11 @@
                             }"
                             @keydown.stop
                             :aria-label="t('wizard.format.type.service')"
+                            ref="stepTwoStart"
                         />
                         <wizard-form-footer
                             @submit="onSelectContinue"
-                            @cancel="
-                                () => {
-                                    disabled = false;
-                                    formatError = false;
-                                    failureError = false;
-                                    url ? (goNext = true) : (goNext = false);
-                                    validation = false;
-                                    wizardStore.goToStep(0);
-                                    displayFormat = '';
-                                }
-                            "
+                            @cancel="cancelFormatStep"
                             :animation="true"
                             :disabled="disabled"
                         />
@@ -103,7 +104,7 @@
                 </stepper-item>
 
                 <!-- Configure layer wizard step -->
-                <stepper-item :title="t('wizard.configure.title')">
+                <stepper-item :title="t('wizard.configure.title')" @focusFirstElement="focusFirst">
                     <form name="configure" @submit="onConfigureContinue" ref="formElement">
                         <wizard-input
                             v-if="layerInfo?.configOptions.includes(`name`)"
@@ -117,6 +118,10 @@
                             :validation-messages="{
                                 required: t('wizard.configure.name.error.required')
                             }"
+                            ref="stepThreeStart"
+                            @focusElement="focusStepThree"
+                            :activeStep="step"
+                            :step="2"
                         />
                         <wizard-input
                             v-if="layerInfo?.configOptions.includes(`nameField`)"
@@ -257,11 +262,10 @@ import {
     onMounted,
     reactive,
     ref,
-    type PropType
+    type PropType,
+    useTemplateRef
 } from 'vue';
 
-// below import is causing error because of revert to old version (from 5.0.1 to 4.1.4)
-//@ts-ignore
 import { ColorPicker } from 'vue-accessible-color-picker';
 
 import type { InstanceAPI, PanelInstance } from '@/api';
@@ -299,6 +303,10 @@ const colour = ref();
 const colourPickerId = ref();
 const componentKey = ref(0);
 const disabled = ref(false);
+const thePanel = ref();
+const stepOneStart = useTemplateRef('stepOneStart');
+const stepTwoStart = useTemplateRef('stepTwoStart');
+const stepThreeStart = useTemplateRef('stepThreeStart');
 
 const formatError = ref(false);
 const failureError = ref(false);
@@ -461,6 +469,54 @@ onBeforeUnmount(() => {
     handlers.value.forEach(handler => iApi.event.off(handler));
 });
 
+// only needed for wizard step 1, when a file is uploaded (and thus the 'continue' button isn't pressed)
+const refocusPanel = () => {
+    const panelContainer = thePanel.value.el;
+    panelContainer.dispatchEvent(new MouseEvent('click'));
+};
+
+// sets focus to the first input component of the currently active wizard step
+const focusFirst = () => {
+    switch (step.value) {
+        case 0:
+            focusStepOne();
+            break;
+        case 1:
+            focusStepTwo();
+            break;
+        case 2:
+            focusStepThree();
+            break;
+    }
+};
+
+const focusStepOne = () => {
+    for (let inputRef in stepOneStart.value) {
+        if (stepOneStart.value[inputRef]) {
+            stepOneStart.value[inputRef].focus();
+            break;
+        }
+    }
+};
+
+const focusStepTwo = () => {
+    for (let inputRef in stepTwoStart.value) {
+        if (stepTwoStart.value[inputRef]) {
+            stepTwoStart.value[inputRef].focus();
+            break;
+        }
+    }
+};
+
+const focusStepThree = () => {
+    for (let inputRef in stepThreeStart.value) {
+        if (stepThreeStart.value[inputRef]) {
+            stepThreeStart.value[inputRef].focus();
+            break;
+        }
+    }
+};
+
 // reads uploaded file
 const uploadFile = async (file: File) => {
     const reader = new FileReader();
@@ -489,6 +545,8 @@ const onSelectContinue = async (event: any) => {
     disabled.value = true;
     failureError.value = false;
     validation.value = true;
+
+    wizardStore.goToStep(WizardStep.CONFIGURE);
 
     displayFormat.value = isFileLayer()
         ? (fileTypeOptions.find(element => element.value === typeSelection.value)?.label as string)
@@ -529,8 +587,6 @@ const onSelectContinue = async (event: any) => {
     }
 
     generateColour();
-
-    wizardStore.goToStep(WizardStep.CONFIGURE);
 
     finishStep.value = !(layerInfo.value.configOptions.includes('sublayers') || !layerInfo.value!.config.name);
 
@@ -793,6 +849,17 @@ const updateColour = (eventData: any) => {
 const cancelServiceStep = () => {
     goNext.value = false;
     wizardStore.goToStep(0);
+    focusStepOne();
+};
+
+const cancelFormatStep = () => {
+    disabled.value = false;
+    formatError.value = false;
+    failureError.value = false;
+    goNext.value = !!url.value;
+    validation.value = false;
+    wizardStore.goToStep(0);
+    displayFormat.value = '';
 };
 
 const cancelNameStep = () => {

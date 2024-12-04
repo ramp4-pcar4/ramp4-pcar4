@@ -38,7 +38,7 @@
             </div>
         </div>
         <transition name="step" mode="out-in">
-            <div class="pl-36" v-show="active()">
+            <div class="pl-36" v-show="active()" ref="stepItem">
                 <!-- step content -->
                 <slot></slot>
             </div>
@@ -47,11 +47,13 @@
 </template>
 
 <script setup lang="ts">
-import { inject, onMounted, ref } from 'vue';
+import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 
 const stepper = inject('stepper') as any;
+const stepItem = ref<HTMLElement>();
+const emit = defineEmits(['focusPanel', 'focusFirstElement']);
 
-defineProps({
+const props = defineProps({
     title: {
         type: String,
         required: true
@@ -63,8 +65,25 @@ defineProps({
 
 const index = ref(-1);
 
+// when the respective step item has been passed, the focusout event will have a 'relatedTarget' value of null
+// which indicates to the FocusContainerManager that focus has exited the panel, so it then disables tabbing for
+// all elements of the panel. To avoid this, we stop the event from propagating. We then set focus to the first
+// input element of the current wizard step
+const focusOutHandler = (event: FocusEvent) => {
+    if (!active()) {
+        event.stopPropagation();
+        emit('focusPanel');
+        emit('focusFirstElement');
+    }
+};
+
 onMounted(() => {
     index.value = stepper.numSteps++;
+    stepItem.value?.addEventListener('focusout', focusOutHandler);
+});
+
+onBeforeUnmount(() => {
+    stepItem.value?.removeEventListener('focusout', focusOutHandler);
 });
 
 const done = () => {
