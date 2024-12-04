@@ -3,6 +3,7 @@ import mkcert from 'vite-plugin-mkcert';
 import vue from '@vitejs/plugin-vue';
 import VitePluginI18n from './scripts/vite-plugin-i18n';
 import VitePluginVersion from './scripts/vite-plugin-version';
+import ViteMinifyEsPlugin from './scripts/vite-minify-es-plugin';
 import { resolve } from 'path';
 import pkg from './package.json';
 
@@ -20,23 +21,14 @@ const baseConfig = {
         }
     },
     build: {
-        copyPublicDir: false,
         target: 'esnext',
         emptyOutDir: false,
         outDir: distName,
-        cssMinify: false,
-        minify: false,
+        sourcemap: false,
         lib: {
             entry: resolve(__dirname, 'src/main.ts'),
-            name: 'RAMP'
-        },
-        rollupOptions: {
-            output: {
-                inlineDynamicImports: true,
-                assetFileNames: (assetInfo: any) => {
-                    return assetInfo.name === 'style.css' ? 'bad.css' : assetInfo.name;
-                }
-            }
+            name: 'RAMP',
+            cssFileName: 'ramp'
         }
     },
     server: {
@@ -48,8 +40,6 @@ const baseConfig = {
 function inlineConfig() {
     return mergeConfig(baseConfig, {
         build: {
-            cssMinify: true,
-            minify: true,
             sourcemap: true,
             lib: {
                 fileName: (format: string) => `ramp.browser.${format}.js`,
@@ -57,9 +47,7 @@ function inlineConfig() {
             },
             rollupOptions: {
                 output: {
-                    assetFileNames: (assetInfo: any) => {
-                        return assetInfo.name === 'style.css' ? 'ramp.css' : assetInfo.name;
-                    }
+                    inlineDynamicImports: true
                 }
             }
         }
@@ -67,27 +55,20 @@ function inlineConfig() {
 }
 
 function esDynamicConfig() {
-    return mergeConfig(baseConfig, {
+    const config = mergeConfig(baseConfig, {
         build: {
             outDir: `${distName}/esDynamic`,
-            minify: true,
+            copyPublicDir: false,
             sourcemap: true,
-            cssMinify: true,
             lib: {
                 fileName: `ramp`,
                 formats: ['es']
-            },
-            rollupOptions: {
-                output: {
-                    inlineDynamicImports: false,
-                    assetFileNames: (assetInfo: any) => {
-                        return assetInfo.name === 'style.css' ? 'ramp.css' : assetInfo.name;
-                    }
-                }
             }
         },
         esbuild: { legalComments: 'none' }
     });
+    config.plugins.push(ViteMinifyEsPlugin());
+    return config;
 }
 
 function npmBundleConfig() {
@@ -95,6 +76,8 @@ function npmBundleConfig() {
 
     const config = mergeConfig(baseConfig, {
         build: {
+            outDir: `${distName}/bundler`,
+            copyPublicDir: false,
             lib: {
                 fileName: 'ramp.bundle.es',
                 formats: ['es']

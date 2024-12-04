@@ -6,8 +6,7 @@
         "cypress.config.*",
         "nightwatch.conf.*",
         "playwright.config.*",
-        "./scripts/vite-plugin-i18n.ts",
-        "./scripts/vite-plugin-version.ts"
+        "./scripts/**/*.ts"
     ],
     "compilerOptions": {
         "composite": true,
