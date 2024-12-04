@@ -9,7 +9,7 @@ import EsriBasemap from '@arcgis/core/Basemap';
 import EsriColour from '@arcgis/core/Color';
 import EsriConfig from '@arcgis/core/config';
 import EsriExtent from '@arcgis/core/geometry/Extent';
-import EsriGeometry from '@arcgis/core/geometry/Geometry';
+import type EsriGeometry from '@arcgis/core/geometry/Geometry';
 import EsriMultipoint from '@arcgis/core/geometry/Multipoint';
 import EsriPoint from '@arcgis/core/geometry/Point';
 import EsriPolygon from '@arcgis/core/geometry/Polygon';
@@ -25,16 +25,16 @@ import EsriOpenStreetMapLayer from '@arcgis/core/layers/OpenStreetMapLayer';
 import EsriTileLayer from '@arcgis/core/layers/TileLayer';
 import EsriWMSLayer from '@arcgis/core/layers/WMSLayer';
 import EsriField from '@arcgis/core/layers/support/Field';
-import EsriLOD from '@arcgis/core/layers/support/LOD';
-import EsriWMSSublayer from '@arcgis/core/layers/support/WMSSublayer';
+import type EsriLOD from '@arcgis/core/layers/support/LOD';
+import type EsriWMSSublayer from '@arcgis/core/layers/support/WMSSublayer';
 import EsriMap from '@arcgis/core/Map';
-import EsriClassBreaksRenderer from '@arcgis/core/renderers/ClassBreaksRenderer';
-import EsriRenderer from '@arcgis/core/renderers/Renderer';
+import type EsriClassBreaksRenderer from '@arcgis/core/renderers/ClassBreaksRenderer';
+import type EsriRenderer from '@arcgis/core/renderers/Renderer';
 import EsriSimpleRenderer from '@arcgis/core/renderers/SimpleRenderer';
-import EsriUniqueValueRenderer from '@arcgis/core/renderers/UniqueValueRenderer';
-import EsriClassBreakInfo from '@arcgis/core/renderers/support/ClassBreakInfo';
+import type EsriUniqueValueRenderer from '@arcgis/core/renderers/UniqueValueRenderer';
+import type EsriClassBreakInfo from '@arcgis/core/renderers/support/ClassBreakInfo';
 import { fromJSON as EsriRendererFromJson } from '@arcgis/core/renderers/support/jsonUtils';
-import EsriUniqueValueInfo from '@arcgis/core/renderers/support/UniqueValueInfo';
+import type EsriUniqueValueInfo from '@arcgis/core/renderers/support/UniqueValueInfo';
 import EsriRequest from '@arcgis/core/request';
 import { executeForIds as EsriQueryByIds } from '@arcgis/core/rest/query';
 import EsriQuery from '@arcgis/core/rest/support/Query';
@@ -42,7 +42,7 @@ import EsriPictureMarkerSymbol from '@arcgis/core/symbols/PictureMarkerSymbol';
 import EsriSimpleFillSymbol from '@arcgis/core/symbols/SimpleFillSymbol';
 import EsriSimpleLineSymbol from '@arcgis/core/symbols/SimpleLineSymbol';
 import EsriSimpleMarkerSymbol from '@arcgis/core/symbols/SimpleMarkerSymbol';
-import EsriSymbol from '@arcgis/core/symbols/Symbol';
+import type EsriSymbol from '@arcgis/core/symbols/Symbol';
 import { fromJSON as EsriSymbolFromJson } from '@arcgis/core/symbols/support/jsonUtils';
 import EsriFeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
 import EsriMapView from '@arcgis/core/views/MapView';
@@ -51,8 +51,8 @@ import EsriColorBackground from '@arcgis/core/webmap/background/ColorBackground'
 // sorted by name
 export {
     EsriBasemap,
-    EsriClassBreakInfo,
-    EsriClassBreaksRenderer,
+    type EsriClassBreakInfo,
+    type EsriClassBreaksRenderer,
     EsriColour,
     EsriColorBackground,
     EsriConfig,
@@ -60,12 +60,12 @@ export {
     EsriFeatureFilter,
     EsriFeatureLayer,
     EsriField,
-    EsriGeometry,
+    type EsriGeometry,
     EsriGeometryFromJson,
     EsriGraphic,
     EsriGraphicsLayer,
     EsriImageryLayer,
-    EsriLOD,
+    type EsriLOD,
     EsriMap,
     EsriMapImageLayer,
     EsriMapView,
@@ -77,7 +77,7 @@ export {
     EsriPolyline,
     EsriQuery,
     EsriQueryByIds,
-    EsriRenderer,
+    type EsriRenderer,
     EsriRendererFromJson,
     EsriRequest,
     EsriSimpleFillSymbol,
@@ -85,11 +85,11 @@ export {
     EsriSimpleMarkerSymbol,
     EsriSimpleRenderer,
     EsriSpatialReference,
-    EsriSymbol,
+    type EsriSymbol,
     EsriSymbolFromJson,
     EsriTileLayer,
-    EsriUniqueValueInfo,
-    EsriUniqueValueRenderer,
+    type EsriUniqueValueInfo,
+    type EsriUniqueValueRenderer,
     EsriWMSLayer,
-    EsriWMSSublayer
+    type EsriWMSSublayer
 };

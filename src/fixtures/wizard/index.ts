@@ -1,6 +1,5 @@
 import { markRaw } from 'vue';
 import { WizardAPI } from './api/wizard';
-import WizardScreenV from './screen.vue';
 import { LayerSource } from './store/layer-source';
 import messages from './lang/lang.csv?raw';
 import { useWizardStore } from './store';
@@ -13,7 +12,7 @@ class WizardFixture extends WizardAPI {
             {
                 wizard: {
                     screens: {
-                        'wizard-screen': markRaw(WizardScreenV)
+                        'wizard-screen': () => markRaw(import('./screen.vue'))
                     },
                     button: {
                         tooltip: 'wizard.title',

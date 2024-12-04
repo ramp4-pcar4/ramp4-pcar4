@@ -1,6 +1,5 @@
 import { DetailsAPI } from './api/details';
 import { type DetailsConfig, useDetailsStore } from './store';
-import DetailsScreenV from './details-screen.vue';
 import messages from './lang/lang.csv?raw';
 
 import { markRaw } from 'vue';
@@ -12,7 +11,7 @@ class DetailsFixture extends DetailsAPI {
             {
                 details: {
                     screens: {
-                        'details-screen': markRaw(DetailsScreenV)
+                        'details-screen': () => markRaw(import('./details-screen.vue'))
                     },
                     style: {
                         width: '425px'

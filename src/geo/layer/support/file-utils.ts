@@ -2,10 +2,7 @@ import { APIScope } from '@/api/internal';
 import defaultRenderers from './defaultRenderers.json';
 import ArcGIS from 'terraformer-arcgis-parser';
 import { csv2geojson, dsv } from 'csv2geojson';
-import shp from 'shpjs/dist/shp.min.js';
 import axios from 'redaxios';
-import JSZip from 'jszip';
-import { geojson as fgbgeojson } from 'flatgeobuf';
 import type { CrsMeta } from 'flatgeobuf';
 
 import { EsriSimpleRenderer } from '@/geo/esri';
@@ -610,7 +607,8 @@ export class FileUtils extends APIScope {
      * @returns {Promise} a promise resolving with geojson
      */
     async shapefileToGeoJson(shapeData: ArrayBuffer): Promise<any> {
-        return shp(shapeData);
+        const shp = await import('shpjs/dist/shp.min.js');
+        return shp.default(shapeData);
     }
 
     /**
@@ -626,57 +624,59 @@ export class FileUtils extends APIScope {
         // blocks the thread before the polling loop can start. So using a small number
         // here as it will only hit the interval once unless something goes horribly wrong.
         const pollingSpeed = 60;
-        return new Promise(resolve => {
-            let headerDone = false;
-            let projection: CrsMeta | null = null; // fgb lib returns null, so we disrespect convention here
+        return import('flatgeobuf').then(({ geojson }) => {
+            return new Promise(resolve => {
+                let headerDone = false;
+                let projection: CrsMeta | null = null; // fgb lib returns null, so we disrespect convention here
 
-            // Uint8Array variant of deserialize is synchronous
-            const geoJson = fgbgeojson.deserialize(new Uint8Array(fgbData), undefined, headerMeta => {
-                projection = headerMeta.crs;
-                headerDone = true;
-            });
+                // Uint8Array variant of deserialize is synchronous
+                const geoJson = geojson.deserialize(new Uint8Array(fgbData), undefined, headerMeta => {
+                    projection = headerMeta.crs;
+                    headerDone = true;
+                });
 
-            let kickTimer = 0;
+                let kickTimer = 0;
 
-            // wait for file content and header to appear
-            const waitingFun = setInterval(() => {
-                if (geoJson && headerDone) {
-                    clearInterval(waitingFun);
+                // wait for file content and header to appear
+                const waitingFun = setInterval(() => {
+                    if (geoJson && headerDone) {
+                        clearInterval(waitingFun);
 
-                    // pick apart spatial reference.
+                        // pick apart spatial reference.
 
-                    let customProj: SpatialReference | undefined;
+                        let customProj: SpatialReference | undefined;
 
-                    if (projection) {
-                        if (projection.code && projection.code !== 4326 && projection.org === 'EPSG') {
-                            // has an EPSG code that is not lat lon
-                            customProj = new SpatialReference(projection.code);
-                        } else if (projection.wkt) {
-                            // no code or non-ESPG code, but there is a wkt. use it.
-                            customProj = new SpatialReference(projection.wkt);
-                        } else {
-                            // no idea what this could be. log it and add support later as need arises.
-                            // currently code will act as if Lat Lon, likely will not show geometry.
-                            console.error('Encountered FlatGeobuf with non-EPSG org: ', projection);
+                        if (projection) {
+                            if (projection.code && projection.code !== 4326 && projection.org === 'EPSG') {
+                                // has an EPSG code that is not lat lon
+                                customProj = new SpatialReference(projection.code);
+                            } else if (projection.wkt) {
+                                // no code or non-ESPG code, but there is a wkt. use it.
+                                customProj = new SpatialReference(projection.wkt);
+                            } else {
+                                // no idea what this could be. log it and add support later as need arises.
+                                // currently code will act as if Lat Lon, likely will not show geometry.
+                                console.error('Encountered FlatGeobuf with non-EPSG org: ', projection);
+                            }
+                        }
+
+                        if (customProj) {
+                            // we found something that appears valid and is not lat lon. Add CRS to geojson object
+                            geoJson.crs = customProj.toGeoJSON();
+                        } // else it's lat lon or ???, default to lat lon (do nothing)
+
+                        resolve(geoJson);
+                    } else {
+                        kickTimer += pollingSpeed;
+                        if (kickTimer > maxLoadTime) {
+                            // took too long. stop.
+                            // handling code will ignore bogus result
+                            clearInterval(waitingFun);
+                            resolve({});
                         }
                     }
-
-                    if (customProj) {
-                        // we found something that appears valid and is not lat lon. Add CRS to geojson object
-                        geoJson.crs = customProj.toGeoJSON();
-                    } // else it's lat lon or ???, default to lat lon (do nothing)
-
-                    resolve(geoJson);
-                } else {
-                    kickTimer += pollingSpeed;
-                    if (kickTimer > maxLoadTime) {
-                        // took too long. stop.
-                        // handling code will ignore bogus result
-                        clearInterval(waitingFun);
-                        resolve({});
-                    }
-                }
-            }, pollingSpeed);
+                }, pollingSpeed);
+            });
         });
     }
 
@@ -731,7 +731,8 @@ export class FileUtils extends APIScope {
      * @returns {Promise<ArrayBuffer>} contents of the unzipped file as ArrayBuffer
      */
     async unzipSingleFile(zippedData: ArrayBuffer): Promise<ArrayBuffer> {
-        const zipper = new JSZip();
+        const JSZip = await import('jszip');
+        const zipper = new JSZip.default();
         const unzippedData = await zipper.loadAsync(zippedData);
         const fileName = Object.keys(unzippedData.files)[0];
         if (fileName && unzippedData.file(fileName)) {
