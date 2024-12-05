@@ -16,10 +16,10 @@ jobs:
                       Your demo site is ready! 🚀
 
                       Enhanced Testing:
-                      Samples: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/enhanced-samples.html
-                      Catalogue: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/enhanced-all.html
+                      Samples: https://${{github.event.pull_request.head.repo.owner.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/enhanced-samples.html
+                      Catalogue: https://${{github.event.pull_request.head.repo.owner.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/enhanced-all.html
 
                       Legacy Testing:
-                      Main: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/
-                      Catalogue: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/index-all.html
-                      Samples: https://${{github.event.pull_request.user.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/index-samples.html
+                      Main: https://${{github.event.pull_request.head.repo.owner.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/
+                      Catalogue: https://${{github.event.pull_request.head.repo.owner.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/index-all.html
+                      Samples: https://${{github.event.pull_request.head.repo.owner.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/index-samples.html
