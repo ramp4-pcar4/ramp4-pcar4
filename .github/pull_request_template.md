@@ -1,3 +1,5 @@
+*Add the appropriate PR labels BEFORE submitting it.*
+
 ### Related Item(s)
 *#Item 1*, *#Item 2*
 
