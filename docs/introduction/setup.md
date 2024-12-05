@@ -25,7 +25,7 @@ To enable demo previews on your forked repository, update the following settings
 
 ## Project Setup
 
-Download [Node v22.5.1](https://nodejs.org/en/blog/release/v22.5.1).
+Download [Node v23.3.0](https://nodejs.org/en/blog/release/v23.3.0).
 
 ```sh
 npm ci

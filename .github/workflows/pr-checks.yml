@@ -11,7 +11,7 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                  node-version: '22.5.1'
+                  node-version: '23.3.0'
                   cache: 'npm'
 
             - name: Try to restore node_modules folder from cache
