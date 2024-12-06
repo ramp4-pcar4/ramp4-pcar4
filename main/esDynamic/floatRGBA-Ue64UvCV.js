@@ -1,0 +1,1 @@
+import{aP as e}from"./main-C0SGMMlt.js";function l(r,a,o=0){const t=e(r,0,u);for(let n=0;n<4;n++)a[o+n]=Math.floor(256*s(t*c[n]))}function f(r,a=0){let o=0;for(let t=0;t<4;t++)o+=r[a+t]*i[t];return o}const c=[1,256,65536,16777216],i=[1/256,1/65536,1/16777216,1/4294967296],u=f(new Uint8ClampedArray([255,255,255,255]));function s(r){return r-Math.floor(r)}export{l as o,f as r};
