@@ -33,7 +33,7 @@ RAMP should still work on most other browsers, but we cannot promise support or 
 
 ### Project Setup
 
-Download [Node v22.5.1](https://nodejs.org/en/blog/release/v22.5.1).
+Download [Node v22.12.0](https://nodejs.org/en/blog/release/v22.12.0).
 
 ```sh
 npm ci
