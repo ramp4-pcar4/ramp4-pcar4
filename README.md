@@ -61,11 +61,11 @@ npm run build
 
 This command runs four parallel builds, each with a different target mode and use case. This is done because Vite and Rollup do not support multiple build configurations at the same time. The modes are:
 
-- `npm run build:npm`: This build generates the `dist/ramp.bundle.es.js` file which is the file that would be used if ramp is installed via npm. All `package.json` dependencies are excluded from this file, the consuming applications npm manager and build process will handle this.
+- `npm run build:npm`: This build generates the `dist/bundler` folder which contains RAMP library split into ES modules. This is the content that would be used if RAMP is installed via npm. All `package.json` dependencies are excluded from these files, the consuming applications npm manager and build process will handle this.
 
-- `npm run build:esDynamic`: This build generates the `dist/esDynamic` folder which contains the ramp library split into ES modules. This is useful for web applications that want dynamic imports to reduce the size of the initial bundle.
+- `npm run build:esDynamic`: This build generates the `dist/esDynamic` folder which contains the RAMP library split into ES modules. This is useful for web applications that want dynamic imports to reduce the size of the initial bundle.
 
-- `npm run build:inline`: This build generates the `dist/ramp.browser.es.js` and `dist/ramp.browser.iife.js` files which contain the entire ramp library as a single file. These files don't support dynamic imports and should only be used if the consuming environment doesn't support ES modules (use iife) and/or only one ramp file can be hosted.
+- `npm run build:inline`: This build generates the `dist/ramp.browser.es.js` and `dist/ramp.browser.iife.js` files which contain the entire RAMP library as a single file. These files don't support dynamic imports and should only be used if the consuming environment doesn't support ES modules (use iife) and/or only one RAMP file can be hosted.
 
 - `npm run build:demos`: This build generates the `dist/demos` folder which contains the demo files. These files are the closest representation of a local develop serve.
 
@@ -114,7 +114,7 @@ Static site generated in the `ts-docs` directory. Open `index.html` to preview.
 
 ### public vs demos folders
 
-The `public` folder is a **static only** folder. It contains the help md files and end-user demo assets and the compiled ramp library source code. Files in this folder are not processed by vite and therefore cannot reference outside files. This is useful for testing if things are broken between the develop and production build.
+The `public` folder is a **static only** folder. It contains the help md files and end-user demo assets and the compiled RAMP library source code. Files in this folder are not processed by vite and therefore cannot reference outside files. This is useful for testing if things are broken between the develop and production build.
 
 To test the files in the `public` folder locally:
 

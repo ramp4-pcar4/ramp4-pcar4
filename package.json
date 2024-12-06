@@ -39,7 +39,7 @@
     },
     "dependencies": {
         "@ag-grid-community/locale": "~32.0.0",
-        "@arcgis/core": "4.30.9",
+        "@arcgis/core": "4.31.6",
         "@popperjs/core": "^2.11.6",
         "@ramp4-pcar4/vue3-treeselect": "github:ramp4-pcar4/vue3-treeselect#v1.0.0",
         "@vueform/toggle": "^2.1.3",
