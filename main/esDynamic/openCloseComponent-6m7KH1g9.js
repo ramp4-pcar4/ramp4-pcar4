@@ -1,0 +1,1 @@
+import{ew as r}from"./main-CZofLY0I.js";import{w as i}from"./dom-BHTTQ4_z.js";const t=r;function n(o){return"opened"in o?o.opened:o.open}function p(o){t(()=>{o.transitionEl&&i(o.transitionEl,o.openTransitionProp,()=>{n(o)?o.onBeforeOpen():o.onBeforeClose()},()=>{n(o)?o.onOpen():o.onClose()})})}export{p as o};

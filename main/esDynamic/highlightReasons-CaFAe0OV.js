@@ -1,0 +1,1 @@
+import{aN as l,aO as e}from"./main-CZofLY0I.js";const r={selection:o=>new l({color:new e([o.color.r/2,o.color.g/2,o.color.b/2,o.color.a])}),highlight:o=>o,popup:o=>new l({color:new e([o.color.g,o.color.b,o.color.r,o.color.a])})};function t(o){if(!o)return 0;let c=1;for(const n in r){if(n===o)break;c<<=1}return c}const a=Object.keys(r);export{r as c,a as l,t};
