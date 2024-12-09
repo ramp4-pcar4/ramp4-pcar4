@@ -31,6 +31,7 @@ grid.filters.date.min,Min Date,1,Date min,1
 grid.filters.label.info,{range} of {total} entries shown,1,{range} de {total} saisies affichées,1
 grid.filters.label.filtered,(filtered from {max} total entries),1,(filtré à partir d'un total de {max} saisies),1
 grid.filters.label.extent,Filter by extent,1,Filtrer par étendue,1
+grid.cells.controls,Use arrow keys to navigate grid cells. Press Tab to proceed,1,Utilisez les flèches pour parcourir les cellules de la grille. Appuyez sur Tab pour continuer,0
 grid.cells.zoom,Zoom to feature,1,Zoom à l'élément,1
 grid.cells.zoom.zooming,Zooming...,1,Zoom en cours...,1
 grid.cells.zoom.error,Zoom failed,1,Échec du zoom,1
