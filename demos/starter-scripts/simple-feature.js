@@ -1,4 +1,6 @@
 import { createInstance, geo } from '@/main';
+import EsriSwipe from '@arcgis/core/widgets/Swipe.js';
+import EsriCollection from '@arcgis/core/core/Collection';
 
 window.debugInstance = null;
 
@@ -309,7 +311,38 @@ const rInstance = createInstance(document.getElementById('app'), config, options
 // add export fixtures
 rInstance.fixture.add('export');
 
+// create a fixture for the slider
+rInstance.fixture.add('swipe');
+setTimeout(() => {
+    const view = rInstance.geo.map.esriView;
+    const natureLayer = rInstance.geo.layer.getLayer('Nature').esriLayer;
+    const waterLayer = rInstance.geo.layer.getLayer('Water').esriLayer;
+    const leading = new EsriCollection();
+    leading.add(natureLayer);
+    const trailing = new EsriCollection();
+    trailing.add(waterLayer);
+    const swipe = new EsriSwipe({
+        view: view,
+        leadingLayers: leading,
+        trailingLayers: trailing,
+        position: 50,
+        visibleElements: { divider: true, handle: true },
+        dragLabel: 'drag the thing',
+        disabled: false,
+        visible: true
+    });
+    //view.ui.add(swipe);
+
+    const slider = document.getElementById('layerSlider');
+    slider?.addEventListener('input', () => {
+        const diff = +slider.value - 50;
+        swipe.position = 50 + 0.99 * diff;
+    });
+}, 4000);
+
 // load map if startRequired is true
-// rInstance.start();
+if (rInstance.startRequired) {
+    rInstance.start();
+}
 
 window.debugInstance = rInstance;
