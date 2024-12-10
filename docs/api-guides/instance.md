@@ -13,7 +13,8 @@ The Instance API provides an interface to manage all aspects of a RAMP instance.
 #### Other Attributes
 
 * `$vApp` - an object of type `ComponentPublicInstance` that represents the Vue app for the RAMP instance. See the [Vue documentation](https://vuejs.org/api/component-instance.html) for details. Note that use of the various APIs is encouraged over accessing the app's properties and methods directly.
-* `$element` - an object of type `VueApp<Element>` that represents the root element for the instance's Vue app.
+* `$element` - an object of type `VueApp<Element>` that represents the Vue application instance for the RAMP instance
+* `$rootEl` - an object of type `Element` that represents the the root DOM element for the RAMP instance
 * `$i18n` - an object representing the [Vue I18n Composer Instance](https://vue-i18n.intlify.dev/api/composition.html#composer) for the instance's Vue app.
 * `language` - a string representing the current language for the instance.
 * `screenSize` - a string representing the screen size for the app. Returns the largest tailwind screen class on the element. Possible values are 'lg', 'md', 'sm' or 'xs'.

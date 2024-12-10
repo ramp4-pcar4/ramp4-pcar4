@@ -94,6 +94,7 @@ export class InstanceAPI {
     readonly $vApp: ComponentPublicInstance;
     readonly $element: VueApp<Element>;
     readonly $i18n: Composer;
+    readonly $rootEl: Element;
 
     private _isFullscreen: boolean;
 
@@ -105,6 +106,7 @@ export class InstanceAPI {
         this.$vApp = appInstance.app;
         this.$element = appInstance.element;
         this.$i18n = appInstance.i18n;
+        this.$rootEl = appInstance.app.$root?.$el;
 
         this.fixture = new FixtureAPI(this); // pass the iApi reference to the FixtureAPI
         this.panel = new PanelAPI(this);
