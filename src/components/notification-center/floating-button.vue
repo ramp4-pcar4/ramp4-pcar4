@@ -4,6 +4,7 @@
         @click="iApi.panel.get('notifications').open()"
         class="pointer-events-auto items-center absolute left-8 bottom-36 p-6 block sm:display-none bg-black-75 rounded-full text-gray-400 hover:text-white"
         :content="t('notifications.title')"
+        :aria-label="t('notifications.title')"
         v-tippy
     >
         <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Anotifications -->
