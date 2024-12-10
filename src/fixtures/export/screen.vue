@@ -115,8 +115,8 @@ onMounted(() => {
     rootResizeObserver.value = new ResizeObserver(make);
     panelResizeObserver.value = new ResizeObserver(make);
     // observe the root element for resize events, not the component itself
-    rootResizeObserver.value.observe(iApi?.$vApp.$root?.$el);
-    panelResizeObserver.value.observe(iApi?.$vApp.$root?.$el.querySelector('[data-cy="export"]'));
+    rootResizeObserver.value.observe(iApi.rootEl);
+    panelResizeObserver.value.observe(iApi.rootEl.querySelector('[data-cy="export"]')!);
 });
 
 onBeforeUnmount(() => {
