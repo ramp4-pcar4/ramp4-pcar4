@@ -41,7 +41,8 @@ export default {
               text: "Introduction",
               collapsed: false,
               items: [
-                { text: "Setup", link: "/introduction/setup" },
+                { text: "Developer Setup", link: "/introduction/setup" },
+                { text: "Adding the Library", link: "/introduction/library" },
                 { text: "Instantiation", link: "/introduction/instantiation" }
               ],
             },
