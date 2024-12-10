@@ -334,7 +334,8 @@
             :content="t('grid.cells.controls')"
             v-tippy="{
                 placement: 'top',
-                trigger: 'manual'
+                trigger: 'manual',
+                touch: false
             }"
             class="w-full h-full flex flex-col"
             v-if="showGrid"
@@ -1596,13 +1597,20 @@ const setUpColumns = () => {
     });
 };
 
-onMounted(() => {
-    gridContainer.value?.addEventListener('focus', () => {
+const keyupEvent = (e: Event) => {
+    const evt = e as KeyboardEvent;
+    if (evt.key === 'Tab' && gridContainer.value?.matches(':focus')) {
         (gridContainer.value as any)._tippy.show();
-    });
-    gridContainer.value?.addEventListener('blur', () => {
-        (gridContainer.value as any)._tippy.hide();
-    });
+    }
+};
+
+const blurEvent = () => {
+    (gridContainer.value as any)._tippy.hide();
+};
+
+onMounted(() => {
+    gridContainer.value?.addEventListener('keyup', keyupEvent);
+    gridContainer.value?.addEventListener('blur', blurEvent);
 });
 
 onBeforeMount(() => {
@@ -1695,12 +1703,8 @@ onBeforeUnmount(() => {
     watchers.value.forEach(unwatch => unwatch());
     gridAccessibilityManager.value?.removeAccessibilityListeners();
     gridAccessibilityManager.value?.removeScrollListeners();
-    gridContainer.value?.removeEventListener('focus', () => {
-        (gridContainer.value as any)._tippy.show();
-    });
-    gridContainer.value?.removeEventListener('blur', () => {
-        (gridContainer.value as any)._tippy.hide();
-    });
+    gridContainer.value?.removeEventListener('keyup', keyupEvent);
+    gridContainer.value?.removeEventListener('blur', blurEvent);
 });
 </script>
 
@@ -1739,6 +1743,11 @@ onBeforeUnmount(() => {
 }
 :deep(.ag-root .rv-input) {
     font-size: 12px;
+}
+
+:deep(.ag-header-cell-comp-wrapper) {
+    padding-right: 2px;
+    padding-left: 2px;
 }
 
 /* Need this for hyperlinked text in the grid */
