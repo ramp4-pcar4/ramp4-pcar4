@@ -6,6 +6,8 @@ Some texts are still incomplete or outdated. We appreciate your patience, things
 
 ## Basic Implementation
 
+The [Library](introduction/library.md) page shows the various ways of incorporating the RAMP library into a web page.
+
 The [Instantiation](introduction/instantiation.md) page provides examples of how to instantiate a RAMP instance, and basic HTML templates to reference.
 
 ## Migration from RAMP 2 / RAMP 3
