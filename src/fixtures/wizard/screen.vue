@@ -119,7 +119,7 @@
                                 required: t('wizard.configure.name.error.required')
                             }"
                             ref="stepThreeStart"
-                            @focusElement="focusStepThree"
+                            @focusElement="focusFirst"
                             :activeStep="step"
                             :step="2"
                         />
@@ -479,43 +479,20 @@ const refocusPanel = () => {
 const focusFirst = () => {
     switch (step.value) {
         case 0:
-            focusStepOne();
+            focusOnStep(stepOneStart);
             break;
         case 1:
-            focusStepTwo();
+            focusOnStep(stepTwoStart);
             break;
         case 2:
-            focusStepThree();
+            focusOnStep(stepThreeStart);
             break;
     }
 };
 
-const focusStepOne = () => {
-    for (let inputRef in stepOneStart.value) {
-        if (stepOneStart.value[inputRef]) {
-            stepOneStart.value[inputRef].focus();
-            break;
-        }
-    }
-};
-
-const focusStepTwo = () => {
-    for (let inputRef in stepTwoStart.value) {
-        if (stepTwoStart.value[inputRef]) {
-            stepTwoStart.value[inputRef].focus();
-            break;
-        }
-    }
-};
-
-const focusStepThree = () => {
-    for (let inputRef in stepThreeStart.value) {
-        if (stepThreeStart.value[inputRef]) {
-            stepThreeStart.value[inputRef].focus();
-            break;
-        }
-    }
-};
+function focusOnStep(step: typeof stepOneStart) {
+    (step.value?.$el.querySelectorAll('input, select')[0] as HTMLElement)?.focus();
+}
 
 // reads uploaded file
 const uploadFile = async (file: File) => {
@@ -849,7 +826,7 @@ const updateColour = (eventData: any) => {
 const cancelServiceStep = () => {
     goNext.value = false;
     wizardStore.goToStep(0);
-    focusStepOne();
+    focusOnStep(stepOneStart);
 };
 
 const cancelFormatStep = () => {
