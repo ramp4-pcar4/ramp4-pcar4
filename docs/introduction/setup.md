@@ -3,8 +3,8 @@
 When you push changes to your forked repo, a demo preview is automatically generated. The demo preview will update each time you push changes. Note that demos are deleted daily whenever the source branch or tag is deleted from your forked repo.
 
 ### Accessing Your Demo Previews:
-- **Branch or Tag Preview**: Visit `https://{{github-username}}.github.io/ramp4-pcar4/{{branch-or-tag-name}}` to see a live preview of the branch or tag you've pushed.
-- **List of All Demos**: View all your demo previews by navigating to `https://github.com/{{github-username}}/ramp4-pcar4/tree/demo-page`.
+- **Branch or Tag Preview**: Visit `https://YOUR-GITHUB-USERNAME.github.io/ramp4-pcar4/BRANCH-OR-TAG-NAME` to see a live preview of the branch or tag you've pushed.
+- **List of All Demos**: View all your demo previews by navigating to `https://github.com/YOUR-GITHUB-USERNAME/ramp4-pcar4/tree/demo-page`.
 
 ### Enabling Demos for Your Forked Repo:
 To enable demo previews on your forked repository, update the following settings:
