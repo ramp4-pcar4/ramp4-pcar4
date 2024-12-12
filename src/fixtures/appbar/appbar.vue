@@ -5,6 +5,7 @@
         :content="t('panels.controls.items')"
         v-tippy="{
             trigger: 'manual',
+            touch: false,
             placement: 'top-end',
             popperOptions: {
                 placement: 'top',
