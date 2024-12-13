@@ -28,7 +28,7 @@
         "test:e2e:ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run'",
         "test:unit": "cypress open-ct",
         "test:unit:ci": "cypress run-ct --quiet --reporter spec",
-        "ts:check": "vue-tsc --build --force",
+        "ts:check": "vue-tsc --noEmit -p ./tsconfig.app.json",
         "ts:generate": "vue-tsc --declaration --emitDeclarationOnly || true",
         "ts-docs:generate": "npx typedoc --skipErrorChecking",
         "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
