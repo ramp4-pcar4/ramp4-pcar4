@@ -4,6 +4,7 @@
         :content="`<div style='word-break: break-word;'>${t(panel.alertName) + '. ' + t('panels.access')}</div>`"
         v-tippy="{
             trigger: 'manual',
+            touch: false,
             onShow: checkMode,
             allowHTML: true,
             maxWidth: panel.style['flex-basis'] ?? 350,

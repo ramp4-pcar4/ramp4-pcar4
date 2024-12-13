@@ -5,7 +5,7 @@
             v-if="notificationStack.length > 0"
             v-focus-list
             :content="t('panels.controls.items')"
-            v-tippy="{ trigger: 'manual', placement: 'top-start' }"
+            v-tippy="{ trigger: 'manual', placement: 'top-start', touch: false }"
             ref="el"
         >
             <template v-for="(notification, index) in notificationStack" :key="notification.message + index">

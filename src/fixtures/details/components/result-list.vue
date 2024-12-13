@@ -97,7 +97,8 @@
                     :content="t('details.layers.results.list.tooltip')"
                     v-tippy="{
                         trigger: 'manual',
-                        placement: 'top-start'
+                        placement: 'top-start',
+                        touch: false
                     }"
                     ref="el"
                 >
