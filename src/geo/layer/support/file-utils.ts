@@ -5,7 +5,7 @@ import { csv2geojson, dsv } from 'csv2geojson';
 import axios from 'redaxios';
 import type { CrsMeta } from 'flatgeobuf';
 
-import { EsriSimpleRenderer } from '@/geo/esri';
+import { EsriAPI } from '@/geo/esri';
 import { Colour, FieldType, LayerType, SpatialReference } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 
@@ -431,7 +431,7 @@ export class FileUtils extends APIScope {
         // Note: while this appears to always give the layer a simple renderer,
         // if a customRenderer is on the config, it will get applied to the esri
         // layer during FileLayer.onLoadActions()
-        configPackage.renderer = EsriSimpleRenderer.fromJSON(defRender.renderer);
+        configPackage.renderer = await EsriAPI.RendererFromJson(defRender.renderer);
 
         // add all the fields to config.Package
         configPackage.fields = (configPackage.fields || []).concat(

@@ -19,8 +19,8 @@ import type {
     Point
 } from '@/geo/api';
 
-import { EsriRequest, EsriWMSLayer } from '@/geo/esri';
-import type { EsriWMSSublayer } from '@/geo/esri';
+import { EsriAPI, EsriRequest } from '@/geo/esri';
+import type { EsriWMSLayer, EsriWMSSublayer } from '@/geo/esri';
 
 import { markRaw, reactive } from 'vue';
 
@@ -48,7 +48,7 @@ export class WmsLayer extends MapLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        this.esriLayer = markRaw(new EsriWMSLayer(this.makeEsriLayerConfig(this.origRampConfig)));
+        this.esriLayer = markRaw(await EsriAPI.WMSLayer(this.makeEsriLayerConfig(this.origRampConfig)));
         await super.onInitiate();
     }
 

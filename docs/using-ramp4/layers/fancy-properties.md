@@ -246,8 +246,6 @@ This differs from the `initialFilteredQuery`, in that the filter is locked for t
 
 File based layers will still download everything up-front, but will respect the filter afterwards. Same with WFS, but a WFS can apply a similar filter in its URL if the server will respect the parameter.
 
-To align a legend symbol stack with a particular permanent filter, see the `symbologyStack` option of the [legend configuration](/using-ramp4/fixtures/legend.md#layer-item-1).
-
 ```js
 {
     permanentFilteredQuery: "resto_type = 'Hamburger'"

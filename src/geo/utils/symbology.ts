@@ -11,7 +11,7 @@ import {
 import { LineStyleType } from '@/geo/api';
 import type { Attributes, FieldDefinition, LegendSymbology } from '@/geo/api';
 
-import { EsriRendererFromJson, EsriRequest } from '@/geo/esri';
+import { EsriAPI, EsriRequest } from '@/geo/esri';
 import type { EsriClassBreaksRenderer, EsriRenderer, EsriSimpleRenderer, EsriUniqueValueRenderer } from '@/geo/esri';
 
 import svgjs from 'svg.js';
@@ -799,10 +799,10 @@ export class SymbologyAPI extends APIScope {
      * @private
      * @param {Object} serverLegend legend json from an esri map server
      * @param {Integer} layerIndex  the index of the layer in the legend we are interested in
-     * @returns {Object} a fake unique value renderer based off the legend
+     * @returns {Promise<BaseRenderer>} resolves with a fake unique value renderer based off the legend
      *
      */
-    private mapServerLegendToRenderer(serverLegend: any, layerIndex: number): BaseRenderer {
+    private async mapServerLegendToRenderer(serverLegend: any, layerIndex: number): Promise<BaseRenderer> {
         const layerLegend = serverLegend.layers.find((l: any) => {
             return l.layerId === layerIndex;
         });
@@ -831,7 +831,8 @@ export class SymbologyAPI extends APIScope {
             };
 
             // ok to pass empty array. this renderer will only be used to generate a legend; no symbol lookups
-            return this.makeRenderer(EsriRendererFromJson(renderer), [], true);
+            const esriRenderer = await EsriAPI.RendererFromJson(renderer);
+            return this.makeRenderer(esriRenderer, [], true);
         } else {
             // TODO does this case ever exist? need to figure out a way to encode this in our official renderer objects
             // renderer = { type: this.NONE };
@@ -849,9 +850,9 @@ export class SymbologyAPI extends APIScope {
      * @function mapServerLegendToRendererAll
      * @private
      * @param {Object} serverLegend legend json from an esri map server
-     * @returns {Object} a fake unique value renderer based off the legend
+     * @returns {Promise<BaseRenderer>} resolves with a fake unique value renderer based off the legend
      */
-    private mapServerLegendToRendererAll(serverLegend: any): BaseRenderer {
+    private async mapServerLegendToRendererAll(serverLegend: any): Promise<BaseRenderer> {
         // TODO potential problem. if we have multiple layers with same label but different
         //      symbols, they will get combined in the legend making process.
         //      the esri Renderer.fromJSON might also get snarky at having two identical values
@@ -877,7 +878,8 @@ export class SymbologyAPI extends APIScope {
             uniqueValueInfos: [].concat(...layerRenders)
         };
 
-        return this.makeRenderer(EsriRendererFromJson(fullRenderer), [], true);
+        const esriRenderer = await EsriAPI.RendererFromJson(fullRenderer);
+        return this.makeRenderer(esriRenderer, [], true);
     }
 
     /**
@@ -905,10 +907,10 @@ export class SymbologyAPI extends APIScope {
         let intIndex: number;
         if (typeof layerIndex === 'undefined') {
             intIndex = 0;
-            fakeRenderer = this.mapServerLegendToRendererAll(serverLegendData);
+            fakeRenderer = await this.mapServerLegendToRendererAll(serverLegendData);
         } else {
             intIndex = parseInt(<string>layerIndex); // sometimes a stringified value comes in. careful now.
-            fakeRenderer = this.mapServerLegendToRenderer(serverLegendData, intIndex);
+            fakeRenderer = await this.mapServerLegendToRenderer(serverLegendData, intIndex);
         }
         // convert renderer to viewer specific legend
         return this.rendererToLegend(fakeRenderer);
