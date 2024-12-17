@@ -100,6 +100,37 @@ jobs:
                   npm run ts-docs:generate
                   npm run vite-docs:generate
 
+            - uses: ramp4-pcar4/status-checks@main
+              id: pr-checks
+              if: github.ref == 'refs/heads/main'
+              with:
+                  gh-token: ${{ secrets.GITHUB_TOKEN }}
+                  ts-command: 'npm run ts:check'
+                  lint-command: 'npm run lint:check'
+                  format-command: 'npm run format:check'
+
+            - name: Typescript badge
+              if: github.ref == 'refs/heads/main'
+              uses: RubbaBoy/BYOB@v1.3.0
+              with:
+                  name: 'tsbadge'
+                  icon: typescript
+                  label: 'TS Errors'
+                  status: ${{ steps.pr-checks.outputs.ts-errors }}
+                  color: blue
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Lint badge
+              if: github.ref == 'refs/heads/main'
+              uses: RubbaBoy/BYOB@v1.3.0
+              with:
+                  name: 'lintbadge'
+                  icon: codecov
+                  label: 'Lint'
+                  status: 'Errors: ${{ steps.pr-checks.outputs.lint-errors }}, Warnings: ${{ steps.pr-checks.outputs.lint-warnings }}'
+                  color: purple
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+
             - name: Publish to NPM for tag releases on main repo only
               if: github.repository == 'ramp4-pcar4/ramp4-pcar4' && startsWith(github.ref, 'refs/tags/v')
               run: |
