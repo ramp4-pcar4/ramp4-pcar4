@@ -599,7 +599,10 @@ export interface GeoJsonOptions {
 }
 
 export interface LoadLayerMetadataOptions {
-    customRenderer?: EsriRenderer; // renderer in ESRI API format
+    /**
+     * renderer in ESRI JS API format
+     */
+    customRenderer?: EsriRenderer;
 }
 
 export interface CsvOptions {

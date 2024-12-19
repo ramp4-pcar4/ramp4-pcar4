@@ -30,7 +30,8 @@ import type {
     RampLayerMapImageSublayerConfig
 } from '@/geo/api';
 
-import { EsriMapImageLayer, EsriRendererFromJson } from '@/geo/esri';
+import { EsriAPI } from '@/geo/esri';
+import type { EsriMapImageLayer } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
 
 // Formerly known as DynamicLayer
@@ -57,7 +58,7 @@ export class MapImageLayer extends MapLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        this.esriLayer = markRaw(new EsriMapImageLayer(this.makeEsriLayerConfig(this.origRampConfig)));
+        this.esriLayer = markRaw(await EsriAPI.MapImageLayer(this.makeEsriLayerConfig(this.origRampConfig)));
 
         await super.onInitiate();
     }
@@ -299,7 +300,7 @@ export class MapImageLayer extends MapLayer {
             // generate the RAMP wrapper on the layer.
             const hasCustRed = miSL.esriSubLayer && config?.customRenderer?.type;
             if (hasCustRed) {
-                miSL.esriSubLayer!.renderer = EsriRendererFromJson(config.customRenderer);
+                miSL.esriSubLayer!.renderer = await EsriAPI.RendererFromJson(config.customRenderer);
             }
 
             await miSL.loadLayerMetadata(hasCustRed ? { customRenderer: miSL.esriSubLayer?.renderer } : {});
