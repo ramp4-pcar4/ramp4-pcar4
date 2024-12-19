@@ -4,6 +4,8 @@
         "bradlc.vscode-tailwindcss",
         "austenc.tailwind-docs",
         "gruntfuggly.todo-tree",
-        "vue.volar"
+        "Vue.volar",
+        "dbaeumer.vscode-eslint",
+        "EditorConfig.EditorConfig"
     ]
 }
