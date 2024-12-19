@@ -1,38 +1,36 @@
 <template>
-    <div ref="componentEl">
-        <panel-screen :panel="panel" :footer="true">
-            <template #header> {{ t('export.title') }} </template>
+    <panel-screen :panel="panel" :footer="true">
+        <template #header> {{ t('export.title') }} </template>
 
-            <template #content>
-                <div class="overflow-hidden border border-gray-200">
-                    <canvas class="export-canvas !w-[100%]"></canvas>
-                </div>
-            </template>
+        <template #content>
+            <div class="overflow-hidden border border-gray-200" ref="componentEl">
+                <canvas class="export-canvas !w-[100%]"></canvas>
+            </div>
+        </template>
 
-            <template #footer>
-                <div class="flex">
-                    <button
-                        type="button"
-                        @click="fixture?.export()"
-                        class="bg-green-700 hover:bg-green-800 text-white font-bold py-8 px-4 sm:px-16 mr-8 sm:mr-16"
-                        :aria-label="t('export.download')"
-                    >
-                        {{ t('export.download') }}
-                    </button>
+        <template #footer>
+            <div class="flex">
+                <button
+                    type="button"
+                    @click="fixture?.export()"
+                    class="bg-green-700 hover:bg-green-800 text-white font-bold py-8 px-4 sm:px-16 mr-8 sm:mr-16"
+                    :aria-label="t('export.download')"
+                >
+                    {{ t('export.download') }}
+                </button>
 
-                    <button type="button" @click="make()" class="py-8 px-4 sm:px-16" :aria-label="t('export.refresh')">
-                        {{ t('export.refresh') }}
-                    </button>
+                <button type="button" @click="make()" class="py-8 px-4 sm:px-16" :aria-label="t('export.refresh')">
+                    {{ t('export.refresh') }}
+                </button>
 
-                    <export-settings
-                        v-if="!hasCustomRenderer"
-                        :componentSelectedState="selectedComponents"
-                        class="ml-auto flex px-4 sm:px-8"
-                    ></export-settings>
-                </div>
-            </template>
-        </panel-screen>
-    </div>
+                <export-settings
+                    v-if="!hasCustomRenderer"
+                    :componentSelectedState="selectedComponents"
+                    class="ml-auto flex px-4 sm:px-8"
+                ></export-settings>
+            </div>
+        </template>
+    </panel-screen>
 </template>
 
 <script setup lang="ts">
