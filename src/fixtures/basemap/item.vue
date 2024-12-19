@@ -66,8 +66,9 @@
                         :content="basemap.description"
                         v-tippy="{
                             placement: 'bottom',
-                            trigger: 'click focus'
+                            trigger: 'manual'
                         }"
+                        ref="basemapInfo"
                     >
                         <svg class="fill-current w-16 h-16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <path d="M0 0h24v24H0z" fill="none"></path>
@@ -92,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject } from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 import type { PropType } from 'vue';
 import type { RampBasemapConfig, RampTileSchemaConfig } from '@/geo/api';
 
@@ -103,6 +104,8 @@ import { useConfigStore } from '@/stores/config';
 const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi');
 const configStore = useConfigStore();
+const basemapInfo = useTemplateRef('basemapInfo');
+const infoTooltipToggle = ref(false);
 
 defineProps({
     basemap: {
@@ -122,6 +125,47 @@ const selectBasemap = (basemap: any) => {
         iApi?.geo.map.setBasemap(basemap.id);
     }
 };
+
+const keyupEvent = (e: Event) => {
+    const evt = e as KeyboardEvent;
+    if (evt.key === 'Tab' && basemapInfo.value?.matches(':focus')) {
+        infoTooltipToggle.value = true;
+        (basemapInfo.value as any)._tippy.show();
+    }
+};
+
+const blurEvent = () => {
+    infoTooltipToggle.value = false;
+    (basemapInfo.value as any)._tippy.hide();
+};
+
+const mobileTouchEvent = (e: Event) => {
+    // ensures that this only handles touch events on a mobile device
+    if ((e as PointerEvent).pointerType === 'touch') {
+        infoTooltipToggle.value = !infoTooltipToggle.value;
+        if (infoTooltipToggle.value) {
+            (basemapInfo.value as any)._tippy.show();
+        } else {
+            (basemapInfo.value as any)._tippy.hide();
+        }
+    }
+};
+
+onMounted(() => {
+    basemapInfo.value?.addEventListener('mouseenter', () => (basemapInfo.value as any)._tippy.show());
+    basemapInfo.value?.addEventListener('mouseleave', () => (basemapInfo.value as any)._tippy.hide());
+    basemapInfo.value?.addEventListener('click', mobileTouchEvent);
+    basemapInfo.value?.addEventListener('keyup', keyupEvent);
+    basemapInfo.value?.addEventListener('blur', blurEvent);
+});
+
+onBeforeUnmount(() => {
+    basemapInfo.value?.removeEventListener('mouseenter', () => (basemapInfo.value as any)._tippy.show());
+    basemapInfo.value?.removeEventListener('mouseleave', () => (basemapInfo.value as any)._tippy.hide());
+    basemapInfo.value?.removeEventListener('click', mobileTouchEvent);
+    basemapInfo.value?.removeEventListener('focus', () => keyupEvent);
+    basemapInfo.value?.removeEventListener('blur', () => blurEvent);
+});
 </script>
 
 <style lang="scss" scoped>

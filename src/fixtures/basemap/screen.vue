@@ -11,6 +11,7 @@
                 v-tippy="{
                     trigger: 'manual',
                     placement: 'top-end',
+                    touch: false,
                     maxWidth: 190
                 }"
                 ref="el"
