@@ -92,8 +92,15 @@ export class InstanceAPI {
      * @memberof InstanceAPI
      */
     readonly $vApp: ComponentPublicInstance;
+    /**
+     * An object of type `VueApp<Element>` that represents the RAMP instance within the Vue app
+     */
     readonly $element: VueApp<Element>;
     readonly $i18n: Composer;
+    /**
+     * An object of type `Element` that represents the root DOM element for the RAMP instance
+     */
+    readonly $rootEl: Element;
 
     private _isFullscreen: boolean;
 
@@ -105,6 +112,7 @@ export class InstanceAPI {
         this.$vApp = appInstance.app;
         this.$element = appInstance.element;
         this.$i18n = appInstance.i18n;
+        this.$rootEl = appInstance.app.$root?.$el;
 
         this.fixture = new FixtureAPI(this); // pass the iApi reference to the FixtureAPI
         this.panel = new PanelAPI(this);
