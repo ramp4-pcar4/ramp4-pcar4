@@ -114,6 +114,14 @@ export class AttribLayer extends MapLayer {
         this.extent = this.extent ?? sData.extent;
         this._serverVisibility = sData.defaultVisibility;
 
+        /* See https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-FeatureLayer.html#title
+               In particular, if the service has several layers, then the title of each layer will be the concatenation
+               of the service name and the layer name.
+               For consistency with map image sublayers, we set the layer's name to only the service name below. */
+        if (!this.origRampConfig.name) {
+            this.name = sData.name ?? this.id;
+        }
+
         // stuff for Feature vs Raster
         if (this.dataFormat === DataFormat.ESRI_FEATURE) {
             this.supportsFeatures = true;
@@ -163,14 +171,6 @@ export class AttribLayer extends MapLayer {
                 permanentFilter: this.getSqlFilter(CoreFilter.PERMANENT)
             };
             this.attribs.attLoader = new ArcServerAttributeLoader(this.$iApi, loadData);
-
-            /* See https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-FeatureLayer.html#title
-               In particular, if the service has several layers, then the title of each layer will be the concatenation
-               of the service name and the layer name.
-               For consistency with map image sublayers, we set the layer's name to only the service name below. */
-            if (!this.origRampConfig.name) {
-                this.name = sData.name ?? this.id;
-            }
         } else {
             // raster layer
             this.supportsFeatures = false;

@@ -1,7 +1,7 @@
 import { CommonGraphicLayer, InstanceAPI } from '@/api/internal';
 import { DrawState, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
-import { EsriGraphicsLayer } from '@/geo/esri';
+import { EsriAPI } from '@/geo/esri';
 import { markRaw } from 'vue';
 
 // NOTE this class is fairly meh, but gives a vanilla implementation of the common graphic layer base.
@@ -18,7 +18,7 @@ export class GraphicLayer extends CommonGraphicLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        this.esriLayer = markRaw(new EsriGraphicsLayer(this.makeEsriLayerConfig(this.origRampConfig)));
+        this.esriLayer = markRaw(await EsriAPI.GraphicsLayer(this.makeEsriLayerConfig(this.origRampConfig)));
         await super.onInitiate();
     }
 

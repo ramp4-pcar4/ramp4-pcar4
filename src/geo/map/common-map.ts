@@ -6,7 +6,8 @@
 
 import { toRaw, markRaw } from 'vue';
 import { APIScope, Basemap, InstanceAPI, NotificationType } from '@/api/internal';
-import { EsriMap } from '@/geo/esri';
+import { EsriAPI } from '@/geo/esri';
+import type { EsriMap } from '@/geo/esri';
 import { BaseGeometry, DefPromise, Extent, ExtentSet, GeometryType, SpatialReference } from '@/geo/api';
 import type { RampLabelsConfig, RampMapConfig, ZoomEasing } from '@/geo/api';
 
@@ -117,14 +118,40 @@ export class CommonMapAPI extends APIScope {
      * Will generate the actual Map control objects and construct it on the page
      * @param {RampMapConfig} config the config for the map
      * @param {string | HTMLDivElement} targetDiv the div to be used for the map view
+     * @returns {Promise} resolves when the map has been created
      */
-    createMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): void {
-        this._basemapStore = config.basemaps.map(bmConfig => {
-            const bm = new Basemap(bmConfig);
+    async createMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): Promise<void> {
+        const iAmBasemapError = (bm: Basemap) => {
+            this.$iApi.notify.show(
+                NotificationType.ERROR,
+                this.$iApi.$i18n.t('layer.error', {
+                    id: bm.name
+                })
+            );
+        };
 
-            // this watches for loading problems.
-            // the "loading" won't start until the basemap actually gets
-            // put into the ESRI map.
+        const basemapGenerationProms = config.basemaps.map(bmConfig => Basemap.create(bmConfig));
+
+        const basemapItemsRaw = await Promise.all(basemapGenerationProms);
+
+        // handle any problems in the basemap generation
+        const basemapItemsPristine = basemapItemsRaw.filter(bm => {
+            if (bm.createErr) {
+                // something went wrong.
+                // place a notification, but basemap still may be partially viable if it has some working inner layers
+                iAmBasemapError(bm);
+            }
+
+            // omit any items where all constituant layers failed
+            return bm.esriBasemap.baseLayers.length > 0;
+        });
+
+        // this watches for loading problems with the basemap, specifically the first one failing,
+        // and triggering the "fallback" logic if that happens.
+        // the "loading" won't start until the basemap actually gets put into the ESRI map,
+        // so no need to pre-check statuses for missed events.
+
+        basemapItemsPristine.forEach(bm => {
             bm.esriBasemap.baseLayers.forEach(baselayer => {
                 baselayer.watch('loadStatus', () => {
                     if (baselayer.loadStatus === 'loaded') {
@@ -132,22 +159,18 @@ export class CommonMapAPI extends APIScope {
                         this.trackFirstBasemap = false;
                     } else if (baselayer.loadStatus === 'failed') {
                         // basemap died. always ping notification.
-                        // initiate fallback if first basemap and fallback exists.
-                        this.$iApi.notify.show(
-                            NotificationType.ERROR,
-                            this.$iApi.$i18n.t('layer.error', {
-                                id: bm.name
-                            })
-                        );
+                        iAmBasemapError(bm);
 
+                        // initiate fallback if first basemap and fallback exists.
                         if (this.trackFirstBasemap) {
                             this.recoverBasemap(bm.tileSchemaId);
                         }
                     }
                 });
             });
-            return bm;
         });
+
+        this._basemapStore = basemapItemsPristine;
 
         if (config.labelsDefault) {
             this.labelsDefault.visible = config.labelsDefault.visible;
@@ -166,9 +189,10 @@ export class CommonMapAPI extends APIScope {
             );
         }
         */
-        this.esriMap = markRaw(new EsriMap(esriConfig));
+        this.esriMap = markRaw(await EsriAPI.Map(esriConfig));
         this.pointZoomScale = config.pointZoomScale && config.pointZoomScale > 0 ? config.pointZoomScale : 50000;
         this._targetDiv = targetDiv;
+
         this.createMapView(config.initialBasemapId);
     }
 
@@ -196,30 +220,33 @@ export class CommonMapAPI extends APIScope {
     }
 
     /**
-     * Reloads the map with the given map config and target div
+     * Reloads the map with the given map config and target div.
+     * This breaks down and re-creates the internal map state.
      *
      * @param {RampMapConfig} config the config for the map
      * @param {string | HTMLDivElement | undefined} targetDiv the div to be used for the map view
+     * @returns {Promise} resolves when the map has been re-created. Layers may still be loading.
      */
-    reloadMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): void {
+    async reloadMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): Promise<void> {
         if (!this.esriMap || !this.esriView) {
             this.noMapErr();
             return;
         }
         this.destroyMap();
-        this.createMap(config, targetDiv);
+        await this.createMap(config, targetDiv);
     }
 
     /**
      * Will generate a ESRI map view and add it to the page
      * Can optionally provide the basemap or basemap id to be used when creating the map view
      *
-     * This method should be overidden by child map classes
+     * This method should be overidden by other map sub-classes
      *
      * @param {string | Basemap | undefined} basemap the id of the basemap that should be used when creating the map view
+     * @returns {Promise} resolves when the map view has been created.
      * @protected
      */
-    protected createMapView(basemap?: string | Basemap): void {
+    protected async createMapView(basemap?: string | Basemap): Promise<void> {
         this.abstractError();
     }
 
@@ -261,10 +288,10 @@ export class CommonMapAPI extends APIScope {
      * Throws error if basemap could not be found
      *
      * @param {string} id basemap id
-     * @returns {Basemap} the found basemap
+     * @returns {Promise<Basemap>} resolves with the found basemap
      * @protected
      */
-    findBasemap(id: string): Basemap {
+    async findBasemap(id: string): Promise<Basemap> {
         const bm: Basemap | undefined = this._basemapStore.find(bms => bms.id === id);
         if (bm) {
             return bm;
@@ -278,15 +305,16 @@ export class CommonMapAPI extends APIScope {
      * Throws error if basemap could not be found with the given id
      *
      * @param {string | basemap} basemap the basemap id or object
+     * @returns {Promise} resolves when the basemap has been applied
      * @protected
      */
-    protected applyBasemap(basemap: string | Basemap): void {
+    protected async applyBasemap(basemap: string | Basemap): Promise<void> {
         if (!this.esriMap) {
             this.noMapErr();
             return;
         }
 
-        const bm: Basemap = typeof basemap === 'string' ? this.findBasemap(basemap) : basemap;
+        const bm: Basemap = typeof basemap === 'string' ? await this.findBasemap(basemap) : basemap;
         this.esriMap.basemap = toRaw(bm.esriBasemap);
     }
 
@@ -299,10 +327,10 @@ export class CommonMapAPI extends APIScope {
      * This method should be overidden by child map classes
      *
      * @param {string} basemapId the basemap id
-     * @returns {boolean} indicates if the schema has changed
+     * @returns {Promise<boolean>} resolves with boolean indicates if the schema has changed
      * @abstract
      */
-    setBasemap(basemapId: string): boolean {
+    async setBasemap(basemapId: string): Promise<boolean> {
         this.abstractError();
         return false;
     }
@@ -314,8 +342,9 @@ export class CommonMapAPI extends APIScope {
      * This method is overidden as needed
      *
      * @param {string} basemapSchemaId the basemap schema id (where the fallback is defined)
+     * @returns {Promise<void>} resolves after recovery has initiated
      */
-    recoverBasemap(basemapSchemaId: string): void {
+    async recoverBasemap(basemapSchemaId: string): Promise<void> {
         // common map does nothing.
         // this also means the overview map will not attempt trickery
     }
