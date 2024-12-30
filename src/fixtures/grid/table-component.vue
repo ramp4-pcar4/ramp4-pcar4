@@ -736,9 +736,10 @@ const clearFilters = () => {
 
 const togglePinned = () => {
     pinned.value = !pinned.value;
+    const pinSetting = pinned.value ? 'left' : null;
 
-    let cols = columnApi.value.getAllDisplayedColumns();
-    columnApi.value.setColumnsPinned(cols.slice(1, 3), pinned.value ? 'left' : '');
+    const cols = columnApi.value.getAllDisplayedColumns();
+    columnApi.value.setColumnsPinned(cols.slice(1, 3), pinSetting);
 };
 
 const exportData = () => {
