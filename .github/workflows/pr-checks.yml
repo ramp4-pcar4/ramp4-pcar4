@@ -32,3 +32,25 @@ jobs:
                   ts-command: 'npm run ts:check'
                   lint-command: 'npm run lint:check'
                   format-command: 'npm run format:check'
+
+            - name: Typescript badge
+              if: always()
+              uses: RubbaBoy/BYOB@v1.3.0
+              with:
+                  name: 'tsbadge-${{github.head_ref}}'
+                  icon: typescript
+                  label: 'TS Errors'
+                  status: ${{ steps.pr-checks.outputs.ts-errors }}
+                  color: blue
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Lint badge
+              if: always()
+              uses: RubbaBoy/BYOB@v1.3.0
+              with:
+                  name: 'lintbadge-${{github.head_ref}}'
+                  icon: codecov
+                  label: 'Lint'
+                  status: 'Errors: ${{ steps.pr-checks.outputs.lint-errors }}, Warnings: ${{ steps.pr-checks.outputs.lint-warnings }}'
+                  color: purple
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
