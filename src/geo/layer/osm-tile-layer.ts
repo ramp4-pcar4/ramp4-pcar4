@@ -3,7 +3,8 @@ import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 
 import type { LegendSymbology, RampLayerConfig } from '@/geo/api';
 
-import { EsriOpenStreetMapLayer } from '@/geo/esri';
+import { EsriAPI } from '@/geo/esri';
+import type { EsriOpenStreetMapLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
 
 /**
@@ -22,7 +23,7 @@ export class OsmTileLayer extends MapLayer {
     }
 
     protected async onInitiate(): Promise<void> {
-        this.esriLayer = markRaw(new EsriOpenStreetMapLayer(this.makeEsriLayerConfig(this.origRampConfig)));
+        this.esriLayer = markRaw(await EsriAPI.OpenStreetMapLayer(this.makeEsriLayerConfig(this.origRampConfig)));
         await super.onInitiate();
     }
 

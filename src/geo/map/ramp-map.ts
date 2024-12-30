@@ -30,7 +30,7 @@ import type {
     Screenshot
 } from '@/geo/api';
 
-import { EsriColorBackground, EsriMapView } from '@/geo/esri';
+import { EsriAPI } from '@/geo/esri';
 import type { EsriGraphic, EsriLOD } from '@/geo/esri';
 
 import { useLayerStore } from '@/stores/layer';
@@ -38,7 +38,6 @@ import { MapCaptionAPI } from './caption';
 import { markRaw, toRaw } from 'vue';
 import { useConfigStore } from '@/stores/config';
 import { debounce, throttle } from 'throttle-debounce';
-import { useDetailsStore } from '@/fixtures/details/store';
 
 export class MapAPI extends CommonMapAPI {
     // API for managing the maptip
@@ -69,27 +68,22 @@ export class MapAPI extends CommonMapAPI {
      */
     constructor(iApi: InstanceAPI) {
         super(iApi);
-
         this.maptip = new MaptipAPI(iApi);
         this.caption = new MapCaptionAPI(iApi);
         this.mapMouseThrottle = 0; // default to 0 (no throttle)
     }
 
-    /**
-     * Will generate the actual Map control objects and construct it on the page
-     * @param {RampMapConfig} config the config for the map
-     * @param {string | HTMLDivElement} targetDiv the div to be used for the map view
-     */
-    createMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): void {
+    async createMap(config: RampMapConfig, targetDiv: string | HTMLDivElement): Promise<void> {
         this.setMapMouseThrottle(config.mapMouseThrottle ?? 0);
         this.trackFirstBasemap = true; // we do this here (in this class) to prevent the overview map from tracking
-        super.createMap(config, targetDiv);
 
         this.layerDefaultTimes.draw = config.layerTimeDefault?.expectedDrawTime ?? 10000;
         this.layerDefaultTimes.load = config.layerTimeDefault?.expectedLoadTime ?? 10000;
 
         // using falsey || since a 0 would cause every layer to fail instantly
         this.layerDefaultTimes.fail = config.layerTimeDefault?.maxLoadTime || 90000;
+
+        await super.createMap(config, targetDiv);
 
         this.viewPromise.then(() => {
             // Timing issues beginning at ESRI v4.26 make us need to wait until the initial view gets created.
@@ -126,8 +120,9 @@ export class MapAPI extends CommonMapAPI {
      *
      * @protected
      * @param {string | Basemap | undefined} basemap the id of the basemap that should be used when creating the map view
+     * @returns {Promise} resolves when the map view has been created.
      */
-    protected createMapView(basemap?: string | Basemap): void {
+    protected async createMapView(basemap?: string | Basemap): Promise<void> {
         // get the config from the store
         const configStore = useConfigStore(this.$vApp.$pinia);
         const config: RampMapConfig = configStore.config.map;
@@ -136,8 +131,8 @@ export class MapAPI extends CommonMapAPI {
         }
 
         const bm: Basemap =
-            (typeof basemap === 'string' ? this.findBasemap(basemap) : basemap) ||
-            this.findBasemap(config.initialBasemapId);
+            (typeof basemap === 'string' ? await this.findBasemap(basemap) : basemap) ||
+            (await this.findBasemap(config.initialBasemapId));
 
         // get the current tile schema we are in
         const tileSchemaConfig: RampTileSchemaConfig | undefined = config.tileSchemas.find(
@@ -169,7 +164,7 @@ export class MapAPI extends CommonMapAPI {
 
         // create esri view with config
         this.esriView = markRaw(
-            new EsriMapView({
+            await EsriAPI.MapView({
                 map: this.esriMap,
                 container: this._targetDiv,
                 constraints: {
@@ -359,6 +354,10 @@ export class MapAPI extends CommonMapAPI {
             // it appears calling this before the when() check causes the esriView promise to block,
             // which then blocks our layer loading even though the map is capable of handling the layers.
             // so set the basemap after we unblock the ramp view promise.
+            // TODO decide if we await/.then on this before starting the fallback timer.
+            //      prob better to not (as it could block timer from ever starting),
+            //      but could open up a case where slow first apply happens after timer
+            //      has reset the basemap to something else. would be rare.
             this.applyBasemap(bm);
 
             // if we have a fallback basemap, set up a failure timeout if desired.
@@ -395,15 +394,16 @@ export class MapAPI extends CommonMapAPI {
      * Throws error if basemap could not be found
      *
      * @param {string | basemap} basemap the basemap id or object
+     * @returns {Promise} resolves when the basemap has been applied
      * @protected
      */
-    protected applyBasemap(basemap: string | Basemap): void {
+    protected async applyBasemap(basemap: string | Basemap): Promise<void> {
         if (!this.esriMap) {
             this.noMapErr();
             return;
         }
 
-        const bm: Basemap = typeof basemap === 'string' ? this.findBasemap(basemap) : basemap;
+        const bm: Basemap = typeof basemap === 'string' ? await this.findBasemap(basemap) : basemap;
         this.esriMap.basemap = toRaw(bm.esriBasemap);
 
         // update the store
@@ -418,16 +418,16 @@ export class MapAPI extends CommonMapAPI {
      * The returned boolean indicates if the schema has changed.
      *
      * @param {string} basemapId the basemap id
-     * @returns {boolean} indicates if the schema has changed
+     * @returns {Promise<boolean>} resolves with boolean indicates if the schema has changed
      */
-    setBasemap(basemapId: string): boolean {
+    async setBasemap(basemapId: string): Promise<boolean> {
         if (!this.esriView || !this.esriMap) {
             this.noMapErr();
             return false;
         }
 
         const configStore = useConfigStore(this.$vApp.$pinia);
-        const bm: Basemap = this.findBasemap(basemapId);
+        const bm: Basemap = await this.findBasemap(basemapId);
         const currentBasemp: RampBasemapConfig = configStore.activeBasemapConfig as RampBasemapConfig;
 
         const schemaChanged: boolean = currentBasemp.tileSchemaId !== bm.tileSchemaId;
@@ -448,7 +448,10 @@ export class MapAPI extends CommonMapAPI {
             // recreate the map view
             this.createMapView(bm);
 
-            this.viewPromise.then(() => {
+            // NOTE: we don't "need" to await on this, but it aligns the behavior
+            //       of the method promise with same-schema else block.
+            //       The method promise blocks until basemap change event has been emitted
+            await this.viewPromise.then(() => {
                 this.$iApi.event.emit(GlobalEvents.MAP_REFRESH_END);
 
                 // fire the basemap change event
@@ -466,12 +469,13 @@ export class MapAPI extends CommonMapAPI {
             });
         } else {
             // change the basemap
-            this.applyBasemap(bm);
+            await this.applyBasemap(bm);
 
             // When schema changes, the recreation of the view will also set the background colour.
-            this.esriView.background = new EsriColorBackground({
+            const backColour = await EsriAPI.ColorBackground({
                 color: new Colour(bm.backgroundColour).toESRI()
             });
+            this.esriView!.background = backColour;
 
             // fire the basemap change event
             this.$iApi.event.emit(GlobalEvents.MAP_BASEMAPCHANGE, {
@@ -488,8 +492,9 @@ export class MapAPI extends CommonMapAPI {
      * If nothing is defined, will do nothing but manage our watching state.
      *
      * @param {string} basemapSchemaId the basemap schema id (where the fallback is defined)
+     * @returns {Promise<void>} resolves after recovery has initiated
      */
-    recoverBasemap(basemapSchemaId: string): void {
+    async recoverBasemap(basemapSchemaId: string): Promise<void> {
         // no hard errors in the method. Just because layer is failing doesn't mean
         // we need to brick the app. Failed layer > brick party.
 
@@ -510,8 +515,8 @@ export class MapAPI extends CommonMapAPI {
 
             if (tileSchemaConfig?.recoveryBasemap?.basemapId) {
                 // there's a fallback, apply it.
-                const fallbackBM = this.findBasemap(tileSchemaConfig.recoveryBasemap.basemapId);
-                this.applyBasemap(fallbackBM);
+                const fallbackBM = await this.findBasemap(tileSchemaConfig.recoveryBasemap.basemapId);
+                await this.applyBasemap(fallbackBM);
             }
         }
     }
