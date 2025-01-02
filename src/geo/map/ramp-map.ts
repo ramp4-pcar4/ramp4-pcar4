@@ -56,10 +56,12 @@ export class MapAPI extends CommonMapAPI {
      * Map wide defaults for layer times. Layers can override.
      */
     layerDefaultTimes: LayerTimes = {
-        // DEV NOTE these values get updated in createMap(). Using 0 here to avoid having defaults in two spots.
-        draw: 0,
-        load: 0,
-        fail: 0
+        // DEV NOTE these values get updated with any config overrides in createMap().
+        //          But need to init values here on the chance layers start initializing prior to map
+        //          getting "created". Affects overview map layers in particular.
+        draw: 10000,
+        load: 10000,
+        fail: 90000
     };
 
     /**
