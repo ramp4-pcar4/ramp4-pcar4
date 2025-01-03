@@ -6,6 +6,7 @@ import VitePluginVersion from './scripts/vite-plugin-version';
 import ViteMinifyEsPlugin from './scripts/vite-minify-es-plugin';
 import { resolve } from 'path';
 import pkg from './package.json';
+import dts from 'vite-plugin-dts';
 
 const distName = resolve(__dirname, process.env.DIST_NAME || 'dist');
 
@@ -89,7 +90,7 @@ function npmBundleConfig() {
             }
         }
     });
-
+    config.plugins.push(dts({ tsconfigPath: './tsconfig.app.json' }));
     return config;
 }
 
