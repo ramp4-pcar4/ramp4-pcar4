@@ -1,0 +1,1 @@
+import{f as m}from"./utils-Clm864D2.js";import{c as n}from"./queryTopFeatures-CHEm3vSO.js";import c from"./TopFeaturesQuery-cMsh5-hI.js";async function f(o,t,r){const a=m(o);return(await n(a,c.from(t),{...r})).data.count}export{f as executeForTopCount};
