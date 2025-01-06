@@ -6,7 +6,7 @@
 
         <notifications-caption-button class="sm:block display-none" />
 
-        <span class="relative top-2 sm:top-1 ml-4 sm:ml-0 shrink-0" v-if="!attribution?.logo!.disabled">
+        <span class="relative top-2 sm:top-1 ml-4 sm:ml-0 shrink-0" v-if="showLogo()">
             <a
                 class="pointer-events-auto cursor-pointer"
                 :href="attribution?.logo!.link"
@@ -159,6 +159,9 @@ onUpdated(() => {
         }
     });
 });
+
+const showLogo = () =>
+    attribution.value?.logo?.link && attribution.value?.logo?.value && !attribution.value?.logo?.disabled;
 
 const changeLang = (lang: string) => {
     if (iApi.$i18n.locale.value != lang) {
