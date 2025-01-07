@@ -63,14 +63,14 @@ export class GridAccessibilityManager {
     }
 
     /**
-     * Set up the listeners for the grid
+     * Set up the listeners for the grid.
      */
     private initAccessibilityListeners() {
         const headerCells = Array.prototype.slice.call(
             this.headerRows[0].querySelectorAll('.ag-header-cell')
         ) as HTMLElement[];
         headerCells.forEach((cell, index) => {
-            if (index < 3) {
+            if (index < 1) {
                 return;
             }
             const buttons = Array.prototype.slice.call(cell.querySelectorAll('button')) as HTMLElement[];
@@ -94,14 +94,14 @@ export class GridAccessibilityManager {
     }
 
     /**
-     * Remove all accessibility listeners from the grid
+     * Remove all accessibility listeners from the grid.
      */
     removeAccessibilityListeners() {
         const headerCells = Array.prototype.slice.call(
             this.headerRows[0].querySelectorAll('.ag-header-cell')
         ) as HTMLElement[];
         headerCells.forEach((cell, index) => {
-            if (index < 3) {
+            if (index < 1) {
                 return;
             }
             const buttons = Array.prototype.slice.call(cell.querySelectorAll('button')) as HTMLElement[];
