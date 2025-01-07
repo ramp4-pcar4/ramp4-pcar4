@@ -23,7 +23,7 @@ const iApi = inject<InstanceAPI>('iApi')!;
 const el = ref<HTMLElement>();
 
 const isButtonVisible = computed<boolean>(() => {
-    let data = Object.assign({}, props.params.data);
+    const data = Object.assign({}, props.params.data);
 
     // Find the layer to determine whether this is a map layer or not.
     const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(data['rvUid'])!;
@@ -38,7 +38,7 @@ const isButtonVisible = computed<boolean>(() => {
 });
 
 const onButtonClick = () => {
-    let data = Object.assign({}, props.params.data);
+    const data = Object.assign({}, props.params.data);
 
     const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(data['rvUid'])!;
     const oidPair = props.params.layerCols[layer.id].find((pair: AttributeMapPair) => pair.origAttr === layer.oidField);
