@@ -95,6 +95,7 @@
                         <button
                             class="flex justify-center fill-current ml-6 cursor-pointer"
                             @click="resetQuickSearch()"
+                            :aria-label="t('grid.search.clear')"
                             v-else
                         >
                             <svg
