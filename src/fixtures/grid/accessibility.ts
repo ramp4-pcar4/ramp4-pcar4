@@ -70,7 +70,7 @@ export class GridAccessibilityManager {
             this.headerRows[0].querySelectorAll('.ag-header-cell')
         ) as HTMLElement[];
         headerCells.forEach((cell, index) => {
-            if (index < 3) {
+            if (index < 1) {
                 return;
             }
             const buttons = Array.prototype.slice.call(cell.querySelectorAll('button')) as HTMLElement[];
@@ -101,7 +101,7 @@ export class GridAccessibilityManager {
             this.headerRows[0].querySelectorAll('.ag-header-cell')
         ) as HTMLElement[];
         headerCells.forEach((cell, index) => {
-            if (index < 3) {
+            if (index < 1) {
                 return;
             }
             const buttons = Array.prototype.slice.call(cell.querySelectorAll('button')) as HTMLElement[];
