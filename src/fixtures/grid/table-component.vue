@@ -505,7 +505,7 @@ const iApi = inject<InstanceAPI>('iApi')!;
 const gridStore = useGridStore();
 const panelStore = usePanelStore();
 const mobileView = computed(() => panelStore.mobileView);
-const pinned = ref<Boolean>(!mobileView.value);
+const pinned = ref<boolean>(!mobileView.value);
 const el = ref<HTMLElement>();
 const gridContainer = useTemplateRef('gridContainer');
 const { t, locale } = useI18n();
@@ -551,6 +551,7 @@ const layer = iApi.geo.layer.getLayer(props.gridId) as LayerInstance;
 const layerCols = ref<{
     [id: string]: Array<AttributeMapPair>;
 }>({});
+const headerCells = ref<Array<Element>>();
 const origLayerIds = ref(gridStore.grids[props.gridId].layerIds);
 const gridLayers = computed(() => {
     if (gridStore.grids[props.gridId]) {
@@ -688,7 +689,7 @@ const toggleFilterByExtent = () => {
 
 // Toggles the floating (column) filters on and off.
 const toggleShowFilters = () => {
-    let colDefs = agGridOptions.value.api.getColumnDefs();
+    const colDefs = agGridOptions.value.api.getColumnDefs();
     config.value.state.colFilter = !config.value.state.colFilter;
 
     colDefs.forEach((col: ColumnDefinition) => {
@@ -707,7 +708,7 @@ const updateFilterInfo = () => {
             applyFiltersToMap();
         }
         nextTick(() => {
-            let cols = columnApi.value.getAllDisplayedColumns();
+            const cols = columnApi.value.getAllDisplayedColumns();
             agGridOptions.value.api.refreshCells({
                 columns: [cols[0]] // Limits the refresh action to the row number column.
             });
@@ -752,7 +753,7 @@ const exportData = () => {
         columnKeys: columnsToExport,
         suppressQuotes: true,
         processCellCallback: cell => {
-            let cellType = cell.column.getColDef().cellRendererParams;
+            const cellType = cell.column.getColDef().cellRendererParams;
             if (!cell.value || (cellType && cellType.type === 'number')) return cell.value;
             else if (cellType && cellType.type === 'date')
                 return `"${new Date(cell.value).toLocaleDateString('en-CA', {
@@ -772,7 +773,7 @@ const exportData = () => {
 const setUpDateFilter = (colDef: ColumnDefinition, state: TableStateManager) => {
     colDef.floatingFilterComponent = 'dateFloatingFilter';
     colDef.filterParams.comparator = function (filterDate: any, entryDate: any) {
-        let entry = new Date(entryDate);
+        const entry = new Date(entryDate);
 
         // We need to specifically compare the UTC year, month, and date because
         // directly comparing the dates returns the wrong value due to timezone differences
@@ -843,7 +844,7 @@ const setUpTextFilter = (colDef: ColumnDefinition, state: TableStateManager) => 
     };
 
     // modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
-    let disregardAccents = function (s: string) {
+    const disregardAccents = function (s: string) {
         let r = s.toLowerCase();
         r = r.replace(new RegExp('[àáâãäå]', 'g'), 'a');
         r = r.replace(new RegExp('æ', 'g'), 'ae');
@@ -871,7 +872,7 @@ const setUpSpecialColumns = (
 ) => {
     // set up row number column
     if (col.field === 'rvRowIndex') {
-        let indexDef = {
+        const indexDef = {
             sortable: false,
             lockPosition: true,
             valueGetter: 'node.rowIndex + 1',
@@ -905,7 +906,7 @@ const setUpSpecialColumns = (
     if (col.field === 'rvInteractive') {
         const buttonControls = config.value.state.controls;
 
-        let detailsDef = {
+        const detailsDef = {
             sortable: false,
             pinned: mobileView.value ? '' : 'left',
             filter: false,
@@ -934,7 +935,7 @@ const setUpSpecialColumns = (
 
         // only render the zoom buttons if there is at least one map layer in the grid
         if (hasMapLayers.value) {
-            let zoomDef = {
+            const zoomDef = {
                 sortable: false,
                 pinned: mobileView.value ? '' : 'left',
                 filter: false,
@@ -965,7 +966,7 @@ const setUpSpecialColumns = (
         buttonControls.forEach((buttonConfig: string | ActionButtonDefinition) => {
             if (buttonConfig === 'zoom' || buttonConfig === 'details') return;
 
-            let buttonDef = {
+            const buttonDef = {
                 sortable: false,
                 pinned: mobileView.value ? '' : 'left',
                 filter: false,
@@ -993,7 +994,7 @@ const setUpSpecialColumns = (
 
     // Set up the symbol column.
     if (col.field === 'rvSymbol') {
-        let iconDef = {
+        const iconDef = {
             sortable: false,
             filter: false,
             lockPosition: true,
@@ -1116,7 +1117,7 @@ const applyFiltersToMap = () => {
 // get filter SQL query string
 const getFiltersQuery = (id: string) => {
     const filterModel = agGridApi.value.getFilterModel();
-    let colStrs: (string | undefined)[] = [];
+    const colStrs: (string | undefined)[] = [];
     Object.keys(filterModel).forEach(col => {
         // check if filter is applied to an attribute of this layer
         const attrs = getAttrPair(id, col);
@@ -1156,7 +1157,7 @@ const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
             break;
         }
         case 'text': {
-            let val = colFilter.filter.replace(/'/g, /''/);
+            const val = colFilter.filter.replace(/'/g, /''/);
             if (val !== '') {
                 // following code is to UNESCAPE all special chars for ESRI and geoApi SQL to parse properly (remove the backslash)
                 const escRegex = /\\[(!"#$&'+,.\\/:;<=>?@[\]^`{|}~)]/g;
@@ -1181,7 +1182,7 @@ const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
                 newVal = newVal.replace(/_/g, 'ௌ_');
                 newVal = `*${newVal}`;
                 // if val contains a % or _, add ESCAPE 'ௌ' at the end of the query
-                let sqlWhere = `UPPER(${col}) LIKE \'${newVal.replace(/\*/g, '%').toUpperCase()}%\'`;
+                const sqlWhere = `UPPER(${col}) LIKE \'${newVal.replace(/\*/g, '%').toUpperCase()}%\'`;
                 return sqlWhere.includes('ௌ%') || sqlWhere.includes('ௌ_') ? `${sqlWhere} ESCAPE \'ௌ\'` : sqlWhere;
             }
             break;
@@ -1212,7 +1213,7 @@ const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
 // convert global search to SQL string filter of columns excluding unfiltered columns
 const globalSearchToSql = (id: string): string => {
     // TODO: support for global search on dates
-    let val = config.value.state.searchFilter.replace(/'/g, "''");
+    const val = config.value.state.searchFilter.replace(/'/g, "''");
     // to implement quick filters, first need to split the search text on white space
     const searchVals = val.split(' ');
 
@@ -1225,18 +1226,18 @@ const globalSearchToSql = (id: string): string => {
                 getAttrPair(id, column.getColId())
         );
 
-    let filteredColumns: string[] = [];
+    const filteredColumns: string[] = [];
 
     sortedRows.forEach((row: RowNode) => {
         let rowMatch = true;
         let rowSql = '';
         // each row must contain all of the split search values
-        for (let searchVal of searchVals) {
+        for (const searchVal of searchVals) {
             const re = new RegExp(`.*${searchVal.split(' ').join('.*').toUpperCase()}`);
             const filterVal = `%${searchVal.replace(/\*/g, '%').split(' ').join('%').toUpperCase()}`;
             // if any column data matches the search val in regex form, set foundVal to true and proceed to next search term
             let foundVal = false;
-            for (let column of columns) {
+            for (const column of columns) {
                 const colId = column.getColId();
                 const origColId = getAttrPair(id, column.getColId())?.origAttr;
                 const colDef = column.getColDef();
@@ -1501,8 +1502,8 @@ const setUpColumns = () => {
                         config.value.state.columns[column.data].visible = false;
                     }
 
-                    let colConfig = config.value.state?.columns[column.data];
-                    let col: ColumnDefinition = {
+                    const colConfig = config.value.state?.columns[column.data];
+                    const col: ColumnDefinition = {
                         headerName: colConfig.title ?? column.title,
                         headerComponent: 'agColumnHeader',
                         headerComponentParams: {
@@ -1536,7 +1537,7 @@ const setUpColumns = () => {
                     };
 
                     // retrieve the field info for the column
-                    let fieldInfo = mergedTableAttrs.fields.find((field: any) => field.name === col.field);
+                    const fieldInfo = mergedTableAttrs.fields.find((field: any) => field.name === col.field);
 
                     if (column === 'rvRowIndex' || column === 'rvSymbol' || column === 'rvInteractive') {
                         setUpSpecialColumns(col, columnDefs.value, config.value.state);
@@ -1612,6 +1613,20 @@ const blurEvent = () => {
 onMounted(() => {
     gridContainer.value?.addEventListener('keyup', keyupEvent);
     gridContainer.value?.addEventListener('blur', blurEvent);
+
+    // Appropriately sets focus for the first two (data) column headers, which for some reason
+    // cannot be entered via clicking Enter. All other headers appear fine though
+    setTimeout(() => {
+        headerCells.value = Array.from(iApi.$rootEl.querySelectorAll('.ag-header-cell'));
+        headerCells.value.slice(7, 9).forEach(headerCell => {
+            const buttons = Array.from(headerCell.querySelectorAll('button'));
+            headerCell.addEventListener('keypress', e => {
+                if ((e as KeyboardEvent).key === 'Enter') {
+                    buttons[0].focus();
+                }
+            });
+        });
+    });
 });
 
 onBeforeMount(() => {
@@ -1706,6 +1721,14 @@ onBeforeUnmount(() => {
     gridAccessibilityManager.value?.removeScrollListeners();
     gridContainer.value?.removeEventListener('keyup', keyupEvent);
     gridContainer.value?.removeEventListener('blur', blurEvent);
+    headerCells.value?.slice(7, 9).forEach(headerCell => {
+        const buttons = Array.from(headerCell.querySelectorAll('button'));
+        headerCell.removeEventListener('keypress', e => {
+            if ((e as KeyboardEvent).key === 'Enter') {
+                buttons[0].focus();
+            }
+        });
+    });
 });
 </script>
 
