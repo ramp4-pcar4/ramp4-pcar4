@@ -32,7 +32,7 @@ const runPreTest = (config, options, utils) => {
     return { config, options };
 };
 
-const runPostTest = (instance, utils) => {
+const runPostTest = instance => {
     instance.$element.component('Tasty-Template', {
         props: ['identifyData'],
         template: `

@@ -20,7 +20,7 @@ const runPreTest = (config, options, utils) => {
     return { config, options };
 };
 
-const runPostTest = (instance, utils) => {
+const runPostTest = instance => {
     instance.fixture.isLoaded('basemap').then(() => {
         const bm = instance.fixture.get('basemap');
         bm.persist = false;

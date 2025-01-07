@@ -10,6 +10,18 @@ import type { ActionButtonDefinition, TableStateOptions } from './grid-state';
  *      - whether table maximized is in maximized or split view
  */
 export default class TableStateManager {
+    state: any;
+    _title: string;
+    _showFilter: boolean;
+    _filterByExtent: boolean;
+    _open: boolean;
+    _columns: { [field: string]: ColumnStateManager };
+    _filtered: boolean;
+    _search: boolean;
+    _searchFilter: string;
+    _applyToMap: boolean;
+    _controls: (string | ActionButtonDefinition)[];
+
     constructor(options?: TableStateOptions) {
         this.state = options ?? {};
         this._title = options?.title ?? '';
@@ -268,18 +280,4 @@ export default class TableStateManager {
     get controls() {
         return this._controls;
     }
-}
-
-export default interface TableStateManager {
-    state: any;
-    _title: string;
-    _showFilter: boolean;
-    _filterByExtent: boolean;
-    _open: boolean;
-    _columns: { [field: string]: ColumnStateManager };
-    _filtered: boolean;
-    _search: boolean;
-    _searchFilter: string;
-    _applyToMap: boolean;
-    _controls: (string | ActionButtonDefinition)[];
 }

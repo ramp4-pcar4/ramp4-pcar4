@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import type { Plugin } from 'vite';
-// @ts-ignore
+// @ts-expect-error
 import { dsvFormat } from 'd3-dsv';
 
 export default function vueI18nPlugin(): Plugin {

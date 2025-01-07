@@ -89,7 +89,7 @@ const selectFilter = ref<Element>();
 
 const provinces = ref<Array<any>>([]);
 const types = ref<Array<any>>([]);
-const watchers = ref<Array<Function>>([]);
+const watchers = ref<Array<() => void>>([]);
 
 const queryParams = computed<QueryParams>(() => geosearchStore.queryParams as QueryParams);
 const language = computed<string>(() => iApi.language);

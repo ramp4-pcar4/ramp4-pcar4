@@ -49,9 +49,11 @@ export const enum LineStyleType {
     LONGDASHDOT = 'long-dash-dot',
     LONGDASHDOTDOT = 'long-dash-dot-dot',
     NONE = 'none',
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     NULL = 'none', // for backwards compatibility
     SHORTDASH = 'short-dash',
     SHORTDASHDOT = 'short-dash-dot',
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     SHORTDASHDOTDOT = 'short-dash-dot-dot',
     SHORTDOT = 'short-dot',
     SOLID = 'solid'
@@ -76,6 +78,7 @@ export const enum FillStyleType {
     FDIAG = 'forward-diagonal',
     HORIZONTAL = 'horizontal',
     NONE = 'none',
+    // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
     NULL = 'none', // for backwards compatibility
     SOLID = 'solid',
     VERTICAL = 'vertical'

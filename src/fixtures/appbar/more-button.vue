@@ -136,7 +136,7 @@ const popperSetUp = () => {
                         boundary: innerShell
                     }
                 },
-                applyMaxSize as Modifier<'applyMaxsize', {}>,
+                applyMaxSize as Modifier<'applyMaxsize', object>,
                 {
                     name: 'offset',
                     options: {

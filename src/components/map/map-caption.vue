@@ -137,7 +137,7 @@ const langtoggle = computed(() => mapCaptionStore.langtoggle);
 const mapConfig = computed(() => configStore.config.map);
 
 const lang = ref<Array<string>>([]);
-const watchers = reactive<Array<Function>>([]);
+const watchers = reactive<Array<() => void>>([]);
 
 watchers.push(
     watch(mapConfig, (newConfig: any) => {

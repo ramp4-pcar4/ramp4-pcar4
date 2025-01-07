@@ -37,7 +37,6 @@ const baseConfig = {
         open: '/demos/enhanced-samples.html',
         https: true
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } as Record<string, any>;
 
 function inlineConfig() {

@@ -115,7 +115,7 @@ jobs:
               with:
                   name: 'tsbadge'
                   icon: typescript
-                  label: 'TS Errors'
+                  label: 'Errors'
                   status: ${{ steps.pr-checks.outputs.ts-errors }}
                   color: blue
                   github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -126,7 +126,7 @@ jobs:
               with:
                   name: 'lintbadge'
                   icon: codecov
-                  label: 'Lint'
+                  label: 'Status'
                   status: 'Errors: ${{ steps.pr-checks.outputs.lint-errors }}, Warnings: ${{ steps.pr-checks.outputs.lint-warnings }}'
                   color: purple
                   github_token: ${{ secrets.GITHUB_TOKEN }}

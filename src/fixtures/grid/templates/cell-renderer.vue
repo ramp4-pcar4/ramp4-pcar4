@@ -57,6 +57,7 @@ const copy = () => {
 
     isCopied.value = true;
     (copyTooltip.value as any)?._tippy.show();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     navigator.clipboard.writeText(el.value?.textContent!);
     setTimeout(() => {
         isCopied.value = false;

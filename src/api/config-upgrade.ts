@@ -868,8 +868,8 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
  * @param r2controls controls array from RAMP2 config
  * @param allowedControls controls supported by RAMP4 config
  */
-function controlsUpgrader(r2controls: String[], allowedControls: String[]) {
-    const r4controls: String[] = [];
+function controlsUpgrader(r2controls: string[], allowedControls: string[]) {
+    const r4controls: string[] = [];
     r2controls.forEach((control: any) => {
         if (allowedControls.includes('identify') && control === 'query') {
             r4controls.push('identify');
@@ -1016,7 +1016,7 @@ function servicesUpgrader(r2Services: any, r4c: any): void {
     }
 
     // If any of these properties get implemented/used in the future, remove them from the warning list and map them appropriately.
-    const unused: String[] = [
+    const unused: string[] = [
         'corsEverywhere',
         'exportMapUrl',
         'geometryUrl',
@@ -1078,7 +1078,7 @@ function uiUpgrader(r2ui: any, r4c: any): void {
     }
 
     if (r2ui.legend) {
-        const headerControls: String[] = ['groupToggle', 'visibilityToggle'];
+        const headerControls: string[] = ['groupToggle', 'visibilityToggle'];
         if (r2ui.legend.reorderable) {
             headerControls.push('layerReorder');
         }
@@ -1224,7 +1224,7 @@ function uiUpgrader(r2ui: any, r4c: any): void {
     }
 
     // If any of these properties get implemented/used in the future, remove them from the warning list and map them appropriately.
-    const unused: String[] = [
+    const unused: string[] = [
         'fullscreen',
         'theme',
         'logoUrl',

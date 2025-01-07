@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { CommonLayer, GlobalEvents, InstanceAPI } from '@/api/internal';
 import { DefPromise, DrawState, Extent, InitiationState, LayerState, ScaleSet, SpatialReference } from '@/geo/api';
 

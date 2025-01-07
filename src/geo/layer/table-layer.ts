@@ -6,11 +6,10 @@ import {
     InstanceAPI,
     QuickCache
 } from '@/api/internal';
-import { CoreFilter, Extent, Filter, Graphic, LayerType, NoGeometry } from '@/geo/api';
+import { CoreFilter, Filter, Graphic, LayerType, NoGeometry } from '@/geo/api';
 import type {
     Attributes,
     DiscreteGraphicResult,
-    GetGraphicParams,
     QueryFeaturesArcServerParams,
     QueryFeaturesParams,
     RampLayerConfig
@@ -105,7 +104,7 @@ export class TableLayer extends DataLayer {
         return loadPromises;
     }
 
-    async getGraphic(objectId: number, opts: GetGraphicParams): Promise<Graphic> {
+    async getGraphic(objectId: number): Promise<Graphic> {
         // overridden from DataLayer just to take advantage of caching. If we decide to drop caching, this can almost be deleted;
         // would just need to ensure the attribute downloader runs first if not already started.
 
@@ -208,10 +207,7 @@ export class TableLayer extends DataLayer {
         return this.filter.getCombinedSql(exclusions);
     }
 
-    async getFilterOIDs(
-        exclusions: Array<string> = [],
-        extent: Extent | undefined = undefined
-    ): Promise<Array<number> | undefined> {
+    async getFilterOIDs(exclusions: Array<string> = []): Promise<Array<number> | undefined> {
         const sql = this.filter.getCombinedSql(exclusions);
 
         if (!sql) {
@@ -266,13 +262,9 @@ export class TableLayer extends DataLayer {
 
         const oids = await this.queryOIDs(options);
 
-        // run result ids through our quick cache pipeline
-        const p: GetGraphicParams = {
-            getAttribs: true
-        };
         return oids.map(oid => ({
             oid: oid,
-            graphic: this.getGraphic(oid, p)
+            graphic: this.getGraphic(oid)
         }));
     }
 
