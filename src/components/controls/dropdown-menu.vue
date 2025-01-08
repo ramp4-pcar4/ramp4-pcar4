@@ -106,11 +106,8 @@ onMounted(() => {
     });
 
     dropdownTrigger.value!.addEventListener('focus', focusDropdownTrigger);
-
     dropdownTrigger.value!.addEventListener('blur', blurDropdownTrigger);
-
     dropdownTrigger.value!.addEventListener('mouseover', focusDropdownTrigger);
-
     dropdownTrigger.value!.addEventListener('mouseleave', blurDropdownTrigger);
 
     // nextTick should prevent any race conditions by letting the child elements render before trying to place them using popper
@@ -174,11 +171,8 @@ onBeforeUnmount(() => {
     });
 
     dropdownTrigger.value!.removeEventListener('focus', focusDropdownTrigger);
-
     dropdownTrigger.value!.removeEventListener('blur', blurDropdownTrigger);
-
     dropdownTrigger.value!.removeEventListener('mouseover', focusDropdownTrigger);
-
     dropdownTrigger.value!.removeEventListener('mouseleave', blurDropdownTrigger);
 
     open.value = false;

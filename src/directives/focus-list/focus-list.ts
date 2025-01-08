@@ -342,10 +342,15 @@ export class FocusListManager {
                 }
                 break;
             case KEYS.Tab:
-                // we only modify Tab behavior if the highlighted item isnt the list
-                if (this.highlightedItem !== this.element) {
-                    // prevent focus-items with tabbable children from being defocused right away
-                    if (this.highlightedItem.querySelectorAll(TABBABLE_TAGS).length === 0) {
+                const highlightedHasNoChildren = this.highlightedItem.querySelectorAll(TABBABLE_TAGS).length === 0;
+                const eventTargetIsFocusList = this.element.isEqualNode(event.target as HTMLElement);
+
+                // We only modify Tab behavior if the highlighted item isnt the list, and when the event's target is the focus list itself,
+                // as this implies that we are currently traversing focus items of the focus list, and thus we should modify the default behaviour
+                // upon clicking Tab
+                if (this.highlightedItem !== this.element && eventTargetIsFocusList) {
+                    // Prevent focus items with tabbable children from being defocused right away
+                    if (highlightedHasNoChildren) {
                         this.defocusItem(this.highlightedItem);
                     }
 
