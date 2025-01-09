@@ -108,6 +108,7 @@ jobs:
                   ts-command: 'npm run ts:check'
                   lint-command: 'npm run lint:check'
                   format-command: 'npm run format:check'
+                  path: 'ramp'
 
             - name: Typescript badge
               if: github.ref == 'refs/heads/main'
