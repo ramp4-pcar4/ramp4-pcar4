@@ -15,7 +15,12 @@
                 }"
                 ref="el"
             >
-                <legend-item v-for="item in children" :legendItem="item" :key="item.uid" />
+                <legend-item
+                    v-for="item in children"
+                    :legendItem="item"
+                    :key="item.uid"
+                    @checkbox-toggled="applyFocusToItem"
+                />
             </div>
         </template>
     </panel-screen>
@@ -48,15 +53,22 @@ const keyupEvent = (e: Event) => {
     }
 };
 
+// Here, a checkbox within the provided focus item was toggled, resulting in the focus item to be unmounted and mounted
+// again. When using keyboard navigation, this causes focus to be removed from the focus item
+const applyFocusToItem = (focusItem: HTMLElement) => {
+    const toggleEvent = new CustomEvent('refocusItem', {
+        detail: { focusItem }
+    });
+    el.value?.dispatchEvent(toggleEvent);
+};
+
 onMounted(() => {
     el.value?.addEventListener('blur', blurEvent);
-
     el.value?.addEventListener('keyup', keyupEvent);
 });
 
 onBeforeUnmount(() => {
     el.value?.removeEventListener('blur', blurEvent);
-
     el.value?.removeEventListener('keyup', keyupEvent);
 });
 

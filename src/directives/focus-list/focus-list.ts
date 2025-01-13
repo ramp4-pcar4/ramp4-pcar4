@@ -140,10 +140,22 @@ export class FocusListManager {
         element.addEventListener('touchstart', function () {
             focusManager.onTouchstart();
         });
+        // Handles event omitted due to the toggling of a checkbox within a focus item
+        element.addEventListener('refocusItem', e => {
+            const evt = e as CustomEvent;
+            const focusItem = evt.detail.focusItem;
+            focusManager.focusItem(focusItem);
+            this.highlightedItem = focusItem;
+            if (focusItem.getAttribute(ITEM_ATTR) === SHOW_TRUNCATE) {
+                (focusItem.querySelector(`[${TRUNCATE_ATTR}]`)! as any)?._tippy?.hide();
+            }
+            if ((focusItem as any)._tippy) {
+                (focusItem as any)._tippy.hide();
+            }
+        });
 
         document.addEventListener('click', function (event: MouseEvent) {
-            // @ts-expect-error TODO: explain why this is needed or remove
-            if (element.contains(event.target)) {
+            if (event.target && element.contains(event.target as Node)) {
                 focusManager.onClick(event);
             } else {
                 focusManager.defocusItem(focusManager.highlightedItem);

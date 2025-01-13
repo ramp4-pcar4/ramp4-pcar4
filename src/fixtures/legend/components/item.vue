@@ -56,6 +56,7 @@
                     aria: 'describedby'
                 }"
                 truncate-trigger
+                ref="legendFocusItem"
             >
                 <!-- smiley face. very important that we migrate this -->
                 <div class="flex p-5 mr-[13px]" v-if="legendItem.type !== LegendType.Item">
@@ -385,6 +386,7 @@
                         legendItem instanceof LayerItem && !legendItem.layerControlAvailable(LayerControl.Visibility)
                     "
                     :label="isGroup ? 'Group' : 'Layer'"
+                    @checkbox-toggled="$emit('checkboxToggled', legendFocusItem as HTMLElement)"
                 />
             </div>
             <div
@@ -438,6 +440,7 @@
                                 :checked="item.visibility"
                                 :disabled="!controlAvailable(LayerControl.Visibility)"
                                 label="Symbol"
+                                @checkbox-toggled="$emit('checkboxToggled', legendFocusItem as HTMLElement)"
                             />
                         </div>
                     </div>
@@ -463,6 +466,7 @@
                             :checked="item.visibility"
                             :disabled="!controlAvailable(LayerControl.Visibility)"
                             label="Symbol"
+                            @checkbox-toggled="$emit('checkboxToggled', legendFocusItem as HTMLElement)"
                         />
                     </div>
                 </div>
@@ -479,7 +483,12 @@
         </div>
         <!-- Display children of the group -->
         <div class="legend-group border-l-2 ml-4 pl-4" v-if="legendItem.expanded">
-            <item v-for="item in legendItem.children" :legendItem="item" :key="item.uid" />
+            <item
+                v-for="item in legendItem.children"
+                :legendItem="item"
+                :key="item.uid"
+                @checkbox-toggled="(focusItem: HTMLElement) => $emit('checkboxToggled', focusItem)"
+            />
         </div>
     </div>
 </template>
@@ -492,7 +501,7 @@ import { useLayerStore } from '@/stores/layer';
 import to from 'await-to-js';
 import { marked } from 'marked';
 import type { PropType } from 'vue';
-import { toRaw, computed, inject, ref, watch } from 'vue';
+import { toRaw, computed, inject, ref, watch, useTemplateRef } from 'vue';
 import { LayerItem } from '../store/layer-item';
 import { LegendControl, LegendType } from '../store/legend-item';
 import { InfoType, SectionItem } from '../store/section-item';
@@ -514,6 +523,7 @@ const panelStore = usePanelStore();
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 const el = ref();
+const legendFocusItem = useTemplateRef('legendFocusItem');
 
 const props = defineProps({
     legendItem: {

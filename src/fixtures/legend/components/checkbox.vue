@@ -4,10 +4,10 @@
         <input
             :type="isRadio ? 'radio' : 'checkbox'"
             :aria-label="t(checked ? `legend.visibility.hide${label}` : `legend.visibility.show${label}`)"
-            @click.stop="toggleVisibility()"
+            @click.stop="clickHandler('mouse')"
             :checked="checked && initialChecked"
             @keypress.enter.prevent
-            @keyup.enter.stop="toggleVisibility()"
+            @keyup.enter.stop="clickHandler('keyboard')"
             :class="[
                 disabled
                     ? 'text-gray-400 border-gray-300'
@@ -18,18 +18,20 @@
             :disabled="disabled"
             :content="t(checked ? `legend.visibility.hide${label}` : `legend.visibility.show${label}`)"
             v-tippy="{ placement: 'top-end', hideOnClick: false }"
+            ref="checkboxInput"
         />
     </div>
 </template>
 
 <script setup lang="ts">
 import { CoreFilter, type LegendSymbology } from '@/geo/api';
-import { onMounted, ref, type PropType } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref, type PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { LayerItem } from '../store/layer-item';
 import { LegendItem } from '../store/legend-item';
 
 const { t } = useI18n();
+const emit = defineEmits(['checkboxToggled']);
 
 const props = defineProps({
     value: {
@@ -47,10 +49,45 @@ const props = defineProps({
 });
 
 const initialChecked = ref(props.legendItem.visibility);
+const checkboxInput = ref();
+
+const clickHandler = async (eventType: string) => {
+    toggleVisibility();
+    await nextTick();
+    const toggleEvent = new CustomEvent('checkboxToggle', {
+        detail: { layerUid: props.legendItem.uid, type: eventType }
+    });
+    window.dispatchEvent(toggleEvent);
+};
 
 onMounted(() => {
     props.legendItem.checkVisibilityRules();
     initialChecked.value = props.legendItem.visibility === props.checked;
+
+    // When checkbox is toggled, it gets unmounted and mounted again. The 'checkboxToggle' event gets dispatched by the
+    // old (to be unmounted) checkbox, and is handled here by the newly mounted checkbox
+    window.addEventListener('checkboxToggle', (e: Event) => {
+        const evt = e as CustomEvent;
+        if (evt.detail.layerUid === props.legendItem.uid) {
+            checkboxInput.value?.focus();
+
+            if (checkboxInput.value && evt.detail.type === 'keyboard') {
+                emit('checkboxToggled');
+            }
+        }
+    });
+});
+
+onBeforeUnmount(() => {
+    window.removeEventListener('checkboxToggle', (e: Event) => {
+        const evt = e as CustomEvent;
+        if (evt.detail.layerUid === props.legendItem.uid) {
+            checkboxInput.value?.focus();
+            if (evt.detail.type === 'keyboard') {
+                emit('checkboxToggled');
+            }
+        }
+    });
 });
 
 /**
