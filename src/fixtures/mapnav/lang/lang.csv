@@ -1,4 +1,6 @@
 key,enValue,enValid,frValue,frValid
+mapnav.openMenu,Open navigation,1,Ouvrir la navigation,0
+mapnav.closeMenu,Close navigation,1,Fermer la navigation,0
 mapnav.zoomIn,Zoom In,1,Zoom avant,1
 mapnav.zoomOut,Zoom Out,1,Zoom arrière,1
 mapnav.home,Home,1,Accueil,1
