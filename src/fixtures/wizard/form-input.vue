@@ -121,11 +121,6 @@
                         :value="modelValue"
                         @input="handleServiceSelection(size, $event)"
                         :aria-label="props.ariaLabel"
-                        v-tippy="{
-                            content: t('select.items'),
-                            trigger: 'manual',
-                            placement: 'top-start'
-                        }"
                         ref="selectInput"
                     >
                         <option class="p-6" v-for="option in options" :key="option.label" :value="option.value">
@@ -307,7 +302,6 @@ const watchers = reactive<Array<Function>>([]);
 if (props.defaultOption && props.modelValue === '' && props.options.length) {
     // regex to guess closest default value for lat/long fields
     // eslint has beef with the following line for unknown reasons.
-    // eslint-disable-next-line
     let defaultValue = props.options[0].value;
     if (props.name === 'latField') {
         const latNames = new RegExp(/^(y|lat.*)$/i);
@@ -417,23 +411,7 @@ const addAriaLabel = () => {
     }
 };
 
-const blurEvent = () => {
-    (selectInput.value as any)._tippy.hide();
-};
-
-const keyupEvent = (e: Event) => {
-    const evt = e as KeyboardEvent;
-    if (evt.key === 'Tab' && selectInput.value?.matches(':focus') && navigator.userAgent.includes('Firefox')) {
-        (selectInput.value as any)._tippy.show();
-    } else {
-        (selectInput.value as any)._tippy.hide();
-    }
-};
-
 onMounted(() => {
-    selectInput.value?.addEventListener('blur', blurEvent);
-    selectInput.value?.addEventListener('keyup', keyupEvent);
-
     // only needed for wizard step 3, which takes longer to mount than the other steps
     if (props.step === 2 && props.step === props.activeStep) {
         emit('focusElement');
@@ -444,9 +422,6 @@ onBeforeUnmount(() => {
     // remove the resize observer
     resizeObserver.value!.disconnect();
     watchers.forEach(unwatch => unwatch());
-
-    selectInput.value?.removeEventListener('blur', blurEvent);
-    selectInput.value?.removeEventListener('keyup', keyupEvent);
 });
 </script>
 

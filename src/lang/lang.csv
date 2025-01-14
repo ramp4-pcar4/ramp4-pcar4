@@ -56,4 +56,3 @@ layer.noexportmap,{name} was attempted to be added as a Map Image Layer but Map 
 caption.attributionDefaultText,Powered by ESRI,1,Propulsé par ESRI,0
 caption.attributionLogoAltText,ESRI logo,1,Logo ESRI,0
 caption.attributionLink,https://www.esri.com/,1,https://www.esri.com/fr-fr/home,1
-select.items, Use Arrow-up/down to select a value. Use Alt+Shift+Arrow-up/down to toggle the select menu,1,Utilisez Flèche haut/bas pour sélectionner une valeur. Utilisez Alt+Shift+Flèche haut/bas pour basculer le menu de sélection,0
