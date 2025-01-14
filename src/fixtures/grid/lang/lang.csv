@@ -5,6 +5,7 @@ grid.splash.error,Error: Failed to load the layer's data.,1,Erreur : Échec du 
 grid.splash.loading,Loading data...,1,Chargement des données...,1
 grid.splash.building,Building table...,1,Création du tableau...,1
 grid.splash.cancel,Cancel,1,Annuler,1
+grid.search.clear,Clear search filter,1,Effacer le filtre de recherche,0
 grid.clearAll,Clear search and filters,1,Effacer la recherche et les filtres,1
 grid.layer.loading,The layer is loading...,1,La couche est en cours de téléchargement...,1
 grid.label.pinColumns,Pin columns,1,Épingler les colonnes,1

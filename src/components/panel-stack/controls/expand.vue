@@ -10,6 +10,7 @@
                 animation: 'scale',
                 hideOnClick: false
             }"
+            :aria-label="t(`panels.controls.${active ? 'collapse' : 'expand'}`)"
         >
             <!-- EXPAND https://fonts.google.com/icons?selected=Material%20Icons%3Aexpand%3A -->
             <svg

@@ -8,6 +8,7 @@
         :disabled="!params.stateManager.filtered"
         tabindex="-1"
         ref="el"
+        :aria-label="t('grid.filters.clear')"
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"

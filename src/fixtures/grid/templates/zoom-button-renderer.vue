@@ -8,6 +8,7 @@
         @click="zoomToFeature"
         tabindex="-1"
         ref="button"
+        :aria-label="t(`grid.cells.zoom${zoomStatus === 'none' ? '' : `.${zoomStatus}`}`)"
     >
         <div v-if="zoomStatus === 'zooming'" class="m-auto animate-spin spinner h-20 w-20"></div>
         <svg
