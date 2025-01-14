@@ -1,5 +1,5 @@
 on:
-    pull_request:
+    pull_request_target:
         types: [opened, synchronize]
 
 jobs:
@@ -37,9 +37,9 @@ jobs:
               if: always()
               uses: RubbaBoy/BYOB@v1.3.0
               with:
-                  name: 'tsbadge-${{github.head_ref}}'
+                  name: 'tsbadge-${{ github.event.pull_request.head.repo.owner.login }}-${{ github.head_ref }}'
                   icon: typescript
-                  label: 'TS Errors'
+                  label: 'Errors (PR)'
                   status: ${{ steps.pr-checks.outputs.ts-errors }}
                   color: blue
                   github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -48,9 +48,9 @@ jobs:
               if: always()
               uses: RubbaBoy/BYOB@v1.3.0
               with:
-                  name: 'lintbadge-${{github.head_ref}}'
+                  name: 'lintbadge-${{ github.event.pull_request.head.repo.owner.login }}-${{ github.head_ref }}'
                   icon: codecov
-                  label: 'Lint'
+                  label: 'Status (PR)'
                   status: 'Errors: ${{ steps.pr-checks.outputs.lint-errors }}, Warnings: ${{ steps.pr-checks.outputs.lint-warnings }}'
                   color: purple
                   github_token: ${{ secrets.GITHUB_TOKEN }}

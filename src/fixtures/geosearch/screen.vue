@@ -95,7 +95,7 @@ const failedServices = computed<string[]>(() => geosearchStore.failedServices);
 
 // zoom in to a clicked result
 const zoomIn = (result: any) => {
-    let zoom = new Polygon(
+    const zoom = new Polygon(
         'zoomies',
         [
             [

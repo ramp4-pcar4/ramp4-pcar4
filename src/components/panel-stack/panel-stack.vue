@@ -46,7 +46,7 @@ onMounted(() => {
 });
 
 const visible = (screenSize: string | null): PanelInstance[] | undefined =>
-    //@ts-ignore
+    //@ts-expect-error TODO: explain why this is needed or remove
     panelStore.getVisible(screenSize);
 
 const enter = (el: Element, done: () => void): void => {
@@ -94,9 +94,8 @@ const animateTransition = (el: Element, done: () => void, values: number[][]): v
     });
 };
 
-// @ts-ignore
 declare class ResizeObserver {
-    constructor(callback: Function);
+    constructor(callback: (entries: ResizeObserverEntry[], observer: ResizeObserver) => void);
     observe(target: Element): void;
     unobserve(target: Element): void;
     disconnect(): void;

@@ -44,7 +44,7 @@ defineProps({
 const areasOfInterestStore = useAreasOfInterestStore();
 
 const areas = computed<AreaOfInterest[] | undefined>(() => areasOfInterestStore.areas);
-let showThumbnail = ref(false);
+const showThumbnail = ref(false);
 
 onMounted(() => {
     showThumbnail.value = !!areas.value?.some((area: AreaOfInterest) => area.thumbnail);

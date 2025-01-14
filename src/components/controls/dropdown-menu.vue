@@ -36,7 +36,7 @@ import { createPopper, detectOverflow } from '@popperjs/core';
 
 const open = ref<boolean>(false);
 const popper = ref<any>(null);
-const watchers = reactive<Array<Function>>([]);
+const watchers = reactive<Array<() => void>>([]);
 
 const el = ref();
 const dropdown = ref<HTMLElement>();
@@ -115,7 +115,7 @@ onMounted(() => {
 
     // nextTick should prevent any race conditions by letting the child elements render before trying to place them using popper
     nextTick(() => {
-        const overflowScrollModifier: Modifier<'overflowScroll', {}> = {
+        const overflowScrollModifier: Modifier<'overflowScroll', object> = {
             name: 'overflowScroll',
             enabled: true,
             phase: 'main',

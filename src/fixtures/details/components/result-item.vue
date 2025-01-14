@@ -108,7 +108,7 @@ const props = defineProps({
 });
 
 const iApi = inject<InstanceAPI>('iApi')!;
-const watchers = ref<Array<Function>>([]);
+const watchers = ref<Array<() => void>>([]);
 const detailsStore = useDetailsStore();
 const { t } = useI18n();
 
@@ -123,7 +123,7 @@ const zoomButton = ref<HTMLElement>();
  * Return the LayerInstance that cooresponds with the UID provided in props.
  */
 const getLayerInfo = () => {
-    let layer: LayerInstance | undefined = layerStore.getLayerByUid(props.uid);
+    const layer: LayerInstance | undefined = layerStore.getLayerByUid(props.uid);
     return layer;
 };
 
@@ -131,11 +131,11 @@ const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(() => d
 
 const defaultTemplates = computed<{ [type: string]: string }>(() => detailsStore.defaultTemplates);
 
-const supportsFeatures = computed<Boolean>(() => {
+const supportsFeatures = computed<boolean>(() => {
     return getLayerInfo()?.supportsFeatures ?? false;
 });
 
-const isMapLayer = computed<Boolean>(() => {
+const isMapLayer = computed<boolean>(() => {
     return getLayerInfo()?.mapLayer ?? false;
 });
 

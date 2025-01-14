@@ -320,7 +320,10 @@ class ExportLegendFixture extends FixtureInstance implements ExportSubFixture {
                 continue;
             }
 
-            sublayer.visibility && ids.push(sublayer.layerIdx);
+            if (sublayer.visibility) {
+                ids.push(sublayer.layerIdx);
+            }
+
             queue.push(...sublayer.sublayers);
         }
 

@@ -200,7 +200,7 @@ const runPreTest = (config, options, utils) => {
     return { config, options };
 };
 
-const runPostTest = (instance, utils) => {
+const runPostTest = instance => {
     // template with our friend Rick.
     instance.$element.component('WFSLayer-Custom', {
         props: ['identifyData'],

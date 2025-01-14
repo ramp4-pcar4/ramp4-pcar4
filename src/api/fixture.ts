@@ -207,7 +207,7 @@ export class FixtureAPI extends APIScope {
         });
         // Now, get all the promises and return
         const proms = fixtureStore.getLoadPromises(idsToCheck);
-        // @ts-ignore I give up, TS is hopeless
+        // @ts-expect-error I give up, TS is hopeless
         return Array.isArray(fixtureId) ? Promise.all(proms) : proms[0];
     }
 
@@ -383,7 +383,12 @@ export class FixtureInstance extends APIScope implements FixtureBase {
         if (app && app._context) {
             vNode.appContext = app._context;
         }
-        el ? render(vNode, el) : render(vNode, (el = document.createElement('div')));
+        if (el) {
+            render(vNode, el);
+        } else {
+            el = document.createElement('div');
+            render(vNode, el);
+        }
 
         const destroy = () => {
             if (el) {

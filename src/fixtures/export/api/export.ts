@@ -296,7 +296,7 @@ export class ExportAPI extends FixtureInstance {
             this.fcFabric.clone((clonedCanvas: fabric.StaticCanvas) => {
                 this.fcFabricDownload = clonedCanvas;
                 this.fcFabricDownload.setDimensions({
-                    width: this.fcFabric!?.getWidth()!,
+                    width: this.fcFabric?.getWidth() ?? panelWidth,
                     height: this.fcFabric!.getHeight()!
                 });
                 this.fcFabricDownload.renderAll();
@@ -327,7 +327,7 @@ export class ExportAPI extends FixtureInstance {
             this.fcFabric.renderAll();
 
             this.fcFabricDownload!.setDimensions({
-                width: (fbMap?.width! ?? DEFAULT_WIDTH) + GLOBAL_MARGIN.LEFT + GLOBAL_MARGIN.RIGHT,
+                width: (fbMap?.width ?? DEFAULT_WIDTH) + GLOBAL_MARGIN.LEFT + GLOBAL_MARGIN.RIGHT,
                 height: this.options.runningHeight + GLOBAL_MARGIN.TOP + GLOBAL_MARGIN.BOTTOM
             });
             this.fcFabricDownload.renderAll();

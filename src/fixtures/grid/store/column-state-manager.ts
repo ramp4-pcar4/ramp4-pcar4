@@ -2,6 +2,16 @@
  * State manager for columns in datagrid.
  */
 export default class ColumnStateManager {
+    columnConfig: any;
+    _field: string;
+    _title: string;
+    _visible: boolean;
+    _width: number;
+    _sort: string;
+    _searchable: boolean;
+    _filter: any;
+    _template: string;
+
     constructor(columnConfig: any) {
         this.columnConfig = columnConfig;
         this._field = columnConfig?.field;
@@ -148,16 +158,4 @@ export default class ColumnStateManager {
     get template(): string {
         return this._template;
     }
-}
-
-export default interface ColumnStateManager {
-    columnConfig: any;
-    _field: string;
-    _title: string;
-    _visible: boolean;
-    _width: number;
-    _sort: string;
-    _searchable: boolean;
-    _filter: any;
-    _template: string;
 }

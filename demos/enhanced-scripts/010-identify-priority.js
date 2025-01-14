@@ -69,7 +69,7 @@ const runPreTest = (config, options, utils) => {
     return { config, options };
 };
 
-const runPostTest = (instance, utils) => {
+const runPostTest = () => {
     // Nothing for this test
 };
 

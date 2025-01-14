@@ -302,7 +302,7 @@ export class AttributeAPI extends APIScope {
         if (feats.length > 0) {
             let geom: BaseGeometry;
 
-            let feat = this.trimFeatureSetAttributes([feats[0]], details.fieldsToTrim ?? [])[0];
+            const feat = this.trimFeatureSetAttributes([feats[0]], details.fieldsToTrim ?? [])[0];
 
             if (details.includeGeometry) {
                 // server result omits spatial reference
@@ -401,7 +401,7 @@ export class AttributeAPI extends APIScope {
         }
 
         // Find the fields that should be trimmed (have trim = true)...
-        let fieldsToTrim = fieldMetadata.fieldInfo.filter(elem => elem.trim).map(elem => elem.name);
+        const fieldsToTrim = fieldMetadata.fieldInfo.filter(elem => elem.trim).map(elem => elem.name);
 
         // ...and set their trim properties on the layer
         layer.fields.forEach(field => {
@@ -571,7 +571,7 @@ export class AttributeAPI extends APIScope {
                 // have to use function() to get .this to reference the row.
                 // arrow notation will reference the attribFC class.
                 const secretFunc = function () {
-                    // @ts-ignore
+                    // @ts-expect-error TODO: explain why this is needed or remove
                     return this[c.data];
                 };
 

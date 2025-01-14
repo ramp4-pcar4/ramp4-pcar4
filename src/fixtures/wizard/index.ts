@@ -34,7 +34,7 @@ class WizardFixture extends WizardAPI {
         let layerSource: LayerSource | undefined = new LayerSource(this.$iApi);
 
         const wizardStore = useWizardStore(this.$vApp.$pinia);
-        //@ts-ignore
+        //@ts-expect-error TODO: explain why this is needed or remove
         wizardStore.layerSource = layerSource;
 
         // override the removed method here to get access to scope

@@ -66,7 +66,7 @@ const activeBasemap = computed<RampBasemapConfig>(() => configStore.activeBasema
 const mapConfig = computed(() => overviewmapStore.mapConfig);
 const basemaps = computed(() => overviewmapStore.basemaps as { [key: string]: RampBasemapConfig });
 const startMinimized = computed(() => overviewmapStore.startMinimized);
-let overviewMap = reactive(new OverviewMapAPI(iApi));
+const overviewMap = reactive(new OverviewMapAPI(iApi));
 const minimized = ref(true);
 const hoverOnExtent = ref(false);
 const handlers = reactive<Array<string>>([]);
@@ -84,7 +84,7 @@ onMounted(async () => {
     minimized.value = startMinimized.value!;
 
     // update the overview map with the current map extent
-    let updatePromise = overviewMap.updateOverview(iApi.geo.map.getExtent());
+    const updatePromise = overviewMap.updateOverview(iApi.geo.map.getExtent());
     // update the overview map whenever the extent changes
     handlers.push(
         iApi.event.on(
@@ -195,7 +195,7 @@ const _adaptBasemap = () => {
             // override the intial basemap id in the overview map config
             overviewmapStore.updateInitialBasemap(basemap.id);
         }
-    } catch (err) {
+    } catch {
         // if we errored above, just use the main map's basemap
 
         // do we want this warning? will throw on every map refresh if no basemaps have been provided in the config (which is valid)

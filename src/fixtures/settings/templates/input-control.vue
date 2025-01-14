@@ -42,7 +42,7 @@ const props = defineProps({
 });
 
 const isDisabled = ref(!!props.config.disabled);
-const watchers = reactive<Array<Function>>([]);
+const watchers = reactive<Array<() => void>>([]);
 
 watchers.push(
     // watch the config for changes to the opacity value

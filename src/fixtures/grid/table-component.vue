@@ -64,7 +64,7 @@
                         @keypress.enter.prevent
                         @keyup.enter="
                             if (panelStore.mobileView) {
-                                //@ts-ignore
+                                //@ts-expect-error TODO: explain why this is needed or remove
                                 $event?.target?.blur();
                             }
                         "
@@ -423,10 +423,10 @@ import { useI18n } from 'vue-i18n';
 /* eslint no-useless-escape: 0 */
 
 export interface FilterParams {
-    comparator?: Function;
+    comparator?: (filterDate: any, entryDate: any) => void;
     inRangeInclusive?: boolean;
-    textMatcher?: Function;
-    textFormatter?: Function;
+    textMatcher?: (params: any) => void;
+    textFormatter?: (s: string) => void;
 }
 export interface TableComponent {
     config: GridConfig;
@@ -461,17 +461,17 @@ export interface ColumnDefinition {
     floatingFilterComponentParams?: {
         suppressFilterButton: boolean;
         stateManager: TableStateManager;
-        clearFilters?: Function;
+        clearFilters?: () => void;
         rowData?: Attributes[];
     };
     filterParams: FilterParams;
-    cellRenderer: Function;
+    cellRenderer: (cell: any) => void;
     cellRendererParams?: any;
     sortable: boolean;
     hide: boolean;
     isSelector: boolean;
     lockPosition: boolean;
-    suppressHeaderKeyboardEvent: Function;
+    suppressHeaderKeyboardEvent: (params: any) => void;
     autoHeight?: boolean;
 }
 // column definition for specialized columns (index, symbols, etc.)
@@ -488,12 +488,12 @@ export interface SpecialColumnDefinition {
     floatingFilterComponentParams?: {
         suppressFilterButton: boolean;
         stateManager: TableStateManager;
-        clearFilters?: Function;
+        clearFilters?: () => void;
     };
     pinned?: string;
     maxWidth?: number;
-    cellStyle: Function;
-    cellRenderer?: Function;
+    cellStyle: () => void;
+    cellRenderer?: () => void;
     cellRendererParams?: any;
     preventExport: boolean;
 }
@@ -505,7 +505,7 @@ const iApi = inject<InstanceAPI>('iApi')!;
 const gridStore = useGridStore();
 const panelStore = usePanelStore();
 const mobileView = computed(() => panelStore.mobileView);
-const pinned = ref<Boolean>(!mobileView.value);
+const pinned = ref<boolean>(!mobileView.value);
 const el = ref<HTMLElement>();
 const gridContainer = useTemplateRef('gridContainer');
 const { t, locale } = useI18n();
@@ -537,7 +537,7 @@ const isErrorGrid = ref<boolean>(false);
 const loadedRecordCount = ref<Array<number>>([]);
 const totalRecordCount = ref<number>(0);
 const handlers = ref<Array<string>>([]);
-const watchers = ref<Array<Function>>([]);
+const watchers = ref<Array<() => void>>([]);
 const gridTitle = ref<string>('');
 const columnApi = ref<ColumnApi>(new ColumnApi());
 const columnDefs = ref<Array<any>>([]);
@@ -688,7 +688,7 @@ const toggleFilterByExtent = () => {
 
 // Toggles the floating (column) filters on and off.
 const toggleShowFilters = () => {
-    let colDefs = agGridOptions.value.api.getColumnDefs();
+    const colDefs = agGridOptions.value.api.getColumnDefs();
     config.value.state.colFilter = !config.value.state.colFilter;
 
     colDefs.forEach((col: ColumnDefinition) => {
@@ -707,7 +707,7 @@ const updateFilterInfo = () => {
             applyFiltersToMap();
         }
         nextTick(() => {
-            let cols = columnApi.value.getAllDisplayedColumns();
+            const cols = columnApi.value.getAllDisplayedColumns();
             agGridOptions.value.api.refreshCells({
                 columns: [cols[0]] // Limits the refresh action to the row number column.
             });
@@ -752,7 +752,7 @@ const exportData = () => {
         columnKeys: columnsToExport,
         suppressQuotes: true,
         processCellCallback: cell => {
-            let cellType = cell.column.getColDef().cellRendererParams;
+            const cellType = cell.column.getColDef().cellRendererParams;
             if (!cell.value || (cellType && cellType.type === 'number')) return cell.value;
             else if (cellType && cellType.type === 'date')
                 return `"${new Date(cell.value).toLocaleDateString('en-CA', {
@@ -772,7 +772,7 @@ const exportData = () => {
 const setUpDateFilter = (colDef: ColumnDefinition, state: TableStateManager) => {
     colDef.floatingFilterComponent = 'dateFloatingFilter';
     colDef.filterParams.comparator = function (filterDate: any, entryDate: any) {
-        let entry = new Date(entryDate);
+        const entry = new Date(entryDate);
 
         // We need to specifically compare the UTC year, month, and date because
         // directly comparing the dates returns the wrong value due to timezone differences
@@ -843,7 +843,7 @@ const setUpTextFilter = (colDef: ColumnDefinition, state: TableStateManager) => 
     };
 
     // modified from: https://www.ag-grid.com/javascript-grid-filter-text/#text-formatter
-    let disregardAccents = function (s: string) {
+    const disregardAccents = function (s: string) {
         let r = s.toLowerCase();
         r = r.replace(new RegExp('[àáâãäå]', 'g'), 'a');
         r = r.replace(new RegExp('æ', 'g'), 'ae');
@@ -871,7 +871,7 @@ const setUpSpecialColumns = (
 ) => {
     // set up row number column
     if (col.field === 'rvRowIndex') {
-        let indexDef = {
+        const indexDef = {
             sortable: false,
             lockPosition: true,
             valueGetter: 'node.rowIndex + 1',
@@ -905,7 +905,7 @@ const setUpSpecialColumns = (
     if (col.field === 'rvInteractive') {
         const buttonControls = config.value.state.controls;
 
-        let detailsDef = {
+        const detailsDef = {
             sortable: false,
             pinned: mobileView.value ? '' : 'left',
             filter: false,
@@ -929,12 +929,13 @@ const setUpSpecialColumns = (
 
         // Only add this button if it is defined in the grid controls.
         if (buttonControls.includes('details')) {
+            //@ts-expect-error TODO: explain why this is needed or remove
             colDef.push(detailsDef);
         }
 
         // only render the zoom buttons if there is at least one map layer in the grid
         if (hasMapLayers.value) {
-            let zoomDef = {
+            const zoomDef = {
                 sortable: false,
                 pinned: mobileView.value ? '' : 'left',
                 filter: false,
@@ -957,6 +958,7 @@ const setUpSpecialColumns = (
 
             // Only add this button if it is defined in the grid controls.
             if (buttonControls.includes('zoom')) {
+                //@ts-expect-error TODO: explain why this is needed or remove
                 colDef.push(zoomDef);
             }
         }
@@ -965,7 +967,7 @@ const setUpSpecialColumns = (
         buttonControls.forEach((buttonConfig: string | ActionButtonDefinition) => {
             if (buttonConfig === 'zoom' || buttonConfig === 'details') return;
 
-            let buttonDef = {
+            const buttonDef = {
                 sortable: false,
                 pinned: mobileView.value ? '' : 'left',
                 filter: false,
@@ -986,14 +988,14 @@ const setUpSpecialColumns = (
                 },
                 preventExport: true
             };
-
+            //@ts-expect-error TODO: explain why this is needed or remove
             colDef.push(buttonDef);
         });
     }
 
     // Set up the symbol column.
     if (col.field === 'rvSymbol') {
-        let iconDef = {
+        const iconDef = {
             sortable: false,
             filter: false,
             lockPosition: true,
@@ -1023,7 +1025,7 @@ const setUpSpecialColumns = (
             },
             preventExport: true
         };
-
+        //@ts-expect-error TODO: explain why this is needed or remove
         colDef.push(iconDef);
     }
 };
@@ -1116,7 +1118,7 @@ const applyFiltersToMap = () => {
 // get filter SQL query string
 const getFiltersQuery = (id: string) => {
     const filterModel = agGridApi.value.getFilterModel();
-    let colStrs: (string | undefined)[] = [];
+    const colStrs: (string | undefined)[] = [];
     Object.keys(filterModel).forEach(col => {
         // check if filter is applied to an attribute of this layer
         const attrs = getAttrPair(id, col);
@@ -1156,7 +1158,7 @@ const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
             break;
         }
         case 'text': {
-            let val = colFilter.filter.replace(/'/g, /''/);
+            const val = colFilter.filter.replace(/'/g, /''/);
             if (val !== '') {
                 // following code is to UNESCAPE all special chars for ESRI and geoApi SQL to parse properly (remove the backslash)
                 const escRegex = /\\[(!"#$&'+,.\\/:;<=>?@[\]^`{|}~)]/g;
@@ -1181,7 +1183,7 @@ const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
                 newVal = newVal.replace(/_/g, 'ௌ_');
                 newVal = `*${newVal}`;
                 // if val contains a % or _, add ESCAPE 'ௌ' at the end of the query
-                let sqlWhere = `UPPER(${col}) LIKE \'${newVal.replace(/\*/g, '%').toUpperCase()}%\'`;
+                const sqlWhere = `UPPER(${col}) LIKE \'${newVal.replace(/\*/g, '%').toUpperCase()}%\'`;
                 return sqlWhere.includes('ௌ%') || sqlWhere.includes('ௌ_') ? `${sqlWhere} ESCAPE \'ௌ\'` : sqlWhere;
             }
             break;
@@ -1212,7 +1214,7 @@ const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
 // convert global search to SQL string filter of columns excluding unfiltered columns
 const globalSearchToSql = (id: string): string => {
     // TODO: support for global search on dates
-    let val = config.value.state.searchFilter.replace(/'/g, "''");
+    const val = config.value.state.searchFilter.replace(/'/g, "''");
     // to implement quick filters, first need to split the search text on white space
     const searchVals = val.split(' ');
 
@@ -1225,18 +1227,18 @@ const globalSearchToSql = (id: string): string => {
                 getAttrPair(id, column.getColId())
         );
 
-    let filteredColumns: string[] = [];
+    const filteredColumns: string[] = [];
 
     sortedRows.forEach((row: RowNode) => {
         let rowMatch = true;
         let rowSql = '';
         // each row must contain all of the split search values
-        for (let searchVal of searchVals) {
+        for (const searchVal of searchVals) {
             const re = new RegExp(`.*${searchVal.split(' ').join('.*').toUpperCase()}`);
             const filterVal = `%${searchVal.replace(/\*/g, '%').split(' ').join('%').toUpperCase()}`;
             // if any column data matches the search val in regex form, set foundVal to true and proceed to next search term
             let foundVal = false;
-            for (let column of columns) {
+            for (const column of columns) {
                 const colId = column.getColId();
                 const origColId = getAttrPair(id, column.getColId())?.origAttr;
                 const colDef = column.getColDef();
@@ -1249,20 +1251,26 @@ const globalSearchToSql = (id: string): string => {
                 else if (colDef.filter === 'agTextColumnFilter') {
                     const cellData = row.data[colId] === null ? null : row.data[colId].toString();
                     if (cellData !== null && re.test(cellData.toUpperCase())) {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                         rowSql
                             ? (rowSql = rowSql.concat(' AND ', `(UPPER(${origColId}) LIKE \'${filterVal}%\')`))
                             : (rowSql = rowSql.concat('(', `(UPPER(${origColId}) LIKE \'${filterVal}%\')`));
                         // if we have already stored the current sql break from loop
-                        filteredColumns.includes(rowSql + ')') ? (foundVal = false) : (foundVal = true);
+                        if (filteredColumns.includes(rowSql + ')')) {
+                            foundVal = false;
+                        } else {
+                            foundVal = true;
+                        }
                         break;
                     }
                 } else if (colDef.filter === 'agNumberColumnFilter') {
                     const cellData = row.data[colId] === null ? null : row.data[colId];
                     if (cellData !== null && re.test(cellData)) {
+                        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
                         rowSql
                             ? (rowSql = rowSql.concat(' AND ', `(${origColId} = ${cellData})`))
                             : (rowSql = rowSql.concat('(', `(${origColId} = ${cellData})`));
-                        filteredColumns.includes(rowSql + ')') ? (foundVal = false) : (foundVal = true);
+                        foundVal = !filteredColumns.includes(rowSql + ')');
                         break;
                     }
                 }
@@ -1501,8 +1509,8 @@ const setUpColumns = () => {
                         config.value.state.columns[column.data].visible = false;
                     }
 
-                    let colConfig = config.value.state?.columns[column.data];
-                    let col: ColumnDefinition = {
+                    const colConfig = config.value.state?.columns[column.data];
+                    const col: ColumnDefinition = {
                         headerName: colConfig.title ?? column.title,
                         headerComponent: 'agColumnHeader',
                         headerComponentParams: {
@@ -1536,7 +1544,7 @@ const setUpColumns = () => {
                     };
 
                     // retrieve the field info for the column
-                    let fieldInfo = mergedTableAttrs.fields.find((field: any) => field.name === col.field);
+                    const fieldInfo = mergedTableAttrs.fields.find((field: any) => field.name === col.field);
 
                     if (column === 'rvRowIndex' || column === 'rvSymbol' || column === 'rvInteractive') {
                         setUpSpecialColumns(col, columnDefs.value, config.value.state);

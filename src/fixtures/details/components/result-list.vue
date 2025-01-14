@@ -177,7 +177,7 @@ const { t } = useI18n();
 /**
  * If we could find the bound layer in our instance
  */
-const layerExists = ref<Boolean>(false);
+const layerExists = ref<boolean>(false);
 
 /**
  * Details fixture
@@ -206,7 +206,7 @@ const currentIdx = ref<number>(0);
 const itemsPerPage = ref<number>(20);
 
 const handlers = ref<Array<string>>([]);
-const watchers = ref<Array<Function>>([]);
+const watchers = ref<Array<() => void>>([]);
 
 const activeGreedy = computed<number>(() => detailsStore.activeGreedy);
 const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(() => detailsStore.properties);
@@ -231,12 +231,12 @@ const getBoundLayerResult = (): IdentifyResult | undefined => {
 /**
  * Computed property that returns true if the layer's overall identify result has loaded.
  */
-const isLayerResultLoaded = computed<Boolean>(() => {
+const isLayerResultLoaded = computed<boolean>(() => {
     const results = getBoundLayerResult();
     return results?.loaded ?? false;
 });
 
-const itemRequestTime = computed<Number | undefined>(() => {
+const itemRequestTime = computed<number | undefined>(() => {
     const results = getBoundLayerResult();
     return results?.requestTime;
 });
@@ -286,7 +286,7 @@ const currentIdentifyItem = computed<IdentifyItem>(() => {
 /**
  * Computed property that indicates if highlighting is a possibility
  */
-const canHighlight = computed<Boolean>(() => {
+const canHighlight = computed<boolean>(() => {
     if (detailsFixture.value.hasHilighter()) {
         const layer = getBoundLayer();
         if (layer) {

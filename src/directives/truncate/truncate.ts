@@ -85,17 +85,6 @@ function onShow(instance: any) {
     }
 }
 
-const escapeHtml = (content: string) => {
-    const specialChars = {
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-    };
-    // @ts-ignore
-    return content.replace(/[<>"']/g, m => specialChars[m]);
-};
-
 /**
  * Applies hyperlinks to any URLs in the provided content.
  *

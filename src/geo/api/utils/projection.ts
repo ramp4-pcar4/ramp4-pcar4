@@ -193,7 +193,7 @@ export class ProjectionAPI {
                 }
                 proj4.defs(epsgStr, def);
                 return true;
-            } catch (e) {
+            } catch {
                 return false;
             }
         };

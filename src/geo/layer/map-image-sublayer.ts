@@ -263,7 +263,8 @@ export class MapImageSublayer extends AttribLayer {
      */
     getSR(): SpatialReference {
         if (this.parentLayer?.esriLayer) {
-            return SpatialReference.fromESRI((<any>this._parentLayer?.esriLayer)?.spatialReference!);
+            const sr = (<any>this._parentLayer?.esriLayer)?.spatialReference;
+            return sr ? SpatialReference.fromESRI(sr) : SpatialReference.latLongSR();
         } else {
             this.noLayerErr();
             return SpatialReference.latLongSR();

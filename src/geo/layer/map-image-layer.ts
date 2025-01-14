@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import {
     GlobalEvents,
     InstanceAPI,
@@ -90,7 +88,7 @@ export class MapImageLayer extends MapLayer {
             // Note png24 is esri default according to docs, but if you set it as default it wrecks the edges
             // of most features. My belief is the actual default is the best setting the server supports,
             // so will only set the esri config if we have an override
-            // @ts-ignore
+            // @ts-expect-error TODO: explain why this is needed or remove
             esriConfig.imageFormat = rampLayerConfig.imageFormat;
         }
 

@@ -68,7 +68,7 @@ defineProps({
 });
 
 const children = computed<Array<LegendItem>>(() => {
-    let legendApi = iApi.fixture.get<LegendAPI>('legend');
+    const legendApi = iApi.fixture.get<LegendAPI>('legend');
     if (legendApi) {
         return [...legendApi.getLegend()];
     }

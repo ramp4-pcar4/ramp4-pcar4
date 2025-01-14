@@ -96,7 +96,6 @@ export class LegendAPI extends FixtureInstance {
 
                 // ts ignoring below because returned item is "LegendItem", but accepted type is "LayerItem | SectionItem"
                 // which is the same thing! (╯°□°）╯︵ ┻━┻
-                //@ts-ignore
                 item!.children.push(this.createItem(childConf, item));
             });
         }

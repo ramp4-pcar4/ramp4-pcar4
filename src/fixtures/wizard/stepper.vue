@@ -15,7 +15,7 @@ const props = defineProps({
 });
 
 const step = computed(() => props.activeStep);
-const watchers = reactive<Array<Function>>([]);
+const watchers = reactive<Array<() => void>>([]);
 
 const stepper = reactive({
     activeIndex: props.activeStep,

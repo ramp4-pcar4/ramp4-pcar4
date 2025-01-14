@@ -61,7 +61,6 @@ export class LegendItem extends APIScope {
 
         this._controls = config.controls?.slice() ?? [LegendControl.Visibility, LegendControl.Expand];
         this._disabledControls = config.disabledControls?.slice();
-        this._lastVisible;
         this._visibleChildren = [];
     }
 
@@ -185,7 +184,9 @@ export class LegendItem extends APIScope {
      */
     toggleVisibility(visible?: boolean, updateParent: boolean = true): void {
         // pass if visibility of item is already equal to the argument value
-        if (this.visibility === visible) return;
+        if (this.visibility === visible) {
+            return;
+        }
 
         this._visibility = visible ?? !this.visibility;
 
@@ -194,9 +195,11 @@ export class LegendItem extends APIScope {
                 // for parent items, if visiblility is toggled on
                 // - if some children were previously visible, toggle on their visiblility
                 // - if no children were previsouly visible, toggle on all children visiblility
-                this._visibleChildren.length > 0
-                    ? this._visibleChildren.forEach(item => item.toggleVisibility(true, false))
-                    : this.children.forEach(item => item.toggleVisibility(true, false));
+                if (this._visibleChildren.length > 0) {
+                    this._visibleChildren.forEach(item => item.toggleVisibility(true, false));
+                } else {
+                    this.children.forEach(item => item.toggleVisibility(true, false));
+                }
             } else {
                 // otherewise turn off visibility for all children
                 this.children.forEach(item => item.toggleVisibility(false, false));

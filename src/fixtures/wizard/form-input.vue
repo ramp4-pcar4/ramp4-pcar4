@@ -283,7 +283,7 @@ const props = defineProps({
     },
     ariaLabel: {
         type: String,
-        default: false
+        default: ''
     }
 });
 
@@ -302,12 +302,12 @@ const valueLabel = ref('value-label');
 const optionLabel = ref('option-label');
 const resizeObserver = ref<ResizeObserver | undefined>(undefined);
 const treeWrapper = ref<HTMLElement | null>(null);
-const watchers = reactive<Array<Function>>([]);
+const watchers = reactive<Array<() => void>>([]);
 
 if (props.defaultOption && props.modelValue === '' && props.options.length) {
     // regex to guess closest default value for lat/long fields
     // eslint has beef with the following line for unknown reasons.
-    // eslint-disable-next-line
+
     let defaultValue = props.options[0].value;
     if (props.name === 'latField') {
         const latNames = new RegExp(/^(y|lat.*)$/i);
@@ -333,13 +333,12 @@ const validUrl = (url: string) => {
     let newUrl;
     try {
         newUrl = new URL(url);
-    } catch (_) {
+    } catch {
         valid.value = false;
         return false;
     }
 
-    const link = newUrl.protocol === 'http:' || newUrl.protocol === 'https:';
-    link ? (valid.value = true) : (valid.value = false);
+    valid.value = newUrl.protocol === 'http:' || newUrl.protocol === 'https:';
 };
 
 const handleUpload = (event: Event) => {
@@ -354,9 +353,7 @@ const handleUrlInput = (event: Event) => {
 };
 
 const handleServiceSelection = (size: string | number, event: Event) => {
-    size
-        ? emit('select', (event.target as HTMLInputElement).value)
-        : emit('update:modelValue', (event.target as HTMLInputElement).value);
+    emit(size ? 'select' : 'update:modelValue', (event.target as HTMLInputElement).value);
 };
 
 const handleNestedChecked = (event: Event) => {
@@ -372,7 +369,7 @@ const handleNameInput = (event: Event) => {
 const handleSelection = () => {
     // small delay so the selected model can update
     emit('select', props.sublayerOptions(selected.value));
-    selected.value && selected.value.length > 0 ? (sublayersError.value = false) : (sublayersError.value = true);
+    sublayersError.value = selected.value && selected.value.length === 0;
 };
 
 const truncateVal = (selected: string) => {
@@ -393,9 +390,11 @@ function observeHeight() {
 
 const setHeight = () => {
     // calculates height of tree selector
-    const menuHeight = iApi!.$vApp.$el.querySelector('.vue-treeselect__menu')?.clientHeight!;
+    const menuElement = iApi!.$vApp.$el.querySelector('.vue-treeselect__menu');
+    const menuHeight = menuElement?.clientHeight ?? 0;
 
-    const selectHeight = iApi!.$vApp.$el.querySelector('.vue-treeselect__control')?.clientHeight!;
+    const selectElement = iApi!.$vApp.$el.querySelector('.vue-treeselect__control');
+    const selectHeight = selectElement?.clientHeight ?? 0;
 
     el.value.style.height = `${menuHeight + selectHeight + 30}px`;
 };
@@ -462,7 +461,8 @@ onBeforeUnmount(() => {
 }
 
 :deep(.vue-treeselect__input:focus) {
-    @apply ring-transparent pl-0 #{!important};
+    outline: none !important;
+    padding-left: 0 !important;
 }
 
 :deep(.vue-treeselect__multi-value) {

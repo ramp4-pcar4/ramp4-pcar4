@@ -1,5 +1,5 @@
 import { GlobalEvents, LayerInstance, type InstanceAPI } from '@/api';
-import { DrawState, LayerControl, LayerType } from '@/geo/api';
+import { DrawState, LayerControl } from '@/geo/api';
 import type { LegendSymbology } from '@/geo/api';
 import { LegendItem, LegendType } from './legend-item';
 
@@ -262,7 +262,7 @@ export class LayerItem extends LegendItem {
      * @param {LayerInstance | undefined} layer the layer to load. If undefined, layer will be fetched via instance API using id/uid.
      */
     // TS complaining as usual. Can maybe remove the parameter and expect caller to set the layer first?
-    // @ts-ignore
+    // @ts-expect-error TODO: explain why this is needed or remove
     load(layer: LayerInstance | undefined) {
         // manage the variant param.
         const layerInst =

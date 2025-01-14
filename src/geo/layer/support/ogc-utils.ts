@@ -263,7 +263,7 @@ export class OgcUtils extends APIScope {
                     return [];
                 }
                 const xmlData: string = new XMLSerializer().serializeToString(xmlNode);
-                const options: Object = {
+                const options: object = {
                     ignoreAttributes: false // check for tag attributes
                 };
                 const jsonObj: any = new XMLParser(options).parse(xmlData);

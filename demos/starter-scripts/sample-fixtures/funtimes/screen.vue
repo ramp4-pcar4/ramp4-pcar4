@@ -2,7 +2,7 @@
     <panel-screen :panel="panel">
         <template #header>
             {{
-                //@ts-ignore
+                //@ts-expect-error
                 $iApi.$i18n.t('funtimes')
             }}
         </template>
@@ -10,7 +10,7 @@
         <template #content>
             <p>
                 {{
-                    //@ts-ignore
+                    //@ts-expect-error
                     $iApi.$i18n.t('funtimes.info')
                 }}
             </p>

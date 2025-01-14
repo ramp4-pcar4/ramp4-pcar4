@@ -175,7 +175,6 @@ export class InstanceAPI {
             configStore.registerConfig({
                 config: langConfig,
                 configLangs: Object.keys(langConfigs),
-                // @ts-ignore
                 allLangs: Object.keys(this.$i18n.messages.value)
             });
 
@@ -203,9 +202,9 @@ export class InstanceAPI {
                     // create the map
                     this.geo.map.createMap(langConfig.map, mapViewElement as HTMLDivElement).then(() => {
                         // Hide hovertip on map creation
-                        //@ts-ignore
+                        //@ts-expect-error TODO: explain why this is needed or remove
                         mapViewElement._tippy.hide(0);
-                        //@ts-ignore
+                        //@ts-expect-error TODO: explain why this is needed or remove
                         maptipStore.setMaptipInstance(mapViewElement._tippy);
 
                         if (langConfig.layers && langConfig.layers.length > 0) {
@@ -306,7 +305,7 @@ export class InstanceAPI {
                     '"': '&quot;',
                     "'": '&#039;'
                 };
-                // @ts-ignore
+                // @ts-expect-error TODO: explain why this is needed or remove
                 return content.replace(/[<>"']/g, m => specialChars[m]);
             };
 
@@ -394,7 +393,6 @@ export class InstanceAPI {
         instanceStore.started = false;
 
         // destroy map (calls private destroyMap)
-        // @ts-ignore
         this.geo.map.destroyMap();
 
         // reset the layer store

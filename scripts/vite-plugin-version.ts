@@ -11,15 +11,15 @@ export default (): Plugin => {
 
             const [major, minor, patch] = pkg.version.split('.');
 
-            config.define
-                ? (config.define.__RAMP_VERSION__ = {
-                      major,
-                      minor,
-                      patch,
-                      timestamp,
-                      hash
-                  })
-                : null;
+            if (config.define) {
+                config.define.__RAMP_VERSION__ = {
+                    major,
+                    minor,
+                    patch,
+                    timestamp,
+                    hash
+                };
+            }
         }
     };
 };

@@ -41,6 +41,7 @@ const clearFilters = () => props.params.clearFilters();
 onMounted(async () => {
     // need to hoist events to top level cell wrapper to be keyboard accessible
     await nextTick();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     const headerCell: HTMLElement = el.value?.closest('.ag-header-cell')!;
     const grid: HTMLElement = headerCell.closest('.ag-pinned-left-header')!;
     headerCell.addEventListener('keydown', async (e: KeyboardEvent) => {
@@ -61,6 +62,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     const headerCell: HTMLElement = el.value?.closest('.ag-header-cell')!;
     const grid: HTMLElement = headerCell.closest('.ag-pinned-left-header')!;
     headerCell.removeEventListener('keydown', async (e: KeyboardEvent) => {

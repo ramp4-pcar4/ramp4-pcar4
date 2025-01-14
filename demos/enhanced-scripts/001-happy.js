@@ -18,7 +18,7 @@ const runPreTest = (config, options, utils) => {
     return { config, options };
 };
 
-const runPostTest = (instance, utils) => {
+const runPostTest = () => {
     // Not used in this test
 };
 

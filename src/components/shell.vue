@@ -56,9 +56,7 @@ const openKeyboardInstructions = () => {
     iApi?.event.emit('openKeyboardInstructions');
 };
 
-const teleported = (): PanelInstance[] =>
-    // @ts-ignore
-    panelStore.teleported;
+const teleported = (): PanelInstance[] => panelStore.teleported;
 </script>
 
 <style lang="scss" scoped>

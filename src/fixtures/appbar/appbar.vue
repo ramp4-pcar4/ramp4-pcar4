@@ -187,15 +187,15 @@ onUpdated(() => {
     nextTick(() => {
         const element: Element = el.value!;
         let key: string | undefined = undefined;
-        let children: Element[] = [...element.children];
+        const children: Element[] = [...element.children];
         let bound: number | undefined = children[children.length - 2].getBoundingClientRect().top;
         if (!panelStore.mobileView) {
             bound = element.getBoundingClientRect().bottom - 38;
         }
-        let dropdown: Element | null = element.querySelector('#dropdown');
+        const dropdown: Element | null = element.querySelector('#dropdown');
         // check positions of appbar buttons
         for (let i = children.length - 4; i >= 0; i--) {
-            let bottom: number = children[i].getBoundingClientRect().bottom;
+            const bottom: number = children[i].getBoundingClientRect().bottom;
             if (bound && dropdown && (bottom > bound || (overflow.value && bottom + 56 > bound))) {
                 children[i].classList.forEach(cl => {
                     if (cl.includes('identifier')) {
@@ -204,7 +204,7 @@ onUpdated(() => {
                 });
                 if (key) {
                     overflowFlags.value[key] = true;
-                    if (!(key as String).includes('divider')) {
+                    if (!(key as string).includes('divider')) {
                         numberOverflow.value++;
                     }
                     popperRerender.value++;
@@ -215,7 +215,7 @@ onUpdated(() => {
             }
         }
         // check position of more button
-        let more: Element | null = element.querySelector('#more');
+        const more: Element | null = element.querySelector('#more');
         let moreBottom = more!.getBoundingClientRect().bottom;
         key = undefined;
         if (
@@ -230,7 +230,7 @@ onUpdated(() => {
             let buttonsRemaining: number = dropdown.childElementCount;
             let index: number = 0;
             while (moreBottom <= bound - 56 || buttonsRemaining == 1) {
-                let item: Element | null = dropdown.children[index];
+                const item: Element | null = dropdown.children[index];
                 if (item) {
                     item.classList.forEach(cl => {
                         if (cl.includes('identifier')) {
@@ -239,7 +239,7 @@ onUpdated(() => {
                     });
                     if (key) {
                         overflowFlags.value[key] = false;
-                        if (!(key as String).includes('divider')) {
+                        if (!(key as string).includes('divider')) {
                             numberOverflow.value--;
                         }
                     }

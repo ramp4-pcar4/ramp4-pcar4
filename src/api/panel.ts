@@ -155,7 +155,7 @@ export class PanelAPI extends APIScope {
 
         // Wait for all promises
         const proms = this.panelStore.getRegPromises(idsToCheck);
-        // @ts-ignore I give up, TS is hopeless
+        // @ts-expect-error I give up, TS is hopeless
         return Array.isArray(panelId) ? Promise.all(proms) : proms[0];
     }
 
@@ -264,7 +264,6 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     get opened(): PanelInstance[] {
-        //@ts-ignore
         return this.panelStore.orderedItems.concat(this.panelStore.teleported);
     }
 
@@ -277,7 +276,6 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     get visible(): PanelInstance[] {
-        //@ts-ignore
         return this.panelStore.visible.concat(this.panelStore.teleported);
     }
 
@@ -389,7 +387,7 @@ export class PanelAPI extends APIScope {
         // use specified toggle value if provided + check if toggle value is possible
         toggle = typeof toggle !== 'undefined' ? toggle : !panel.isVisible;
         if (toggle !== panel.isVisible) {
-            toggle ? this.open(value) : this.close(panel);
+            return toggle ? this.open(value) : this.close(panel);
         }
 
         return panel;
@@ -421,7 +419,7 @@ export class PanelAPI extends APIScope {
         // use specified toggle value if provided + check if toggle value is possible
         toggle = typeof toggle !== 'undefined' ? toggle : !panel.isVisible;
         if (toggle !== panel.isVisible) {
-            toggle ? this.open(panel) : this.minimize(panel);
+            return toggle ? this.open(panel) : this.minimize(panel);
         }
 
         return panel;
@@ -454,7 +452,7 @@ export class PanelAPI extends APIScope {
         }
 
         // NOTE: we store `pinned` in the store as a reference to a panel instance object
-        //@ts-ignore
+        //@ts-expect-error TODO: explain why this is needed or remove
         this.panelStore.pinned = pin ? panel : undefined;
 
         return panel;
@@ -468,7 +466,7 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     get pinned(): PanelInstance | undefined {
-        //@ts-ignore
+        //@ts-expect-error TODO: explain why this is needed or remove
         return this.panelStore.pinned || undefined;
     }
 
@@ -496,7 +494,7 @@ export class PanelAPI extends APIScope {
         // check if required props are there, or bad things can happen on startup
         // need this here until we figure out how to pass in props, after layer use is normalized
         if (panel.screens[route.screen]?.props) {
-            const propsToCheck = Object.keys(panel.screens[route.screen]?.props).filter((pr: String) => pr !== 'panel');
+            const propsToCheck = Object.keys(panel.screens[route.screen]?.props).filter((pr: string) => pr !== 'panel');
             const propsPassed = route.props ? Object.keys(route.props) : [];
             for (let i = 0; i < propsToCheck.length; i++) {
                 if (

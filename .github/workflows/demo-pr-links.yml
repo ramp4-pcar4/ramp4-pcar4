@@ -24,4 +24,4 @@ jobs:
                       Catalogue: https://${{github.event.pull_request.head.repo.owner.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/index-all.html
                       Samples: https://${{github.event.pull_request.head.repo.owner.login}}.github.io/ramp4-pcar4/${{github.head_ref}}/demos/index-samples.html
 
-                      ![](https://byob.yarr.is/ramp4-pcar4/ramp4-pcar4/tsbadge-${{github.head_ref}}) ![](https://byob.yarr.is/ramp4-pcar4/ramp4-pcar4/lintbadge-${{github.head_ref}})
+                      ![](https://byob.yarr.is/ramp4-pcar4/ramp4-pcar4/tsbadge-${{ github.event.pull_request.head.repo.owner.login }}-${{ github.head_ref }}) ![](https://byob.yarr.is/ramp4-pcar4/ramp4-pcar4/lintbadge-${{ github.event.pull_request.head.repo.owner.login }}-${{ github.head_ref }})

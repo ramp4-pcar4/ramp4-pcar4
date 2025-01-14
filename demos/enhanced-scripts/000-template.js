@@ -33,14 +33,18 @@ addLegendLang(legendConfig, langKey)
 
 */
 
-const runPreTest = (config, options, utils) => {
+// All available params:
+// const runPreTest = (config, options, utils) => {
+const runPreTest = (config, options) => {
     // Do any config setup & options setup here, if any
 
     return { config, options };
 };
 
-const runPostTest = (instance, utils) => {
-    // Do any test steps on the instantiated instnace, if any
+// All available params:
+// const runPostTest = (instance, utils) => {
+const runPostTest = () => {
+    // Do any test steps on the instantiated instance, if any
 };
 
 export { runPreTest, runPostTest };

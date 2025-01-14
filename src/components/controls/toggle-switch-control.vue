@@ -54,7 +54,7 @@ const props = defineProps({
 const isOn = ref<boolean>(props.config.value);
 const isDisabled = ref<boolean>(!!props.config.disabled);
 const toggleKey = ref<number>(0); // this key forces Vue to rerender Toggle
-const watchers = reactive<Array<Function>>([]);
+const watchers = reactive<Array<() => void>>([]);
 const toggleWrapper = ref<HTMLElement | null>(null);
 
 watchers.push(

@@ -152,7 +152,7 @@ export const usePanelStore = defineStore('panel', () => {
             // mobile mode only allows for one panel to be visible
             if ((remainingWidth >= panelWidth && !mobileView.value) || nowVisible.length === 0) {
                 remainingWidth -= panelWidth;
-                //@ts-ignore
+                //@ts-expect-error TODO: explain why this is needed or remove
                 nowVisible.unshift(panel);
             }
 
@@ -165,7 +165,7 @@ export const usePanelStore = defineStore('panel', () => {
         // if pinned isn't visible and we are not in mobile mode we need to change the order of the panels (to make it visible)
         if (
             pinned.value &&
-            //@ts-ignore
+            //@ts-expect-error TODO: explain why this is needed or remove
             !nowVisible.includes(pinned.value) &&
             !mobileView.value
         ) {
@@ -182,7 +182,7 @@ export const usePanelStore = defineStore('panel', () => {
 
             if (remainingWidth >= (pinned.value.width || defaultWidth)) {
                 // if theres room insert pinned element
-                //@ts-ignore
+                //@ts-expect-error TODO: explain why this is needed or remove
                 nowVisible.unshift(pinned.value);
             } else {
                 // otherwise there is only one element in `nowVisible` (loop invariant fun)
@@ -190,27 +190,24 @@ export const usePanelStore = defineStore('panel', () => {
                 // otherwise the priority element stays as the only visible
                 if (!priority.value) {
                     lastElement = nowVisible.shift()!;
-                    //@ts-ignore
+                    //@ts-expect-error TODO: explain why this is needed or remove
                     nowVisible.unshift(pinned.value);
                 }
             }
 
-            //@ts-ignore
             const pinnedIndex = orderedItems.value.indexOf(pinned.value);
-            //@ts-ignore
+            //@ts-expect-error TODO: explain why this is needed or remove
             const lastRemovedIndex = orderedItems.value.indexOf(lastElement!);
             // clone the current order, splice out the pinned item, insert it back in after the last element we removed from visible
             const newPanelOrder = orderedItems.value.slice();
             if (lastRemovedIndex > -1) {
                 newPanelOrder.splice(pinnedIndex, 1);
-                //@ts-ignore
                 newPanelOrder.splice(lastRemovedIndex, 0, pinned.value);
             }
 
             orderedItems.value = newPanelOrder;
         }
         remWidth.value = remainingWidth;
-        //@ts-ignore
         visible.value = nowVisible;
     }
 
@@ -231,25 +228,24 @@ export const usePanelStore = defineStore('panel', () => {
 
     function open(panel: PanelInstance): void {
         if (panel.teleport) {
-            // @ts-ignore
+            // @ts-expect-error TODO: explain why this is needed or remove
             teleported.value = [...teleported.value, panel];
         } else {
-            //@ts-ignore
+            //@ts-expect-error TODO: explain why this is needed or remove
             orderedItems.value = [...orderedItems.value, panel];
-            // @ts-ignore
             priority.value = panel;
         }
     }
 
     function close(panel: PanelInstance): void {
         if (panel.teleport) {
-            //@ts-ignore
+            //@ts-expect-error TODO: explain why this is needed or remove
             const index = teleported.value.indexOf(panel);
             if (index !== -1) {
                 teleported.value = [...teleported.value.slice(0, index), ...teleported.value.slice(index + 1)];
             }
         } else {
-            //@ts-ignore
+            //@ts-expect-error TODO: explain why this is needed or remove
             const index = orderedItems.value.indexOf(panel);
             if (index !== -1) {
                 orderedItems.value = [...orderedItems.value.slice(0, index), ...orderedItems.value.slice(index + 1)];
@@ -258,7 +254,7 @@ export const usePanelStore = defineStore('panel', () => {
     }
 
     function move(panel: PanelInstance, direction: PanelDirection): void {
-        //@ts-ignore
+        //@ts-expect-error TODO: explain why this is needed or remove
         const index = orderedItems.value.indexOf(panel);
         const delta = direction === 'right' ? 1 : -1;
         if (visible.value.includes(orderedItems.value[index + delta])) {
@@ -280,7 +276,7 @@ export const usePanelStore = defineStore('panel', () => {
             delete regPromises.value[panel.id];
         }
         // remove from visible
-        //@ts-ignore
+        //@ts-expect-error TODO: explain why this is needed or remove
         const index = visible.value.indexOf(panel);
         if (index !== -1) {
             visible.value = [...visible.value.slice(0, index), ...visible.value.slice(index + 1)];

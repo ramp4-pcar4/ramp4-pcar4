@@ -30,15 +30,14 @@ const numberFormats = {
     }
 };
 
-export function i18n(): I18n<{}, {}, {}, string, false> {
-    // @ts-ignore
+export function i18n(): I18n<LocaleMessages<VueMessageType>, IntlDateTimeFormats, IntlNumberFormats, string, false> {
+    // @ts-expect-error TODO: explain why this is needed or remove
     return createI18n({
         legacy: false,
         // get the language of the page from the root `html` node
         locale: document.documentElement!.getAttribute('lang') || lang,
         fallbackLocale: lang,
         globalInjection: true,
-        //@ts-ignore
         messages,
         numberFormats
     });

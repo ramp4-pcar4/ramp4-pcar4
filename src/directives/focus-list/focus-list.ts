@@ -142,7 +142,7 @@ export class FocusListManager {
         });
 
         document.addEventListener('click', function (event: MouseEvent) {
-            // @ts-ignore
+            // @ts-expect-error TODO: explain why this is needed or remove
             if (element.contains(event.target)) {
                 focusManager.onClick(event);
             } else {

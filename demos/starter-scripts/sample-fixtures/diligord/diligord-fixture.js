@@ -7,9 +7,6 @@ import { h, markRaw, resolveComponent } from 'vue';
 export class DiligordFixture {
     added() {
         // `this.id` and `this.$iApi` and `this.$vApp` are automatically made available on this object
-        this.id;
-        this.$iApi;
-        this.$vApp;
 
         // Diligord Fixture creates a simple panel with a single screen with two header controls (pin and close),
         // and increment button and an input field (bound to the panel title) in the content slot

@@ -381,9 +381,9 @@ enum DefEH {
 class EventHandler {
     eventName: string;
     handlerName: string;
-    handlerFunc: Function;
+    handlerFunc: () => void;
 
-    constructor(eName: string, hName: string, handler: Function) {
+    constructor(eName: string, hName: string, handler: () => void) {
         this.eventName = eName;
         this.handlerName = hName;
         this.handlerFunc = handler;
@@ -483,7 +483,7 @@ export class EventAPI extends APIScope {
      * @returns {string} the handler name
      * @memberof EventAPI
      */
-    on(event: string, callback: Function, handlerName = ''): string {
+    on(event: string, callback: (...args: any[]) => void, handlerName = ''): string {
         // check if name already registered
         if (this.findHandler(handlerName)) {
             // TODO decide if we are replacing, erroring, do nothing + console warn?
@@ -564,14 +564,14 @@ export class EventAPI extends APIScope {
      * @returns {string} the handler name
      * @memberof EventAPI
      */
-    once(event: string, callback: Function, handlerName = ''): string {
+    once(event: string, callback: (args: any[]) => void, handlerName = ''): string {
         // need to do this here and upfront, so we have the name for the unregistration.
         // otherwise we would let the .on() call do its naming thing
         if (!handlerName) {
             handlerName = this.handlerNamer(event);
         }
 
-        const secretCallback = (...args: any[]) => {
+        const secretCallback = (...args: [any]) => {
             // run the original function. unregister our one-time handler
             callback(...args);
             this.off(handlerName);
@@ -627,7 +627,7 @@ export class EventAPI extends APIScope {
      * @private
      */
     private defaultHandlerFactory(handlerName: string): string {
-        let zeHandler: Function;
+        let zeHandler: (payload?: any) => void;
         switch (handlerName) {
             case DefEH.CONFIG_CHANGE_UPDATES_MAP_ATTRIBS:
                 // update any basemap attribution in the map caption when the config changes (likely language switch)

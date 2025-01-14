@@ -59,7 +59,7 @@ export class SymbologyAPI extends APIScope {
      * @param {Object} renderer an enhanced renderer (see function enhanceRenderer)
      * @return {Object} an ESRI Symbol object in server format
      */
-    getGraphicSymbol(attributes: Object, renderer: BaseRenderer): __esri.Symbol {
+    getGraphicSymbol(attributes: object, renderer: BaseRenderer): __esri.Symbol {
         return renderer.getGraphicSymbol(attributes);
     }
 
@@ -90,7 +90,7 @@ export class SymbologyAPI extends APIScope {
      * @param {String} imageUri url or dataUrl of the legend image
      * @return {Promise} a promise resolving with symbology svg code and its label
      */
-    async generateWMSSymbology(imageUri: string): Promise<Object> {
+    async generateWMSSymbology(imageUri: string): Promise<object> {
         const draw = svgjs(document.createElement('div'))
             .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
             .viewbox(0, 0, 0, 0);
@@ -126,11 +126,11 @@ export class SymbologyAPI extends APIScope {
      *
      * @private
      * @function _listToSymbology
-     * @param {Function} conversionFunction a conversion function to wrap the supplied image into an image or an icon style symbology container
+     * @param {(image: string) => Promise<string>} conversionFunction a conversion function to wrap the supplied image into an image or an icon style symbology container
      * @param {Array} list a list of config-supplied symbology items in the form of [ { text: <String>, image: <String> }, ... ] wher `image` can be dataURL or an actual url
      * @return {Array} an array of converted symbology symbols in the form of [ { name: <String>, image: <String>, svgcode: <String> }, ... ]; items will be populated async as conversions are done
      */
-    private listToSymbology(conversionFunction: Function, list: Array<any>): Array<Object> {
+    private listToSymbology(conversionFunction: (image: string) => Promise<string>, list: Array<any>): Array<object> {
         const results = list.map(({ text, image }) => {
             const result = {
                 name: text,
@@ -307,37 +307,37 @@ export class SymbologyAPI extends APIScope {
         // jscs doesn't like enhanced object notation
         // jscs:disable requireSpacesInAnonymousFunctionExpression
         const esriSimpleMarkerSimbol = {
-            // @ts-ignore
+            // @ts-expect-error TODO: explain why this is needed or remove
             path({ size, path }) {
                 // esriSMSPath
                 return draw.path(path).size(size * pts2Pxl);
             },
-            // @ts-ignore
+            // @ts-expect-error TODO: explain why this is needed or remove
             circle({ size }) {
                 // esriSMSCircle
                 return draw.circle(size * pts2Pxl);
             },
-            // @ts-ignore
+            // @ts-expect-error TODO: explain why this is needed or remove
             cross({ size }) {
                 // esriSMSCross
                 return draw.path('M 0,10 L 20,10 M 10,0 L 10,20').size(size * pts2Pxl);
             },
-            // @ts-ignore
+            // @ts-expect-error TODO: explain why this is needed or remove
             x({ size }) {
                 // esriSMSX
                 return draw.path('M 0,0 L 20,20 M 20,0 L 0,20').size(size * pts2Pxl);
             },
-            // @ts-ignore
+            // @ts-expect-error TODO: explain why this is needed or remove
             triangle({ size }) {
                 // esriSMSTriangle
                 return draw.path('M 20,20 L 10,0 0,20 Z').size(size * pts2Pxl);
             },
-            // @ts-ignore
+            // @ts-expect-error TODO: explain why this is needed or remove
             diamond({ size }) {
                 // esriSMSDiamond
                 return draw.path('M 20,10 L 10,0 0,10 10,20 Z').size(size * pts2Pxl);
             },
-            // @ts-ignore
+            // @ts-expect-error TODO: explain why this is needed or remove
             square({ size }) {
                 // esriSMSSquare
                 return draw.path('M 0,0 20,0 20,20 0,20 Z').size(size * pts2Pxl);
@@ -390,7 +390,7 @@ export class SymbologyAPI extends APIScope {
                 };
             },
             none: () => 'transparent', // esriSFSNull
-            horizontal: (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
+            horizontal: (_symbolColour: object, symbolStroke: svgjs.StrokeData) => {
                 // esriSFSHorizontal
                 const cellSize = 5;
 
@@ -399,7 +399,7 @@ export class SymbologyAPI extends APIScope {
                     .pattern(cellSize, cellSize, add => add.line(0, cellSize / 2, cellSize, cellSize / 2))
                     .stroke(symbolStroke);
             },
-            vertical: (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
+            vertical: (_symbolColour: object, symbolStroke: svgjs.StrokeData) => {
                 // esriSFSVertical
                 const cellSize = 5;
 
@@ -408,7 +408,7 @@ export class SymbologyAPI extends APIScope {
                     .pattern(cellSize, cellSize, add => add.line(cellSize / 2, 0, cellSize / 2, cellSize))
                     .stroke(symbolStroke);
             },
-            'forward-diagonal': (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
+            'forward-diagonal': (_symbolColour: object, symbolStroke: svgjs.StrokeData) => {
                 // esriSFSForwardDiagonal
                 const cellSize = 5;
 
@@ -419,7 +419,7 @@ export class SymbologyAPI extends APIScope {
                     add.line(0, 0, cellSize, cellSize).move(cellSize, 0).stroke(symbolStroke);
                 });
             },
-            'backward-diagonal': (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
+            'backward-diagonal': (_symbolColour: object, symbolStroke: svgjs.StrokeData) => {
                 // esriSFSBackwardDiagonal
                 const cellSize = 5;
 
@@ -434,7 +434,7 @@ export class SymbologyAPI extends APIScope {
                         .stroke(symbolStroke);
                 });
             },
-            cross: (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
+            cross: (_symbolColour: object, symbolStroke: svgjs.StrokeData) => {
                 // esriSFSCross
                 const cellSize = 5;
 
@@ -444,7 +444,7 @@ export class SymbologyAPI extends APIScope {
                     add.line(0, cellSize / 2, cellSize, cellSize / 2).stroke(symbolStroke);
                 });
             },
-            'diagonal-cross': (_symbolColour: Object, symbolStroke: svgjs.StrokeData) => {
+            'diagonal-cross': (_symbolColour: object, symbolStroke: svgjs.StrokeData) => {
                 // esriSFSDiagonalCross
                 const cellSize = 7;
 
@@ -469,12 +469,12 @@ export class SymbologyAPI extends APIScope {
                     color: outlineColour.colour,
                     opacity: outlineColour.opacity,
                     width: symbol.outline.width,
-                    // @ts-ignore
+                    // @ts-expect-error TODO: explain why this is needed or remove
                     dasharray: ESRI_DASH_MAPS[symbol.outline.style]
                 });
 
                 // make an ESRI simple symbol and apply fill and outline to it
-                // @ts-ignore
+                // @ts-expect-error TODO: explain why this is needed or remove
                 const marker = esriSimpleMarkerSimbol[symbol.style](symbol)
                     .fill({
                         color: symbolColour.colour,
@@ -494,7 +494,7 @@ export class SymbologyAPI extends APIScope {
                     opacity: lineColour.opacity,
                     width: symbol.width,
                     linecap: 'butt',
-                    // @ts-ignore
+                    // @ts-expect-error TODO: explain why this is needed or remove
                     dasharray: ESRI_DASH_MAPS[symbol.style]
                 });
 
@@ -514,7 +514,7 @@ export class SymbologyAPI extends APIScope {
                     color: symbolColour.colour,
                     opacity: symbolColour.opacity
                 });
-                // @ts-ignore
+                // @ts-expect-error TODO: explain why this is needed or remove
                 const symbolFill = esriSFSFills[symbol.style](symbolColour, symbolStroke);
 
                 symbol.outline = symbol.outline || DEFAULT_OUTLINE;
@@ -524,7 +524,7 @@ export class SymbologyAPI extends APIScope {
                     opacity: outlineColour.opacity,
                     width: symbol.outline.width,
                     linecap: 'butt',
-                    // @ts-ignore
+                    // @ts-expect-error TODO: explain why this is needed or remove
                     dasharray: ESRI_DASH_MAPS[symbol.outline.style]
                 });
 
@@ -555,7 +555,7 @@ export class SymbologyAPI extends APIScope {
                     color: outlineColour.colour,
                     opacity: outlineColour.opacity,
                     width: symbol.outline.width,
-                    // @ts-ignore
+                    // @ts-expect-error TODO: explain why this is needed or remove
                     dasharray: ESRI_DASH_MAPS[symbol.outline.style]
                 });
 
@@ -602,7 +602,7 @@ export class SymbologyAPI extends APIScope {
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
         try {
-            // @ts-ignore
+            // @ts-expect-error TODO: explain why this is needed or remove
             await Promise.resolve(symbolTypes[symbol.type]());
 
             // remove element from the page
@@ -619,7 +619,7 @@ export class SymbologyAPI extends APIScope {
          * @return {Object} a stroke object
          * @private
          */
-        function makeStroke(overrides: Object): Object {
+        function makeStroke(overrides: object): object {
             return Object.assign({}, DEFAULT_STROKE, overrides);
         }
 
@@ -629,7 +629,7 @@ export class SymbologyAPI extends APIScope {
          * @param  {Object} c ESRI Colour object
          * @return {Object} colour and opacity in SVG format
          */
-        function parseEsriColour(c: __esri.Color): Object {
+        function parseEsriColour(c: __esri.Color): object {
             if (c) {
                 return {
                     colour: `rgb(${c.r},${c.g},${c.b})`,
@@ -809,7 +809,7 @@ export class SymbologyAPI extends APIScope {
 
         // when no layer has been found it can be a layer whitout a legend like annotation layer
         // in this case, do not apply a renderer
-        let renderer: Object;
+        let renderer: object;
         if (typeof layerLegend !== 'undefined') {
             // make the mock renderer
 

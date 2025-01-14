@@ -18,8 +18,9 @@
 export class DefPromise<T> {
     protected realPromise: Promise<T>;
 
-    resolveMe(v?: T): void {
-        // i do nothing as i get overwritten;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    resolveMe(_v?: T): void {
+        // i do nothing as i get overwritten
     }
 
     rejectMe(): void {
