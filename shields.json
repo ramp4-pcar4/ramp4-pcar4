@@ -1,1 +1,1 @@
-{"tsbadge":{"label":"TS Errors","icon":"typescript","status":"0","color":"blue"},"lintbadge":{"label":"Lint","icon":"codecov","status":"Errors: 0, Warnings: 0","color":"purple"}}
+{"tsbadge":{"label":"Errors","icon":"typescript","status":"0","color":"blue"},"lintbadge":{"label":"Lint","icon":"codecov","status":"Errors: 0, Warnings: 0","color":"purple"}}
