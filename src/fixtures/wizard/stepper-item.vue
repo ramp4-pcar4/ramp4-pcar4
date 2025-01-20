@@ -53,7 +53,7 @@ const stepper = inject('stepper') as any;
 const stepItem = ref<HTMLElement>();
 const emit = defineEmits(['focusPanel', 'focusFirstElement']);
 
-const props = defineProps({
+defineProps({
     title: {
         type: String,
         required: true

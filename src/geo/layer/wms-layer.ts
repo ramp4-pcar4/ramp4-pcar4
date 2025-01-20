@@ -309,7 +309,7 @@ export class WmsLayer extends MapLayer {
         // TODO worth examining: the esri layer has properties .featureInfoUrl and .featureInfoFormat
         //      possible these can simplify a lot of this code?
 
-        // @ts-ignore
+        // @ts-expect-error TODO: explain why this is needed or remove
         const returnType = customReturnType[mimeType] || 'text';
 
         // our incoming map/point information are likely in the same spatial reference.
@@ -378,13 +378,13 @@ export class WmsLayer extends MapLayer {
         if (clp) {
             Object.keys(clp).forEach(key => {
                 if (key.toLowerCase() !== 'styles') {
-                    // @ts-ignore
+                    // @ts-expect-error TODO: explain why this is needed or remove
                     settings[key] = clp[key];
                 }
             });
         }
 
-        // @ts-ignore
+        // @ts-expect-error TODO: explain why this is needed or remove
         Object.keys(settings).forEach(key => (req[key] = settings[key]));
 
         return EsriRequest(esriLayer.url.split('?')[0], {

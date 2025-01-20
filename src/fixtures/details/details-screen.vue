@@ -54,7 +54,7 @@ const iApi = inject<InstanceAPI>('iApi')!;
 const detailsStore = useDetailsStore();
 
 const handlers = ref<Array<string>>([]);
-const watchers = ref<Array<Function>>([]);
+const watchers = ref<Array<() => void>>([]);
 const layerResults = ref<Array<IdentifyResult>>([]);
 const noResults = ref<boolean>(false);
 

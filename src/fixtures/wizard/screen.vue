@@ -314,9 +314,9 @@ const goNext = ref(false);
 const finishStep = ref(false);
 const validation = ref(false);
 
-const layerReady = ref<Boolean>(false);
-const layerUploaded = ref<Boolean>(true);
-const layerName = ref<String>('');
+const layerReady = ref<boolean>(false);
+const layerUploaded = ref<boolean>(true);
+const layerName = ref<string>('');
 
 const displayFormat = ref<string>('');
 
@@ -397,7 +397,7 @@ const layerInfo = computed({
 });
 const IsCorsRequired = computed(() => {
     // check if proxy is defined
-    let hasProxy = iApi.geo.proxy !== '';
+    const hasProxy = iApi.geo.proxy !== '';
 
     // handle cases for each type
     switch (typeSelection.value) {
@@ -540,7 +540,7 @@ const onSelectContinue = async (event: any) => {
         if (isFileLayer() && fileData.value) {
             layerInfo.value.config.url = '';
         }
-    } catch (_) {
+    } catch {
         disabled.value = false;
         failureError.value = true;
         return;
@@ -625,7 +625,7 @@ const updateFile = (newFile: File) => {
 
 const updateUrl = (urlVal: string, valid: boolean) => {
     url.value = urlVal.trim();
-    valid ? (goNext.value = true) : (goNext.value = false);
+    goNext.value = valid;
 };
 
 const updateTypeSelection = (type: string) => {
@@ -637,12 +637,12 @@ const updateLayerName = (name: string) => {
     layerInfo.value!.config.name = name.trim();
     const sublayers = layerInfo.value?.config.sublayers;
     const canFinish = sublayers ? name && sublayers.length > 0 : name.trim();
-    canFinish ? (finishStep.value = true) : (finishStep.value = false);
+    finishStep.value = !!canFinish;
 };
 
 const updateSublayers = (sublayer: Array<any>) => {
     layerInfo.value!.config.sublayers = sublayer;
-    sublayer.length > 0 && layerInfo.value?.config.name ? (finishStep.value = true) : (finishStep.value = false);
+    finishStep.value = !!(sublayer.length > 0 && layerInfo.value?.config.name);
 };
 
 const updateNested = (isNested: boolean) => {

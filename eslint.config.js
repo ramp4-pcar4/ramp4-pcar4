@@ -10,7 +10,7 @@ export default [
     },
     {
         name: 'app/files-to-ignore',
-        ignores: ['**/dist/**']
+        ignores: ['**/dist/**', '**/tests/**', '**/*.d.ts']
     },
     {
         rules: {
@@ -27,6 +27,13 @@ export default [
             'cypress/e2e/**/*.{cy,spec}.{js,ts,jsx,tsx}',
             'cypress/support/**/*.{js,ts,jsx,tsx}'
         ]
+    },
+    {
+        rules: {
+            '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/no-this-alias': 'off',
+            'vue/multi-word-component-names': 'off'
+        }
     },
     skipFormatting
 ];

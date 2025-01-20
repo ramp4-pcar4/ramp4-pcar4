@@ -61,18 +61,18 @@ const props = defineProps({
 
 // Keep track of the currently selected layer index.
 const selectedLayer = ref<string>('');
-const watchers = ref<Array<Function>>([]);
+const watchers = ref<Array<() => void>>([]);
 
 // Expanded is true if the sidebar is expanded. Hovering is true only if the cursor is currently over the sidebar.
-const expanded = ref<Boolean>(false);
-const hovering = ref<Boolean>(false);
+const expanded = ref<boolean>(false);
+const hovering = ref<boolean>(false);
 
 /**
  * Return the LayerInstance that cooresponds with the provided UID.
  * @param uid the UID of the layer to look up.
  */
 const getLayerInfo = (uid: string) => {
-    let layer: LayerInstance | undefined = layerStore.getLayerByUid(uid);
+    const layer: LayerInstance | undefined = layerStore.getLayerByUid(uid);
     return layer;
 };
 

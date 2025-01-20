@@ -61,7 +61,7 @@ const setup = () => {
         );
 
         esriHandlers.push(
-            //@ts-ignore
+            //@ts-expect-error TODO: explain why this is needed or remove
             iApi.geo.map.esriView!.on(['pointer-up', 'pointer-leave'], e => {
                 if (e.pointerType !== 'touch') return;
                 // small delay as to not offend panguard when lifting more than one finger

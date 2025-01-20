@@ -147,7 +147,7 @@ const layersModel = ref<Array<LayerModel>>([]);
  */
 const oldOrder = ref<Array<number>>([]);
 const handlers = ref<Array<string>>([]);
-const watchers = ref<Array<Function>>([]);
+const watchers = ref<Array<() => void>>([]);
 const isAnimationEnabled = computed<boolean>(() => iApi.animate);
 
 /*
@@ -173,7 +173,7 @@ count stays the same.
  */
 const loadLayers = (): void => {
     // remember which layers were expanded
-    let layerExpandedState: { [id: string]: boolean } = {};
+    const layerExpandedState: { [id: string]: boolean } = {};
     layersModel.value.forEach((layer: LayerModel) => {
         layerExpandedState[layer.id] = layer.isExpanded;
     });
@@ -196,7 +196,7 @@ const loadLayers = (): void => {
             const trueIdx: number = layerOrderIds.indexOf(layer.id);
 
             // map layer instance to simpler layer model object
-            let model: LayerModel = {
+            const model: LayerModel = {
                 id: layer.id,
                 uid: layer.uid,
                 name: '',
@@ -228,7 +228,9 @@ const loadLayers = (): void => {
  * @param {LayerInstance} layer the layer that has loaded
  */
 const loadLayerData = (layer: LayerInstance): void => {
-    let model: LayerModel | undefined = layersModel.value.find((layerModel: LayerModel) => layerModel.id === layer.id);
+    const model: LayerModel | undefined = layersModel.value.find(
+        (layerModel: LayerModel) => layerModel.id === layer.id
+    );
 
     if (!model) {
         return;

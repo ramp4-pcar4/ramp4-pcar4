@@ -210,7 +210,7 @@ export class LayerAPI extends APIScope {
      * @returns {Array<LayerInstance>} all layers on the map
      */
     allLayersOnMap(inMapOrder: boolean = true): Array<LayerInstance> {
-        let mapLayers = this.allLayers().filter(l => l.mapLayer && l.initiationState === InitiationState.INITIATED);
+        const mapLayers = this.allLayers().filter(l => l.mapLayer && l.initiationState === InitiationState.INITIATED);
 
         if (inMapOrder) {
             const lOrder = this.layerOrderIds();

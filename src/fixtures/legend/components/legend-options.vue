@@ -137,7 +137,7 @@
                 :content="!reloadableLayer ? t('legend.layer.controls.reloadDisabled') : ''"
                 @mouseover.stop="hover($event.currentTarget!)"
                 @mouseout="
-                    //@ts-ignore
+                    //@ts-expect-error TODO: explain why this is needed or remove
                     mobileMode ? null : $event.currentTarget?._tippy?.hide(), (hovered = false)
                 "
                 v-tippy="{
@@ -282,8 +282,12 @@ const reloadableLayer = computed((): boolean => {
 const hover = (t: EventTarget) => {
     hovered.value = true;
     setTimeout(() => {
-        //@ts-ignore
-        if (hovered.value) mobileMode.value ? null : t._tippy?.show();
+        if (hovered.value) {
+            if (!mobileMode.value) {
+                //@ts-expect-error TODO: explain why this is needed or remove
+                t._tippy?.show();
+            }
+        }
     }, 300);
 };
 
@@ -293,7 +297,7 @@ const hover = (t: EventTarget) => {
 const getFixtureExists = (fixtureName: string): boolean => {
     try {
         return iApi.fixture.exists(fixtureName);
-    } catch (e) {
+    } catch {
         return false;
     }
 };

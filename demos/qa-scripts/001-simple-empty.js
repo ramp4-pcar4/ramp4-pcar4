@@ -5,7 +5,7 @@ Test 01: An empty map.
 QA TEST SCRIPT. Don't modify without chatting with QA first.
 */
 
-const runPreTest = (config, options, utils) => {
+const runPreTest = (config, options) => {
     config.configs.en.fixtures.legend.root.children.push({
         infoType: 'text',
         content: 'I start with no layers'
@@ -19,7 +19,7 @@ const runPreTest = (config, options, utils) => {
     return { config, options };
 };
 
-const runPostTest = (instance, utils) => {
+const runPostTest = () => {
     // Do any test steps on the instantiated instnace, if any
 };
 

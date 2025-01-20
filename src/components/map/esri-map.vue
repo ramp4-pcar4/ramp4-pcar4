@@ -30,18 +30,17 @@ const iApi = inject('iApi') as InstanceAPI;
 const maptipPoint = computed(() => maptipStore.maptipPoint);
 const maptipInstance = computed(() => maptipStore.maptipInstance);
 const maptipContent = computed(() => maptipStore.content);
-const watchers = reactive<Array<Function>>([]);
+const watchers = reactive<Array<() => void>>([]);
 
 watchers.push(
     watch(maptipPoint, () => {
         if (maptipPoint.value) {
             // Calculate offset from mappoint
-            let offsetX, offsetY: number;
             const originX: number = iApi.geo.map.getPixelWidth() / 2;
             const originY = 0;
             const screenPointFromMapPoint = iApi.geo.map.mapPointToScreenPoint(maptipPoint.value! as Point);
-            offsetX = screenPointFromMapPoint.screenX - originX;
-            offsetY = originY - screenPointFromMapPoint.screenY;
+            const offsetX = screenPointFromMapPoint.screenX - originX;
+            const offsetY = originY - screenPointFromMapPoint.screenY;
             maptipInstance.value.setProps({
                 offset: [offsetX, offsetY]
             });

@@ -62,12 +62,12 @@ const fixture = ref<ExportAPI>();
 // changes to the root element impact map boundaries, changes to the panel impact the resolution of the displayed export
 const rootResizeObserver = ref<ResizeObserver | undefined>(undefined);
 const panelResizeObserver = ref<ResizeObserver | undefined>(undefined);
-const watchers = ref<Array<Function>>([]);
+const watchers = ref<Array<() => void>>([]);
 
 const el = useTemplateRef('componentEl');
 const componentSelectedState = computed(() => exportStore.componentSelectedState);
 const selectedComponents = computed<any>(() => {
-    let state: any = {};
+    const state: any = {};
     if (fixture.value) {
         Object.keys(componentSelectedState.value).forEach((component: string) => {
             state[component] = {

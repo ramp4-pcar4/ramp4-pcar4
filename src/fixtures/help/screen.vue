@@ -54,7 +54,7 @@ defineProps({
 const location = computed<string>(() => helpStore.location);
 const helpSections = ref<Array<any>>([]);
 const originalTextArray = ref<Array<any>>([]);
-const watchers = ref<Array<Function>>([]);
+const watchers = ref<Array<() => void>>([]);
 
 const noResults = ref<boolean>(false);
 let numResults: number;
@@ -141,7 +141,7 @@ onBeforeMount(() => {
                     const reg = /^#\s(.*)\n{2}(?:.+|\n(?!\n{2,}))*/gm;
                     // remove new line character ASCII (13) so that above regex is compatible with all
                     // operating systems (markdown file varies by OS new line preference)
-                    let helpMd = r.data.replace(new RegExp(String.fromCharCode(13), 'g'), '');
+                    const helpMd = r.data.replace(new RegExp(String.fromCharCode(13), 'g'), '');
                     helpSections.value = [];
                     let section;
                     while ((section = reg.exec(helpMd))) {

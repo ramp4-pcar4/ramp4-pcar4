@@ -145,9 +145,11 @@ const makeHtmlLink = (html: string, alias: string): string => {
     // Check to see if url is a valid image / data url based on extension type or format
     if (
         !!html.trim().match(/\.(jpeg|jpg|gif|png)$/) ||
-        !!html.trim().match(
-            /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i //eslint-disable-line
-        )
+        !!html
+            .trim()
+            .match(
+                /^\s*data:([a-z]+\/[a-z]+(;[a-z\-]+\=[a-z\-]+)?)?(;base64)?,[a-z0-9\!\$\&\'\,\(\)\*\+\,\;\=\-\.\_\~\:\@\/\?\%\s]*\s*$/i
+            )
     ) {
         return `<img src="${html}" alt="${t('details.item.alert.defaultAltText', { alias: alias })}" />`;
     }

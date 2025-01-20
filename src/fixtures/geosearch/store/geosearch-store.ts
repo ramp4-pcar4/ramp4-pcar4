@@ -119,7 +119,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
                             // replace old saved results
                             const filteredData = filter(
                                 resultsVisible.value,
-                                //@ts-ignore
+                                //@ts-expect-error TODO: explain why this is needed or remove
                                 queryParams.value,
                                 savedResults.value
                             );
@@ -132,7 +132,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
                 // otherwise no new search term so we only need to filter on query param values
                 const filteredData = filter(
                     resultsVisible.value,
-                    //@ts-ignore
+                    //@ts-expect-error TODO: explain why this is needed or remove
                     queryParams.value,
                     savedResults.value
                 );

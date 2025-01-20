@@ -73,7 +73,7 @@ const response = computed(() => metadataStore.response);
 const layerExists = ref(false); // tracks whether the layer still exists
 const cache = reactive<MetadataCache>({});
 const handlers = reactive<Array<string>>([]);
-const watchers = reactive<Array<Function>>([]);
+const watchers = reactive<Array<() => void>>([]);
 
 onMounted(() => {
     loadMetadata();
@@ -147,20 +147,20 @@ const loadMetadata = () => {
                     )
                 );
 
-                //@ts-ignore
+                //@ts-expect-error TODO: explain why this is needed or remove
                 metadataStore.response = textContainer.outerHTML;
             }
         });
     } else if (props.payload.type === 'html') {
         requestContent(props.payload.url).then(r => {
             metadataStore.status = r.status;
-            //@ts-ignore
+            //@ts-expect-error TODO: explain why this is needed or remove
             metadataStore.response = r.response;
         });
     } else if (props.payload.type === 'md') {
         requestContent(props.payload.url).then(r => {
             metadataStore.status = r.status;
-            //@ts-ignore
+            //@ts-expect-error TODO: explain why this is needed or remove
             metadataStore.response = marked(r.response);
         });
     }

@@ -141,7 +141,7 @@ const opacityModel = ref(props.layer.opacity * 100);
 const identifyModel = ref(props.layer.identify);
 const layerExists = ref(false); // tracks whether the layer still exists
 const handlers = reactive<Array<string>>([]);
-const watchers = reactive<Array<Function>>([]);
+const watchers = reactive<Array<() => void>>([]);
 
 layerExists.value = props.layer !== undefined && !props.layer!.isRemoved;
 

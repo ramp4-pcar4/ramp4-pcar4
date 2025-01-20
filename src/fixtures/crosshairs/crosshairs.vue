@@ -43,7 +43,7 @@ import type { InstanceAPI } from '@/api';
 
 const iApi = inject<InstanceAPI>('iApi')!;
 
-const visible = ref<Boolean>(false);
+const visible = ref<boolean>(false);
 const handlers = ref<Array<string>>([]);
 
 onMounted(() => {

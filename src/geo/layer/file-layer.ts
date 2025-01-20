@@ -132,7 +132,7 @@ export class FileLayer extends AttribLayer {
         ];
 
         copyProp.forEach((p: string) => {
-            // @ts-ignore
+            // @ts-expect-error TODO: explain why this is needed or remove
             esriConfig[p] = this.esriJson[p];
         });
 

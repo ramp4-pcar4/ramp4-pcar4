@@ -388,12 +388,12 @@ export class FileUtils extends APIScope {
         //      then this likely needs a full file scan & analysis
         const geoJsonGeomType = geoJson.features[0].geometry.type;
 
-        // @ts-ignore
+        // @ts-expect-error TODO: explain why this is needed or remove
         const value = featureTypeToRenderer[geoJsonGeomType];
         // clone the default renderer so changes don't persist
         // also note that this default renderer object is in ArcGIS Server object format
         const defRender: any = JSON.parse(
-            // @ts-ignore
+            // @ts-expect-error TODO: explain why this is needed or remove
             JSON.stringify(defaultRenderers[value])
         );
 
@@ -436,10 +436,10 @@ export class FileUtils extends APIScope {
         // add all the fields to config.Package
         configPackage.fields = (configPackage.fields || []).concat(
             options.fieldMetadata?.exclusiveFields
-                ? (this.extractGeoJsonFields(geoJson) as Array<Object>).filter((field: any) =>
+                ? (this.extractGeoJsonFields(geoJson) as Array<object>).filter((field: any) =>
                       options.fieldMetadata?.fieldInfo?.find((f: any) => f.name === field.name)
                   )
-                : (this.extractGeoJsonFields(geoJson) as Array<Object>)
+                : (this.extractGeoJsonFields(geoJson) as Array<object>)
         );
 
         // fix the order in configPackage.fields if specified in the config

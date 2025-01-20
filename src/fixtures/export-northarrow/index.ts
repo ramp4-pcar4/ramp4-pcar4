@@ -19,7 +19,7 @@ class ExportNorthArrowFixture extends FixtureInstance implements ExportSubFixtur
          * @returns 0
          * @memberof ExportNorthArrowFixture
          **/
-        let calculateNorthArrowAngle = (normalizedPositionX: number) => {
+        let calculateNorthArrowAngle: (normalizedPositionX: number) => number = () => {
             return 0;
         };
         let normalizedPositionX = 0;

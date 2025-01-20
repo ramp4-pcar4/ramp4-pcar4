@@ -50,7 +50,7 @@ const geolocate = async () => {
 
 // zoom to point
 const zoomIn = (coords: Array<number>): void => {
-    let zoomTarget = new Point('geolocation', coords, SpatialReference.latLongSR(), true);
+    const zoomTarget = new Point('geolocation', coords, SpatialReference.latLongSR(), true);
     iApi.geo.map.zoomMapTo(zoomTarget);
 };
 
