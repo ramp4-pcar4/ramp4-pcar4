@@ -468,24 +468,23 @@ export class FixtureInstance extends APIScope implements FixtureBase {
         if (this.config?.panelWidth) {
             const panelWidths: any = {};
 
-            // If only a number was provided, use it as the `default` value.
-            if (typeof this.config?.panelWidth == 'number') {
-                this.config.panelWidth = {
-                    default: this.config?.panelWidth
-                };
-            }
-
-            // If the `default` attribute is provided, set all panels owned by this fixture to the provided width.
-            if (this.config.panelWidth.default) {
+            // If the `default` attribute is provided, or if panelWidth is a number, set all panels owned by this fixture to the provided width.
+            if (typeof this.config.panelWidth === 'number') {
                 panels.forEach((item: string) => {
-                    panelWidths[item] = (this.config.panelWidth as any).default;
+                    panelWidths[item] = this.config.panelWidth as number;
                 });
-            }
+            } else {
+                if (this.config.panelWidth.default) {
+                    panels.forEach((item: string) => {
+                        panelWidths[item] = (this.config.panelWidth as any).default;
+                    });
+                }
 
-            // Handle other panels, if they have a specific width set.
-            for (const item in this.config.panelWidth) {
-                if (item == 'default') continue;
-                panelWidths[item] = this.config.panelWidth[item];
+                // Handle other panels, if they have a specific width set.
+                for (const item in this.config.panelWidth) {
+                    if (item == 'default') continue;
+                    panelWidths[item] = this.config.panelWidth[item];
+                }
             }
 
             // Update the width for each specified panel.
