@@ -7,6 +7,7 @@
             :content="t('panels.controls.items')"
             v-tippy="{ trigger: 'manual', placement: 'top-start', touch: false }"
             ref="el"
+            class="h-full overflow-y-auto"
         >
             <template v-for="(notification, index) in notificationStack" :key="notification.message + index">
                 <div v-if="index > 0" class="w-full border-b border-black" />
