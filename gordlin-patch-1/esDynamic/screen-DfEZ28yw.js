@@ -1,0 +1,5 @@
+import { _ as f } from "./screen.vue_vue_type_script_setup_true_lang-DkuCHmdT.js";
+export {
+  f as default
+};
+//# sourceMappingURL=screen-DfEZ28yw.js.map
