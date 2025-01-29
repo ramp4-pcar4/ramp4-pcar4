@@ -10,7 +10,6 @@
                 placement: tooltipPlacement,
                 theme: tooltipTheme,
                 animation: tooltipAnimation,
-                appendTo: 'parent',
                 trigger: 'manual'
             }"
             ref="dropdownTrigger"
@@ -113,7 +112,7 @@ onMounted(() => {
 
     dropdownTrigger.value!.addEventListener('mouseleave', blurDropdownTrigger);
 
-    // nextTick should prevent any race conditions by letting the child elements render before trying to place them using popper
+    // nextTick should prevent any race conditions by letting the child elements render before trying to place them using popper.
     nextTick(() => {
         const overflowScrollModifier: Modifier<'overflowScroll', object> = {
             name: 'overflowScroll',
