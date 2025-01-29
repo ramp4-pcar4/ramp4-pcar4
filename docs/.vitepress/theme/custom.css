@@ -3,5 +3,9 @@
 Custom CSS
 */
 :root {
-
+    /* Vitepress changed their default colours from Green to Blue. This sets it back */
+    --vp-c-brand-1: var(--vp-c-green-1);
+    --vp-c-brand-2: var(--vp-c-green-2);
+    --vp-c-brand-3: var(--vp-c-green-3);
+    --vp-c-brand-soft: var(--vp-c-green-soft);
 }
