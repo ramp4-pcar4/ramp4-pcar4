@@ -1,5 +1,5 @@
 import { APIScope, GlobalEvents, isHTMLScreen, PanelInstance } from './internal';
-import type { PanelConfigStyle, PanelDirection } from '@/stores/panel';
+import type { HTMLScreen, PanelConfigStyle, PanelDirection } from '@/stores/panel';
 import { usePanelStore } from '@/stores/panel';
 import type { HTMLPanelInstance } from '@/stores/panel';
 import type { PanelConfig, PanelConfigRoute } from '@/stores/panel';
@@ -18,7 +18,7 @@ export class PanelAPI extends APIScope {
      * @param {string} [screenId] id of the screen to be updated. If not provided, it will update the first screen in the panel
      * @memberof PanelAPI
      */
-    updateHTML(panel: PanelInstance | string, html: { [key: string]: string | HTMLElement }, screenId?: string): void {
+    updateHTML(panel: PanelInstance | string, html: HTMLScreen | { [key: string]: string }, screenId?: string): void {
         // An html-based panel should have only one screen
         const panelInstance = this.get(panel);
 
@@ -36,13 +36,14 @@ export class PanelAPI extends APIScope {
     /**
      * Helper for `registerHTML()`. Creates and returns the `PanelConfigSet` required to register the HTML panel
      *
-     * @param {HTMLPanelInstance} htmlPanel a `HTMLPanelInstance` object, excluding its `options` (if it exists), corresponding
-     * to the new html panel
+     * @param {HTMLPanelInstance} htmlPanel a `HTMLPanelInstance` object, excluding its `languageKeys` (if it exists),
+     * corresponding to the new html panel
      * @returns {PanelConfigSet} The `PanelConfigSet` corresponding to the panel that is to be created
      * @memberof PanelAPI
      */
-    private registerHTMLConfig(htmlPanel: Omit<HTMLPanelInstance, 'options'>): PanelConfigSet {
+    private registerHTMLConfig(htmlPanel: Omit<HTMLPanelInstance, 'languageKeys'>): PanelConfigSet {
         for (const lang in htmlPanel.content) {
+            // After this, htmlPanel.content will be of type HTMLScreen
             if (typeof htmlPanel.content[lang] === 'string') {
                 const newHtml = document.createElement('div');
                 newHtml.innerHTML = htmlPanel.content[lang];
@@ -71,11 +72,17 @@ export class PanelAPI extends APIScope {
     registerHTML(htmlPanel: HTMLPanelInstance): PanelInstance {
         const existingPanel = this.get(htmlPanel.id);
         if (existingPanel) {
-            console.error('panel already exist');
+            console.error('Panel already exist');
             return existingPanel;
         }
         const panelConfig = this.registerHTMLConfig(htmlPanel);
-        const panel: PanelInstance = this.register(panelConfig, htmlPanel.options) as unknown as PanelInstance;
+        const panelOptions = {
+            i18n: {
+                messages: htmlPanel.languageKeys
+            }
+        } as PanelRegistrationOptions;
+
+        const panel: PanelInstance = this.register(panelConfig, panelOptions) as unknown as PanelInstance;
 
         return panel;
     }

@@ -303,32 +303,30 @@ frenchContent.appendChild(frenchText);
 ```
 
 ### Step 2: Register your panel
-Before your panel is ready to use, you need to register it via the `registerHTML` method in the [Panel API](#the-panel-api). Shown below is the way you would register the panel for either of the panel screen
-template creation methods in step 1.
+Before your panel is ready for use, you need to register it via the `registerHTML` method in the [Panel API](#the-panel-api). Shown below is the way you would register the panel for either of the panel screen template creation methods in step 1.
+
+Note that, for `languageKeys`, the keys of this object should be language strings, and values should be objects of keys mapping to strings of the respective language. The keys within the objects for each language are what should be used for
+the `alertName`, or any other content within the panel. Currently the only language strings supported are 'en' and 'fr'.
 
 ```JS
 const htmlContent = {en: englishContent, fr: frenchContent};
 const panelId = 'panel1';
-const alertName = 'panelName' // should be a key within each lang object of  `panelOptions.i18n.messages` below
+const alertName = 'panelName';
+const languageKeys = { 
+    en: {'panelName': "My panel"},
+    fr: {'panelName': "Mon panneau"}
+};
 const panelStyle = {
     'background-color': 'red'
 }; 
-const panelOptions = {
-            i18n: {
-                messages: {
-                    en: {'panelName': "My panel"},
-                    fr: {'panelName': "Mon panneau"}
-                }
-            }
-        };
 
 const htmlPanel = {
     content: htmlContent,
     id: panelId,
-    alertName: alertName, 
+    alertName, 
+    languageKeys,
     style: panelStyle, 
-    options: panelOptions
-}
+};
 const myCustomPanel = myRAMPInstance.panel.registerHTML(htmlPanel);
 ```
 
@@ -416,14 +414,12 @@ The API provides the following methods:
 
     Additionally, the `PanelRegistrationOptions` object has one optional property of `i18n`, where you should include the localized strings for the panel. For more details on localization, please see the [localization documentation](../using-ramp4/config-language.md)
 * `isRegistered(panelId: string | string[]): Promise<void>` - provides a promise that resolves when panels with the specified panel ID(s) have completed registration.
-* `registerHTML(htmlPanel: HTMLPanelInstance)` - Registers a new panel containing a screen of HTML content and returns the PanelInstance. Note: `htmlPanel.options` should be structured as follows:
+* `registerHTML(htmlPanel: HTMLPanelInstance)` - Registers a new panel containing a screen of HTML content and returns the PanelInstance. Note: `htmlPanel.languageKeys` should be structured as follows:
 ```
-i18n: { 
-    messages: {
-        lang1: {key1: lang1-value1, key2: lang1-value2, ...}, 
-        lang2: {key1: lang2-value1, key2: lang2-value2, ...},
-        ...
-    }
+{
+    lang1: {key1: lang1-value1, key2: lang1-value2, ...}, 
+    lang2: {key1: lang2-value1, key2: lang2-value2, ...},
+    ...
 }
 ```
 * `updateHTML(panel: PanelInstance | string, html: { [key: string]: string | HTMLElement }, screenId?: string)` - Updates the content of a specific HTML-based screen of a panel, using HTML content 
