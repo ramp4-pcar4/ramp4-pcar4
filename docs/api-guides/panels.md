@@ -310,24 +310,20 @@ template creation methods in step 1.
 const htmlContent = {en: englishContent, fr: frenchContent};
 const panelId = 'panel1';
 const alertName = 'panelName' // should be a key within each lang object of  `panelOptions.i18n.messages` below
+const languageKeys = {
+    en: {'panelName': "My panel"},
+    fr: {'panelName': "Mon panneau"}
+}
 const panelStyle = {
     'background-color': 'red'
 }; 
-const panelOptions = {
-            i18n: {
-                messages: {
-                    en: {'panelName': "My panel"},
-                    fr: {'panelName': "Mon panneau"}
-                }
-            }
-        };
 
 const htmlPanel = {
     content: htmlContent,
     id: panelId,
     alertName: alertName, 
+    languageKeys: languageKeys
     style: panelStyle, 
-    options: panelOptions
 }
 const myCustomPanel = myRAMPInstance.panel.registerHTML(htmlPanel);
 ```
@@ -416,14 +412,12 @@ The API provides the following methods:
 
     Additionally, the `PanelRegistrationOptions` object has one optional property of `i18n`, where you should include the localized strings for the panel. For more details on localization, please see the [localization documentation](../using-ramp4/config-language.md)
 * `isRegistered(panelId: string | string[]): Promise<void>` - provides a promise that resolves when panels with the specified panel ID(s) have completed registration.
-* `registerHTML(htmlPanel: HTMLPanelInstance)` - Registers a new panel containing a screen of HTML content and returns the PanelInstance. Note: `htmlPanel.options` should be structured as follows:
+* `registerHTML(htmlPanel: HTMLPanelInstance)` - Registers a new panel containing a screen of HTML content and returns the PanelInstance. Note: `htmlPanel.langaugeKeys` should be structured as follows:
 ```
-i18n: { 
-    messages: {
-        lang1: {key1: lang1-value1, key2: lang1-value2, ...}, 
-        lang2: {key1: lang2-value1, key2: lang2-value2, ...},
-        ...
-    }
+{
+    lang1: {key1: lang1-value1, key2: lang1-value2, ...}, 
+    lang2: {key1: lang2-value1, key2: lang2-value2, ...},
+    ...
 }
 ```
 * `updateHTML(panel: PanelInstance | string, html: { [key: string]: string | HTMLElement }, screenId?: string)` - Updates the content of a specific HTML-based screen of a panel, using HTML content 
