@@ -142,8 +142,7 @@ export class FocusListManager {
         });
 
         document.addEventListener('click', function (event: MouseEvent) {
-            // @ts-expect-error TODO: explain why this is needed or remove
-            if (element.contains(event.target)) {
+            if (event.target && element.contains(event.target as Node)) {
                 focusManager.onClick(event);
             } else {
                 focusManager.defocusItem(focusManager.highlightedItem);
