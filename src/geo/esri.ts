@@ -46,6 +46,7 @@ import type EsriFeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
 import type EsriMapView from '@arcgis/core/views/MapView';
 import type EsriColorBackground from '@arcgis/core/webmap/background/ColorBackground';
 
+// import type { createArcadeExecutor as EsriCreateArcadeExecutor } from '@arcgis/core/arcade';
 // NOTE we need to have explicit strings in the `await import()` calls, as that's
 //      how Vite knows how to optimize the chunks.
 //      So lots of boilerplate here instead of nice `genericLoad(libPath: string)` gettup.
@@ -106,6 +107,19 @@ class EsriAPI {
     }
 
     // --- Utils ---
+
+    static async ArcadeExecutor(script: string, profile: __esri.Profile): Promise<__esri.ArcadeExecutor> {
+        const { createArcadeExecutor } = await import('@arcgis/core/arcade');
+        return await createArcadeExecutor(script, profile);
+    }
+
+    /*
+    // This returns pre-canned esri profiles. I don't think we actually want that.
+    static async ArcadeProfile(esriKey: string): Promise<__esri.Profile> {
+        const { createArcadeProfile } = await import('@arcgis/core/arcade');
+        return  createArcadeProfile(esriKey);
+    }
+    */
 
     static async ColorBackground(prams: __esri.ColorBackgroundProperties): Promise<EsriColorBackground> {
         const lib = await import('@arcgis/core/webmap/background/ColorBackground');
