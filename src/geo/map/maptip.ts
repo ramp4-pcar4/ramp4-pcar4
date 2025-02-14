@@ -41,9 +41,11 @@ export class MaptipAPI extends APIScope {
 
         if (!graphicHit) {
             this.clear();
+            // If there is no graphic hit, disable the maptip. Otherwise vue-tippy will
+            // show the last maptip content for the previous graphic hit on touch devices when they pan/zoom.
+            this.maptipStore.maptipInstance.disable();
             return;
         }
-
         // Get the layer
         const layerInstance: LayerInstance | undefined = this.$iApi.geo.layer.getLayer(graphicHit.layerId);
 
@@ -62,6 +64,8 @@ export class MaptipAPI extends APIScope {
         }
 
         this.clear();
+        // If there is no graphic hit, disable the maptip. Otherwise vue-tippy will
+        // show the last maptip content for the previous graphic hit on touch devices when they pan/zoom.
         this.#lastHit = graphicHit;
 
         if (!layerInstance) {
@@ -84,6 +88,8 @@ export class MaptipAPI extends APIScope {
             getAttribs: true
         });
 
+        // At this point we have a graphic hit and a layer, so we can show the maptip
+        this.maptipStore.maptipInstance.enable();
         this.setPoint(this.$iApi.geo.map.screenPointToMapPoint(screenPoint));
 
         this.$iApi.event.emit(GlobalEvents.MAP_GRAPHICHIT, {

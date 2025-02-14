@@ -81,6 +81,9 @@ const setup = () => {
                     return;
                 }
 
+                // manually scroll the page since scrolling doesn't work when moving over the map
+                window.scrollBy({ left: pointer.x - x, top: pointer.y - y, behavior: 'instant' });
+
                 // ignore very small movements to avoid scrolling when someone is tapping the screen
                 const distance = Math.sqrt(Math.pow(x - pointer.x, 2) + Math.pow(y - pointer.y, 2));
                 if (distance < 20) return;
@@ -95,9 +98,6 @@ const setup = () => {
                 timeoutID.value = window.setTimeout(() => {
                     panGuard.value!.classList.remove('pg-active');
                 }, 2000);
-
-                // manually scroll the page since scrolling doesn't work when moving over the map
-                window.scrollBy(pointer.x - x, pointer.y - y);
             })
         );
     });

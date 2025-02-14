@@ -944,6 +944,21 @@ export class EventAPI extends APIScope {
                     throttle(50, (mapMove: MapMove) => zeHandler(mapMove)),
                     handlerName
                 );
+
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_MOUSEDOWN,
+                    throttle(50, mapMove => {
+                        const downPoint = {
+                            screenX: mapMove.offsetX,
+                            screenY: mapMove.offsetY,
+                            button: mapMove.button,
+                            moveTime: 0
+                        };
+                        zeHandler(downPoint);
+                    }),
+                    handlerName + '1'
+                );
+
                 break;
 
             case DefEH.MAP_MOUSELEAVE_REMOVES_MAPTIP:

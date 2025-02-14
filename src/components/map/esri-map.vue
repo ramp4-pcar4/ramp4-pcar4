@@ -14,12 +14,14 @@
             duration: [200, 200]
         }"
         @mousedown="mouseFocus"
+        @touchstart="isTouch = true"
+        @touchend="isTouch = false"
         @keydown.up.down.left.right.prevent
     ></div>
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onBeforeUnmount, reactive, watch } from 'vue';
+import { computed, inject, onBeforeUnmount, reactive, watch, ref } from 'vue';
 import { useMaptipStore } from '@/stores/maptip';
 import type { InstanceAPI } from '@/api';
 import type { Point } from '@/geo/api';
@@ -32,6 +34,8 @@ const maptipInstance = computed(() => maptipStore.maptipInstance);
 const maptipContent = computed(() => maptipStore.content);
 const watchers = reactive<Array<() => void>>([]);
 
+const isTouch = ref(false);
+
 watchers.push(
     watch(maptipPoint, () => {
         if (maptipPoint.value) {
@@ -42,7 +46,7 @@ watchers.push(
             const offsetX = screenPointFromMapPoint.screenX - originX;
             const offsetY = originY - screenPointFromMapPoint.screenY;
             maptipInstance.value.setProps({
-                offset: [offsetX, offsetY]
+                offset: isTouch.value ? [offsetX, offsetY + 25] : [offsetX, offsetY]
             });
             if (maptipContent.value && maptipContent.value !== '') {
                 maptipInstance.value.show();
@@ -74,4 +78,14 @@ const mouseFocus = () => {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.esri-view-surface {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+</style>
