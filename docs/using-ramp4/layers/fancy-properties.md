@@ -58,7 +58,7 @@ The object structure matches the ArcGIS Server [Renderer](https://developers.arc
 Specifies the z-order of how graphics should be drawn on the map. While the array structure supports multiple fields, the current version of the ESRI API (`v4.29`) will only support one field. If missing, the draw order will be the order that features are returned from the source.
 
 - `field`: string. The field name that contains the values to order by. Case sensitive. The field must have a numeric or date data type.
-- `arcade`: string. An [Arcade](https://developers.arcgis.com/javascript/latest/arcade/) expression that evaluates to a number or date. Draw order will be based on the expression result.
+- `arcade`: string. An [Arcade](https://developers.arcgis.com/javascript/latest/arcade/) expression that evaluates to a number or date. Draw order will be based on the expression result. This formula will operate in ESRI's [feature sorting profile](https://developers.arcgis.com/javascript/latest/arcade/#feature-sorting), and uses their variables (`$feature.yourAttributeName` is most useful).
 - `ascending`: boolean. If `true`, smaller values will appear "on top" of larger values. `false` will produce the opposite order. Defaults to `true`.
 
 One of `field` or `arcade` must be specified, but not both.
@@ -222,11 +222,32 @@ Not supported for identify requests to WMS layers. While Map Image Layer Sublaye
 }
 ```
 
+## nameArcade
+
+*string*, only applies to layers that [support attributes](./additional-layer-sections.md#layer-abilities)
+
+Specifies an Arcade formula to use as the `nameValue` for a feature.
+
+- This will be utilized in various places, such as the title of the basic Details panel.
+- This formula operates in the [RAMP Arcade Profile](./additional-layer-sections.md#arcade-formulas).
+- If missing, the value of `nameField` will be used.
+
+```js
+{
+    nameArcade: "$attr.name + ', Esquire'"
+}
+```
+
 ## nameField
 
 *string*, only applies to layers that [support attributes](./additional-layer-sections.md#layer-abilities)
 
-Specifies an attribute field name to use as the "name" for a feature. This will be utilized in various places, such as the title of the basic Details panel. If missing, will attempt to find and use a name field specified by the host server, otherwise will use the Object ID. Field name is case sensitive.
+Specifies an attribute field name to use as the `nameValue` for a feature.
+
+- This will be utilized in various places, such as the title of the basic Details panel.
+- Will be ignored if `nameArcade` is set.
+- If missing, will attempt to find and use a name field specified by the host server (if exists), otherwise will use the Object ID.
+- Field name is case sensitive.
 
 ```js
 {
@@ -306,11 +327,32 @@ If `true`, will cause a default legend entry to be generated as a single entry, 
 
 Contains metadata for the sublayers of a layer that supports them. See the [sublayers section](./sublayer-properties.md).
 
+## tooltipArcade
+
+*string*, only applies to layers that [have vector client data](./additional-layer-sections.md#layer-abilities).
+
+Specifies an Arcade formula to use as the `tooltipValue` for a feature.
+
+- The value is displayed in the maptip when the mouse is over the feature.
+- This formula operates in the [RAMP Arcade Profile](./additional-layer-sections.md#arcade-formulas).
+- If missing, the value of `tooltipField` will be used.
+
+```js
+{
+    tooltipArcade: "'Mouse is over ' + $attr.name"
+}
+```
+
 ## tooltipField
 
-*string*, only applies to layers that [have vector client data](./additional-layer-sections.md#layer-abilities)
+*string*, only applies to layers that [have vector client data](./additional-layer-sections.md#layer-abilities).
 
-Specifies an attribute field name to use as the content for a tooltip when the mouse is over the feature. If missing, will use the `nameField` value. Field name is case sensitive.
+Specifies an attribute field name to use as the `tooltipValue` for a feature.
+
+- The value is displayed in the maptip when the mouse is over the feature.
+- Will be ignored if `tooltipArcade` is set.
+- If missing, will use the `nameValue`
+- Field name is case sensitive.
 
 ```js
 {

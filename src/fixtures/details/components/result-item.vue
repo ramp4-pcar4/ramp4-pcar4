@@ -150,8 +150,10 @@ const isMapLayer = computed<boolean>(() => {
  * Determine the name of the data point.
  */
 const itemName = computed<string>(() => {
-    const nameField = getLayerInfo()?.nameField;
-    let returnValue = nameField && props.data.loaded ? props.data.data[nameField] : iApi.$i18n.t('details.items.title');
+    const layer = getLayerInfo();
+
+    let returnValue =
+        layer && props.data.loaded ? layer.nameValue(props.data.data) : iApi.$i18n.t('details.items.title');
 
     // only replace html special chars if string represents plain text
     if (iApi!.ui.isPlainText(returnValue)) {
