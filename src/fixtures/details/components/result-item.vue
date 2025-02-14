@@ -17,7 +17,7 @@
                 :content="itemName"
                 v-html="makeHtmlLink(itemName)"
                 v-truncate="{
-                    options: { placement: 'right' }
+                    options: { placement: 'top' }
                 }"
                 :tabindex="inList ? -1 : 0"
             ></span>
