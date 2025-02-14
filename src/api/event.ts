@@ -361,6 +361,7 @@ enum DefEH {
     MAP_KEYUP_UPDATES_KEY_HANDLER = 'ramp_map_keyup_updates_key_handler',
     MAP_MOUSE_UPDATES_COORDS = 'ramp_map_mouse_updates_coords',
     MAP_MOUSE_UPDATES_MAPTIP = 'ramp_map_mouse_updates_maptip',
+    MAP_MOUSEDOWN_UPDATES_MAPTIP = 'ramp_map_mousedown_updates_maptip',
     MAP_MOUSELEAVE_REMOVES_MAPTIP = 'ramp_map_mouseleave_removes_maptip',
     MAP_RESIZE_UPDATES_SCALEBAR = 'ramp_map_resize_updates_scalebar',
     MAP_SCALE_UPDATES_SCALEBAR = 'ramp_map_scale_updates_scalebar',
@@ -944,6 +945,32 @@ export class EventAPI extends APIScope {
                     throttle(50, (mapMove: MapMove) => zeHandler(mapMove)),
                     handlerName
                 );
+
+                break;
+
+            case DefEH.MAP_MOUSEDOWN_UPDATES_MAPTIP:
+                // update any maptip state when the mouse moves over the map
+                zeHandler = (mapMove: MapMove) => {
+                    this.$iApi.geo.map.maptip.checkAtCoord({
+                        screenX: mapMove.screenX,
+                        screenY: mapMove.screenY
+                    });
+                };
+
+                this.$iApi.event.on(
+                    GlobalEvents.MAP_MOUSEDOWN,
+                    throttle(50, mapMove => {
+                        const downPoint = {
+                            screenX: mapMove.offsetX,
+                            screenY: mapMove.offsetY,
+                            button: mapMove.button,
+                            moveTime: 0
+                        };
+                        zeHandler(downPoint);
+                    }),
+                    handlerName
+                );
+
                 break;
 
             case DefEH.MAP_MOUSELEAVE_REMOVES_MAPTIP:
