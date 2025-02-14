@@ -16,7 +16,8 @@ const runPreTest = (config, options, utils) => {
         url: '../file-layers/geojson.json',
         caching: true,
         colour: '#00FF7F',
-        nameField: 'name'
+        nameField: 'name',
+        nameArcade: ` 'Happiest ' + $attr.name `
     };
 
     const yarmouth = {
@@ -36,7 +37,9 @@ const runPreTest = (config, options, utils) => {
         url: '../file-layers/duffers.json',
         caching: true,
         colour: '#008CAA',
-        nameField: 'name'
+        nameField: 'name',
+        nameArcade: ` 'Welcome to ' + $attr.name `,
+        tooltipArcade: `'I work at ' + $attr.name`
     };
 
     const latlonFL = {

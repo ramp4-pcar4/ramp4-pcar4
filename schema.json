@@ -1079,7 +1079,12 @@
                 "nameField": {
                     "type": "string",
                     "default": "",
-                    "description": "The display field of the layer. If it is not present the viewer will make an attempt to scrape this information."
+                    "description": "The field to be used for the feature name. Ignored if nameArcade is defined. If not present, the viewer will use the server designation, or Object ID as final fallback."
+                },
+                "nameArcade": {
+                    "type": "string",
+                    "default": "",
+                    "description": "An arcade formula to be used for the feature name. If not present, the viewer will use value of nameField."
                 },
                 "extent": {
                     "$ref": "#/$defs/extentWithReference"
@@ -1154,12 +1159,22 @@
                 "nameField": {
                     "type": "string",
                     "default": "",
-                    "description": "Display field of the layer."
+                    "description": "The field to be used for the feature name. Ignored if nameArcade is defined. If not present, the viewer will use the server designation, or Object ID as final fallback."
+                },
+                "nameArcade": {
+                    "type": "string",
+                    "default": "",
+                    "description": "An arcade formula to be used for the feature name. If not present, the viewer will use value of nameField."
                 },
                 "tooltipField": {
                     "type": "string",
                     "default": "",
-                    "description": "The field to be used for tooltips. If not present, the viewer will use nameField (if provided)."
+                    "description": "The field to be used for tooltips. Ignored if tooltipArcade is defined. If not present, the viewer will use the feature name value."
+                },
+                "tooltipArcade": {
+                    "type": "string",
+                    "default": "",
+                    "description": "An arcade formula to be used for tooltips. If not present, the viewer will use tooltipField."
                 },
                 "url": {
                     "type": "string",
@@ -1277,12 +1292,22 @@
                 "nameField": {
                     "type": "string",
                     "default": "",
-                    "description": "Display field of the layer. If not present, the viewer will make an attempt to find the first valid field."
+                    "description": "The field to be used for the feature name. Ignored if nameArcade is defined. If not present, the viewer will use the server designation, or Object ID as final fallback."
+                },
+                "nameArcade": {
+                    "type": "string",
+                    "default": "",
+                    "description": "An arcade formula to be used for the feature name. If not present, the viewer will use value of nameField."
                 },
                 "tooltipField": {
                     "type": "string",
                     "default": "",
-                    "description": "The field to be used for tooltips. If not present, the viewer will use nameField (if provided)."
+                    "description": "The field to be used for tooltips. Ignored if tooltipArcade is defined. If not present, the viewer will use the feature name value."
+                },
+                "tooltipArcade": {
+                    "type": "string",
+                    "default": "",
+                    "description": "An arcade formula to be used for tooltips. If not present, the viewer will use tooltipField."
                 },
                 "url": {
                     "type": "string",
@@ -1413,7 +1438,12 @@
                 "nameField": {
                     "type": "string",
                     "default": "",
-                    "description": "Display field of the layer. If not present, the viewer will make an attempt to find the first valid field."
+                    "description": "The field to be used for the feature name. Ignored if nameArcade is defined. If not present, the viewer will use the server designation, or Object ID as final fallback."
+                },
+                "nameArcade": {
+                    "type": "string",
+                    "default": "",
+                    "description": "An arcade formula to be used for the feature name. If not present, the viewer will use value of nameField."
                 },
                 "url": {
                     "type": "string",
@@ -1492,12 +1522,22 @@
                 "nameField": {
                     "type": "string",
                     "default": "",
-                    "description": "Display field of the layer. If not present, the viewer will make an attempt to scrape this information."
+                    "description": "The field to be used for the feature name. Ignored if nameArcade is defined. If not present, the viewer will use the server designation, or Object ID as final fallback."
+                },
+                "nameArcade": {
+                    "type": "string",
+                    "default": "",
+                    "description": "An arcade formula to be used for the feature name. If not present, the viewer will use value of nameField."
                 },
                 "tooltipField": {
                     "type": "string",
                     "default": "",
-                    "description": "The field to be used for tooltips. If not present, the viewer will use nameField (if provided)."
+                    "description": "The field to be used for tooltips. Ignored if tooltipArcade is defined. If not present, the viewer will use the feature name value."
+                },
+                "tooltipArcade": {
+                    "type": "string",
+                    "default": "",
+                    "description": "An arcade formula to be used for tooltips. If not present, the viewer will use tooltipField."
                 },
                 "url": {
                     "type": "string",
