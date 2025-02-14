@@ -46,15 +46,12 @@ export class FileLayer extends AttribLayer {
     // and have the generic initiation code in this file just grab it.
     protected sourceGeoJson: object | undefined;
 
-    tooltipField: string; // if we end up having more things that are shared with FeatureLayer, consider making a FeatureBaseLayer class for both to inherit from
-
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = true;
         this.isFile = true;
         this.dataFormat = DataFormat.ESRI_FEATURE;
         this.layerFormat = LayerFormat.FEATURE;
-        this.tooltipField = '';
         this.layerIdx = 0;
 
         if (rampConfig.identifyMode && rampConfig.identifyMode !== LayerIdentifyMode.NONE) {
@@ -170,18 +167,29 @@ export class FileLayer extends AttribLayer {
 
             // NOTE: call extract, not load, as there is no service involved here
             this.extractLayerMetadata();
-            // NOTE name field overrides from config have already been applied by this point
-            if (this.origRampConfig.tooltipField) {
-                this.tooltipField =
-                    this.$iApi.geo.attributes.fieldValidator(this.fields, this.origRampConfig.tooltipField) ||
-                    this.nameField;
-            } else {
-                this.tooltipField = this.nameField;
-            }
 
             this.$iApi.geo.attributes.applyFieldMetadata(this, this.origRampConfig.fieldMetadata);
 
             this.attribs.attLoader.updateFieldList(this.fieldList);
+
+            // With files, .nameField is already populated and cleaned due to extractLayerMetadata()
+            // We only run the initializer to account for any arcade formulas. So a bit of fakery.
+
+            await this.nameInitializer(
+                { nameArcade: this.origRampConfig.nameArcade } as RampLayerConfig,
+                this.nameField
+            );
+
+            // and more trickery here. Just because we don't like to mess with the orig config.
+            // so clean up data, and pass a faked config to the tooltip initializer
+            const cleanedTooltip = this.origRampConfig.tooltipField
+                ? this.$iApi.geo.attributes.fieldValidator(this.fields, this.origRampConfig.tooltipField)
+                : '';
+
+            await this.tooltipInitializer({
+                tooltipArcade: this.origRampConfig.tooltipArcade,
+                tooltipField: cleanedTooltip
+            } as RampLayerConfig);
 
             this.featureCount = this.esriLayer?.source.length || 0;
         };

@@ -698,6 +698,7 @@ export interface RampLayerMapImageSublayerConfig {
     index: number;
     name?: string;
     nameField?: string;
+    nameArcade?: string;
     state?: RampLayerStateConfig;
 
     extent?: RampExtentConfig;
@@ -714,6 +715,8 @@ export interface RampLayerMapImageSublayerConfig {
     // the following don't exist on the actual config object, but are needed by the layer class
     id: string;
     layerType: LayerType;
+    tooltipField?: string;
+    tooltipArcade?: string;
 }
 
 // i.e. a wms layer child
@@ -743,7 +746,9 @@ export interface RampLayerConfig {
     expectedLoadTime?: number;
     fieldMetadata?: RampLayerFieldMetadataConfig;
     nameField?: string;
+    nameArcade?: string;
     tooltipField?: string;
+    tooltipArcade?: string;
     featureInfoMimeType?: string; // used by WMS layer
     controls?: Array<LayerControl>;
     disabledControls?: Array<LayerControl>;

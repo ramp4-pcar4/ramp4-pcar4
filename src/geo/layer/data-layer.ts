@@ -153,13 +153,26 @@ export class DataLayer extends CommonLayer {
 
             // assign additional metadata
             this.featureCount = realJson.data.length;
-            if (this.origRampConfig.nameField) {
-                this.nameField =
-                    this.$iApi.geo.attributes.fieldValidator(this.fields, this.origRampConfig.nameField) ||
-                    this.oidField;
-            } else {
-                this.nameField = this.oidField;
-            }
+
+            // trickery required.
+            // random data files can have invalid field names. need to take that into account.
+            // so we make a fake config clone that will make the name initialzer happy.
+            // KNOWN LIMITATION: any bad fields in an arcade statement will not get fixed.
+            //      The wizard will not have an Arcade UI, so only config/api sourced files
+            //      will ever have arcade formulas. The current compromise is data in those
+            //      scenarios should be vetted.
+            //      If we ever need to support rubbish, will need to brew up some type of arcade field
+            //      name crawl & replace.
+
+            const ogFieldName = this.origRampConfig.nameField;
+            const cleanedName = ogFieldName ? this.$iApi.geo.attributes.fieldValidator(this.fields, ogFieldName) : '';
+
+            const fakeConfig = {
+                nameField: cleanedName,
+                nameArcade: this.origRampConfig.nameArcade
+            } as RampLayerConfig;
+
+            await this.nameInitializer(fakeConfig, '');
 
             // attributes are processed, can drop the transitory data.
             this.sourceJson = undefined;
