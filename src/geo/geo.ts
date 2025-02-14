@@ -3,7 +3,7 @@
 import { APIScope, AttributeAPI, InstanceAPI, LayerAPI, MapAPI, QueryAPI, SymbologyAPI } from '@/api/internal';
 import { geo } from '@/main';
 import type { GeometryAPI, ProjectionAPI, SharedUtilsAPI } from '@/geo/api';
-import { EsriConfig } from '@/geo/esri';
+import { EsriAPI, EsriConfig } from '@/geo/esri';
 
 export class GeoAPI extends APIScope {
     attributes: AttributeAPI;
@@ -64,5 +64,43 @@ export class GeoAPI extends APIScope {
      */
     get proxy(): string {
         return EsriConfig.request.proxyUrl || '';
+    }
+
+    async arcadeTest(funText: string): Promise<string> {
+        const fakeAttrib = {
+            $myAttrib: {
+                prefix: 'Mr',
+                name: funText
+            }
+        };
+        const arcadeProfile: __esri.Profile = {
+            variables: [
+                {
+                    name: '$myAttrib',
+                    type: 'dictionary',
+                    properties: [
+                        {
+                            name: 'prefix',
+                            type: 'text'
+                        },
+                        {
+                            name: 'name',
+                            type: 'text'
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // '${$myAttrib.prefix}. ${$myAttrib.name}, Esquire'
+        // `$myAttrib.prefix + '. ' + $myAttrib.name + ', Esquire'`
+        // `Concatenate([$myAttrib.prefix,'. ',$myAttrib.name,' Esquire'],'')`
+        const engine = await EsriAPI.ArcadeExecutor(
+            `$myAttrib.prefix + '. ' + $myAttrib.name + ', Esquire'`,
+            arcadeProfile
+        );
+        const result = engine.execute(fakeAttrib);
+        console.log('TA DAAA: ' + result);
+        return result;
     }
 }
