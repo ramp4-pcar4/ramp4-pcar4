@@ -404,12 +404,11 @@
                     "type": "number",
                     "description": "The default panel width for this fixtures panels."
                 }
-            }, 
+            },
             "additionalProperties": {
-                "type": "number", 
-                "description":  "Will target the panel whose name matches the prop name."
+                "type": "number",
+                "description": "Will target the panel whose name matches the prop name."
             }
-        }
         },
         "panelTeleport": {
             "type": "object",
