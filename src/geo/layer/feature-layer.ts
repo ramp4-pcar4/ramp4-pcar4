@@ -27,12 +27,9 @@ import { markRaw, reactive } from 'vue';
 export class FeatureLayer extends AttribLayer {
     declare esriLayer: EsriFeatureLayer | undefined;
 
-    tooltipField: string;
-
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.dataFormat = DataFormat.ESRI_FEATURE;
-        this.tooltipField = '';
         this.supportsIdentify = true;
         this.layerType = LayerType.FEATURE;
         this.layerFormat = LayerFormat.FEATURE;
@@ -112,7 +109,7 @@ export class FeatureLayer extends AttribLayer {
                 this.visibility = this.origRampConfig?.state?.visibility ?? this._serverVisibility ?? true;
 
                 // apply any config based overrides to the data we just downloaded
-                this.nameField = this.origRampConfig.nameField || this.nameField || '';
+                this.nameField = this.origRampConfig.nameField || this.nameField || ''; // TODO no OID as 3rd option?
                 this.tooltipField = this.origRampConfig.tooltipField || this.nameField;
 
                 this.$iApi.geo.attributes.applyFieldMetadata(this, this.origRampConfig.fieldMetadata);

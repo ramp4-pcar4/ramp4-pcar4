@@ -114,6 +114,9 @@ export class MaptipAPI extends APIScope {
         );
     }
 
+    // TODO ^^^ should not be referincing config.tooltipField.  Should be the layer value.
+    //          If we make a general "getter" to handle complexity this might become moot
+
     /**
      * Clears the maptip from the map
      */

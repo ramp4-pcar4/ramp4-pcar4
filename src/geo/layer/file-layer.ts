@@ -46,15 +46,12 @@ export class FileLayer extends AttribLayer {
     // and have the generic initiation code in this file just grab it.
     protected sourceGeoJson: object | undefined;
 
-    tooltipField: string; // if we end up having more things that are shared with FeatureLayer, consider making a FeatureBaseLayer class for both to inherit from
-
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = true;
         this.isFile = true;
         this.dataFormat = DataFormat.ESRI_FEATURE;
         this.layerFormat = LayerFormat.FEATURE;
-        this.tooltipField = '';
         this.layerIdx = 0;
 
         if (rampConfig.identifyMode && rampConfig.identifyMode !== LayerIdentifyMode.NONE) {

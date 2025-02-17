@@ -325,7 +325,7 @@ export class MapImageLayer extends MapLayer {
                           : (this.origState.visibility ?? miSL._serverVisibility)) ??
                       true);
                 miSL.opacity = subC.state?.opacity ?? this.origState.opacity ?? 1;
-                miSL.nameField = subC.nameField || miSL.nameField || '';
+                miSL.nameField = subC.nameField || miSL.nameField || ''; // TODO third default is OID in other layers
 
                 this.$iApi.geo.attributes.applyFieldMetadata(miSL, subC.fieldMetadata);
 
