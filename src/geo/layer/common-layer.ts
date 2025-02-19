@@ -19,7 +19,8 @@ import {
     TreeNode
 } from '@/geo/api';
 
-import type { AttributeSet, GetGraphicParams, RampLayerConfig, TabularAttributeSet } from '@/geo/api';
+import type { Attributes, AttributeSet, GetGraphicParams, RampLayerConfig, TabularAttributeSet } from '@/geo/api';
+import { EsriAPI } from '@/geo/esri';
 import to from 'await-to-js';
 
 const enum TimerType {
@@ -50,6 +51,16 @@ export class CommonLayer extends LayerInstance {
      */
     protected loadPromDone: boolean;
     protected layerTree: TreeNode;
+
+    /**
+     * Internally tracks any arcade formula for the name value.
+     */
+    protected nameArcadeFormula: string;
+
+    /**
+     * The name arcade executor if a name formula is defined
+     */
+    protected nameArcadeExecutor: __esri.ArcadeExecutor | undefined;
 
     // ----------- LAYER CONSTRUCTION AND INITIALIZAION -----------
 
@@ -96,6 +107,7 @@ export class CommonLayer extends LayerInstance {
         this.url = this.origRampConfig.url;
         this.canReload = !!(this.url || this.origRampConfig.caching);
         this.loadPromDone = false;
+        this.nameArcadeFormula = '';
 
         this.layerTree = new TreeNode(0, this.uid, this.name, true); // is a layer with layer index 0 by default. subclasses will change this when they load
     }
@@ -530,6 +542,93 @@ export class CommonLayer extends LayerInstance {
         if (this.timers[type]) {
             clearTimeout(this.timers[type]);
             this.timers[type] = undefined;
+        }
+    }
+
+    get nameArcade(): string {
+        return this.nameArcadeFormula;
+    }
+    async setNameArcade(formula: string): Promise<void> {
+        if (this.supportsFeatures) {
+            if (formula.trim() === '') {
+                this.nameArcadeFormula = '';
+                this.nameArcadeExecutor = undefined;
+            } else {
+                this.nameArcadeFormula = formula;
+
+                const arcadeProfile: __esri.Profile = {
+                    variables: [
+                        {
+                            name: '$Attr',
+                            type: 'dictionary',
+                            properties: this.fields
+                                .map(fd => {
+                                    const arcardeType = this.$iApi.geo.attributes.fieldTypeToArcade(fd.type);
+                                    if (arcardeType) {
+                                        return { name: fd.name, type: arcardeType };
+                                    } else {
+                                        console.error(
+                                            `Encountered field type with no arcade support: ${fd.type} [${fd.name}]`
+                                        );
+                                        return arcardeType; // undefined
+                                    }
+                                })
+                                .filter(f => !!f)
+                        }
+                    ]
+                };
+
+                this.nameArcadeExecutor = await EsriAPI.ArcadeExecutor(formula, arcadeProfile);
+            }
+        } else {
+            console.error("Attempted to set a name arcade function on a layer that doesn't support it.");
+        }
+    }
+
+    /**
+     * Handles initialization logic for feature names. Only valid for
+     * layers that support attributes.
+     *
+     * @param config a ramp layer configuration object. Can pass empty object if n/a.
+     * @param serviceDefault name field as defined by the layer service. Not required
+     */
+    protected async nameInitializer(config: RampLayerConfig, serviceDefault: string = ''): Promise<void> {
+        // kick out if supportsattribs is false
+        // check configs for field or arcade
+        // if arcade, generate executor via setArcade function, set  return
+        // else return config || service || oid
+
+        if (this.supportsFeatures) {
+            const trimArcade = (config.nameArcade || '').trim();
+            if (trimArcade) {
+                // build executor, store formula
+                await this.setNameArcade(trimArcade);
+            }
+
+            // we still assign name field even if an arcade exists. This is for
+            // fallback support of any old templates/custom fixtures that are not using
+            // nameValue(). Any `attribute[nameField]` code will still work / not explode.
+
+            this.nameField = (config.nameField || '').trim() || serviceDefault || this.oidField;
+        } else {
+            console.error('Attempted to init a name field on an unsupported layer.');
+        }
+    }
+
+    async nameValue(feature: Attributes | number): Promise<string> {
+        // NOTE if async is making it too difficult, change to sync and drop the OID lookup
+
+        if (typeof feature === 'number') {
+            const graphic = await this.getGraphic(feature, { getAttribs: true });
+            feature = graphic.attributes;
+        }
+
+        // TODO decide if we return error strings (to make visually obvious)
+        //      or return empty string + console errors
+        if (this.nameArcade) {
+            return this.nameArcadeExecutor?.execute(feature) ?? 'Arcade Error';
+        } else {
+            return feature[this.nameField] ?? 'Name Field Error';
         }
     }
 }

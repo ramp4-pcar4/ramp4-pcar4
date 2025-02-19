@@ -743,6 +743,7 @@ export interface RampLayerConfig {
     expectedLoadTime?: number;
     fieldMetadata?: RampLayerFieldMetadataConfig;
     nameField?: string;
+    nameArcade?: string;
     tooltipField?: string;
     featureInfoMimeType?: string; // used by WMS layer
     controls?: Array<LayerControl>;

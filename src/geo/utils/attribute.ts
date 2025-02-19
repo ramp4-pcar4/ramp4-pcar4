@@ -33,6 +33,23 @@ export interface AttributeLoaderDetails {
     fieldsToTrim?: Array<string>; // All string fields whose values should be trimmed
 }
 
+// Arcade data types we are currenlty supporting
+type EsriArcadeVarType = 'geometry' | 'number' | 'text' | 'date';
+
+// Maps the ESRI field type to a matching ESRI arcade variable type
+const arcadeTypeMapper: Map<string, EsriArcadeVarType> = new Map([
+    ['integer', 'number'],
+    ['small-integer', 'number'],
+    ['big-integer', 'number'],
+    ['single', 'number'],
+    ['double', 'number'],
+    ['long', 'number'],
+    ['oid', 'number'],
+    ['string', 'text'],
+    ['geometry', 'geometry'],
+    ['date', 'date']
+]);
+
 /**
  * Provides methods for handling ESRI-style attributes
  */
@@ -599,6 +616,17 @@ export class AttributeAPI extends APIScope {
                 }
             });
         */
+    }
+
+    /**
+     * Gives an arcade variable type that corresponds to a field type.
+     * Undefined if a valid mapping could not be derived.
+     *
+     * @param fieldType
+     * @returns
+     */
+    fieldTypeToArcade(fieldType: string): EsriArcadeVarType | undefined {
+        return arcadeTypeMapper.get(fieldType);
     }
 }
 
