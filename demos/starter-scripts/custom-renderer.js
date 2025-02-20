@@ -232,7 +232,7 @@ let config = {
                 {
                     id: 'FeatureSimple',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/9',
                     customRenderer: {
                         type: 'simple',
                         label: 'Super Simple',
@@ -258,7 +258,7 @@ let config = {
                 {
                     id: 'FeatureUniqueValue',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/9',
                     customRenderer: {
                         type: 'uniqueValue',
                         field1: 'Category',
@@ -292,7 +292,7 @@ let config = {
                 {
                     id: 'FeatureClassBreaks',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/9',
                     customRenderer: {
                         type: 'classBreaks',
                         field: 'OBJECTID',
@@ -514,7 +514,7 @@ let config = {
                 {
                     id: 'MILSimple',
                     layerType: 'esri-map-image',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                     sublayers: [
                         {
                             index: 18,
@@ -563,7 +563,7 @@ let config = {
                 {
                     id: 'MILUniqueValue',
                     layerType: 'esri-map-image',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                     sublayers: [
                         {
                             index: 18,
@@ -625,7 +625,7 @@ let config = {
                 {
                     id: 'MILClassBreaks',
                     layerType: 'esri-map-image',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                     sublayers: [
                         {
                             index: 18,

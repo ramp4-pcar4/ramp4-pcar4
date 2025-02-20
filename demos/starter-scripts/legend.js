@@ -130,7 +130,7 @@ let config = {
                 {
                     id: 'CleanAir',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/9',
                     state: {
                         opacity: 0.8,
                         visibility: true,
@@ -272,7 +272,7 @@ const testSuite = async () => {
 
     const layer = window.debugInstance.geo.layer.createLayer({
         id: 'Oilsands',
-        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/Oilsands/MapServer',
+        url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/Oilsands/MapServer',
         layerType: 'esri-map-image',
         name: 'Oil Sands',
         sublayers: [

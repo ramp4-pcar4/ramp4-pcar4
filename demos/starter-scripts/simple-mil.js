@@ -248,7 +248,7 @@ let config = {
                 {
                     id: 'EcoGeo',
                     layerType: 'esri-map-image',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/',
                     sublayers: [{ index: 6 }, { index: 8 }]
                 }
             ],

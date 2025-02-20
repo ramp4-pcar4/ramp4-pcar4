@@ -23,7 +23,7 @@ const runPreTest = (config, options, utils) => {
         id: 'table',
         name: 'JOSM Theme Count',
         layerType: 'data-esri-table',
-        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/Oilsands/MapServer/5'
+        url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/Oilsands/MapServer/5'
     };
 
     utils.addLayerLegend(customJson);

@@ -313,7 +313,7 @@ let config = {
                 {
                     id: 'CleanAir',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/9',
                     state: {
                         opacity: 0.8,
                         visibility: true,

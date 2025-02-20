@@ -70,18 +70,18 @@ let config = {
                 {
                     id: 'EcoGeo',
                     layerType: 'esri-map-image',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/',
                     sublayers: [{ index: 6 }, { index: 7 }, { index: 8 }]
                 },
                 {
                     id: 'EcoGeo-9',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9'
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/9'
                 },
                 {
                     id: 'MajorCities',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/SupportData/MapServer/1'
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/SupportData/MapServer/1'
                 },
                 {
                     id: 'Heroni',
@@ -91,7 +91,7 @@ let config = {
                 {
                     id: 'CESI',
                     layerType: 'esri-map-image',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer/',
                     sublayers: [{ index: 22 }, { index: 24 }, { index: 26 }]
                 },
                 {
@@ -121,7 +121,7 @@ let config = {
                     id: 'table',
                     name: 'OilSands',
                     layerType: 'data-esri-table',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/Oilsands/MapServer/5'
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/Oilsands/MapServer/5'
                 }
             ],
             fixtures: {

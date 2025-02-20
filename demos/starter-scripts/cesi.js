@@ -256,7 +256,7 @@ let config = {
                     id: 'AirEmissions_GHG',
                     name: 'Greenhouse gas emissions from large facilities',
                     layerType: 'esri-map-image',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer/',
                     metadata: {
                         url: 'https://indicators-map.ec.gc.ca/metadata/en/Ammonia%20emissions%20by%20facility.xml'
                     },
@@ -306,7 +306,7 @@ let config = {
                     nameField: 'GridColumn1',
                     name: 'Sulphur oxide emissions by facility',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/18',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer/18',
                     metadata: {
                         url: 'https://indicators-map.ec.gc.ca/metadata/en/Sulphur%20oxide%20emissions%20by%20facility.xml'
                     },
@@ -340,7 +340,7 @@ let config = {
                     nameField: 'StationName',
                     name: 'Average fine particulate matter concentrations at monitoring stations',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/26',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer/26',
                     metadata: {
                         url: 'https://indicators-map.ec.gc.ca/metadata/en/Average%20ambient%20fine%20particulate%20matter%20concentrations%20at%20monitoring%20stations.xml'
                     },
@@ -370,7 +370,7 @@ let config = {
                     nameField: 'StationName',
                     name: 'Average sulphur dioxide concentrations at monitoring stations',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/28',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer/28',
                     metadata: {
                         url: 'https://indicators-map.ec.gc.ca/metadata/en/Average%20ambient%20sulphur%20dioxide%20concentrations%20at%20monitoring%20stations.xml'
                     },
@@ -400,7 +400,7 @@ let config = {
                     nameField: 'GridColumn1',
                     name: 'Cadmium emissions to air by facility',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/13',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer/13',
                     state: {
                         visibility: false
                     },
@@ -430,7 +430,7 @@ let config = {
                     nameField: 'FacilityName',
                     name: 'Releases of lead to water by facility',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/38',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer/38',
                     metadata: {
                         url: 'https://indicators-map.ec.gc.ca/metadata/en/Releases%20of%20lead%20to%20water%20by%20facility.xml'
                     },
@@ -463,7 +463,7 @@ let config = {
                     id: 'Conserved_Areas',
                     name: 'Conserved areas',
                     layerType: 'esri-map-image',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                     metadata: {
                         url: 'https://indicators-map.ec.gc.ca/metadata/en/Protected%20Areas.xml'
                     },
@@ -506,7 +506,7 @@ let config = {
                     nameField: 'Name',
                     name: 'Water quality at monitoring sites',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/5',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer/5',
                     metadata: {
                         url: 'https://indicators-map.ec.gc.ca/metadata/en/Water%20quality%20at%20monitoring%20sites.xml'
                     },
@@ -520,7 +520,7 @@ let config = {
                     nameField: 'StationName',
                     name: 'Water quantity at monitoring stations',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/1',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer/1',
                     metadata: {
                         url: 'https://indicators-map.ec.gc.ca/metadata/en/Water%20quantity%20at%20monitoring%20stations.xml'
                     },
@@ -553,7 +553,7 @@ let config = {
                     id: 'EZ',
                     name: 'Ecozones',
                     layerType: 'esri-map-image',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                     state: {
                         query: false,
                         visibility: true,

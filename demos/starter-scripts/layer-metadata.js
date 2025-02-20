@@ -77,7 +77,7 @@ let config = {
                     id: 'ecogeo-nature',
                     name: 'Nature',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/6',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/6',
                     metadata: {
                         url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/main/public/help/en.md'
                     }

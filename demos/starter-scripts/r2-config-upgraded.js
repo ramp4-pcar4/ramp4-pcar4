@@ -28,7 +28,7 @@ const r2config = {
     services: {
         proxyUrl: 'https://maps.canada.ca/wmsproxy/ws/wmsproxy/executeFromProxy',
         exportMapUrl:
-            'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task',
+            'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task',
         export: {
             title: {
                 value: 'Title'
@@ -120,7 +120,7 @@ const r2config = {
                     visibility: false,
                     boundingBox: false
                 },
-                url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/37'
+                url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer/37'
             },
             {
                 id: 'LeadReleases',
@@ -128,7 +128,7 @@ const r2config = {
                 table: {
                     lazyFilter: true
                 },
-                url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/38'
+                url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer/38'
             },
             {
                 id: 'CESI',
@@ -142,7 +142,7 @@ const r2config = {
                 state: {
                     visibility: true
                 },
-                url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer'
+                url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer'
             },
             {
                 id: 'wms',

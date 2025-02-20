@@ -248,7 +248,7 @@ let config = {
                 {
                     id: 'Offscale',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/CanadaThings/MapServer/0'
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/CanadaThings/MapServer/0'
                 }
             ],
             fixtures: {

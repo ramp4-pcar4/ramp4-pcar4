@@ -10,7 +10,7 @@ const runPreTest = (config, options, utils) => {
     const simpleFeat = {
         id: 'FeatureSimple',
         layerType: 'esri-feature',
-        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
+        url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/9',
         customRenderer: {
             type: 'simple',
             label: 'Super Simple',
@@ -37,7 +37,7 @@ const runPreTest = (config, options, utils) => {
     const uniqueFeat = {
         id: 'FeatureUniqueValue',
         layerType: 'esri-feature',
-        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
+        url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/9',
         customRenderer: {
             type: 'uniqueValue',
             field1: 'Category',
@@ -72,7 +72,7 @@ const runPreTest = (config, options, utils) => {
     const breaksFeat = {
         id: 'FeatureClassBreaks',
         layerType: 'esri-feature',
-        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/9',
+        url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/9',
         customRenderer: {
             type: 'classBreaks',
             field: 'OBJECTID',
@@ -297,7 +297,7 @@ const runPreTest = (config, options, utils) => {
     const simpleMil = {
         id: 'MILSimple',
         layerType: 'esri-map-image',
-        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer',
+        url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
         sublayers: [
             {
                 index: 18,
@@ -349,7 +349,7 @@ const runPreTest = (config, options, utils) => {
     const uniqueMil = {
         id: 'MILUniqueValue',
         layerType: 'esri-map-image',
-        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer',
+        url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
         sublayers: [
             {
                 index: 18,
@@ -413,7 +413,7 @@ const runPreTest = (config, options, utils) => {
     const breaksMil = {
         id: 'MILClassBreaks',
         layerType: 'esri-map-image',
-        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer',
+        url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
         sublayers: [
             {
                 index: 18,

@@ -41,21 +41,21 @@ const runPreTest = (config, options, utils) => {
     const polyFeatureLayer = {
         id: 'TerritoriesPoly',
         layerType: 'esri-feature',
-        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/SupportData/MapServer/3',
+        url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/SupportData/MapServer/3',
         permanentFilteredQuery: `Name = 'Nunavut' OR Name = 'Northwest Territories' OR Name = 'Yukon Territory'`
     };
 
     const lineFeatureLayer = {
         id: 'BasinLine',
         layerType: 'esri-feature',
-        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/2',
+        url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer/2',
         permanentFilteredQuery: `OBJECTID > 80`
     };
 
     const milCesiLayer = {
         id: 'CESI',
         layerType: 'esri-map-image',
-        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/CESI/MapServer/',
+        url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer/',
         sublayers: [{ index: 36 }, { index: 37 }, { index: 38 }]
     };
 
