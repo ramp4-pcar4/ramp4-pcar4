@@ -16,8 +16,14 @@
                 class="pl-3 text-left flex-grow itemName"
                 :content="itemName"
                 v-html="makeHtmlLink(itemName)"
+                @touchstart="isTouch = true"
+                @touchend="isTouch = false"
                 v-truncate="{
-                    options: { placement: 'right' }
+                    options: {
+                        placement: 'top-start',
+                        // Offset more for touch devices so tooltip is visible above finger
+                        offset: () => (isTouch ? [0, 25] : [0, 0])
+                    }
                 }"
                 :tabindex="inList ? -1 : 0"
             ></span>
@@ -111,6 +117,7 @@ const iApi = inject<InstanceAPI>('iApi')!;
 const watchers = ref<Array<() => void>>([]);
 const detailsStore = useDetailsStore();
 const { t } = useI18n();
+const isTouch = ref(false);
 
 /**
  * Icon string to display for this item

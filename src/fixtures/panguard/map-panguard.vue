@@ -95,9 +95,6 @@ const setup = () => {
                 timeoutID.value = window.setTimeout(() => {
                     panGuard.value!.classList.remove('pg-active');
                 }, 2000);
-
-                // manually scroll the page since scrolling doesn't work when moving over the map
-                window.scrollBy(pointer.x - x, pointer.y - y);
             })
         );
     });
@@ -128,6 +125,8 @@ const setup = () => {
     &.pg-active {
         opacity: 1;
         transition-duration: 0.3s;
+        pointer-events: auto !important;
+        touch-action: auto;
     }
 
     .pg-label {
