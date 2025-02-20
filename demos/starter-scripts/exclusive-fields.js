@@ -249,7 +249,7 @@ let config = {
                     id: 'Nature',
                     name: 'Feature Layer with Name and Description',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/6',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/6',
                     fieldMetadata: {
                         fieldInfo: [{ name: 'Name' }, { name: 'Description' }],
                         exclusiveFields: true
@@ -258,7 +258,7 @@ let config = {
                 {
                     id: 'EcoGeo',
                     layerType: 'esri-map-image',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/EcoAction/MapServer/',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/',
                     sublayers: [
                         {
                             index: 8,

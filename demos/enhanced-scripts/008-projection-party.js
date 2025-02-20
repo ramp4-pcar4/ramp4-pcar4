@@ -50,7 +50,7 @@ const runPreTest = (config, options, utils) => {
         id: 'fMerc',
         layerType: 'esri-feature',
         name: 'Feature Mercator',
-        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/Oilsands/MapServer/0',
+        url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/Oilsands/MapServer/0',
         permanentFilteredQuery: 'OBJECTID < 100'
     };
 
@@ -58,7 +58,7 @@ const runPreTest = (config, options, utils) => {
         id: 'fLambert',
         layerType: 'esri-feature',
         name: 'Feature Lambert',
-        url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/Surverses_des_egouts_unitaires_Combined_sewer_overflow/MapServer/34'
+        url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/Surverses_des_egouts_unitaires_Combined_sewer_overflow/MapServer/34'
     };
 
     utils.addLayerLegend(latlonFL);

@@ -253,7 +253,7 @@ let config = {
                     id: 'Water',
                     name: 'Oily Water',
                     layerType: 'esri-map-image',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/OilsandsLambert/MapServer/',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/OilsandsLambert/MapServer/',
                     sublayers: [
                         {
                             index: 0,
@@ -265,7 +265,7 @@ let config = {
                     id: 'Cities',
                     name: 'Grouse Cities',
                     layerType: 'esri-feature',
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/BasicCity/MapServer/0',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/BasicCity/MapServer/0',
                     permanentFilteredQuery: 'POPCLASS = 3',
                     customRenderer: {
                         type: 'simple',

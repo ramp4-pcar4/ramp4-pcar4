@@ -118,7 +118,7 @@ let config = {
                             ]
                         }
                     },
-                    url: 'https://section917.canadacentral.cloudapp.azure.com/arcgis/rest/services/TestData/TimeParty/MapServer/0'
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/TimeParty/MapServer/0'
                 }
             ],
             fixtures: {
