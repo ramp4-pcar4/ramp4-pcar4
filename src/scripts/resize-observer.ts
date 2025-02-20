@@ -1,46 +1,45 @@
 // From https://philipwalton.com/articles/responsive-components-a-solution-to-the-container-queries-problem/
 
-// Only run if ResizeObserver is supported.
 // Create a single ResizeObserver class to handle all
 // container elements. The instance is created with a callback,
 // which is invoked as soon as an element is observed as well
 // as any time that element's size changes.
 
+const DEFAULT_BREAKPOINTS = {
+    xs: 200,
+    sm: 576,
+    md: 768,
+    lg: 960
+};
+
 export default class CustomResizeObserver {
-    private readonly resizeObserver: ResizeObserver | undefined;
+    private readonly resizeObserver: ResizeObserver;
 
     constructor(breakpoints?: { [key: string]: number }) {
-        this.resizeObserver =
-            'ResizeObserver' in self
-                ? new ResizeObserver(function (entries) {
-                      // Default breakpoints that should apply to all observed
-                      // elements that don't define their own custom breakpoints.
-                      const defaultBreakpoints = {
-                          xs: 200,
-                          sm: 576,
-                          md: 768,
-                          lg: 960
-                      };
+        this.resizeObserver = new ResizeObserver(entries => {
+            if (!entries.length) {
+                return;
+            }
 
-                      entries.forEach(function (entry) {
-                          // If breakpoints are defined on the observed element,
-                          // use them. Otherwise use the defaults.
-                          const bp = (entry.target as any).dataset.breakpoints
-                              ? JSON.parse((entry.target as any).dataset.breakpoints)
-                              : (breakpoints ?? defaultBreakpoints);
+            // Use requestAnimationFrame to ensure the callback runs after the browser paints to avoid
+            // a console error for undelivered notifications. This error occurs because we are adding a class to the target
+            // element, possibly before draw, and the browser is warning that an infinite loop is possible (if the class were to trigger a resize).
+            window.requestAnimationFrame(() => {
+                entries.forEach(entry => {
+                    const customData = (entry.target as HTMLElement).dataset.breakpoints;
+                    const bp = customData ? JSON.parse(customData) : (breakpoints ?? DEFAULT_BREAKPOINTS);
 
-                          // Update the matching breakpoints on the observed element.
-                          Object.keys(bp).forEach(function (breakpoint) {
-                              const minWidth = bp[breakpoint];
-                              if (entry.contentRect.width >= minWidth) {
-                                  entry.target.classList.add(breakpoint);
-                              } else {
-                                  entry.target.classList.remove(breakpoint);
-                              }
-                          });
-                      });
-                  })
-                : undefined;
+                    Object.keys(bp).forEach(key => {
+                        const minWidth = bp[key];
+                        if (entry.contentRect.width >= minWidth) {
+                            entry.target.classList.add(key);
+                        } else {
+                            entry.target.classList.remove(key);
+                        }
+                    });
+                });
+            });
+        });
     }
 
     observe(target: Element): void {
