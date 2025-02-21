@@ -555,6 +555,7 @@ export class CommonLayer extends LayerInstance {
     get nameArcade(): string {
         return this.nameArcadeFormula;
     }
+
     async setNameArcade(formula: string): Promise<void> {
         if (this.supportsFeatures) {
             if (formula.trim() === '') {
@@ -577,7 +578,7 @@ export class CommonLayer extends LayerInstance {
                                         console.error(
                                             `Encountered field type with no arcade support: ${fd.type} [${fd.name}]`
                                         );
-                                        return arcardeType; // undefined
+                                        return arcardeType; // <-- will be undefined
                                     }
                                 })
                                 .filter(f => !!f)
@@ -604,11 +605,6 @@ export class CommonLayer extends LayerInstance {
         config: RampLayerConfig | RampLayerMapImageSublayerConfig,
         serviceDefault: string = ''
     ): Promise<void> {
-        // kick out if supportsattribs is false
-        // check configs for field or arcade
-        // if arcade, generate executor via setArcade function, set  return
-        // else return config || service || oid
-
         if (this.supportsFeatures) {
             const trimArcade = (config?.nameArcade || '').trim();
             if (trimArcade) {
@@ -626,23 +622,27 @@ export class CommonLayer extends LayerInstance {
         }
     }
 
-    nameValue(feature: Attributes): string {
+    nameValue(attributes: Attributes): string {
         // NOTE idea was to also support OID as parameter, and do a feature lookup
         //      in here. But that forces the method to be async, which causes
         //      problems with a stuff that wants an instant value.
         //      So the convention anything that wants async needs to run the oid -> feature
         //      part themselves and pass the result to this badboy.
 
-        // TODO decide if we return error strings (to make visually obvious)
-        //      or return empty string + console errors
-        if (this.nameArcade) {
-            const arcadePayload = {
-                $Attr: feature
-            };
+        if (attributes) {
+            // TODO decide if we return error strings (to make visually obvious)
+            //      or return empty string + console errors
+            if (this.nameArcade) {
+                const arcadePayload = {
+                    $Attr: attributes
+                };
 
-            return this.nameArcadeExecutor?.execute(arcadePayload) ?? 'Arcade Error';
+                return this.nameArcadeExecutor?.execute(arcadePayload) ?? 'Arcade Error';
+            } else {
+                return this.nameField ? (attributes[this.nameField] ?? 'Name Field Error') : '';
+            }
         } else {
-            return this.nameField ? (feature[this.nameField] ?? 'Name Field Error') : '';
+            return '';
         }
     }
 }

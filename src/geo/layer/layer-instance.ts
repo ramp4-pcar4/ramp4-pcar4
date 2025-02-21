@@ -536,7 +536,14 @@ export class LayerInstance extends APIScope {
         return false;
     }
 
-    nameValue(feature: Attributes): string {
+    /**
+     * Given the attributes of a feature of this layer, returns the name of that feature.
+     * Valid only for layers that support attributes.
+     *
+     * @param attributes attribute values
+     * @returns the name
+     */
+    nameValue(attributes: Attributes): string {
         return '';
     }
 

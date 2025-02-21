@@ -46,7 +46,6 @@ import type EsriFeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
 import type EsriMapView from '@arcgis/core/views/MapView';
 import type EsriColorBackground from '@arcgis/core/webmap/background/ColorBackground';
 
-// import type { createArcadeExecutor as EsriCreateArcadeExecutor } from '@arcgis/core/arcade';
 // NOTE we need to have explicit strings in the `await import()` calls, as that's
 //      how Vite knows how to optimize the chunks.
 //      So lots of boilerplate here instead of nice `genericLoad(libPath: string)` gettup.
