@@ -47,6 +47,7 @@ export class AttribLayer extends MapLayer {
     renderer: BaseRenderer | undefined;
     serviceUrl: string;
     canModifyLayer: boolean;
+    tooltipField: string;
 
     protected filter: Filter;
 
@@ -56,6 +57,7 @@ export class AttribLayer extends MapLayer {
         this.geomType = GeometryType.UNKNOWN;
         this.serviceUrl = '';
         this.fieldList = '';
+        this.tooltipField = '';
         this.canModifyLayer = true;
         this.filter = new Filter(rampConfig.permanentFilteredQuery || '', rampConfig.initialFilteredQuery || '');
         this.hovertips = rampConfig.state?.hovertips ?? true;
