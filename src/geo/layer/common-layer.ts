@@ -19,7 +19,14 @@ import {
     TreeNode
 } from '@/geo/api';
 
-import type { Attributes, AttributeSet, GetGraphicParams, RampLayerConfig, TabularAttributeSet } from '@/geo/api';
+import type {
+    Attributes,
+    AttributeSet,
+    GetGraphicParams,
+    RampLayerConfig,
+    RampLayerMapImageSublayerConfig,
+    TabularAttributeSet
+} from '@/geo/api';
 import { EsriAPI } from '@/geo/esri';
 import to from 'await-to-js';
 
@@ -588,18 +595,22 @@ export class CommonLayer extends LayerInstance {
     /**
      * Handles initialization logic for feature names. Only valid for
      * layers that support attributes.
+     * Typically called by internal processes.
      *
      * @param config a ramp layer configuration object. Can pass empty object if n/a.
      * @param serviceDefault name field as defined by the layer service. Not required
      */
-    protected async nameInitializer(config: RampLayerConfig, serviceDefault: string = ''): Promise<void> {
+    async nameInitializer(
+        config: RampLayerConfig | RampLayerMapImageSublayerConfig,
+        serviceDefault: string = ''
+    ): Promise<void> {
         // kick out if supportsattribs is false
         // check configs for field or arcade
         // if arcade, generate executor via setArcade function, set  return
         // else return config || service || oid
 
         if (this.supportsFeatures) {
-            const trimArcade = (config.nameArcade || '').trim();
+            const trimArcade = (config?.nameArcade || '').trim();
             if (trimArcade) {
                 // build executor, store formula
                 await this.setNameArcade(trimArcade);
@@ -609,7 +620,7 @@ export class CommonLayer extends LayerInstance {
             // fallback support of any old templates/custom fixtures that are not using
             // nameValue(). Any `attribute[nameField]` code will still work / not explode.
 
-            this.nameField = (config.nameField || '').trim() || serviceDefault || this.oidField;
+            this.nameField = (config?.nameField || '').trim() || serviceDefault || this.oidField;
         } else {
             console.error('Attempted to init a name field on an unsupported layer.');
         }

@@ -325,7 +325,6 @@ export class MapImageLayer extends MapLayer {
                           : (this.origState.visibility ?? miSL._serverVisibility)) ??
                       true);
                 miSL.opacity = subC.state?.opacity ?? this.origState.opacity ?? 1;
-                miSL.nameField = subC.nameField || miSL.nameField || ''; // TODO third default is OID in other layers
 
                 this.$iApi.geo.attributes.applyFieldMetadata(miSL, subC.fieldMetadata);
 
@@ -353,6 +352,11 @@ export class MapImageLayer extends MapLayer {
                 // ensure our massaged field lists get updated inside the sublayer
                 miSL.updateFieldList();
                 miSL.updateFieldsToTrim();
+
+                // TODO this needs to run after field lists are set.
+                //      .nameField already contains the service value of the sublayer from the miSL.loadLayerMetadata()
+                //      call above.
+                await miSL.nameInitializer(subC, miSL.nameField);
 
                 // get feature count
                 const count = await this.$iApi.geo.layer.loadFeatureCount(

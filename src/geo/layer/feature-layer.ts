@@ -108,13 +108,16 @@ export class FeatureLayer extends AttribLayer {
                 // apply server visibility in case of missing visibility in config
                 this.visibility = this.origRampConfig?.state?.visibility ?? this._serverVisibility ?? true;
 
-                // apply any config based overrides to the data we just downloaded
-                this.nameField = this.origRampConfig.nameField || this.nameField || ''; // TODO no OID as 3rd option?
-                this.tooltipField = this.origRampConfig.tooltipField || this.nameField;
-
                 this.$iApi.geo.attributes.applyFieldMetadata(this, this.origRampConfig.fieldMetadata);
                 this.attribs.attLoader.updateFieldList(this.fieldList);
                 this.attribs.attLoader.updateFieldsToTrim(this.getFieldsToTrim());
+
+                // apply any config based overrides to the data we just downloaded
+                // NOTE must be called after fields are defined.
+                //      .nameField will already contian any server-based definitions
+                await this.nameInitializer(this.origRampConfig, this.nameField);
+
+                this.tooltipField = this.origRampConfig.tooltipField || this.nameField;
             }
         };
 

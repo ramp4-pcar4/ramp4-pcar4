@@ -698,6 +698,7 @@ export interface RampLayerMapImageSublayerConfig {
     index: number;
     name?: string;
     nameField?: string;
+    nameArcade?: string;
     state?: RampLayerStateConfig;
 
     extent?: RampExtentConfig;
