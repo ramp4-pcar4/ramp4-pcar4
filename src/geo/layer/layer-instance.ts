@@ -20,6 +20,7 @@ import {
     TreeNode
 } from '@/geo/api';
 import type {
+    Attributes,
     AttributeSet,
     DrawOrder,
     FieldDefinition,
@@ -533,6 +534,10 @@ export class LayerInstance extends APIScope {
      */
     canIdentify(): boolean {
         return false;
+    }
+
+    nameValue(feature: Attributes): string {
+        return '';
     }
 
     /**

@@ -626,20 +626,23 @@ export class CommonLayer extends LayerInstance {
         }
     }
 
-    async nameValue(feature: Attributes | number): Promise<string> {
-        // NOTE if async is making it too difficult, change to sync and drop the OID lookup
-
-        if (typeof feature === 'number') {
-            const graphic = await this.getGraphic(feature, { getAttribs: true });
-            feature = graphic.attributes;
-        }
+    nameValue(feature: Attributes): string {
+        // NOTE idea was to also support OID as parameter, and do a feature lookup
+        //      in here. But that forces the method to be async, which causes
+        //      problems with a stuff that wants an instant value.
+        //      So the convention anything that wants async needs to run the oid -> feature
+        //      part themselves and pass the result to this badboy.
 
         // TODO decide if we return error strings (to make visually obvious)
         //      or return empty string + console errors
         if (this.nameArcade) {
-            return this.nameArcadeExecutor?.execute(feature) ?? 'Arcade Error';
+            const arcadePayload = {
+                $Attr: feature
+            };
+
+            return this.nameArcadeExecutor?.execute(arcadePayload) ?? 'Arcade Error';
         } else {
-            return feature[this.nameField] ?? 'Name Field Error';
+            return this.nameField ? (feature[this.nameField] ?? 'Name Field Error') : '';
         }
     }
 }
