@@ -1,0 +1,1 @@
+import{cl as n}from"./main-BvP2mMJi.js";function l(r,e){let t;if(typeof r=="string")t=n(r+`-seed(${e})`);else{let o=12;t=r^e;do t=107*(t>>8^t)+o|0;while(--o!=0)}return(1+t/(1<<31))/2}function c(r){return Math.floor(l(r,f)*i)}const f=53290320,i=10;export{l as e,c as o};
