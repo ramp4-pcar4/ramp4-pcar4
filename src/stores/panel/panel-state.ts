@@ -1,6 +1,6 @@
 import type { Component, ComponentOptions, ComponentPublicInstance } from 'vue';
 
-import type { PanelInstance, PanelRegistrationOptions } from '@/api';
+import type { PanelInstance } from '@/api';
 import type { DefPromise } from '@/geo/api';
 
 export interface PanelState {
@@ -114,13 +114,13 @@ export type HTMLScreen = {
 
 export type HTMLPanelInstance = {
     /**
-     * keyed language object containing HTML content for each language, represented as an HTMLElement
+     * Keyed language object containing HTML content for each language, represented as an HTMLElement
      * object or a string.
      *
-     * @type {{ [key: string]: string | HTMLElement }}
+     * @type { HTMLScreen | { [key: string]: string };}
      * @memberof HTMLPanelInstance
      */
-    content: HTMLScreen;
+    content: HTMLScreen | { [key: string]: string };
 
     /**
      * id of the panel
@@ -139,20 +139,20 @@ export type HTMLPanelInstance = {
     alertName: string;
 
     /**
+     * A set of language keys to be utilized by the panel
+     *
+     * @type {{ [key: string]: string }}
+     * @memberof HTMLPanelInstance
+     */
+    languageKeys?: { [key: string]: string };
+
+    /**
      * The style object to apply to the panel. If none provided, the default panel styling will be used.
      *
      * @type {PanelConfigStyle}
      * @memberof HTMLPanelInstance
      */
     style?: PanelConfigStyle;
-
-    /**
-     * a set of options that will apply to the panel
-     *
-     * @type {PanelRegistrationOptions}
-     * @memberof HTMLPanelInstance
-     */
-    options?: PanelRegistrationOptions;
 };
 
 /**
