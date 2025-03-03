@@ -393,6 +393,10 @@ const clickShowList = () => {
  */
 const detailsClosed = () => {
     detailsFixture.value.removeDetailsHilight();
+    // unwatch when the panel is closed, not when unmounted because a minimized
+    // panel will be unmounted but still needs to have watchers active.
+    watchers.value.forEach(unwatch => unwatch());
+    handlers.value.forEach(handler => iApi.event.off(handler));
 
     // (JR) commenting this out. if user turns off toggle, it shouldnt reset back to on when screen closes.
     // detailsStore.hilightToggle = true;
@@ -545,10 +549,6 @@ onBeforeMount(() => {
 });
 
 onBeforeUnmount(() => {
-    // clean up hooks into various events.
-    watchers.value.forEach(unwatch => unwatch());
-    handlers.value.forEach(handler => iApi.event.off(handler));
-
     el.value?.removeEventListener('blur', blurEvent);
     el.value?.removeEventListener('keyup', keyupEvent);
 });
