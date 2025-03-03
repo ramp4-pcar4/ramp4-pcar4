@@ -46,15 +46,12 @@ export class FileLayer extends AttribLayer {
     // and have the generic initiation code in this file just grab it.
     protected sourceGeoJson: object | undefined;
 
-    tooltipField: string; // if we end up having more things that are shared with FeatureLayer, consider making a FeatureBaseLayer class for both to inherit from
-
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
         this.supportsIdentify = true;
         this.isFile = true;
         this.dataFormat = DataFormat.ESRI_FEATURE;
         this.layerFormat = LayerFormat.FEATURE;
-        this.tooltipField = '';
         this.layerIdx = 0;
 
         if (rampConfig.identifyMode && rampConfig.identifyMode !== LayerIdentifyMode.NONE) {
@@ -170,7 +167,16 @@ export class FileLayer extends AttribLayer {
 
             // NOTE: call extract, not load, as there is no service involved here
             this.extractLayerMetadata();
-            // NOTE name field overrides from config have already been applied by this point
+
+            this.$iApi.geo.attributes.applyFieldMetadata(this, this.origRampConfig.fieldMetadata);
+
+            this.attribs.attLoader.updateFieldList(this.fieldList);
+
+            // NOTE this needs to be called after fields are set. With files, they are set in layer generation.
+            //      .nameField will already contain any systemy overrides if the config has nothing.
+            //      use it for the "service" value
+            await this.nameInitializer(this.origRampConfig, this.nameField);
+
             if (this.origRampConfig.tooltipField) {
                 this.tooltipField =
                     this.$iApi.geo.attributes.fieldValidator(this.fields, this.origRampConfig.tooltipField) ||
@@ -178,10 +184,6 @@ export class FileLayer extends AttribLayer {
             } else {
                 this.tooltipField = this.nameField;
             }
-
-            this.$iApi.geo.attributes.applyFieldMetadata(this, this.origRampConfig.fieldMetadata);
-
-            this.attribs.attLoader.updateFieldList(this.fieldList);
 
             this.featureCount = this.esriLayer?.source.length || 0;
         };

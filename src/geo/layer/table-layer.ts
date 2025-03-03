@@ -64,12 +64,13 @@ export class TableLayer extends DataLayer {
 
             // apply any config based overrides to the data we just downloaded
 
-            this.nameField = this.origRampConfig.nameField || sData.displayField || this.oidField;
-
             // process fields and any overrides
             this.fields = sData.fields;
 
             this.$iApi.geo.attributes.applyFieldMetadata(this, this.origRampConfig.fieldMetadata);
+
+            // NOTE this must be called after the fields are set
+            this.nameInitializer(this.origRampConfig, sData.displayField);
 
             // set up attribute loader.
             // will add a cache even though it will be rarely used (would require an API call to show details prior to grid load)

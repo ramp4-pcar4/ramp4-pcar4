@@ -20,6 +20,7 @@ import {
     TreeNode
 } from '@/geo/api';
 import type {
+    Attributes,
     AttributeSet,
     DrawOrder,
     FieldDefinition,
@@ -120,22 +121,39 @@ export class LayerInstance extends APIScope {
     featureCount: number;
 
     /**
-     * Array of field definitions about the given layer's fields. Non-feature layers will have empty arrays.
+     * Array of field definitions about the given layer's fields. Attribute-less layers will have empty arrays.
      */
     fields: Array<FieldDefinition>;
 
     /**
-     * Comma delimited string of field names (or '*' for all). Useful for numerous ESRI api calls. Non-feature layers will return empty string;
+     * Comma delimited string of field names (or '*' for all). Useful for numerous ESRI api calls. Attribute-less layers will return empty string;
      */
     fieldList: string;
 
     /**
-     * Field name that contains value considered the name of a feature. Not applicable for non-feature layers.
+     * Field name that contains value considered the name of a feature. Not applicable for attribute-less layers. Ignored if nameArcade is set.
      */
     nameField: string;
 
     /**
-     * Field name that contains the object ID of a feature. Not applicable for non-feature layers.
+     * Arcade formula to derive name of feature. Empty string to turn off. Not applicable for attribute-less layers.
+     */
+    get nameArcade(): string {
+        return '';
+    }
+
+    /**
+     * Sets a new arcade formula for the name value.
+     *
+     * @param formula
+     * @returns Promise that resolves when the arcade executor has been generated.
+     */
+    async setNameArcade(formula: string): Promise<void> {
+        // instance interface does nothing.
+    }
+
+    /**
+     * Field name that contains the object ID of a feature. Not applicable for attribute-less layers.
      */
     oidField: string;
 
@@ -516,6 +534,17 @@ export class LayerInstance extends APIScope {
      */
     canIdentify(): boolean {
         return false;
+    }
+
+    /**
+     * Given the attributes of a feature of this layer, returns the name of that feature.
+     * Valid only for layers that support attributes.
+     *
+     * @param attributes attribute values
+     * @returns the name
+     */
+    nameValue(attributes: Attributes): string {
+        return '';
     }
 
     /**

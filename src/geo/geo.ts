@@ -3,7 +3,7 @@
 import { APIScope, AttributeAPI, InstanceAPI, LayerAPI, MapAPI, QueryAPI, SymbologyAPI } from '@/api/internal';
 import { geo } from '@/main';
 import type { GeometryAPI, ProjectionAPI, SharedUtilsAPI } from '@/geo/api';
-import { EsriConfig } from '@/geo/esri';
+import { EsriAPI, EsriConfig } from '@/geo/esri';
 
 export class GeoAPI extends APIScope {
     attributes: AttributeAPI;
