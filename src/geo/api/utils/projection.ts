@@ -1,4 +1,4 @@
-import { Tools } from 'terraformer';
+import { applyConverter } from '@terraformer/spatial';
 import { BaseGeometry, Extent, GeometryType, Polygon, SpatialReference } from '@/geo/api';
 import type { EpsgLookup, SrDef } from '@/geo/api';
 import { EsriRequest } from '@/geo/esri';
@@ -276,7 +276,7 @@ export class ProjectionAPI {
 
         const projFunc = proj4(inSr, outSr).forward;
 
-        return Tools.applyConverter(geoJson, projFunc);
+        return applyConverter(geoJson, projFunc);
     }
 
     /**
