@@ -1,6 +1,6 @@
 import { APIScope } from '@/api/internal';
 import defaultRenderers from './defaultRenderers.json';
-import ArcGIS from 'terraformer-arcgis-parser';
+import { geojsonToArcGIS } from '@terraformer/arcgis';
 import { csv2geojson, dsv } from 'csv2geojson';
 import axios from 'redaxios';
 import type { CrsMeta } from 'flatgeobuf';
@@ -493,10 +493,7 @@ export class FileUtils extends APIScope {
 
         // terraformer has no support for non-wkid layers. can also do funny things if source is 102100.
         // use 8888 as placehold then adjust below
-
-        // NOTE typescript lies here. it insists esriJson will have .features property, but it infact is the feature array itself
-        //      it also claims the .sr param is not valid, though it's in the documentation and the code.  lies!
-        const esriJson = <any>ArcGIS.convert(geoJson, <any>{ sr: 8888 });
+        const esriJson = geojsonToArcGIS(geoJson, { sr: 8888 });
         configPackage.geometryType = this.$iApi.geo.geom.geoJsonGeomTypeToEsriGeomType(geoJsonGeomType);
 
         const validFields = configPackage.fields.map(esriField => esriField.name);
