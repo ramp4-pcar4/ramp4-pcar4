@@ -14,11 +14,11 @@ LayerInstance: RAMP's internal "base class" for layers. Any code dealing with ge
 
 ~ ~ ~ WMSLayer: Handles WMS layers.
 
+~ ~ ~ MapImageLayer: Handles ArcGIS Server Map Image layers (formerly Dynamic layers).
+
 ~ ~ ~ AttributeLayer: The generic class for layers that deal with attributes / features.
 
 ~ ~ ~ ~ FeatureLayer: Handles ArcGIS Server Feature layers.
-
-~ ~ ~ ~ MapImageLayer: Handles ArcGIS Server Map Image layers (formerly Dynamic layers).
 
 ~ ~ ~ ~ MapImageSublayer: Handles sublayers of ArcGIS Server Map Image layers. These are instantiated by MapImageLayers.
 
