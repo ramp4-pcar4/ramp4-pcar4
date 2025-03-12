@@ -1,0 +1,1 @@
+import{bD as i,bE as p,bF as r,ap as n}from"./main-DCIX61zy.js";function u(s,t,c,o){if(i(s.spatialReference,c)){a[0]=s.x,a[1]=s.y;const f=s.z;return a[2]=f??o??0,p(a,s.spatialReference,0,t,c,0)}const e=r(s,c);return!!e&&(t[0]=e?.x,t[1]=e?.y,t[2]=e?.z??o??0,!0)}const a=n();export{u as c};

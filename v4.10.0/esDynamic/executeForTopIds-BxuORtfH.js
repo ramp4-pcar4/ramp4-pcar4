@@ -1,0 +1,1 @@
+import{bq as s,bQ as e}from"./main-DCIX61zy.js";import{m}from"./queryTopFeatures-Cam5OLhi.js";async function n(o,r,t){const a=s(o);return(await m(a,e.from(r),{...t})).data.objectIds}export{n as executeForTopIds};
