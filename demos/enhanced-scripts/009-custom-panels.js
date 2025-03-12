@@ -51,14 +51,9 @@ const runPostTest = instance => {
         },
         id: 'panel3',
         alertName: 'new.title',
-        style: undefined,
-        options: {
-            i18n: {
-                messages: {
-                    en: { 'new.title': 'English' },
-                    fr: { 'new.title': 'French' }
-                }
-            }
+        i18nMap: {
+            en: { 'new.title': 'English' },
+            fr: { 'new.title': 'French' }
         }
     };
 
