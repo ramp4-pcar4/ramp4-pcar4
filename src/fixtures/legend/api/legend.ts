@@ -78,7 +78,7 @@ export class LegendAPI extends FixtureInstance {
             // create a wrapper legend object for single layer item
             // if the item is a sublayer, override the item id to the sublayers id
             if (itemConf.sublayerIndex !== undefined) {
-                itemConf.layerId = `${itemConf.layerId}-${itemConf.sublayerIndex}`;
+                itemConf.layerId = this.$iApi.geo.layer.sublayerId(itemConf.layerId, itemConf.sublayerIndex);
             }
             item = new LayerItem(this.$iApi, itemConf, parent) as unknown as LegendItem;
         }
@@ -352,7 +352,7 @@ export class LegendAPI extends FixtureInstance {
                         } else if (!node.isLayerRoot && !node.isLogicalLayer) {
                             // is not root, and is not logical layer (MIL sub groups)
                             // we remove the current layer item for the group, and instead turn it into a group
-                            layerItem = this.getLayerItem(`${layer.id}-${node.layerIdx}`);
+                            layerItem = this.getLayerItem(this.$iApi.geo.layer.sublayerId(layer.id, node.layerIdx));
                             if (layerItem) {
                                 const layerItemConf = layerItem.getConfig();
                                 delete layerItemConf.layerId;
@@ -386,7 +386,7 @@ export class LegendAPI extends FixtureInstance {
                 updateLayerItem(layer, true); // update the root layer item first
                 if (layer.supportsSublayers) {
                     layer.config.sublayers.forEach((sublayer: any) => {
-                        updateLayerItem(`${layer.id}-${sublayer.index}`, true); // hacky solution because sublayers arent created on error
+                        updateLayerItem(this.$iApi.geo.layer.sublayerId(layer.id, sublayer.index), true); // hacky solution because sublayers arent created on error
                     });
                 }
             });

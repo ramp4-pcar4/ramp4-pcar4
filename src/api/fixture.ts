@@ -442,7 +442,7 @@ export class FixtureInstance extends APIScope implements FixtureBase {
                 let layerId: string = layer.id;
                 if (parent !== undefined) {
                     // generate suffixed layer id for sublayer entry
-                    layerId = `${parent.id}-${layer.index}`;
+                    layerId = this.$iApi.geo.layer.sublayerId(parent.id, layer.index);
                 }
                 fixtureConfigs[layerId] = layer.fixtures[this.id];
             }

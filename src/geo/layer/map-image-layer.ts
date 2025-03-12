@@ -202,7 +202,7 @@ export class MapImageLayer extends MapLayer {
                 if (!this._sublayers[sid]) {
                     this._sublayers[sid] = new MapImageSublayer(
                         {
-                            id: `${this.id}-${sid}`,
+                            id: this.$iApi.geo.layer.sublayerId(this.id, sid),
                             index: sid,
                             // TODO: Revisit once issue #961 is implemented.
                             // See https://github.com/ramp4-pcar4/ramp4-pcar4/pull/1045#pullrequestreview-977116071
