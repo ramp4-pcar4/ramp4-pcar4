@@ -257,7 +257,7 @@ export class FeatureLayer extends AttribLayer {
             if (!this.layerExists) {
                 this.noLayerErr();
                 reject();
-            } else if (!['multipoint', 'polyline', 'polygon'].includes(this.esriLayer!.geometryType)) {
+            } else if (!['multipoint', 'polyline', 'polygon'].includes(this.esriLayer!.geometryType!)) {
                 console.error(`Attempted to query extent for invalid geometry type ${this.esriLayer!.geometryType}.`);
                 reject();
                 // TODO: should the query be re run if the basemap changes, or do we leave it up to user to do the projecting themselves?

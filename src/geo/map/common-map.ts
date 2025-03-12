@@ -6,7 +6,7 @@
 
 import { toRaw, markRaw } from 'vue';
 import { APIScope, Basemap, InstanceAPI, NotificationType } from '@/api/internal';
-import { EsriAPI } from '@/geo/esri';
+import { EsriAPI, EsriWatch } from '@/geo/esri';
 import type { EsriMap } from '@/geo/esri';
 import { BaseGeometry, DefPromise, Extent, ExtentSet, GeometryType, SpatialReference } from '@/geo/api';
 import type { RampLabelsConfig, RampMapConfig, ZoomEasing } from '@/geo/api';
@@ -153,20 +153,23 @@ export class CommonMapAPI extends APIScope {
 
         basemapItemsPristine.forEach(bm => {
             bm.esriBasemap.baseLayers.forEach(baselayer => {
-                baselayer.watch('loadStatus', () => {
-                    if (baselayer.loadStatus === 'loaded') {
-                        // all good. we flip our flag and stop any active tracking.
-                        this.trackFirstBasemap = false;
-                    } else if (baselayer.loadStatus === 'failed') {
-                        // basemap died. always ping notification.
-                        iAmBasemapError(bm);
+                EsriWatch(
+                    () => baselayer.loadStatus,
+                    () => {
+                        if (baselayer.loadStatus === 'loaded') {
+                            // all good. we flip our flag and stop any active tracking.
+                            this.trackFirstBasemap = false;
+                        } else if (baselayer.loadStatus === 'failed') {
+                            // basemap died. always ping notification.
+                            iAmBasemapError(bm);
 
-                        // initiate fallback if first basemap and fallback exists.
-                        if (this.trackFirstBasemap) {
-                            this.recoverBasemap(bm.tileSchemaId);
+                            // initiate fallback if first basemap and fallback exists.
+                            if (this.trackFirstBasemap) {
+                                this.recoverBasemap(bm.tileSchemaId);
+                            }
                         }
                     }
-                });
+                );
             });
         });
 
@@ -271,7 +274,7 @@ export class CommonMapAPI extends APIScope {
         // Destroy the current map view
         // @ts-expect-error TODO: explain why this is needed or remove
         this.esriView.map = null;
-        // @ts-expect-error TODO: explain why this is needed or remove
+        // TODO: explain why this is needed or remove
         this.esriView.container = null;
         // @ts-expect-error TODO: explain why this is needed or remove
         this.esriView.spatialReference = null;
@@ -356,7 +359,7 @@ export class CommonMapAPI extends APIScope {
      */
     getCurrentBasemapId(): string | undefined {
         if (this.esriMap) {
-            return this.esriMap.basemap.id;
+            return this.esriMap.basemap?.id ?? undefined;
         } else {
             this.noMapErr();
         }

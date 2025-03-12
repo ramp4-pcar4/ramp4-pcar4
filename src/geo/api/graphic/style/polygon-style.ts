@@ -67,7 +67,7 @@ export class PolygonStyle extends BaseStyle {
                 colour: e.color.toRgba(),
                 style: <FillStyleType>e.style
             },
-            outline: LineStyle.fromESRI(e.outline).toOptions()
+            outline: LineStyle.fromESRI(e.outline!).toOptions()
         };
 
         return new PolygonStyle(opts);
