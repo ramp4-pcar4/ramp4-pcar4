@@ -567,6 +567,19 @@ const systemCols = ref<Set<string>>(new Set<string>());
 // in order to avoid race conditions
 const filterQueue = ref<Array<DefPromise<void>>>([]);
 
+const addAriaLabels = () => {
+    const checkboxInputs = iApi.$vApp.$el.querySelectorAll(
+        '.ag-input-field-input.ag-checkbox-input'
+    ) as NodeListOf<Element>;
+
+    checkboxInputs.forEach((input, index) => {
+        const allColumns = columnApi.value.getAllDisplayedColumns();
+        const column = allColumns[index].getColDef();
+
+        input.setAttribute('aria-label', column.headerName ?? t('grid.label.specialColumn'));
+    });
+};
+
 const onGridReady = (params: any) => {
     agGridApi.value = params.api;
     columnApi.value = params.columnApi;
@@ -581,18 +594,6 @@ const onGridReady = (params: any) => {
     if (rowData.value.length > 0) {
         columnApi.value.autoSizeAllColumns();
     }
-
-    const addAriaLabels = () => {
-        const checkboxInputs = iApi.$vApp.$el.querySelectorAll(
-            '.ag-input-field-input.ag-checkbox-input'
-        ) as NodeListOf<Element>;
-        checkboxInputs.forEach((input, index) => {
-            const allColumns = columnApi.value.getAllDisplayedColumns();
-            const column = allColumns[index].getColDef();
-
-            input.setAttribute('aria-label', column.headerName ?? t('grid.label.specialColumn'));
-        });
-    };
 
     // Initial load
     addAriaLabels();
@@ -664,6 +665,8 @@ const gridRendered = () => {
         agGridApi.value as GridApi,
         columnApi.value as ColumnApi
     );
+
+    addAriaLabels();
 };
 
 // Updates the global search value.
@@ -1675,7 +1678,10 @@ onBeforeMount(() => {
         tabToNextCell: tabToNextCellHandler,
         // tab vertically instead of horizontally
         tabToNextHeader: tabToNextHeaderHandler,
-        onModelUpdated: debounce(300, () => columnApi.value.autoSizeAllColumns())
+        onModelUpdated: debounce(300, () => {
+            columnApi.value.autoSizeAllColumns();
+            addAriaLabels();
+        })
     };
 
     setUpColumns();
