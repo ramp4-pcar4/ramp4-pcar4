@@ -535,23 +535,69 @@ Get the field name that is designated as the unique identifier of the feature.
 myLayer.oidField; // "OBJECTID"
 ```
 
-Get the field name that is designated as the identifying name of the feature (used as a default for uncustomized map hovertips, identify panels, etc.).
-
-```js
-myLayer.nameField; // "site_name"
-```
-
 Get the draw order of the Layer. Not supported by Map Image Sublayers or Data Layers. Can only be set via layer configuration. ESRI currently only supports ordering by one field.
 
 ```js
 myLayer.drawOrder; // [{ field: 'population', ascending: true }]
 ```
 
-Get or set if the Layer features should show hovertips on the map. Not supported by Map Image Sublayers or Data Layers.
+Deriving feature primary names and tooltip (maptip / hovertip) names act as a unit due to value defaulting. All field names are case sensitive. Missing / empty-string values will use the designated default. See the [Arcade section](../using-ramp4/layers/additional-layer-sections.md#arcade-formulas) for specifics on writing Arcade formulas for these settings.
+
+The `nameValue(attribute)` will return the "feature name" for the given attribute, based on values of `nameArcade` or `nameField`. This is used as a default for uncustomized map hovertips and identify panels.
+
+```js
+myLayer.nameValue({ other_name: 'Donna', good_name: 'Laura' }); // "Laura"
+```
+
+Get or set the field that provides the content for `nameValue`. This value will be ignored if `nameArcade` is set. It is not recommended to set this to an empty or invalid string.
+
+```js
+myLayer.nameField; // "site_name"
+```
+
+Get the Arcade formula that calculates the content for `nameValue`. An empty string indicates no formula is active.
+
+```js
+myLayer.nameArcade; // "'Welcome to ' + $attr.placename"
+```
+
+Set the Arcade formula that calculates the content for `nameValue`. An empty string will turn off any formula calculations. The method returns a Promise that resolves once the formula evaluator has been constructed.
+
+```js
+myLayer.setNameArcade("'You have ' + $attr.browser"); // Promise<void>
+```
+
+Maptip values only apply to layers with client-side vector data. They are not supported by Map Image Sublayers or Data Layers, nor any non-feature layers. 
+
+Get or set if the Layer features should show maptips on the map.
 
 ```js
 myLayer.hovertips;         // true
-myLayer.hovertips = false; // will no longer show hovertips
+myLayer.hovertips = false; // will no longer show maptips
+```
+
+The `tooltipValue(attribute)` will return the maptip text for the given attribute, based on values of `tooltipArcade` or `tooltipField`. If neither are defined, `nameValue` will be used instead.
+
+```js
+myLayer.tooltipValue({ other_name: 'Donna', good_name: 'Laura' }); // "Hello I'm Laura"
+```
+
+Get or set the field that provides the content for `tooltipValue`. This value will be ignored if `tooltipArcade` is set. Set to empty string to ignore.
+
+```js
+myLayer.tooltipField; // "fun_fact"
+```
+
+Get the Arcade formula that calculates the content for `tooltipValue`. An empty string indicates no formula is active.
+
+```js
+myLayer.tooltipArcade; // "'This here is ' + $attr.placename"
+```
+
+Set the Arcade formula that calculates the content for `tooltipValue`. An empty string will turn off any formula calculations. The method returns a Promise that resolves once the formula evaluator has been constructed.
+
+```js
+myLayer.setNameArcade("'Visit sunny ' + $attr.landmark"); // Promise<void>
 ```
 
 ### Methods

@@ -36,6 +36,20 @@ These represent formats an ESRI Map Image Layer can return.
 - `gif`
 - `svg`
 
+## Arcade Formulas
+
+Some properties on RAMP Attribute-supporting layers use Arcade formulas with a custom profile. This section lists the variables in that profile.
+
+For more information about Arcade formulas in general, see the [ESRI Arcade](https://developers.arcgis.com/javascript/latest/arcade/) page.
+
+### Attributes
+
+Use the `$attr` variable to access attribute values. E.g.:
+
+```txt
+'My prefix ' + $attr.myfieldname
+```
+
 ## Layer Abilities
 
 This indicates which layer types can support certain sets of abilities
