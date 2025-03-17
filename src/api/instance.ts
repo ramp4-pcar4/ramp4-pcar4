@@ -795,6 +795,9 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     vueElement.config.globalProperties.$iApi = iApi;
     vueElement.config.globalProperties.$pinia = pinia;
 
+    // set the id prefix for the app for use in generating unique ids with `useId`
+    vueElement.config.idPrefix = `ramp-${element.id || iApi.geo.shared.generateUUID()}`;
+
     vueElement.provide('iApi', iApi);
 
     const app = vueElement.mount(element);
