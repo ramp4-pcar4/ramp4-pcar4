@@ -6,6 +6,7 @@ import { i18n } from '@/lang';
 import screenfull from 'screenfull';
 
 import clonedeep from 'lodash.clonedeep';
+import { v7 as uuidv7 } from 'uuid';
 
 import App from '@/app.vue';
 
@@ -794,6 +795,9 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     // Add the $pinia and $iApi instances to the Vue components.
     vueElement.config.globalProperties.$iApi = iApi;
     vueElement.config.globalProperties.$pinia = pinia;
+
+    // set the id prefix for the app for use in generating unique ids with `useId`
+    vueElement.config.idPrefix = `ramp-${element.id || uuidv7()}`;
 
     vueElement.provide('iApi', iApi);
 
