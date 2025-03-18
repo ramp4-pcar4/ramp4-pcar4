@@ -29,6 +29,7 @@ The [Instantiation](introduction/instantiation.md) page provides examples of how
   - [Grid](using-ramp4/fixtures/grid.md#configuration)
   - [Layer Settings](using-ramp4/fixtures/layer-settings.md#configuration)
   - [Legend](using-ramp4/fixtures/legend.md#configuration) (configuration snippets are embedded in functional descriptions)
+  - [Draw Tools](using-ramp4/fixtures/draw-tools.md)
 - The [collection of sample configs](https://github.com/ramp4-pcar4/ramp4-pcar4/tree/main/demos/starter-scripts) on the repo may also be of use to see working examples.
 
 ## API Documentation
