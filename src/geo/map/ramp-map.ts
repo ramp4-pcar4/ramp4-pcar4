@@ -38,6 +38,7 @@ import { MapCaptionAPI } from './caption';
 import { markRaw, toRaw } from 'vue';
 import { useConfigStore } from '@/stores/config';
 import { debounce, throttle } from 'throttle-debounce';
+import type { DrawAPI } from '@/fixtures/draw/api/drawApi';
 
 export class MapAPI extends CommonMapAPI {
     // API for managing the maptip
@@ -1263,9 +1264,9 @@ export class MapAPI extends CommonMapAPI {
      *
      * @param {MapClick | Point} targetPoint the place on the map to execute the identify
      * @memberof MapAPI
-     * @returns {MapIdentifyResult} results of the identify
+     * @returns {Promise<MapIdentifyResult>} results of the identify
      */
-    runIdentify(targetPoint: MapClick | Point): MapIdentifyResult {
+    async runIdentify(targetPoint: MapClick | Point): Promise<MapIdentifyResult> {
         const layers = this.$iApi.geo.layer.allLayersOnMap(false).filter(l => l.canIdentify());
 
         let mapClick: MapClick;
@@ -1282,6 +1283,27 @@ export class MapAPI extends CommonMapAPI {
             };
         } else {
             mapClick = targetPoint;
+        }
+
+        const drawFixture = this.$iApi.fixture.get<DrawAPI>('draw');
+        let drawGraphicsLayerId: string | undefined;
+
+        // if draw is active or a shape is selected disable identify
+        if (drawFixture) {
+            if (drawFixture.store.activeTool || drawFixture.store.selectedGraphicId !== null) {
+                return { click: mapClick, results: [] };
+            }
+            drawGraphicsLayerId = drawFixture.graphicsLayerId;
+        }
+
+        // if draw is active, and the click was on the draw graphics layer, disable identify
+        if (drawGraphicsLayerId && this.esriView) {
+            const hitTestResults = await this.esriView.hitTest({ x: mapClick.screenX, y: mapClick.screenY });
+            for (const hr of hitTestResults.results) {
+                if (hr.layer && hr.layer.id === drawGraphicsLayerId) {
+                    return { click: mapClick, results: [] };
+                }
+            }
         }
 
         // Don't perform an identify request if the layers array hasn't been established yet.
