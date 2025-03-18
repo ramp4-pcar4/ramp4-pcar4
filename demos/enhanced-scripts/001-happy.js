@@ -15,6 +15,20 @@ const runPreTest = (config, options, utils) => {
 
     utils.addLayerLegend(happy);
 
+    config.startingFixtures.push('draw');
+
+    const drawConfig = {
+        types: [
+            { type: 'point' },
+            { type: 'polyline' },
+            { type: 'polygon' },
+            { type: 'circle', enabled: false },
+            { type: 'rectangle', options: {} }
+        ]
+    };
+    config.configs.en.fixtures.draw = drawConfig;
+    config.configs.fr.fixtures.draw = drawConfig;
+
     return { config, options };
 };
 

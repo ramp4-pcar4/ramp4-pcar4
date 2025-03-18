@@ -667,6 +667,24 @@
                 }
             }
         },
+        "draw": {
+            "type": "object",
+            "description": "Provides the configuration to the export fixture",
+            "properties": {
+                "types": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "type": { "type": "string" },
+                            "enabled": { "type": "boolean" },
+                            "options": { "type": "object" }
+                        },
+                        "required": ["type"]
+                    }
+                }
+            }
+        },
         "export": {
             "type": "object",
             "description": "Provides configuration to the export fixture. If not supplied the default config used.",
@@ -2558,6 +2576,10 @@
                         }
                     },
                     "required": ["templates"]
+                },
+                "draw": {
+                    "$ref": "#/$defs/draw",
+                    "description": "Provides the configuration to the draw fixture"
                 },
                 "export": {
                     "$ref": "#/$defs/export",
