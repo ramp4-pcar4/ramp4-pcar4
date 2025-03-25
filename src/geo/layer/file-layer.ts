@@ -21,6 +21,7 @@ import {
 } from '@/geo/api';
 
 import type {
+    FieldDefinition,
     GeoJsonOptions,
     GetGraphicParams,
     IdentifyParameters,
@@ -139,7 +140,7 @@ export class FileLayer extends AttribLayer {
         if (this.origRampConfig.nameField) {
             esriConfig.displayField =
                 this.$iApi.geo.attributes.fieldValidator(
-                    <Array<EsriField>>esriConfig.fields,
+                    <Array<FieldDefinition>>esriConfig.fields,
                     this.origRampConfig.nameField!
                 ) || oidField;
         } else {
@@ -330,30 +331,30 @@ export class FileLayer extends AttribLayer {
         // properties for all endpoints
         this.supportsFeatures = true;
 
-        this.geomType = this.$iApi.geo.geom.clientGeomTypeToRampGeomType(l.geometryType);
+        this.geomType = this.$iApi.geo.geom.clientGeomTypeToRampGeomType(l.geometryType!);
 
         // if we ever make config override for scale, would need to apply on the layer constructor, will end up here
         this.scaleSet.minScale = l.minScale || 0;
         this.scaleSet.maxScale = l.maxScale || 0;
 
         // ESRI API appears to calculate the extent correctly. Well done!
-        this.extent = this.extent ?? Extent.fromESRI(l.fullExtent, this.id + '_extent');
+        this.extent = this.extent ?? Extent.fromESRI(l.fullExtent!, this.id + '_extent');
 
         const esriFields: Array<EsriField> = markRaw(l.fields.slice());
         this.fields = esriFields.map(f => {
             return {
-                name: f.name,
-                alias: f.alias,
-                type: f.type,
-                length: f.length
+                name: f.name!,
+                alias: f.alias!,
+                type: f.type!,
+                length: f.length!
             };
         });
-        this.nameField = l.displayField;
+        this.nameField = l.displayField!;
         this.oidField = l.objectIdField;
 
         // if there was a custom renderer in the config, it would have been applied when the
         // layer was constructed. no need to check here.
-        this.renderer = this.$iApi.geo.symbology.makeRenderer(l.renderer, this.fields);
+        this.renderer = this.$iApi.geo.symbology.makeRenderer(l.renderer!, this.fields);
 
         // this array will have a set of promises that resolve when all the legend svg has drawn.
         // for now, will not include that set (promise.all'd) on the layer load blocker;

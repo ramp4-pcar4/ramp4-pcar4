@@ -28,7 +28,7 @@ import type {
     RampLayerMapImageSublayerConfig
 } from '@/geo/api';
 
-import { EsriAPI } from '@/geo/esri';
+import { EsriAPI, EsriWatch } from '@/geo/esri';
 import type { EsriMapImageLayer } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
 
@@ -146,7 +146,7 @@ export class MapImageLayer extends MapLayer {
         }
         this.isDynamic = this.esriLayer!.capabilities.exportMap.supportsDynamicLayers;
 
-        this.extent = this.extent ?? Extent.fromESRI(this.esriLayer!.fullExtent, this.id + '_extent');
+        this.extent = this.extent ?? Extent.fromESRI(this.esriLayer!.fullExtent!, this.id + '_extent');
 
         const findSublayer = (targetIndex: number): __esri.Sublayer => {
             const finder = this.esriLayer?.allSublayers.find(s => {
@@ -248,20 +248,26 @@ export class MapImageLayer extends MapLayer {
                     parentTreeNode.children.push(treeLeaf);
                 }
                 _sublayer.esriWatches.push(
-                    subLayer.watch('visible', () => {
-                        this.$iApi.event.emit(GlobalEvents.LAYER_VISIBILITYCHANGE, {
-                            visibility: _sublayer.visibility,
-                            layer: _sublayer
-                        });
-                        (_sublayer.parentLayer as MapLayer) // the parent of a MapImageSublayer must be a MapLayer
-                            ?.checkVisibility();
-                    }),
-                    subLayer.watch('opacity', (newval: number) => {
-                        this.$iApi.event.emit(GlobalEvents.LAYER_OPACITYCHANGE, {
-                            opacity: newval,
-                            layer: _sublayer
-                        });
-                    })
+                    EsriWatch(
+                        () => subLayer.visible,
+                        () => {
+                            this.$iApi.event.emit(GlobalEvents.LAYER_VISIBILITYCHANGE, {
+                                visibility: _sublayer.visibility,
+                                layer: _sublayer
+                            });
+                            (_sublayer.parentLayer as MapLayer) // the parent of a MapImageSublayer must be a MapLayer
+                                ?.checkVisibility();
+                        }
+                    ),
+                    EsriWatch(
+                        () => subLayer.opacity,
+                        (newval: number) => {
+                            this.$iApi.event.emit(GlobalEvents.LAYER_OPACITYCHANGE, {
+                                opacity: newval,
+                                layer: _sublayer
+                            });
+                        }
+                    )
                 );
             }
         };
@@ -280,7 +286,7 @@ export class MapImageLayer extends MapLayer {
             // NOTE: can consider alternates, like esriLayer.url + / + layerIdx
             const sublayer = findSublayer(miSL.layerIdx);
             const config = subConfigs[miSL.layerIdx];
-            miSL.serviceUrl = sublayer.url;
+            miSL.serviceUrl = sublayer.url!;
 
             // the sublayer needs to be re-fetched because the initial sublayer was marked as "raw"
             miSL.fetchEsriSublayer(this);
@@ -301,7 +307,7 @@ export class MapImageLayer extends MapLayer {
                 miSL.esriSubLayer!.renderer = await EsriAPI.RendererFromJson(config.customRenderer);
             }
 
-            await miSL.loadLayerMetadata(hasCustRed ? { customRenderer: miSL.esriSubLayer?.renderer } : {});
+            await miSL.loadLayerMetadata(hasCustRed ? { customRenderer: miSL.esriSubLayer?.renderer! } : {});
 
             if (startTime < this.lastCancel) {
                 // cancelled, kickout.

@@ -307,7 +307,7 @@ export class AttributeAPI extends APIScope {
             if (details.includeGeometry) {
                 // server result omits spatial reference
                 feat.geometry.spatialReference = serviceResult.data.spatialReference;
-                const localEsriGeom = EsriGeometryFromJson(feat.geometry);
+                const localEsriGeom = EsriGeometryFromJson(feat.geometry)!;
                 geom = this.$iApi.geo.geom.geomEsriToRamp(localEsriGeom);
             } else {
                 geom = new NoGeometry();

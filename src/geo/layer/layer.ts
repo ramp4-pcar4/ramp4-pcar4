@@ -388,10 +388,10 @@ export class LayerAPI extends APIScope {
                 );
                 md.fields = esriFields.map(f => {
                     return {
-                        name: f.name,
-                        alias: f.alias,
-                        type: f.type,
-                        length: f.length
+                        name: f.name!,
+                        alias: f.alias!,
+                        type: f.type!,
+                        length: f.length!
                     };
                 });
 

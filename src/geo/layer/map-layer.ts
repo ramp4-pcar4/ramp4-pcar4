@@ -1,7 +1,7 @@
 import { CommonLayer, GlobalEvents, InstanceAPI } from '@/api/internal';
 import { DefPromise, DrawState, Extent, InitiationState, LayerState, ScaleSet, SpatialReference } from '@/geo/api';
-
 import type { DrawOrder, RampLayerConfig } from '@/geo/api';
+import { EsriWatch } from '@/geo/esri';
 
 /**
  * A common layer class which is inherited by layer classes that implement map-based layers.
@@ -80,60 +80,72 @@ export class MapLayer extends CommonLayer {
         }
 
         this.esriWatches.push(
-            this.esriLayer.watch('visible', (newval: boolean) => {
-                // TODO re-evaluate the event parameter. This is common routine. Need to think about how sublayer would factor in to this.
-                //      might need a secondary sublayer event, triggered on the sublayer? Sublayer visibility can change without affecting
-                //      overall layer. TRICKY.
-                this.$iApi.event.emit(GlobalEvents.LAYER_VISIBILITYCHANGE, {
-                    visibility: newval,
-                    layer: this
-                });
-            })
-        );
-
-        this.esriWatches.push(
-            this.esriLayer.watch('opacity', (newval: number) => {
-                // TODO re-evaluate the event parameter. This is common routine. Need to think about how sublayer would factor in to this.
-                //      might need a secondary sublayer event, triggered on the sublayer? Sublayer opacity can change without affecting
-                //      overall layer opacity. TRICKY.
-                this.$iApi.event.emit(GlobalEvents.LAYER_OPACITYCHANGE, {
-                    opacity: newval,
-                    layer: this
-                });
-            })
-        );
-
-        this.esriWatches.push(
-            this.esriLayer.watch('loadStatus', (newval: string) => {
-                const statemap: any = {
-                    'not-loaded': LayerState.LOADING,
-                    loading: LayerState.LOADING,
-                    loaded: LayerState.LOADED,
-                    failed: LayerState.ERROR
-                };
-
-                if (newval === 'loaded') {
-                    // loaded is a special case. this layer may need to do
-                    // additional asynch work to fully set things up, so we
-                    // trigger that process now. it will fire the RAMP event
-                    // when it's done done.
-                    // Re: load cancel. If we cancelled earlier the esri layer shouldn't hit this state.
-                    //     If we cancelled later, the onLoad stuff will deal with it.
-                    this.onLoad();
-                } else if (newval === 'failed') {
-                    this.onError();
-                } else {
-                    this.updateLayerState(statemap[newval]);
+            EsriWatch(
+                () => this.esriLayer!.visible,
+                (newval: boolean) => {
+                    // TODO re-evaluate the event parameter. This is common routine. Need to think about how sublayer would factor in to this.
+                    //      might need a secondary sublayer event, triggered on the sublayer? Sublayer visibility can change without affecting
+                    //      overall layer. TRICKY.
+                    this.$iApi.event.emit(GlobalEvents.LAYER_VISIBILITYCHANGE, {
+                        visibility: newval,
+                        layer: this
+                    });
                 }
-            })
+            )
+        );
+
+        this.esriWatches.push(
+            EsriWatch(
+                () => this.esriLayer!.opacity,
+                (newval: number) => {
+                    // TODO re-evaluate the event parameter. This is common routine. Need to think about how sublayer would factor in to this.
+                    //      might need a secondary sublayer event, triggered on the sublayer? Sublayer opacity can change without affecting
+                    //      overall layer opacity. TRICKY.
+                    this.$iApi.event.emit(GlobalEvents.LAYER_OPACITYCHANGE, {
+                        opacity: newval,
+                        layer: this
+                    });
+                }
+            )
+        );
+
+        this.esriWatches.push(
+            EsriWatch(
+                () => this.esriLayer!.loadStatus,
+                (newval: string) => {
+                    const statemap: any = {
+                        'not-loaded': LayerState.LOADING,
+                        loading: LayerState.LOADING,
+                        loaded: LayerState.LOADED,
+                        failed: LayerState.ERROR
+                    };
+
+                    if (newval === 'loaded') {
+                        // loaded is a special case. this layer may need to do
+                        // additional asynch work to fully set things up, so we
+                        // trigger that process now. it will fire the RAMP event
+                        // when it's done done.
+                        // Re: load cancel. If we cancelled earlier the esri layer shouldn't hit this state.
+                        //     If we cancelled later, the onLoad stuff will deal with it.
+                        this.onLoad();
+                    } else if (newval === 'failed') {
+                        this.onError();
+                    } else {
+                        this.updateLayerState(statemap[newval]);
+                    }
+                }
+            )
         );
 
         this.esriLayer.on('layerview-create', (e: __esri.LayerLayerviewCreateEvent) => {
             this.esriView = e.layerView;
             this.esriWatches.push(
-                e.layerView.watch('updating', (newval: boolean) => {
-                    this.updateDrawState(newval ? DrawState.REFRESH : DrawState.UP_TO_DATE);
-                })
+                EsriWatch(
+                    () => e.layerView.updating,
+                    (newval: boolean) => {
+                        this.updateDrawState(newval ? DrawState.REFRESH : DrawState.UP_TO_DATE);
+                    }
+                )
             );
             this.viewDefProm.resolveMe();
         });

@@ -155,7 +155,7 @@ export class SimpleRenderer extends BaseRenderer {
         this.type = RendererType.Simple;
         const su = new BaseSymbolUnit(this);
         su.label = esriRenderer.label || '';
-        su.symbol = esriRenderer.symbol;
+        su.symbol = esriRenderer.symbol! as EsriSymbol;
         su.definitionClause = '';
 
         this.symbolUnits.push(su);
@@ -180,14 +180,14 @@ export class UniqueValueRenderer extends BaseRenderer {
 
         this.keyFields = [esriRenderer.field, esriRenderer.field2, esriRenderer.field3] // extract field names
             .filter(fn => fn) // remove any undefined names
-            .map((fn: string) => this.cleanFieldName(fn, layerFields)); // correct any mismatched case of field names
+            .map(fn => this.cleanFieldName(fn as string, layerFields)); // correct any mismatched case of field names
 
         const fieldDelims: Array<string> = this.keyFields.map((fn: string) => this.getFieldDelimiter(fn, layerFields));
 
-        esriRenderer.uniqueValueInfos.forEach((uvi: EsriUniqueValueInfo) => {
+        esriRenderer.uniqueValueInfos!.forEach((uvi: EsriUniqueValueInfo) => {
             const su = new UniqueValueSymbolUnit(this, uvi.value);
             su.label = uvi.label || '';
-            su.symbol = uvi.symbol;
+            su.symbol = uvi.symbol as EsriSymbol;
 
             // convert fields/values into sql clause
             if (!this.falseRenderer) {
@@ -213,7 +213,7 @@ export class UniqueValueRenderer extends BaseRenderer {
             const su = new UniqueValueSymbolUnit(this, '');
             su.isDefault = true;
             su.label = esriRenderer.defaultLabel || '';
-            su.symbol = esriRenderer.defaultSymbol;
+            su.symbol = esriRenderer.defaultSymbol as EsriSymbol;
             su.definitionClause = this.makeElseClause();
             this.defaultUnit = su;
         }
@@ -270,7 +270,7 @@ export class ClassBreaksRenderer extends BaseRenderer {
             const first = i === 0;
             const su = new ClassBreaksSymbolUnit(this, cbi.minValue, cbi.maxValue, first);
             su.label = cbi.label || '';
-            su.symbol = cbi.symbol;
+            su.symbol = cbi.symbol as EsriSymbol;
 
             // Convert fields/values into sql clause. First item has inclusive lower bound (see PR #2239)
             if (!this.falseRenderer) {
@@ -288,7 +288,7 @@ export class ClassBreaksRenderer extends BaseRenderer {
             const su = new ClassBreaksSymbolUnit(this, 0, 0, false);
             su.isDefault = true;
             su.label = esriRenderer.defaultLabel || '';
-            su.symbol = esriRenderer.defaultSymbol;
+            su.symbol = esriRenderer.defaultSymbol as EsriSymbol;
             su.definitionClause = this.makeElseClause();
             this.defaultUnit = su;
         }

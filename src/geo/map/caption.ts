@@ -167,8 +167,9 @@ export class MapCaptionAPI extends APIScope {
             const intervalTimeout: number = 20;
 
             // Create load promises that resolve when the baseLayer loads or after a timeout
-            const baseLayerLoadPromises: Array<Promise<__esri.Layer | null>> =
-                this.$iApi.geo.map.esriMap.basemap.baseLayers
+            const esriBMs = this.$iApi.geo.map.esriMap.basemap;
+            if (esriBMs) {
+                const baseLayerLoadPromises: Array<Promise<__esri.Layer | null>> = esriBMs.baseLayers
                     .map((bl: __esri.Layer) => {
                         return new Promise<__esri.Layer | null>(resolve => {
                             // Keep count of layer.load checks done so far
@@ -190,19 +191,20 @@ export class MapCaptionAPI extends APIScope {
                     })
                     .toArray();
 
-            // Join all the copyright strings and update the attribution
-            Promise.all(baseLayerLoadPromises).then(baseLayers => {
-                copyrightText = baseLayers
-                    .filter((bl: any) => bl?.copyright)
-                    .map((bl: any) => bl.copyright)
-                    .join(' | ');
+                // Join all the copyright strings and update the attribution
+                Promise.all(baseLayerLoadPromises).then(baseLayers => {
+                    copyrightText = baseLayers
+                        .filter((bl: any) => bl?.copyright)
+                        .map((bl: any) => bl.copyright)
+                        .join(' | ');
 
-                attribution.text!.value = copyrightText || attribution.text!.value || esriText.value;
+                    attribution.text!.value = copyrightText || attribution.text!.value || esriText.value;
 
-                // Update attribution
-                const mapCaptionStore = useMapCaptionStore(this.$vApp.$pinia);
-                mapCaptionStore.setAttribution(attribution);
-            });
+                    // Update attribution
+                    const mapCaptionStore = useMapCaptionStore(this.$vApp.$pinia);
+                    mapCaptionStore.setAttribution(attribution);
+                });
+            }
         }
     }
 

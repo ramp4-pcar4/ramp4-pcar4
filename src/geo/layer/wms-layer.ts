@@ -294,7 +294,7 @@ export class WmsLayer extends MapLayer {
         const layers = layerList.join(',');
 
         // tear off any decimals from the screenpoint coords.
-        const screenPoint = map.esriView.toScreen(point.toESRI());
+        const screenPoint = map.esriView.toScreen(point.toESRI())!;
         const intX = Math.floor(screenPoint.x);
         const intY = Math.floor(screenPoint.y);
 
@@ -468,11 +468,13 @@ export class WmsLayer extends MapLayer {
         }
         let targetEntry;
         // we use .some to allow the search to stop when we find something
-        this.esriLayer.allSublayers.some((sl: any) => {
+        this.esriLayer.allSublayers.some(sl => {
             // wms ids are stored in .name
             if (sl.name === wmsLayerId) {
                 targetEntry = sl.title;
                 return true;
+            } else {
+                return false;
             }
         });
 
