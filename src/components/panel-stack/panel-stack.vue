@@ -1,5 +1,5 @@
 <template>
-    <transition-group @enter="enter" @leave="leave" name="panel-container" tag="div" ref="el">
+    <transition-group @enter="enter" @leave="leave" name="panel-container" tag="div" ref="el" class="panel-container">
         <!-- TODO: pass a corresponding fixture instance to the panel component as it can be useful -->
         <panel-container
             v-for="panel in visible(iApi!.screenSize)"
@@ -22,6 +22,9 @@ import { usePanelStore } from '@/stores/panel';
 const panelStore = usePanelStore();
 const iApi = inject<InstanceAPI>('iApi')!;
 const el = ref<ComponentPublicInstance>();
+const opacity = computed(() => {
+    return panelStore.opacity;
+});
 
 const mobileMode = computed(() => panelStore.mobileView);
 
@@ -107,5 +110,10 @@ declare class ResizeObserver {
 // https://vuejs.org/v2/guide/transitions.html#List-Move-Transitions
 .panel-container-move {
     transition: 0.3s transform cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.panel-container {
+    transition: opacity 0.2s ease-out;
+    opacity: v-bind(opacity) !important;
 }
 </style>
