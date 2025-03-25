@@ -230,6 +230,7 @@ export class FixtureAPI extends APIScope {
                 'basemap',
                 'crosshairs',
                 'details',
+                'draw',
                 'geosearch',
                 'grid',
                 'help',

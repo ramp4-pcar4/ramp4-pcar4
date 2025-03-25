@@ -1,0 +1,34 @@
+key,enValue,enValid,frValue,frValid
+draw.multiPoint.started,{type} drawing started with 1 point,1,Dessin de {type} commencé avec 1 point,1
+draw.multiPoint.pointAdded,Point added {count} points total,1,Point ajouté, {count} points au total,1
+draw.multiPoint.pointRemoved,Point removed {count} points remaining,1,Point supprimé, {count} points restants,1
+draw.multiPoint.canceled,Drawing canceled,1,Dessin annulé,1
+draw.multiPoint.completed,{type} completed with {count} points,1,{type} terminé avec {count} points,1
+draw.multiPoint.notEnoughPoints,Not enough points for {type} minimum {min} required,1,Pas assez de points pour {type}, minimum {min} requis,1
+draw.graphic.created,{type} created,1,{type} créé,1
+draw.graphic.selected,{type} selected,1,{type} sélectionné,1
+draw.graphic.deselected,Graphic deselected,1,Graphique désélectionné,1
+draw.graphic.deleted,Graphic deleted,1,Graphique supprimé,1
+draw.graphic.updated,Graphic updated,1,Graphique mis à jour,1
+draw.graphic.none,No graphic found,1,Aucun graphique trouvé,1
+draw.tool.canceled,Drawing tool canceled,1,Outil de dessin annulé,1
+draw.point.resize.unsupported,Resizing not supported for point graphics,1,Le redimensionnement n'est pas pris en charge pour les points,1
+draw.point.rotate.unsupported,Rotation not supported for point graphics,1,La rotation n'est pas prise en charge pour les points,1
+draw.move.up,Moved up,1,Déplacé vers le haut,1
+draw.move.down,Moved down,1,Déplacé vers le bas,1
+draw.move.left,Moved left,1,Déplacé vers la gauche,1
+draw.move.right,Moved right,1,Déplacé vers la droite,1
+draw.resize.increase,Increased size,1,Taille augmentée,1
+draw.resize.decrease,Decreased size,1,Taille réduite,1
+draw.rotate.clockwise,Rotated clockwise,1,Rotation dans le sens horaire,1
+draw.rotate.counterclockwise,Rotated counter-clockwise,1,Rotation dans le sens antihoraire,1
+draw.button.point,Draw point,1,Dessiner un point,1
+draw.button.line,Draw line,1,Dessiner une ligne,1
+draw.button.polygon,Draw polygon,1,Dessiner un polygone,1
+draw.button.rectangle,Draw rectangle,1,Dessiner un rectangle,1
+draw.button.circle,Draw circle,1,Dessiner un cercle,1
+draw.point.tooltip,Draw point,1,Dessiner un point,1
+draw.polyline.tooltip,Draw polyline,1,Dessiner une polyligne,1
+draw.polygon.tooltip,Draw polygon,1,Dessiner un polygone,1
+draw.circle.tooltip,Draw circle,1,Dessiner un cercle,1
+draw.rectangle.tooltip,Draw rectangle,1,Dessiner un rectangle,1
