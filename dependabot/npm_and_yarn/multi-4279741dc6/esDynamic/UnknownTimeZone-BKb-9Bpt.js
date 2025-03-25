@@ -1,0 +1,1 @@
+import{a6 as e,a7 as o}from"./main-BenRwYBM.js";class t{}function a(n){return n instanceof e?n===t.instance:n?.toString().toLowerCase()==="unknown"}function r(n){return a(n)?t.instance:n}t.instance=new o("Etc/UTC");export{r as i,a as r,t};
