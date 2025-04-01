@@ -191,7 +191,7 @@
                                 @keydown.stop
                             />
                         </div>
-                        <label class="sr-only" :for="`${colourPickerId}-color-hex`">{{
+                        <label class="sr-only" :for="`${randomId}-color-hex`">{{
                             t('wizard.configure.colour.hex')
                         }}</label>
                         <label class="text-base font-bold" v-if="layerInfo?.configOptions.includes('colour')">{{
@@ -202,7 +202,7 @@
                             alpha-channel="hide"
                             :visible-formats="['hex']"
                             default-format="hex"
-                            :id="colourPickerId"
+                            :id="randomId + '-hue-slider'"
                             :color="colour"
                             @color-change="updateColour"
                         >
@@ -263,7 +263,8 @@ import {
     reactive,
     ref,
     type PropType,
-    useTemplateRef
+    useTemplateRef,
+    useId
 } from 'vue';
 
 import { ColorPicker } from 'vue-accessible-color-picker';
@@ -286,6 +287,7 @@ const wizardStore = useWizardStore();
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 const formElement = ref();
+const randomId = useId();
 
 const handlers = ref<Array<string>>([]);
 
@@ -300,7 +302,6 @@ const layerSource = computed(() => wizardStore.layerSource);
 const step = computed(() => wizardStore.currStep);
 
 const colour = ref();
-const colourPickerId = ref();
 const componentKey = ref(0);
 const disabled = ref(false);
 const thePanel = ref();
@@ -808,10 +809,6 @@ const generateColour = () => {
             Math.floor(Math.random() * 16777215)
                 .toString(16)
                 .padStart(6, '0');
-    // generate unique ID for colour picker to prevent multi-ramp collisions
-    do {
-        colourPickerId.value = Math.random().toString(36).substring(2, 9);
-    } while (document.getElementById(colourPickerId.value + '-hue-slider') !== null);
 };
 
 const updateColour = (eventData: any) => {
