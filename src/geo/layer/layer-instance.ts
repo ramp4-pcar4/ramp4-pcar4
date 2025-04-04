@@ -349,6 +349,16 @@ export class LayerInstance extends APIScope {
     }
 
     /**
+     * Provides a promise that resolves when the layer view has been created.
+     *
+     * @method viewPromise
+     * @returns {Promise} resolves when the layer view is created
+     */
+    viewPromise(): Promise<void> {
+        return Promise.resolve();
+    }
+
+    /**
      * Indicates if the layer is in a state that is makes sense to interact with.
      * I.e. False if layer has not done it's initial load, or is in error state.
      * Acts as a handy shortcut to inspecting the layerState.

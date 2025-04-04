@@ -36,9 +36,8 @@ export class GlowHilightMode extends LiftHilightMode {
         const hilightLayer = this.$iApi.geo.layer.getLayer(HILIGHT_LAYER_NAME);
         if (hilightLayer && hilightLayer.esriLayer && hilightLayer.isLoaded && hilightLayer instanceof GraphicLayer) {
             const gs = graphics instanceof Array ? graphics : [graphics];
-            this.$iApi.geo.map.esriView?.whenLayerView(hilightLayer.esriLayer)?.then(function (layerView) {
-                layerView.highlight(gs.map(g => hilightLayer.getEsriGraphic(g.id)!));
-            });
+            await hilightLayer.viewPromise();
+            hilightLayer.esriView!.highlight(gs.map(g => hilightLayer.getEsriGraphic(g.id)!));
         }
     }
 

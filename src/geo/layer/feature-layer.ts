@@ -26,6 +26,7 @@ import { markRaw, reactive } from 'vue';
  */
 export class FeatureLayer extends AttribLayer {
     declare esriLayer: EsriFeatureLayer | undefined;
+    declare esriView: __esri.FeatureLayerView | undefined;
 
     tooltipField: string;
 
