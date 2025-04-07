@@ -84,7 +84,7 @@ export class LineStyle extends BaseStyle {
     static fromESRI(e: EsriSimpleLineSymbol): LineStyle {
         const opts: LineStyleOptions = {
             width: e.width,
-            colour: e.color.toRgba(),
+            colour: e.color!.toRgba(),
             style: <LineStyleType>e.style
         };
         return new LineStyle(opts);

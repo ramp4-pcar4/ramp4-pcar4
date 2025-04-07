@@ -206,7 +206,7 @@ export class PointStyle extends BaseStyle {
             popts.style = PointStyleType.ICON;
             popts.width = e.width;
             popts.height = e.height;
-            popts.icon = e.url;
+            popts.icon = e.url!;
         }
         return new PointStyle(opts);
     }

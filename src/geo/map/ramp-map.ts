@@ -30,7 +30,7 @@ import type {
     Screenshot
 } from '@/geo/api';
 
-import { EsriAPI } from '@/geo/esri';
+import { EsriAPI, EsriWatch } from '@/geo/esri';
 import type { EsriGraphic, EsriLOD } from '@/geo/esri';
 
 import { useLayerStore } from '@/stores/layer';
@@ -187,27 +187,33 @@ export class MapAPI extends CommonMapAPI {
 
         this.handlers.push({
             type: 'extent',
-            handler: this.esriView.watch('extent', (newval: __esri.Extent) => {
-                // NOTE: yes, double events. rationale is a block of code dealing with filters will not
-                //       want to have two event handlers (one on filter, one on extent change) and synch
-                //       between them. They can subscribe to the filter event and get all the info they need.
+            handler: EsriWatch(
+                () => this.esriView!.extent,
+                (newval: __esri.Extent) => {
+                    // NOTE: yes, double events. rationale is a block of code dealing with filters will not
+                    //       want to have two event handlers (one on filter, one on extent change) and synch
+                    //       between them. They can subscribe to the filter event and get all the info they need.
 
-                if (newval) {
-                    const newExtent = <Extent>this.$iApi.geo.geom.geomEsriToRamp(newval, 'map_extent_event');
-                    this.$iApi.event.emit(GlobalEvents.MAP_EXTENTCHANGE, newExtent);
-                    this.$iApi.event.emit(GlobalEvents.FILTER_CHANGE, {
-                        extent: newExtent,
-                        filterKey: CoreFilter.EXTENT
-                    });
+                    if (newval) {
+                        const newExtent = <Extent>this.$iApi.geo.geom.geomEsriToRamp(newval, 'map_extent_event');
+                        this.$iApi.event.emit(GlobalEvents.MAP_EXTENTCHANGE, newExtent);
+                        this.$iApi.event.emit(GlobalEvents.FILTER_CHANGE, {
+                            extent: newExtent,
+                            filterKey: CoreFilter.EXTENT
+                        });
+                    }
                 }
-            })
+            )
         });
 
         this.handlers.push({
             type: 'scale',
-            handler: this.esriView.watch('scale', (newval: number) => {
-                this.$iApi.event.emit(GlobalEvents.MAP_SCALECHANGE, newval);
-            })
+            handler: EsriWatch(
+                () => this.esriView!.scale,
+                (newval: number) => {
+                    this.$iApi.event.emit(GlobalEvents.MAP_SCALECHANGE, newval);
+                }
+            )
         });
 
         this.handlers.push({
@@ -326,29 +332,37 @@ export class MapAPI extends CommonMapAPI {
             })
         });
 
-        this.esriView.container.addEventListener('touchmove', e => {
-            // need this for panning and zooming to work on mobile devices / touchscreens
-            // touchmove stops the drag event (what the MapView reacts to) from firing properly
-            e.preventDefault();
-        });
+        if (this.esriView.container) {
+            this.esriView.container.addEventListener('touchmove', e => {
+                // need this for panning and zooming to work on mobile devices / touchscreens
+                // touchmove stops the drag event (what the MapView reacts to) from firing properly
+                e.preventDefault();
+            });
+        } else {
+            console.error('ESRI Map View is missing its container');
+        }
 
         // most browsers have a webgl context limit of 16 (one instance of RAMP can use 2 - map and overview map).
         // once the number of contexts is higher than the limit, the oldest context will be lost.
         // when instance is visible on screen, if its map context is lost then recover it.
-        this.esriView.watch('fatalError', () => {
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        this.esriView?.tryFatalErrorRecovery();
-                        observer.disconnect();
-                    }
+        EsriWatch(
+            () => this.esriView!.fatalError,
+            () => {
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            this.esriView?.tryFatalErrorRecovery();
+                            observer.disconnect();
+                        }
+                    });
                 });
-            });
-            observer.observe(this.esriView!.container);
-        });
+                observer.observe(this.esriView!.container!);
+            }
+        );
 
         // as of ESRI v4.26, we need to marinate until .when() is done.
         // otherwise, something happens too fast and the initial calls to view.goTo() grouse quite a lot.
+
         this.esriView.when(() => {
             this._viewPromise.resolveMe();
             this.created = true;
@@ -385,7 +399,7 @@ export class MapAPI extends CommonMapAPI {
      */
     protected destroyMapView(): void {
         // override the method to remove this listener
-        this.esriView?.container.removeEventListener('touchmove', e => {
+        this.esriView?.container?.removeEventListener('touchmove', e => {
             e.preventDefault();
         });
         super.destroyMapView();
@@ -406,6 +420,7 @@ export class MapAPI extends CommonMapAPI {
         }
 
         const bm: Basemap = typeof basemap === 'string' ? await this.findBasemap(basemap) : basemap;
+
         this.esriMap.basemap = toRaw(bm.esriBasemap);
 
         // update the store
@@ -1150,7 +1165,7 @@ export class MapAPI extends CommonMapAPI {
      */
     mapPointToScreenPoint(mapPoint: Point): ScreenPoint {
         if (this.esriView) {
-            const esriPoint = this.esriView.toScreen(mapPoint.toESRI());
+            const esriPoint = this.esriView.toScreen(mapPoint.toESRI())!;
             return { screenX: esriPoint.x, screenY: esriPoint.y };
         } else {
             this.noMapErr();
@@ -1227,9 +1242,9 @@ export class MapAPI extends CommonMapAPI {
             }).then(hitResults => {
                 return hitResults.results.map(hr => {
                     return {
-                        layerId: hr.layer.id,
+                        layerId: hr.layer!.id,
                         layerIdx: 0, // not required for this process, default rather than expensive lookup
-                        oid: (hr as __esri.GraphicHit).graphic.getObjectId()
+                        oid: (hr as __esri.GraphicHit).graphic.getObjectId() as number
                     };
                 });
             });
@@ -1313,11 +1328,14 @@ export class MapAPI extends CommonMapAPI {
 
         // find the top-most valid hit
         hitResults.some(gHit => {
+            if (!gHit.layer) {
+                return false;
+            }
             if (dupeSet.has(gHit.layer.id)) {
                 // already tested this layer
                 return false;
             }
-            const layerHunt = layers.find(l => l.id === gHit.layer.id);
+            const layerHunt = layers.find(l => l.id === gHit.layer!.id);
             if (layerHunt) {
                 // winner winner chicken dinner.
                 // if cosmetic, sad times. it's blocking anything under it.
@@ -1344,7 +1362,7 @@ export class MapAPI extends CommonMapAPI {
         if (hitLayer && topGraphic) {
             // make a fancy bundle
             return {
-                oid: topGraphic.getObjectId(),
+                oid: topGraphic.getObjectId() as number,
                 layerId: hitLayer.id,
                 layerIdx: hitLayer.layerIdx
             };

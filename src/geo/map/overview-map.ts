@@ -2,7 +2,7 @@ import { markRaw } from 'vue';
 import { Basemap, CommonMapAPI, GraphicLayer, InstanceAPI } from '@/api/internal';
 import { Graphic, LayerType, PolygonStyle } from '@/geo/api';
 import type { Extent, RampMapConfig } from '@/geo/api';
-import { EsriAPI } from '@/geo/esri';
+import { EsriAPI, EsriWatch } from '@/geo/esri';
 
 import { useConfigStore } from '@/stores/config';
 import { useOverviewmapStore } from '@/fixtures/overviewmap/store';
@@ -102,7 +102,7 @@ export class OverviewMapAPI extends CommonMapAPI {
             })
         });
 
-        this.esriView.container.addEventListener('touchmove', e => {
+        this.esriView!.container!.addEventListener('touchmove', e => {
             // need this for panning and zooming to work on mobile devices / touchscreens
             // touchmove stops the drag event (what the MapView reacts to) from firing properly
             e.preventDefault();
@@ -111,17 +111,20 @@ export class OverviewMapAPI extends CommonMapAPI {
         // most browsers have a webgl context limit of 16 (one instance of RAMP can use 2 - map and overview map).
         // once the number of contexts is higher than the limit, the oldest context will be lost.
         // when instance is visible on screen, if its overview context is lost then recover it.
-        this.esriView.watch('fatalError', () => {
-            const observer = new IntersectionObserver(entries => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        this.esriView?.tryFatalErrorRecovery();
-                        observer.disconnect();
-                    }
+        EsriWatch(
+            () => this.esriView!.fatalError,
+            () => {
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            this.esriView?.tryFatalErrorRecovery();
+                            observer.disconnect();
+                        }
+                    });
                 });
-            });
-            observer.observe(this.esriView!.container);
-        });
+                observer.observe(this.esriView!.container!);
+            }
+        );
 
         // as of ESRI v4.26, we need to marinate until .when() is done.
         // otherwise, something happens too fast and the initial calls to view.goTo() grouse quite a lot,
@@ -187,7 +190,7 @@ export class OverviewMapAPI extends CommonMapAPI {
      */
     protected destroyMapView(): void {
         // override the method to remove this listener
-        this.esriView?.container.removeEventListener('touchmove', e => {
+        this.esriView?.container!.removeEventListener('touchmove', e => {
             e.preventDefault();
         });
         super.destroyMapView();
@@ -273,7 +276,7 @@ export class OverviewMapAPI extends CommonMapAPI {
                 // check if drag hits graphic, if so set start extent
                 if (await this.cursorHitTest(esriDrag)) {
                     this.startExtent = markRaw(
-                        this.overviewGraphicLayer.getEsriGraphic('overview-graphic')!.geometry
+                        this.overviewGraphicLayer.getEsriGraphic('overview-graphic')!.geometry!
                     ) as __esri.Extent;
                 }
             } else if (this.startExtent) {

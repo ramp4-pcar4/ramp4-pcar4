@@ -140,7 +140,7 @@ export class SpatialReference {
             return new SpatialReference(esriSR.wkt);
         } else {
             const latestWkid = esriSR.toJSON().latestWkid; // for whatever reason, esri type doesnt expose the property
-            const rampSR = new SpatialReference(esriSR.wkid);
+            const rampSR = new SpatialReference(esriSR.wkid!);
             if (latestWkid) {
                 rampSR.latestWkid = latestWkid;
             }

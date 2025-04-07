@@ -8,8 +8,8 @@
 import type EsriBasemap from '@arcgis/core/Basemap';
 import EsriColour from '@arcgis/core/Color';
 import EsriConfig from '@arcgis/core/config';
+import { watch as EsriWatch } from '@arcgis/core/core/reactiveUtils.js';
 import EsriExtent from '@arcgis/core/geometry/Extent';
-import type EsriGeometry from '@arcgis/core/geometry/Geometry';
 import EsriMultipoint from '@arcgis/core/geometry/Multipoint';
 import EsriPoint from '@arcgis/core/geometry/Point';
 import EsriPolygon from '@arcgis/core/geometry/Polygon';
@@ -24,12 +24,12 @@ import type EsriMapImageLayer from '@arcgis/core/layers/MapImageLayer';
 import type EsriOpenStreetMapLayer from '@arcgis/core/layers/OpenStreetMapLayer';
 import type EsriTileLayer from '@arcgis/core/layers/TileLayer';
 import type EsriWMSLayer from '@arcgis/core/layers/WMSLayer';
+import type EsriFeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
 import type EsriField from '@arcgis/core/layers/support/Field';
 import type EsriLOD from '@arcgis/core/layers/support/LOD';
 import type EsriWMSSublayer from '@arcgis/core/layers/support/WMSSublayer';
 import type EsriMap from '@arcgis/core/Map';
 import type EsriClassBreaksRenderer from '@arcgis/core/renderers/ClassBreaksRenderer';
-import type EsriRenderer from '@arcgis/core/renderers/Renderer';
 import type EsriSimpleRenderer from '@arcgis/core/renderers/SimpleRenderer';
 import type EsriUniqueValueRenderer from '@arcgis/core/renderers/UniqueValueRenderer';
 import type EsriClassBreakInfo from '@arcgis/core/renderers/support/ClassBreakInfo';
@@ -40,9 +40,12 @@ import EsriPictureMarkerSymbol from '@arcgis/core/symbols/PictureMarkerSymbol';
 import EsriSimpleFillSymbol from '@arcgis/core/symbols/SimpleFillSymbol';
 import EsriSimpleLineSymbol from '@arcgis/core/symbols/SimpleLineSymbol';
 import EsriSimpleMarkerSymbol from '@arcgis/core/symbols/SimpleMarkerSymbol';
-import type EsriSymbol from '@arcgis/core/symbols/Symbol';
 import { fromJSON as EsriSymbolFromJson } from '@arcgis/core/symbols/support/jsonUtils';
-import type EsriFeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
+import type {
+    GeometryUnion as EsriGeometry,
+    RendererUnion as EsriRenderer,
+    Symbol2DUnion as EsriSymbol
+} from '@arcgis/core/unionTypes.js';
 import type EsriMapView from '@arcgis/core/views/MapView';
 import type EsriColorBackground from '@arcgis/core/webmap/background/ColorBackground';
 
@@ -134,7 +137,7 @@ class EsriAPI {
 
     static async RendererFromJson(json: any): Promise<EsriRenderer> {
         const { fromJSON } = await import('@arcgis/core/renderers/support/jsonUtils');
-        return fromJSON(json);
+        return fromJSON(json)!;
     }
 }
 
@@ -179,6 +182,7 @@ export {
     type EsriTileLayer,
     type EsriUniqueValueInfo,
     type EsriUniqueValueRenderer,
+    EsriWatch,
     type EsriWMSLayer,
     type EsriWMSSublayer
 };

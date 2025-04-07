@@ -59,7 +59,7 @@ export class MapImageSublayer extends AttribLayer {
         this.esriSubLayer = markRaw(
             parent.esriLayer.allSublayers.find(s => {
                 return s.id === this.layerIdx;
-            })
+            })!
         );
     }
 
