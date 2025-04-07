@@ -7,6 +7,7 @@
             tooltipPlacement="left"
             tooltipPlacementAlt="left"
             ref="dropdown"
+            :key="legendOptionKey"
         >
             <template #header>
                 <div class="flex p-4 justify-center items-center">
@@ -174,6 +175,8 @@ const dropdown = ref();
 const hovered = ref(false);
 const panelStore = usePanelStore();
 const mobileMode = ref(panelStore.mobileView);
+const emit = defineEmits(['focusItem']);
+const legendOptionKey = ref(0);
 
 const props = defineProps({
     legendItem: LayerItem
@@ -261,10 +264,16 @@ const removeLayer = () => {
 /**
  * Reloads a layer on the map.
  */
-const reloadLayer = () => {
+const reloadLayer = (e: Event) => {
     if (reloadableLayer.value) {
-        toRaw(props.legendItem!.layer!).reload();
-        dropdown.value.open = false;
+        toRaw(props.legendItem!.layer!)
+            .reload()
+            .then(() => {
+                legendOptionKey.value += 1;
+                if ((e as PointerEvent).pointerType !== 'mouse') {
+                    emit('focusItem');
+                }
+            });
     }
 };
 

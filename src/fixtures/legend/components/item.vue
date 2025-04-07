@@ -56,6 +56,7 @@
                     aria: 'describedby'
                 }"
                 truncate-trigger
+                ref="legendFocusItem"
             >
                 <!-- smiley face. very important that we migrate this -->
                 <div class="flex p-5 mr-[13px]" v-if="legendItem.type !== LegendType.Item">
@@ -243,6 +244,7 @@
                         invisible: legendItem.type === LegendType.Placeholder
                     }"
                     :legendItem="legendItem"
+                    @focus-item="() => $emit('focusItem', legendFocusItem as HTMLElement)"
                 />
 
                 <!-- Button only appears for loading or errored LayerItems -->
@@ -479,7 +481,12 @@
         </div>
         <!-- Display children of the group -->
         <div class="legend-group border-l-2 ml-4 pl-4" v-if="legendItem.expanded">
-            <item v-for="item in legendItem.children" :legendItem="item" :key="item.uid" />
+            <item
+                v-for="item in legendItem.children"
+                :legendItem="item"
+                :key="item.uid"
+                @focus-item="(focusItem: HTMLElement) => $emit('focusItem', focusItem)"
+            />
         </div>
     </div>
 </template>
@@ -492,7 +499,7 @@ import { useLayerStore } from '@/stores/layer';
 import to from 'await-to-js';
 import { marked } from 'marked';
 import type { PropType } from 'vue';
-import { toRaw, computed, inject, ref, watch } from 'vue';
+import { toRaw, computed, inject, ref, watch, useTemplateRef } from 'vue';
 import { LayerItem } from '../store/layer-item';
 import { LegendControl, LegendType } from '../store/legend-item';
 import { InfoType, SectionItem } from '../store/section-item';
@@ -531,6 +538,7 @@ const layerConfigs = computed(() => layerStore.layerConfigs);
 const symbologyStack = ref<Array<LegendSymbology>>([]); // ref instead of reactive to maintain reactivity after promise
 const symbologyStackLoaded = ref<boolean>(false);
 const hovered = ref(false);
+const legendFocusItem = useTemplateRef('legendFocusItem');
 
 /**
  * Get the type of layer
