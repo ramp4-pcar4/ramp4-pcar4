@@ -7,6 +7,7 @@
             tooltipPlacement="left"
             tooltipPlacementAlt="left"
             ref="dropdown"
+            :key="legendOptionKey"
         >
             <template #header>
                 <div class="flex p-4 justify-center items-center">
@@ -145,7 +146,7 @@
                     trigger: 'manual focus',
                     aria: 'describedby'
                 }"
-                @click="reloadLayer"
+                @click="e => reloadLayer(e as PointerEvent)"
                 role="button"
                 :aria-label="t('legend.layer.controls.reload')"
             >
@@ -174,6 +175,8 @@ const dropdown = ref();
 const hovered = ref(false);
 const panelStore = usePanelStore();
 const mobileMode = ref(panelStore.mobileView);
+const emit = defineEmits(['focusItem']);
+const legendOptionKey = ref(0);
 
 const props = defineProps({
     legendItem: LayerItem
@@ -260,11 +263,19 @@ const removeLayer = () => {
 
 /**
  * Reloads a layer on the map.
+ *
+ * @param {PointerEvent} e the PointerEvent corresponding to the reload button being clicked/pressed
  */
-const reloadLayer = () => {
+const reloadLayer = (e: PointerEvent) => {
     if (reloadableLayer.value) {
-        toRaw(props.legendItem!.layer!).reload();
-        dropdown.value.open = false;
+        toRaw(props.legendItem!.layer!)
+            .reload()
+            .then(() => {
+                legendOptionKey.value += 1;
+                if (e.pointerType !== 'mouse') {
+                    emit('focusItem');
+                }
+            });
     }
 };
 

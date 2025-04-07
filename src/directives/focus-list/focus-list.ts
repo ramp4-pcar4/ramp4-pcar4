@@ -141,6 +141,15 @@ export class FocusListManager {
             focusManager.onTouchstart();
         });
 
+        // Focuses a legend item after it's reload button is clicked. See #2605
+        element.addEventListener('refocusLegendItem', e => {
+            const evt = e as CustomEvent;
+            const focusItem = evt.detail.focusItem;
+            focusManager.element.focus();
+            focusManager.focusItem(focusItem);
+            this.highlightedItem = focusItem;
+        });
+
         document.addEventListener('click', function (event: MouseEvent) {
             if (event.target && element.contains(event.target as Node)) {
                 focusManager.onClick(event);
