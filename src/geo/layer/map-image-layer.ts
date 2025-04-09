@@ -22,6 +22,7 @@ import {
 } from '@/geo/api';
 import type {
     IdentifyParameters,
+    LoadLayerMetadataOptions,
     Point,
     QueryFeaturesParams,
     RampLayerConfig,
@@ -302,16 +303,14 @@ export class MapImageLayer extends MapLayer {
             // setting custom renderer here (if one is provided)
             // this code applies esri renderer. loadLayerMetadata will
             // generate the RAMP wrapper on the layer.
-            const hasCustRed = miSL.esriSubLayer && config?.customRenderer?.type;
-            if (hasCustRed) {
-                miSL.esriSubLayer!.renderer = await EsriAPI.RendererFromJson(config.customRenderer);
+            const llmOptions: LoadLayerMetadataOptions = {};
+            if (miSL.esriSubLayer && config?.customRenderer?.type) {
+                const esriCustomRenderer = await EsriAPI.RendererFromJson(config.customRenderer);
+                miSL.esriSubLayer.renderer = esriCustomRenderer;
+                llmOptions.customRenderer = esriCustomRenderer;
             }
 
-            await miSL.loadLayerMetadata(
-                hasCustRed && miSL.esriSubLayer && miSL.esriSubLayer.renderer
-                    ? { customRenderer: miSL.esriSubLayer.renderer }
-                    : {}
-            );
+            await miSL.loadLayerMetadata(llmOptions);
 
             if (startTime < this.lastCancel) {
                 // cancelled, kickout.
