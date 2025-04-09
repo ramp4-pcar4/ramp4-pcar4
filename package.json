@@ -31,8 +31,8 @@
         "ts:check": "vue-tsc --noEmit -p ./tsconfig.app.json",
         "ts:copy": "npx --yes cpx \"src/*.d.ts\" \"dist/bundler/src\"",
         "ts-docs:generate": "npx typedoc --skipErrorChecking",
-        "lint": "eslint . --fix",
-        "lint:check": "eslint . --format json > results.json",
+        "lint": "eslint src/ --fix",
+        "lint:check": "eslint src/ --format json > results.json",
         "format": "prettier --write src/",
         "format:check": "prettier . -c",
         "vite-docs:generate": "npx vitepress build docs"
