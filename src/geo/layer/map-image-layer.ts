@@ -307,7 +307,11 @@ export class MapImageLayer extends MapLayer {
                 miSL.esriSubLayer!.renderer = await EsriAPI.RendererFromJson(config.customRenderer);
             }
 
-            await miSL.loadLayerMetadata(hasCustRed ? { customRenderer: miSL.esriSubLayer?.renderer! } : {});
+            await miSL.loadLayerMetadata(
+                hasCustRed && miSL.esriSubLayer && miSL.esriSubLayer.renderer
+                    ? { customRenderer: miSL.esriSubLayer.renderer }
+                    : {}
+            );
 
             if (startTime < this.lastCancel) {
                 // cancelled, kickout.
