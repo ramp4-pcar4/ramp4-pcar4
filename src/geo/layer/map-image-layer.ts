@@ -25,7 +25,8 @@ import type {
     Point,
     QueryFeaturesParams,
     RampLayerConfig,
-    RampLayerMapImageSublayerConfig
+    RampLayerMapImageSublayerConfig,
+    LoadLayerMetadataOptions
 } from '@/geo/api';
 
 import { EsriAPI, EsriWatch } from '@/geo/esri';
@@ -307,11 +308,14 @@ export class MapImageLayer extends MapLayer {
                 miSL.esriSubLayer!.renderer = await EsriAPI.RendererFromJson(config.customRenderer);
             }
 
-            await miSL.loadLayerMetadata(
-                hasCustRed && miSL.esriSubLayer && miSL.esriSubLayer.renderer
-                    ? { customRenderer: miSL.esriSubLayer.renderer }
-                    : {}
-            );
+            const llmOptions: LoadLayerMetadataOptions = {};
+            if (miSL.esriSubLayer && config?.customRenderer?.type) {
+                const esriCustomRenderer = await EsriAPI.RendererFromJson(config.customRenderer);
+                miSL.esriSubLayer.renderer = esriCustomRenderer;
+                llmOptions.customRenderer = esriCustomRenderer;
+            }
+
+            await miSL.loadLayerMetadata(llmOptions);
 
             if (startTime < this.lastCancel) {
                 // cancelled, kickout.
