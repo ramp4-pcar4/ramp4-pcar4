@@ -7,8 +7,6 @@ import { markRaw } from 'vue';
  * A layer class which implements an ESRI Map Image Sublayer.
  */
 export class MapImageSublayer extends AttribLayer {
-    tooltipField: string;
-
     constructor(config: RampLayerMapImageSublayerConfig, $iApi: InstanceAPI, parent: MapImageLayer) {
         // unknown is to force a narrower interface into the more common layer interface.
         super(config as unknown as RampLayerConfig, $iApi);
@@ -27,7 +25,6 @@ export class MapImageSublayer extends AttribLayer {
         this.dataFormat = DataFormat.ESRI_FEATURE;
         this.supportsFeatures = true;
 
-        this.tooltipField = '';
         this.hovertips = false;
         this.url = this.parentLayer?.url;
         this.canReload = !!(this.url || this.origRampConfig.caching);

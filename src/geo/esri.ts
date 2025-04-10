@@ -110,6 +110,19 @@ class EsriAPI {
 
     // --- Utils ---
 
+    static async ArcadeExecutor(script: string, profile: __esri.Profile): Promise<__esri.ArcadeExecutor> {
+        const { createArcadeExecutor } = await import('@arcgis/core/arcade');
+        return await createArcadeExecutor(script, profile);
+    }
+
+    /*
+    // This returns pre-canned esri profiles. I don't think we actually want that.
+    static async ArcadeProfile(esriKey: string): Promise<__esri.Profile> {
+        const { createArcadeProfile } = await import('@arcgis/core/arcade');
+        return  createArcadeProfile(esriKey);
+    }
+    */
+
     static async ColorBackground(prams: __esri.ColorBackgroundProperties): Promise<EsriColorBackground> {
         const lib = await import('@arcgis/core/webmap/background/ColorBackground');
         return Reflect.construct(lib.default, [prams]);

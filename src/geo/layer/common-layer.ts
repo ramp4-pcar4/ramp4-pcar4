@@ -19,7 +19,15 @@ import {
     TreeNode
 } from '@/geo/api';
 
-import type { AttributeSet, GetGraphicParams, RampLayerConfig, TabularAttributeSet } from '@/geo/api';
+import type {
+    Attributes,
+    AttributeSet,
+    GetGraphicParams,
+    RampLayerConfig,
+    RampLayerMapImageSublayerConfig,
+    TabularAttributeSet
+} from '@/geo/api';
+import { EsriAPI } from '@/geo/esri';
 import to from 'await-to-js';
 
 const enum TimerType {
@@ -50,6 +58,26 @@ export class CommonLayer extends LayerInstance {
      */
     protected loadPromDone: boolean;
     protected layerTree: TreeNode;
+
+    /**
+     * Internally tracks any arcade formula for the name value.
+     */
+    protected nameArcadeFormula: string;
+
+    /**
+     * The name arcade executor if a name formula is defined
+     */
+    protected nameArcadeExecutor: __esri.ArcadeExecutor | undefined;
+
+    /**
+     * Internally tracks any arcade formula for the maptip value.
+     */
+    protected tooltipArcadeFormula: string;
+
+    /**
+     * The maptip arcade executor if a maptip formula is defined
+     */
+    protected tooltipArcadeExecutor: __esri.ArcadeExecutor | undefined;
 
     // ----------- LAYER CONSTRUCTION AND INITIALIZAION -----------
 
@@ -96,6 +124,8 @@ export class CommonLayer extends LayerInstance {
         this.url = this.origRampConfig.url;
         this.canReload = !!(this.url || this.origRampConfig.caching);
         this.loadPromDone = false;
+        this.nameArcadeFormula = '';
+        this.tooltipArcadeFormula = '';
 
         this.layerTree = new TreeNode(0, this.uid, this.name, true); // is a layer with layer index 0 by default. subclasses will change this when they load
     }
@@ -530,6 +560,168 @@ export class CommonLayer extends LayerInstance {
         if (this.timers[type]) {
             clearTimeout(this.timers[type]);
             this.timers[type] = undefined;
+        }
+    }
+
+    /**
+     * Will create an arcade formula executor valid for this layer
+     *
+     * @param formula an arcade formula
+     * @returns resolves with an arcade executor object
+     */
+    private async arcadeGenerator(formula: string): Promise<__esri.ArcadeExecutor> {
+        const arcadeProfile: __esri.Profile = {
+            variables: [
+                {
+                    name: '$attr',
+                    type: 'dictionary',
+                    properties: this.fields
+                        .map(fd => {
+                            const arcardeType = this.$iApi.geo.attributes.fieldTypeToArcade(fd.type);
+                            if (arcardeType) {
+                                return { name: fd.name, type: arcardeType };
+                            } else {
+                                console.error(`Encountered field type with no arcade support: ${fd.type} [${fd.name}]`);
+                                return arcardeType; // <-- will be undefined
+                            }
+                        })
+                        .filter(f => !!f)
+                }
+            ]
+        };
+
+        return EsriAPI.ArcadeExecutor(formula, arcadeProfile);
+    }
+
+    get nameArcade(): string {
+        return this.nameArcadeFormula;
+    }
+
+    async setNameArcade(formula: string): Promise<void> {
+        if (this.supportsFeatures) {
+            if (formula.trim() === '') {
+                this.nameArcadeFormula = '';
+                this.nameArcadeExecutor = undefined;
+            } else {
+                this.nameArcadeFormula = formula;
+
+                this.nameArcadeExecutor = await this.arcadeGenerator(formula);
+            }
+        } else {
+            console.error("Attempted to set a name arcade function on a layer that doesn't support it.");
+        }
+    }
+
+    /**
+     * Handles initialization logic for feature names.
+     * Only valid for layers that support attributes.
+     * Typically called by internal processes.
+     *
+     * @param config a ramp layer configuration object. Can pass empty object if n/a.
+     * @param serviceDefault name field as defined by the layer service. Not required
+     */
+    async nameInitializer(
+        config: RampLayerConfig | RampLayerMapImageSublayerConfig,
+        serviceDefault: string = ''
+    ): Promise<void> {
+        if (this.supportsFeatures) {
+            const trimArcade = (config?.nameArcade || '').trim();
+            if (trimArcade) {
+                // build executor, store formula
+                await this.setNameArcade(trimArcade);
+            }
+
+            // we still assign name field even if an arcade exists. This is for
+            // fallback support of any old templates/custom fixtures that are not using
+            // nameValue(). Any `attribute[nameField]` code will still work / not explode.
+
+            this.nameField = (config?.nameField || '').trim() || serviceDefault || this.oidField;
+        } else {
+            console.error('Attempted to init a name field on an unsupported layer.');
+        }
+    }
+
+    nameValue(attributes: Attributes): string {
+        // NOTE idea was to also support OID as parameter, and do a feature lookup
+        //      in here. But that forces the method to be async, which causes
+        //      problems with a stuff that wants an instant value.
+        //      So the convention anything that wants async needs to run the oid -> feature
+        //      part themselves and pass the result to this badboy.
+
+        if (attributes) {
+            // TODO decide if we return error strings (to make visually obvious)
+            //      or return empty string + console errors
+            if (this.nameArcade) {
+                const arcadePayload = {
+                    $attr: attributes
+                };
+
+                return this.nameArcadeExecutor?.execute(arcadePayload) ?? 'Arcade Error';
+            } else {
+                return this.nameField ? (attributes[this.nameField] ?? 'Name Field Error') : '';
+            }
+        } else {
+            return '';
+        }
+    }
+
+    get tooltipArcade(): string {
+        return this.tooltipArcadeFormula;
+    }
+
+    async setTooltipArcade(formula: string): Promise<void> {
+        if (this.supportsFeatures) {
+            if (formula.trim() === '') {
+                this.tooltipArcadeFormula = '';
+                this.tooltipArcadeExecutor = undefined;
+            } else {
+                this.tooltipArcadeFormula = formula;
+                this.tooltipArcadeExecutor = await this.arcadeGenerator(formula);
+            }
+        } else {
+            console.error("Attempted to set a tooltip arcade function on a layer that doesn't support it.");
+        }
+    }
+
+    /**
+     * Handles initialization logic for feature tooltips.
+     * Only valid for layers that support attributes.
+     * Needs to be called after nameInitializer to ensure correct fallback defaults.
+     * Typically called by internal processes.
+     *
+     * @param config a ramp layer configuration object. Can pass empty object if n/a.
+     */
+    async tooltipInitializer(config: RampLayerConfig | RampLayerMapImageSublayerConfig): Promise<void> {
+        if (this.supportsFeatures) {
+            const trimArcade = (config?.tooltipArcade || '').trim();
+            if (trimArcade) {
+                // build executor, store formula
+                await this.setTooltipArcade(trimArcade);
+            }
+
+            this.tooltipField = (config?.tooltipField || '').trim();
+        } else {
+            console.error('Attempted to init a tooltip field on an unsupported layer.');
+        }
+    }
+
+    tooltipValue(attributes: Attributes): string {
+        if (attributes) {
+            // TODO decide if we return error strings (to make visually obvious)
+            //      or return empty string + console errors
+            if (this.tooltipArcade) {
+                const arcadePayload = {
+                    $attr: attributes
+                };
+
+                return this.tooltipArcadeExecutor?.execute(arcadePayload) ?? 'Arcade Error';
+            } else {
+                return this.tooltipField
+                    ? (attributes[this.tooltipField] ?? this.nameValue(attributes))
+                    : this.nameValue(attributes);
+            }
+        } else {
+            return '';
         }
     }
 }
