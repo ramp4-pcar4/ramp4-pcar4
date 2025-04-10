@@ -15,7 +15,12 @@
                 }"
                 ref="el"
             >
-                <legend-item v-for="item in children" :legendItem="item" :key="item.uid" />
+                <legend-item
+                    v-for="item in children"
+                    :legendItem="item"
+                    :key="item.uid"
+                    @focus-item="(focusItem: HTMLElement, legendItem: LegendItem) => applyFocusToItem(focusItem)"
+                />
             </div>
         </template>
     </panel-screen>
@@ -48,15 +53,18 @@ const keyupEvent = (e: Event) => {
     }
 };
 
+const applyFocusToItem = (focusItem: HTMLElement) => {
+    const focusItemEvent = new CustomEvent('refocusLegendItem', { detail: { focusItem } });
+    el.value?.dispatchEvent(focusItemEvent);
+};
+
 onMounted(() => {
     el.value?.addEventListener('blur', blurEvent);
-
     el.value?.addEventListener('keyup', keyupEvent);
 });
 
 onBeforeUnmount(() => {
     el.value?.removeEventListener('blur', blurEvent);
-
     el.value?.removeEventListener('keyup', keyupEvent);
 });
 

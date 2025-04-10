@@ -440,7 +440,6 @@ export class LegendAPI extends FixtureInstance {
      */
     reloadLayerItem(layer: LayerInstance | string): boolean {
         const affectedBlocks = this.getLayerBoundItems(layer);
-
         affectedBlocks.forEach(block => block.reload());
 
         return affectedBlocks.length > 0;
