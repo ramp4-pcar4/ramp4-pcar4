@@ -37,6 +37,8 @@ import type {
     TabularAttributeSet
 } from '@/geo/api';
 
+import { EsriAPI, EsriWatch } from '@/geo/esri';
+
 import { toRaw } from 'vue';
 
 /**
@@ -285,30 +287,40 @@ export class AttribLayer extends MapLayer {
             // attempt to get geometry from fastest source.
             if (gCache) {
                 resultGeom = gCache;
+            } else if (this.layerType === LayerType.FEATURE) {
+                // need to wait for the view to exist, and to finish downloading any updates
+                await this.viewPromise();
+                if (this.esriView!.updating) {
+                    await new Promise<void>(resolve => {
+                        const watcher = EsriWatch(
+                            () => this.esriView!.updating,
+                            newValue => {
+                                if (!newValue) {
+                                    // done updating
+                                    watcher.remove();
+                                    resolve();
+                                }
+                            }
+                        );
+                    });
+                }
 
-                /*
-            // / NOTE: at first glance it looks like ESRI 4 is hiding the guts of server-based feature layers.
-            //              when there is time, can take a look to see if any hidden/system caches are there on
-            //              the esri layer object to exploit.
-            //              for now, will just skip this optimization.
-            // UPDATE: could probably do this by running queryFeatures on the layer view.
+                // run a query against the layer view to steal the local geometry
+                const query = await EsriAPI.Query();
+                query.objectIds = [objectId];
+                query.returnGeometry = true;
 
-            } else if (this.parentLayer._innerLayer.type === 'feature') {
-                // it is a feature layer. we can attempt to extract info from it.
-                // but remember the feature may not exist on the client currently
+                const localResult = await (this.esriView as __esri.FeatureLayerView)!.queryFeatures(query);
+                if (localResult.features.length) {
+                    const localFeat = localResult.features[0];
+                    const localGeom = this.$iApi.geo.geom.geomEsriToRamp(localFeat.geometry!);
 
-                let localGraphic =  (<esri.FeatureLayer>this.parentLayer._innerLayer).graphics.find(g =>
-                    g.attributes[this.oidField] === objectId);
-
-
-                if (localGraphic) {
-                    // found one. cache it and use it
-                    gCache[objectId] = localGraphic.geometry;
-                    resultFeat.geometry = localGraphic.geometry;
+                    this.attribs.quickCache.setGeom(objectId, localGeom, scale);
+                    resultGeom = localGeom;
                 } else {
+                    // was not found locally
                     needWebGeom = true;
                 }
-            */
             } else {
                 needWebGeom = true;
             }

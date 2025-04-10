@@ -2,6 +2,7 @@ import { CommonLayer, GlobalEvents, InstanceAPI } from '@/api/internal';
 import { DefPromise, DrawState, Extent, InitiationState, LayerState, ScaleSet, SpatialReference } from '@/geo/api';
 import type { DrawOrder, RampLayerConfig } from '@/geo/api';
 import { EsriWatch } from '@/geo/esri';
+import { markRaw } from 'vue';
 
 /**
  * A common layer class which is inherited by layer classes that implement map-based layers.
@@ -138,7 +139,7 @@ export class MapLayer extends CommonLayer {
         );
 
         this.esriLayer.on('layerview-create', (e: __esri.LayerLayerviewCreateEvent) => {
-            this.esriView = e.layerView;
+            this.esriView = markRaw(e.layerView);
             this.esriWatches.push(
                 EsriWatch(
                     () => e.layerView.updating,
@@ -270,6 +271,10 @@ export class MapLayer extends CommonLayer {
         proms.push(lookupPromise);
 
         return proms;
+    }
+
+    viewPromise(): Promise<void> {
+        return this.viewDefProm.getPromise();
     }
 
     // ----------- LAYER MANAGEMENT -----------

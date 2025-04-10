@@ -19,6 +19,7 @@ export class CommonGraphicLayer extends MapLayer {
 
     protected _graphics: Array<Graphic> = [];
     declare esriLayer: EsriGraphicsLayer | undefined;
+    declare esriView: __esri.GraphicsLayerView | undefined;
 
     /**
      * Take a layer config from the RAMP application and derives a configuration for an ESRI layer
