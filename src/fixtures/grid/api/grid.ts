@@ -73,8 +73,9 @@ export class GridAPI extends FixtureInstance {
                 layers.forEach((layer: any) => {
                     if (layer.sublayers) {
                         layer.sublayers?.forEach((sl: number) => {
-                            layerIds.push(`${layer.layerId}-${sl}`);
-                            delete layerGridConfigs[`${layer.layerId}-${sl}`];
+                            const subId = this.$iApi.geo.layer.sublayerId(layer.layerId, sl);
+                            layerIds.push(subId);
+                            delete layerGridConfigs[subId];
                         });
                     } else {
                         layerIds.push(layer.layerId);

@@ -26,6 +26,7 @@ import {
 import type { ArcGisServerMetadata, RampLayerConfig } from '@/geo/api';
 import {
     DataFormat,
+    DefPromise,
     Extent,
     GeometryType,
     InitiationState,
@@ -119,6 +120,17 @@ export class LayerAPI extends APIScope {
     }
 
     /**
+     * Returns a standardized sublayer id for a parent id and sublayer index
+     *
+     * @param {string} parentLayerId layer id of the layer hosting the sublayer
+     * @param {number} sublayerIndex index of the sublayer
+     * @returns {string} standardized sublayer id
+     */
+    sublayerId(parentLayerId: string, sublayerIndex: number): string {
+        return `${parentLayerId}-${sublayerIndex}`;
+    }
+
+    /**
      * Access a registered layer object.
      *
      * @param {string} layerId layer id or uid of the layer
@@ -151,6 +163,59 @@ export class LayerAPI extends APIScope {
         } else {
             return undefined;
         }
+    }
+
+    /**
+     * Waits for a layer to register, then returns it.
+     *
+     * @param {string} layerId layer id or uid of the layer
+     * @returns {Promise<LayerInstance>} The layer instance with the given id.
+     */
+    async awaitLayer(layerId: string): Promise<LayerInstance> {
+        // test immediately
+        const fastTest = this.getLayer(layerId);
+        if (fastTest) {
+            return fastTest;
+        }
+
+        const defFun = new DefPromise<LayerInstance>();
+
+        // test ~3 times a second for 8 seconds
+        let expectedWait = 0;
+        const expectedPingTime = 300;
+        const stopExpected = setInterval(() => {
+            expectedWait += expectedPingTime;
+            const expTest = this.getLayer(layerId);
+            if (expTest) {
+                clearInterval(stopExpected);
+                defFun.resolveMe(expTest);
+            } else if (expectedWait > 8000) {
+                clearInterval(stopExpected);
+
+                // start slower pings every 1.5 seconds until found.
+                // this code is super light, browser perf won't be impacted if a nothingburger request runs forever.
+                const stopSlowpoke = setInterval(() => {
+                    const slowTest = this.getLayer(layerId);
+                    if (slowTest) {
+                        clearInterval(stopSlowpoke);
+                        defFun.resolveMe(slowTest);
+                    }
+                }, 1500);
+            }
+        }, expectedPingTime);
+
+        return defFun.getPromise();
+    }
+
+    /**
+     * Waits for a sublayer to register, then returns it.
+     *
+     * @param {string} layerId layer id of the layer.
+     * @param {number} index index of the sublayer
+     * @returns {Promise<LayerInstance>} The sublayer instance.
+     */
+    async awaitSublayer(layerId: string, index: number): Promise<LayerInstance> {
+        return this.awaitLayer(this.sublayerId(layerId, index));
     }
 
     /**
