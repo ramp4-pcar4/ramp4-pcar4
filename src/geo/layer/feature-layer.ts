@@ -68,6 +68,11 @@ export class FeatureLayer extends AttribLayer {
         // process any order-by configuration
         this.configDrawOrder(rampLayerConfig, esriConfig);
 
+        // enable point clustering if set up in config
+        if (rampLayerConfig.pointClustering) {
+            esriConfig.featureReduction = rampLayerConfig.pointClustering;
+        }
+
         return esriConfig;
     }
 
