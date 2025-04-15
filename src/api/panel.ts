@@ -167,6 +167,16 @@ export class PanelAPI extends APIScope {
     }
 
     /**
+     * Returns the panel ids of all currently registered panels
+     *
+     * @returns {Array<string>}
+     * @memberof PanelAPI
+     */
+    allRegistered(): Array<string> {
+        return Object.keys(this.panelStore.items);
+    }
+
+    /**
      * Removes a panel instance
      *
      * @param {(string | PanelInstance)} value

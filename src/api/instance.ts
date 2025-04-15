@@ -13,7 +13,7 @@ import VueTippy from 'vue-tippy';
 import { FocusList, FocusItem, FocusContainer } from '@/directives/focus-list';
 import { Truncate } from '@/directives/truncate/truncate';
 
-import { EventAPI, FixtureAPI, GeoAPI, GlobalEvents, PanelAPI, NotificationAPI } from './internal';
+import { DevAPI, EventAPI, FixtureAPI, GeoAPI, GlobalEvents, NotificationAPI, PanelAPI } from './internal';
 
 import PanelScreenV from '@/components/panel-stack/panel-screen.vue';
 import PinV from '@/components/panel-stack/controls/pin.vue';
@@ -71,6 +71,7 @@ export class InstanceAPI {
     readonly event: EventAPI;
     readonly geo: GeoAPI;
     readonly notify: NotificationAPI;
+    readonly dev: DevAPI;
     readonly ui: {
         maptip: MaptipAPI;
         exposeOids: boolean;
@@ -117,6 +118,7 @@ export class InstanceAPI {
         this.fixture = new FixtureAPI(this); // pass the iApi reference to the FixtureAPI
         this.panel = new PanelAPI(this);
         this.geo = new GeoAPI(this);
+        this.dev = new DevAPI(this);
         //TODO before 1.0: does the ui namespace still make sense, should we just leave maptip under geo.map only?
         this.ui = {
             maptip: this.geo.map.maptip,
