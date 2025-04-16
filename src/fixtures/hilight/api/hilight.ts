@@ -53,6 +53,7 @@ export class HilightAPI extends FixtureInstance {
             id: HILIGHT_LAYER_NAME,
             layerType: LayerType.GRAPHIC,
             cosmetic: true,
+            system: true,
             url: ''
         });
 

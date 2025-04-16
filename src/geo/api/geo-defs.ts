@@ -762,6 +762,7 @@ export interface RampLayerConfig {
     catalogueUrl?: string;
     fixtures?: any; // layer-based fixture config
     cosmetic?: boolean;
+    system?: boolean;
     colour?: string;
     imageFormat?: string;
     initialFilteredQuery?: string;

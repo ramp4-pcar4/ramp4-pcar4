@@ -21,7 +21,8 @@ export class OverviewMapAPI extends CommonMapAPI {
             id: 'RampOverviewGraphic',
             layerType: LayerType.GRAPHIC,
             url: '',
-            cosmetic: true
+            cosmetic: true,
+            system: true
         }) as GraphicLayer;
         this.overviewmapStore = useOverviewmapStore(this.$vApp.$pinia);
     }
