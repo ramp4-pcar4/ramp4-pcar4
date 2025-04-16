@@ -3,6 +3,7 @@ import { createInstance, geo } from '@/main';
 window.debugInstance = null;
 
 let config = {
+    startingFixtures: [],
     configs: {
         en: {
             map: {

@@ -224,7 +224,7 @@ export class FixtureAPI extends APIScope {
      * @memberof FixtureAPI
      */
     addDefaultFixtures(fixtureNames?: Array<string>): Promise<Array<FixtureBase>> {
-        if (!Array.isArray(fixtureNames) || fixtureNames.length === 0) {
+        if (!Array.isArray(fixtureNames)) {
             fixtureNames = [
                 'appbar',
                 'basemap',
