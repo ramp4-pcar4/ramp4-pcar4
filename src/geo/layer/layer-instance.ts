@@ -216,6 +216,11 @@ export class LayerInstance extends APIScope {
     isCosmetic: boolean;
 
     /**
+     * If the layer is being managed by a RAMP functionality
+     */
+    isSystem: boolean;
+
+    /**
      * If the layer was added by user interaction during the session
      */
     userAdded: boolean;
@@ -325,6 +330,7 @@ export class LayerInstance extends APIScope {
         this.isRemoved = false;
         this.isFile = false;
         this.isCosmetic = false;
+        this.isSystem = false;
         this.userAdded = false;
         this.identify = false; // will be updated later based on config/supportsIdentify value
         this.hovertips = false;

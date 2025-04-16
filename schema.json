@@ -891,6 +891,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Indicates if this layer is a cosmetic supporting layer which will not be considered for general user interaction."
+                },
+                "system": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Indicates if this layer is used and managed by a RAMP functionality."
                 }
             },
             "required": ["id", "layerType", "url"],
