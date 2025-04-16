@@ -155,7 +155,8 @@ const updateNortharrow = async (newExtent: Extent) => {
                     id: POLE_MARKER_LAYER_ID,
                     layerType: LayerType.GRAPHIC,
                     url: '',
-                    cosmetic: true // mark this layer as a cosmetic layer
+                    cosmetic: true, // mark this layer as a cosmetic layer
+                    system: true
                 });
                 iApi.geo.map.addLayer(poleLayer);
 

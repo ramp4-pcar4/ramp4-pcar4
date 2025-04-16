@@ -52,6 +52,7 @@ export class FogHilightMode extends LiftHilightMode {
                 id: FOG_HILIGHT_LAYER_NAME,
                 layerType: LayerType.TILE,
                 cosmetic: true,
+                system: true,
                 // TODO: what if there's more than 1 URL provided?
                 // See https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/1352
                 url: mapConfig.layers[0].url

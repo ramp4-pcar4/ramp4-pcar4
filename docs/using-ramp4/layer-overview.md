@@ -36,6 +36,7 @@ Below is a list of the various properties that can be specified for a layer conf
 - [singleEntryCollapse](./layers/fancy-properties.md#singleentrycollapse)
 - [state](./layers/basic-properties.md#state)
 - [sublayers](./layers/fancy-properties.md#sublayers)
+- [system](./layers/basic-properties.md#system)
 - [tooltipArcade](./layers/fancy-properties.md#tooltiparcade)
 - [tooltipField](./layers/fancy-properties.md#tooltipfield)
 - [touchTolerance](./layers/fancy-properties.md#touchtolerance)

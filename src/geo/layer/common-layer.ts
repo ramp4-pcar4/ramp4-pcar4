@@ -108,6 +108,7 @@ export class CommonLayer extends LayerInstance {
         this.id = rampConfig.id || '';
         this.uid = this.$iApi.geo.shared.generateUUID();
         this.isCosmetic = false;
+        this.isSystem = rampConfig.system || false;
         this.isRemoved = false;
         this.isSublayer = false;
         this.supportsIdentify = false; // default state.
