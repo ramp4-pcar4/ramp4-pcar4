@@ -13,8 +13,7 @@ import type { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import { useAppbarStore } from '@/fixtures/appbar/store';
 import { useGridStore } from '@/fixtures/grid/store';
 import { LayerState, LayerType } from '@/geo/api';
-import type { BasemapChange, IdentifyResultFormat, MapClick, MapMove, RampBasemapConfig, ScreenPoint } from '@/geo/api';
-import type { RampConfig } from '@/types';
+import type { BasemapChange, IdentifyResultFormat, MapClick, MapMove, ScreenPoint } from '@/geo/api';
 import { debounce, throttle } from 'throttle-debounce';
 import { useMapCaptionStore } from '@/stores/map-caption';
 import { useConfigStore } from '@/stores/config';
@@ -310,6 +309,12 @@ export enum GlobalEvents {
     RAMP_MOBILEVIEW_CHANGE = 'ramp/mobileviewchange',
 
     /**
+     * Fires when the instance has been explicitly reloaded / restarted
+     * Payload: none
+     */
+    RAMP_RELOAD = 'ramp/reload',
+
+    /**
      * Fires when a request is issued to toggle (open/close) the Layer Reorder panel.
      * Payload: none
      */
@@ -338,7 +343,6 @@ export enum GlobalEvents {
 // IMPORTANT: These values are part of the public API, best to never edit them unless no other alternative,
 //            as it will be a breaking change to API usage.
 enum DefEH {
-    CONFIG_CHANGE_UPDATES_MAP_ATTRIBS = 'ramp_config_change_updates_map_attribs',
     LAYER_ERROR_UPDATES_LEGEND = 'ramp_layer_error_updates_legend',
     LAYER_REGISTER_BINDS_LEGEND = 'ramp_layer_register_binds_legend',
     LAYER_RELOAD_END_BINDS_LEGEND = 'ramp_layer_reload_end_binds_legend',
@@ -630,19 +634,6 @@ export class EventAPI extends APIScope {
     private defaultHandlerFactory(handlerName: string): string {
         let zeHandler: (payload?: any) => void;
         switch (handlerName) {
-            case DefEH.CONFIG_CHANGE_UPDATES_MAP_ATTRIBS:
-                // update any basemap attribution in the map caption when the config changes (likely language switch)
-                zeHandler = (payload: RampConfig) => {
-                    const currentBasemapConfig: RampBasemapConfig | undefined = payload.map.basemaps.find(
-                        bms => bms.id === this.$iApi.geo.map.getCurrentBasemapId()
-                    );
-
-                    this.$iApi.geo.map.caption.updateAttribution(currentBasemapConfig?.attribution);
-                };
-
-                this.$iApi.event.on(GlobalEvents.CONFIG_CHANGE, zeHandler, handlerName);
-                break;
-
             case DefEH.LAYER_ERROR_UPDATES_LEGEND:
                 // when a layer errors, have the standard legend update in accordance to the layer
                 zeHandler = (payload: { state: string; layer: LayerInstance }) => {

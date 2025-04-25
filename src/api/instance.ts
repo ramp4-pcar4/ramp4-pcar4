@@ -164,30 +164,17 @@ export class InstanceAPI {
         const panelStore = usePanelStore(this.$vApp.$pinia);
         const maptipStore = useMaptipStore(this.$vApp.$pinia);
         if (configs?.configs !== undefined) {
-            const langConfigs: {
-                [key: string]: RampConfig;
-            } = configs.configs;
+            // update the config set in the store, ensuring every language is mapped to something
+            const allLangs = Object.keys(this.$i18n.messages.value);
+            configStore.registerAllConfigs(configs, allLangs);
 
-            const langConfig = langConfigs[this.$i18n.locale.value] ?? langConfigs[Object.keys(langConfigs)[0]];
-            configStore.newConfig(langConfig);
-
-            // register first config for all available languages and then overwrite configs per language as needed
-            configStore.registerConfig({
-                config: langConfig,
-                configLangs: Object.keys(langConfigs),
-                allLangs: Object.keys(this.$i18n.messages.value)
-            });
-
-            for (const lang in langConfigs) {
-                configStore.registerConfig({
-                    config: langConfigs[lang],
-                    configLangs: [lang]
-                });
-            }
+            // set the current languages' config as the active config
+            const activeConfig = configStore.registeredConfigs[configStore.registeredLangs[this.$i18n.locale.value]];
+            configStore.newConfig(activeConfig);
 
             // set the initial basemap
-            configStore.activeBasemapConfig = langConfig.map.basemaps.find(
-                bm => bm.id === langConfig.map.initialBasemapId
+            configStore.activeBasemapConfig = activeConfig.map.basemaps.find(
+                bm => bm.id === activeConfig.map.initialBasemapId
             );
 
             // need to wait for the map container div to appear
@@ -200,19 +187,19 @@ export class InstanceAPI {
                     clearInterval(mapDivWatcher);
 
                     // create the map
-                    this.geo.map.createMap(langConfig.map, mapViewElement as HTMLDivElement).then(() => {
+                    this.geo.map.createMap(activeConfig.map, mapViewElement as HTMLDivElement).then(() => {
                         // Hide hovertip on map creation
                         //@ts-expect-error TODO: explain why this is needed or remove
                         mapViewElement._tippy.hide(0);
                         //@ts-expect-error TODO: explain why this is needed or remove
                         maptipStore.setMaptipInstance(mapViewElement._tippy);
 
-                        if (langConfig.layers && langConfig.layers.length > 0) {
+                        if (activeConfig.layers && activeConfig.layers.length > 0) {
                             // Add all the config layers to the instance, in order.
                             // Config layers always get "added first", so we provide order positions here for the map layers.
                             // Enhanced positioning logic is now handled by map.addLayer()
                             let mapOrderPos = 0;
-                            langConfig.layers.forEach(layerConfig => {
+                            activeConfig.layers.forEach(layerConfig => {
                                 const layer = this.geo.layer.createLayer(layerConfig);
                                 this.geo.map
                                     .addLayer(layer, mapOrderPos)
@@ -229,17 +216,17 @@ export class InstanceAPI {
                 }
             }, 100);
 
-            if (langConfig.panels) {
+            if (activeConfig.panels) {
                 // open and pin appropiate panels on startup
                 // TODO: Note that certain panels like grid, settings, etc. need to get data for a specific layer.
                 // Because different fixtures get this data in different ways (some use LayerInstance, some uid, some custom config),
                 // there is no way to open the panel with layer data loaded without writing specific code for specific fixtures.
                 // Once layer usage throughout RAMP is normalized, add an extra nugget in the config called options or something so that the panel
                 // can load layer data as well.
-                if (langConfig.panels.open && langConfig.panels.open.length > 0) {
-                    const panelIds = langConfig.panels.open.map(p => p.id);
+                if (activeConfig.panels.open && activeConfig.panels.open.length > 0) {
+                    const panelIds = activeConfig.panels.open.map(p => p.id);
                     this.panel.isRegistered(panelIds).then(() => {
-                        langConfig.panels?.open?.forEach(panel => {
+                        activeConfig.panels?.open?.forEach(panel => {
                             this.panel.open({
                                 id: panel.id,
                                 screen: panel.screen
@@ -252,29 +239,29 @@ export class InstanceAPI {
                 }
 
                 // enable/disable reorder controls
-                panelStore.reorderable = langConfig.panels.reorderable ?? true;
+                panelStore.reorderable = activeConfig.panels.reorderable ?? true;
             }
 
             // disable animations if needed
-            if (!langConfig.system?.animate && this.$element._container && this.$element._container.children[0]) {
+            if (!activeConfig.system?.animate && this.$element._container && this.$element._container.children[0]) {
                 this.$element._container.children[0].classList.remove('animation-enabled');
             }
 
             // process system configurations
-            if (langConfig.system?.proxyUrl) {
-                this.geo.proxy = langConfig.system.proxyUrl;
+            if (activeConfig.system?.proxyUrl) {
+                this.geo.proxy = activeConfig.system.proxyUrl;
             }
-            if (langConfig.system?.exposeOid) {
-                this.ui.exposeOids = langConfig.system.exposeOid;
+            if (activeConfig.system?.exposeOid) {
+                this.ui.exposeOids = activeConfig.system.exposeOid;
             }
-            if (langConfig.system?.exposeMeasurements != undefined) {
-                this.ui.exposeMeasurements = langConfig.system.exposeMeasurements;
+            if (activeConfig.system?.exposeMeasurements != undefined) {
+                this.ui.exposeMeasurements = activeConfig.system.exposeMeasurements;
             }
-            if (langConfig.system?.scrollToInstance) {
-                this.ui.scrollToInstance = langConfig.system?.scrollToInstance;
+            if (activeConfig.system?.scrollToInstance) {
+                this.ui.scrollToInstance = activeConfig.system?.scrollToInstance;
             }
-            if (langConfig.system?.suppressNumberLocalization) {
-                this.ui.suppressNumberLocalization = langConfig.system?.suppressNumberLocalization;
+            if (activeConfig.system?.suppressNumberLocalization) {
+                this.ui.suppressNumberLocalization = activeConfig.system?.suppressNumberLocalization;
             }
 
             // set up key to SVG bindings for zoom icons
@@ -284,7 +271,7 @@ export class InstanceAPI {
             };
 
             // Set up custom zoom icon for the map and details panel. If not specified in the config, 'globe' is the default.
-            const zoomKey: string = langConfig.system?.zoomIcon || 'globe';
+            const zoomKey: string = activeConfig.system?.zoomIcon || 'globe';
             const zoomIcon: string = zoomSvgs[zoomKey] || zoomKey;
 
             this.ui.getZoomIcon = () => {
@@ -349,12 +336,13 @@ export class InstanceAPI {
     }
 
     /**
-     * Reloads Vue R4MP instance with a new config
+     * Encapsulates the steps required to reload the instance. Utility to be called
+     * by other orchestrator methods.
      *
      * @param {RampConfigs} configs language-keyed R4MP config
      * @param {RampOptions} options startup options for this R4MP instance
      */
-    reload(configs?: RampConfigs, options?: RampOptions): void {
+    private reloadWorker(configs?: RampConfigs, options?: RampOptions): void {
         const instanceStore = useInstanceStore(this.$vApp.$pinia);
         const notificationStore = useNotificationStore(this.$vApp.$pinia);
         const configStore = useConfigStore(this.$vApp.$pinia);
@@ -362,10 +350,9 @@ export class InstanceAPI {
         const layerStore = useLayerStore(this.$vApp.$pinia);
         const gridStore = useGridStore(this.$vApp.$pinia);
 
-        // if a user provides their own config, we pretend that RAMP is initializing for the first time
-        const first = !!configs;
+        const newConfigProvided = !!configs;
 
-        if (first) {
+        if (newConfigProvided) {
             // remove all fixtures
             // get list of all fixture ids currently added
             const addedFixtures: Array<string> = Object.keys(fixtureStore.items);
@@ -404,8 +391,8 @@ export class InstanceAPI {
             this._eventsOn = false;
         }
 
-        // if configs is not provided, use the current configs
-        if (configs === undefined) {
+        if (!newConfigProvided) {
+            // if configs is not provided, use the current configs (e.g. language change, basic reload).
             // Need to clone this config to trigger config watch handlers
             configs = JSON.parse(
                 JSON.stringify({
@@ -422,7 +409,25 @@ export class InstanceAPI {
         this.geo.map.maptip.clear();
 
         // re-initalize ramp
-        this.initialize(first, configs, options);
+        // if a user provides their own config, we pretend that RAMP is initializing for the first time
+        this.initialize(newConfigProvided, configs, options);
+
+        if (newConfigProvided) {
+            // raise event that the configuration changed.
+            // call this last, as we need initialize() to register the new config first
+            this.event.emit(GlobalEvents.CONFIG_CHANGE, this.getConfig());
+        }
+    }
+
+    /**
+     * Reloads Vue R4MP instance, with the option of providing a new config
+     *
+     * @param {RampConfigs} configs language-keyed R4MP config. if missing, the existing configs will be used
+     * @param {RampOptions} options startup options for this R4MP instance
+     */
+    reload(configs?: RampConfigs, options?: RampOptions): void {
+        this.reloadWorker(configs, options);
+        this.event.emit(GlobalEvents.RAMP_RELOAD);
     }
 
     /**
@@ -482,7 +487,7 @@ export class InstanceAPI {
      *
      * @memberof InstanceAPI
      */
-    getConfig() {
+    getConfig(): RampConfig {
         // clone it to avoid mutations to store config
         const configStore = useConfigStore(this.$vApp.$pinia);
         return JSON.parse(JSON.stringify(configStore.getActiveConfig(this.language)));
@@ -586,7 +591,7 @@ export class InstanceAPI {
         }
         const configStore = useConfigStore(this.$vApp.$pinia);
         const notificationStore = useNotificationStore(this.$vApp.$pinia);
-        const langs = configStore.registeredLangs;
+        const underlyingConfigLang = configStore.registeredLangs;
 
         // If monoconfig, clear all notifications (notification language isn't changed on lang change)
         if (Object.keys(configStore.registeredConfigs).length === 1) {
@@ -599,9 +604,15 @@ export class InstanceAPI {
         const activeConfig = this.getConfig();
 
         // reload the map and emit event if configs are different
-        if (langs[old] !== langs[language]) {
+        if (underlyingConfigLang[old] !== underlyingConfigLang[language]) {
+            // reload, but in sneaky fashion. this is a lang change, not a forced reload.
+            // calling the worker avoids the reload event getting yeet'd
+            this.reloadWorker();
+
+            // We are changing "active" configs, and the configs are actually different.
+            // The reloader will not throw this event since we're using the existing config sets.
+            // So throw the config event here. Do it after .reload() to match the timing of an API-triggered reload
             this.event.emit(GlobalEvents.CONFIG_CHANGE, activeConfig);
-            this.reload();
         }
 
         this.event.emit(GlobalEvents.LANG_CHANGE, {
