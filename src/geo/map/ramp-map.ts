@@ -69,7 +69,7 @@ export class MapAPI extends CommonMapAPI {
      * @param {InstanceAPI} iApi the RAMP instance
      */
     constructor(iApi: InstanceAPI) {
-        super(iApi);
+        super(iApi, 'main');
         this.maptip = new MaptipAPI(iApi);
         this.caption = new MapCaptionAPI(iApi);
         this.mapMouseThrottle = 0; // default to 0 (no throttle)
