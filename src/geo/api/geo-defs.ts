@@ -1,5 +1,5 @@
 import type { BaseGeometry, Extent, Graphic, Point, SpatialReference } from '@/geo/api';
-import type { EsriRenderer } from '../esri';
+import type { EsriFeatureReductionCluster, EsriRenderer } from '@/geo/esri';
 
 // From the supported ESRI field types
 // https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-support-Field.html#type
@@ -772,6 +772,7 @@ export interface RampLayerConfig {
     rawData?: any; // used for static data, like geojson string, shapefile guts
     maxLoadTime?: number; // how long layer can load before error
     labels?: RampLabelsConfig; // label config. for now only valid on MILSublayer but needs to be here due to inheritance fun
+    geomClustering?: EsriFeatureReductionCluster; // spatially groups geometries into clusters
 }
 
 export interface RampExtentConfig {

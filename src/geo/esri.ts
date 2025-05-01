@@ -9,6 +9,7 @@ import type EsriBasemap from '@arcgis/core/Basemap';
 import EsriColour from '@arcgis/core/Color';
 import EsriConfig from '@arcgis/core/config';
 import { watch as EsriWatch } from '@arcgis/core/core/reactiveUtils.js';
+
 import EsriExtent from '@arcgis/core/geometry/Extent';
 import EsriMultipoint from '@arcgis/core/geometry/Multipoint';
 import EsriPoint from '@arcgis/core/geometry/Point';
@@ -16,7 +17,9 @@ import EsriPolygon from '@arcgis/core/geometry/Polygon';
 import EsriPolyline from '@arcgis/core/geometry/Polyline';
 import EsriSpatialReference from '@arcgis/core/geometry/SpatialReference';
 import { fromJSON as EsriGeometryFromJson } from '@arcgis/core/geometry/support/jsonUtils';
+
 import EsriGraphic from '@arcgis/core/Graphic';
+
 import type EsriFeatureLayer from '@arcgis/core/layers/FeatureLayer';
 import type EsriGraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
 import type EsriImageryLayer from '@arcgis/core/layers/ImageryLayer';
@@ -25,22 +28,28 @@ import type EsriOpenStreetMapLayer from '@arcgis/core/layers/OpenStreetMapLayer'
 import type EsriTileLayer from '@arcgis/core/layers/TileLayer';
 import type EsriWMSLayer from '@arcgis/core/layers/WMSLayer';
 import type EsriFeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
+import type EsriFeatureReductionCluster from '@arcgis/core/layers/support/FeatureReductionCluster';
 import type EsriField from '@arcgis/core/layers/support/Field';
 import type EsriLOD from '@arcgis/core/layers/support/LOD';
 import type EsriWMSSublayer from '@arcgis/core/layers/support/WMSSublayer';
+
 import type EsriMap from '@arcgis/core/Map';
+
 import type EsriClassBreaksRenderer from '@arcgis/core/renderers/ClassBreaksRenderer';
 import type EsriSimpleRenderer from '@arcgis/core/renderers/SimpleRenderer';
 import type EsriUniqueValueRenderer from '@arcgis/core/renderers/UniqueValueRenderer';
 import type EsriClassBreakInfo from '@arcgis/core/renderers/support/ClassBreakInfo';
 import type EsriUniqueValueInfo from '@arcgis/core/renderers/support/UniqueValueInfo';
+
 import EsriRequest from '@arcgis/core/request';
 import type EsriQuery from '@arcgis/core/rest/support/Query';
+
 import EsriPictureMarkerSymbol from '@arcgis/core/symbols/PictureMarkerSymbol';
 import EsriSimpleFillSymbol from '@arcgis/core/symbols/SimpleFillSymbol';
 import EsriSimpleLineSymbol from '@arcgis/core/symbols/SimpleLineSymbol';
 import EsriSimpleMarkerSymbol from '@arcgis/core/symbols/SimpleMarkerSymbol';
 import { fromJSON as EsriSymbolFromJson } from '@arcgis/core/symbols/support/jsonUtils';
+
 import type {
     GeometryUnion as EsriGeometry,
     RendererUnion as EsriRenderer,
@@ -166,6 +175,7 @@ export {
     EsriExtent,
     type EsriFeatureFilter,
     type EsriFeatureLayer,
+    type EsriFeatureReductionCluster,
     type EsriField,
     type EsriGeometry,
     EsriGeometryFromJson,
