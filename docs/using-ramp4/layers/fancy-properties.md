@@ -140,6 +140,34 @@ The object structure is a string key being the fixture id, and a value being an 
 }
 ```
 
+## geomClustering
+
+*object*, only applies to layers that [have vector client data](./additional-layer-sections.md#layer-abilities)
+
+Defines a clustering renderer for the layer. When multiple geometries are in a specified proximity to each other, a cluster symbol will be displayed instead. For non-point geometries, the geometry centroid is used to determine proximity.
+
+The object follows the convention of the ESRI [FeatureReductionCluster](https://developers.arcgis.com/javascript/latest/api-reference/esri-layers-support-FeatureReductionCluster.html)
+
+```js
+{
+    geomClustering: {
+        type: 'cluster',
+        clusterRadius: '100px',
+        clusterMinSize: '24px',
+        clusterMaxSize: '60px',
+        symbol: {
+            type: 'simple-marker',
+            style: 'circle',
+            color: '#69dcff',
+            outline: {
+                color: 'rgba(0, 139, 174, 0.5)',
+                width: 6
+            }
+        }
+    }
+}
+```
+
 ## identifyMode
 
 *string*, only applies to layers that [have vector client data](./additional-layer-sections.md#layer-abilities)

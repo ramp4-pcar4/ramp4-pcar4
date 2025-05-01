@@ -690,9 +690,9 @@ const reloadLayer = () => {
 
             const targetId = layerItemProp.isSublayer ? layerItemProp.parentLayerId : layerItemProp.layerId;
 
-            const layerConfig = layerConfigs.value.find((lc: RampLayerConfig) => lc.id === targetId);
+            const layerConfig = layerConfigs.value.find(lc => lc.id === targetId);
             if (layerConfig !== undefined) {
-                recreateLayer(layerConfig);
+                recreateLayer(layerConfig as RampLayerConfig);
             }
         }
 

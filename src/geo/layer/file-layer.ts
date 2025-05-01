@@ -150,6 +150,11 @@ export class FileLayer extends AttribLayer {
         // process any order-by configuration
         this.configDrawOrder(rampLayerConfig, esriConfig);
 
+        // enable point clustering if set up in config
+        if (rampLayerConfig.geomClustering) {
+            esriConfig.featureReduction = rampLayerConfig.geomClustering;
+        }
+
         return esriConfig;
     }
 
