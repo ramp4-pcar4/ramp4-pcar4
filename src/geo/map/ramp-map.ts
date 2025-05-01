@@ -31,7 +31,7 @@ import type {
 } from '@/geo/api';
 
 import { EsriAPI, EsriWatch } from '@/geo/esri';
-import type { EsriGraphic, EsriLOD } from '@/geo/esri';
+import type { EsriFeatureLayer, EsriGraphic, EsriLOD } from '@/geo/esri';
 
 import { useLayerStore } from '@/stores/layer';
 import { MapCaptionAPI } from './caption';
@@ -1173,6 +1173,67 @@ export class MapAPI extends CommonMapAPI {
         }
     }
 
+    /**
+     * Determines any client-side symbol hits at a map pixel. Handles any declustering.
+     *
+     * @param screenX
+     * @param screenY
+     * @returns promise resolving in all graphic hits under the pixel
+     */
+    private async symbolIdentify(screenX: number, screenY: number): Promise<Array<GraphicHitResult>> {
+        // be careful. wait for map view to exist
+        await this.viewPromise;
+
+        const hitResults = await this.esriView!.hitTest({
+            x: screenX,
+            y: screenY
+        });
+
+        const hitPromises = hitResults.results
+            .filter(hr => hr.type === 'graphic')
+            .map(async hr => {
+                // NOTE: It's likely that graphic layers can sneak in here as well.
+                //       Currently we dont support maptip/identify on them, so they will always get filtered out
+                //       later on in the pipeline. I suspect the .getObjectId is a nullable or 0, but
+                //       nothing reads the property so not an issue.
+                //       If we add support for graphics, this prob needs enhancements
+                //       See discussions #690, #1320, pr #2617
+                const esriFeatureLayer = hr.layer as EsriFeatureLayer;
+
+                // aggregated graphic, represents a cluster of features
+                if (hr.graphic.isAggregate === true) {
+                    // NOTE: Would be nicer to use the RAMP layer stuff here (.viewPromise, .esriView),
+                    //       but would need to do a lookup on the ramp layer. The underlying esri layer
+                    //       is lurking on the esri hitTest. Both approaches are verbose, I think this approach is
+                    //       more performant
+                    const layerView = await this.esriView!.whenLayerView(esriFeatureLayer);
+
+                    // use the aggregated graphics object id to query the features lurking in the cluster
+
+                    const query = layerView.createQuery();
+                    query.aggregateIds = [hr.graphic.getObjectId() as number];
+
+                    const queryResult = await layerView.queryFeatures(query);
+
+                    return queryResult.features.map(fr => ({
+                        layerId: esriFeatureLayer.id,
+                        layerIdx: 0,
+                        oid: fr.getObjectId() as number
+                    }));
+                } else {
+                    return {
+                        layerId: esriFeatureLayer.id,
+                        layerIdx: 0, // not required for this process, default rather than expensive lookup
+                        oid: hr.graphic.getObjectId() as number
+                    };
+                }
+            });
+
+        const unaggregatedHitResults = await Promise.all(hitPromises);
+        // promise results are singles for normie layers, arrays of singles for clusterer hits. flatten to enforce respect
+        return unaggregatedHitResults.flat();
+    }
+
     // pending https://github.com/ramp4-pcar4/ramp4-pcar4/issues/130
     // commenting out to avoid any undecided constants being exposed
     /*
@@ -1236,18 +1297,7 @@ export class MapAPI extends CommonMapAPI {
                 return l.identifyMode === LayerIdentifyMode.HYBRID || l.identifyMode === LayerIdentifyMode.SYMBOLIC;
             })
         ) {
-            hitTestProm = this.esriView!.hitTest({
-                x: mapClick.screenX,
-                y: mapClick.screenY
-            }).then(hitResults => {
-                return hitResults.results.map(hr => {
-                    return {
-                        layerId: hr.layer!.id,
-                        layerIdx: 0, // not required for this process, default rather than expensive lookup
-                        oid: (hr as __esri.GraphicHit).graphic.getObjectId() as number
-                    };
-                });
-            });
+            hitTestProm = this.symbolIdentify(mapClick.screenX, mapClick.screenY);
         }
 
         const p: IdentifyParameters = {
@@ -1318,7 +1368,7 @@ export class MapAPI extends CommonMapAPI {
         }
 
         // these will be ordered top-most to bottom-most in visible drawing order.
-        const hitResults = hitTest.results as Array<__esri.GraphicHit>;
+        const hitResults = hitTest.results.filter(hr => hr.type === 'graphic');
 
         let hitLayer: LayerInstance | undefined;
         let topGraphic: EsriGraphic | undefined;
@@ -1329,6 +1379,7 @@ export class MapAPI extends CommonMapAPI {
         // find the top-most valid hit
         hitResults.some(gHit => {
             if (!gHit.layer) {
+                // thing we hit is not tied to a layer. what would this even be?
                 return false;
             }
             if (dupeSet.has(gHit.layer.id)) {
@@ -1338,17 +1389,18 @@ export class MapAPI extends CommonMapAPI {
             const layerHunt = layers.find(l => l.id === gHit.layer!.id);
             if (layerHunt) {
                 // winner winner chicken dinner.
-                // if cosmetic, sad times. it's blocking anything under it.
-                // don't set hitLayer but exit the loop anyway.
-                // same goes for Graphic layers. Until we implement issue #998,
-                // then this needs to change (maybe).
-                // otherwise normie layer, set our result var.
+                // set the hit layer/graphic vars only if we have a valid top-most graphic.
+                // invalid cases:
+                // - cosmetic layer, sad times. it's blocking anything under it.
+                // - graphic layer, sad times. Until we implement issue #998
+                // - clusterer symbol, sad times. Unless we decide how and what kind of tip we should show
 
-                if (!layerHunt.isCosmetic && layerHunt.layerType !== LayerType.GRAPHIC) {
+                if (!(layerHunt.isCosmetic || layerHunt.layerType === LayerType.GRAPHIC || gHit.graphic.isAggregate)) {
                     hitLayer = layerHunt;
                     topGraphic = gHit.graphic;
                 }
 
+                // stop looping regardless. we've found topmost and were able to make sense of it.
                 return true;
             } else {
                 // mark this layer as searched, prevent another find if many hits for this layer.
