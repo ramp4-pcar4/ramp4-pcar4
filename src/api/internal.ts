@@ -50,4 +50,5 @@ export * from './fixture';
 export * from './panel';
 export * from './panel-instance';
 export * from './notifications';
+export * from './dev';
 export * from './config-upgrade';
