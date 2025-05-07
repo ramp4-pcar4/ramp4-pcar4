@@ -16,6 +16,7 @@ export class MapImageSublayer extends AttribLayer {
         this.isSublayer = true;
         this.layerIdx = config.index;
         this.parentLayer = parent;
+        this.isSystem = parent.isSystem;
 
         // these two props will get flipped to raster during the server metadata checks if needed.
         // has to be set here to allow for initial/permanent filters to be set immediately.

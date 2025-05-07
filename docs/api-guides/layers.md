@@ -329,6 +329,12 @@ Determine if the Layer is designated as `cosmetic`. This means the Layer appears
 myLayer.isCosmetic; // true
 ```
 
+Determine if the Layer is designated as `system`. This means the Layer is being used and managed by a RAMP functionality.
+
+```js
+myLayer.isSystem; // true
+```
+
 Get the visible scale ranges for the Layer or sublayer. A value of `0` on a range indicates there is no limit. Scales are fractions (i.e. a value of `2000` actually means 1/2000 scale), so `min` and `max` can be counterintuitive (large scale means the view is closer to real life size, so the viewport is closer to the ground level). Not supported by Data Layers.
 
 ```js

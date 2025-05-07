@@ -152,3 +152,15 @@ Defines the desired state of the layer at load time.
     }
 }
 ```
+
+## system
+
+*boolean*
+
+Indicates if a layer is used / managed by a RAMP functionality. Some examples would be the layer that houses the North Pole marker, or feature highlighting. The value is informational, and does not change anything about the layer itself. In a typical scenario, a layer defined in a RAMP configuration will not need to set this. If missing, defaults to `false`. 
+
+```js
+{
+    system: true
+}
+```
