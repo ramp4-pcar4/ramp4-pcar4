@@ -39,7 +39,7 @@ This object can optionally include a `startingFixtures` list which is a set of f
 
 The following options are supported when creating an instance.
 
-`loadDefaultFixtures` will instruct RAMP to use the default set of fixtures, providing an "out-of-the-box" experience and requiring minimal setup. The default value is `true`, setting it to `false` means the instantiator must manage their own fixture setup. See the [defaults page](../using-ramp4/default-setup.md) and the [fixtures page](../using-ramp4/fixtures/custom-fixtures.md) for additional details. If `startingFixtures` is specified in the the `config` object above and is non-empty, this option will be ignored and the specified fixtures will be loaded instead.
+`loadDefaultFixtures` will instruct RAMP to use the default set of fixtures, providing an "out-of-the-box" experience and requiring minimal setup. The default value is `true`, setting it to `false` means the instantiator must manage their own fixture setup. See the [defaults page](../using-ramp4/default-setup.md) and the [fixtures page](../using-ramp4/fixtures/custom-fixtures.md) for additional details. If `startingFixtures` is specified in the the `config` object above, this option will be ignored and the specified fixtures will be loaded instead.
 
 `loadDefaultEvents` is related to `loadDefaultFixtures`, and will apply the default event handlers to link all the default fixtures to each-other and the RAMP core. The default value is `true`, setting it to `false` means the instantiator must wire up their own preferred event handlers.  See the [defaults page](../using-ramp4/default-setup.md) and the [events page](../api-guides/events.md) for additional details.
 
