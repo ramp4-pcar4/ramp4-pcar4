@@ -18,6 +18,7 @@ Below is a list of the various properties that can be specified for a layer conf
 - [featureInfoMimeType](./layers/fancy-properties.md#featureinfomimetype)
 - [fieldMetadata](./layers/fancy-properties.md#fieldmetadata)
 - [fixtures](./layers/fancy-properties.md#fixtures)
+- [geomClustering](./layers/fancy-properties.md#geomclustering)
 - [id](./layers/required-properties.md#id)
 - [identifyMode](./layers/fancy-properties.md#identifymode)
 - [imageFormat](./layers/fancy-properties.md#imageformat)
