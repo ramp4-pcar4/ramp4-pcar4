@@ -1,0 +1,1 @@
+import{aT as s,aU as m}from"./main-CKI8Ciev.js";function c(r){return{geometryType:m(r[0]),geometries:r.map(t=>t.toJSON())}}function f(r,t,o){const n=s(t);return r.map(a=>{const e=n.fromJSON(a);return e.spatialReference=o,e})}export{f as o,c as r};

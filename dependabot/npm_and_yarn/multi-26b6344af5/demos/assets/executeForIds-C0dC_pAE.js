@@ -1,0 +1,1 @@
+import{f as s}from"./utils-DI5eYgHm.js";import{S as f,p as m}from"./query-Sh32Chip.js";import{b as c}from"./Query-CsgMbHO2.js";async function e(t,a,o){const r=s(t),{data:n}=await f(r,c.from(a),o);return n.count}async function b(t,a,o){const r=s(t),{data:n}=await m(r,c.from(a),o);return n.objectIds??[]}export{b as a,e as s};
