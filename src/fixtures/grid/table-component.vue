@@ -628,8 +628,8 @@ const onGridReady = (params: any) => {
         })
     );
     handlers.value.push(
-        iApi.event.on(GlobalEvents.CONFIG_CHANGE, () => {
-            // Refresh the grid when the config changes (the language might have changed)
+        iApi.event.on(GlobalEvents.LANG_CHANGE, () => {
+            // Refresh the grid when the language changes
             agGridApi.value.redrawRows({
                 force: true
             } as any);

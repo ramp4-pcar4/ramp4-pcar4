@@ -33,6 +33,11 @@ export class CommonMapAPI extends APIScope {
     created = false;
 
     /**
+     * Identifies the map. Primarily used for debugging.
+     */
+    name: string;
+
+    /**
      * Tracks if we are watching for the first basemap to load.
      * @private
      */
@@ -89,7 +94,7 @@ export class CommonMapAPI extends APIScope {
      */
     protected pointZoomScale: number;
 
-    protected constructor(iApi: InstanceAPI) {
+    protected constructor(iApi: InstanceAPI, name: string = '') {
         super(iApi);
 
         this.esriMap = undefined;
@@ -97,10 +102,12 @@ export class CommonMapAPI extends APIScope {
         this._viewPromise = new DefPromise();
         this.handlers = [];
         this.pointZoomScale = 50000;
+        this.name = name;
     }
 
     protected noMapErr(): void {
-        console.error('Attempted to manipulate the map before calling createMap()');
+        console.error(`Attempted to manipulate the ${this.name} map before calling createMap()`);
+        console.trace();
     }
 
     protected abstractError(): void {

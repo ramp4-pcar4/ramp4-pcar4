@@ -18,49 +18,50 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 
 | Event Name                                         | Payload                                                        | Event Announces                                  |
 | -------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------ |
-| APPBAR_BUTTON_CLICK<br>'appbar/click'                      | _id_: button component/panel id                                             | A button in the appbar was clicked
+| APPBAR_BUTTON_CLICK<br>'appbar/click'              | _id_: button component/panel id                                | A button in the appbar was clicked               |
 | COMPONENT<br>'ramp/component'                      | _id_: component id                                             | A vue component registered                       |
-| CONFIG_CHANGE<br>'config/change'                   | RampConfig object                                              | The config was changed                           |
+| CONFIG_CHANGE<br>'config/change'                   | RampConfig object                                              | The active config was changed                    |
 | FILTER_CHANGE<br>'filter/change'                   | FilterEventParam object                                        | A filter has changed                             |
 | FIXTURE_ADDED<br>'fixture/added'                   | FixtureInstance object                                         | A fixture has been added                         |
 | FIXTURE_REMOVED<br>'fixture/removed'               | FixtureInstance object                                         | A fixture has been removed                       |
 | LANG_CHANGE<br>'lang/change'                       | _oldLang_: old language, _newLang_: new language               | The language was changed                         |
-| LAYER_DRAWSTATECHANGE<br>'layer/drawstatechange'   | _state_: new value, _layer_: LayerInstance object                | The layer draw state changed                     |
-| LAYER_INITIATIONSTATECHANGE<br>'layer/initiationStatechange' | _state_: new value, _layer_: LayerInstance object      | The layer layer state changed |
-| LAYER_LAYERSTATECHANGE<br>'layer/layerstatechange' | _state_: new value, _layer_: LayerInstance object, _userCancel_: boolean                | The layer load state changed |                     |
-| LAYER_OPACITYCHANGE<br>'layer/opacitychange'       | _opacity_: new value, _layer_: LayerInstance object              | The layer opacity changed                        |
-| LAYER_REGISTERED<br>'layer/registered'             | LayerInstance object                                           | The layer was registered with the instance                   |
+| LAYER_DRAWSTATECHANGE<br>'layer/drawstatechange'   | _state_: new value, _layer_: LayerInstance object              | The layer draw state changed                     |
+| LAYER_INITIATIONSTATECHANGE<br>'layer/initiationStatechange' | _state_: new value, _layer_: LayerInstance object    | The layer layer state changed                    |
+| LAYER_LAYERSTATECHANGE<br>'layer/layerstatechange' | _state_: new value, _layer_: LayerInstance object, _userCancel_: boolean   | The layer load state changed         |
+| LAYER_OPACITYCHANGE<br>'layer/opacitychange'       | _opacity_: new value, _layer_: LayerInstance object            | The layer opacity changed                        |
+| LAYER_REGISTERED<br>'layer/registered'             | LayerInstance object                                           | The layer was registered with the instance       |
 | LAYER_RELOAD_END<br>'layer/reloadend'              | LayerInstance object                                           | The layer finished reloading                     |
 | LAYER_RELOAD_START<br>'layer/reloadstart'          | LayerInstance object                                           | The layer started reloading                      |
 | LAYER_REMOVE<br>'layer/remove'                     | LayerInstance object                                           | The layer was removed from the map               |
-| LAYER_VISIBILITYCHANGE<br>'layer/visibilitychange' | _visibility_: new value, _layer_: LayerInstance object           | The layer visibility changed                     |
-| MAP_BASEMAPCHANGE<br>'map/basemapchanged'          | _basemapId_: string, _schemaChanged_: boolean                      | The basemap was changed                          |
+| LAYER_VISIBILITYCHANGE<br>'layer/visibilitychange' | _visibility_: new value, _layer_: LayerInstance object         | The layer visibility changed                     |
+| MAP_BASEMAPCHANGE<br>'map/basemapchanged'          | _basemapId_: string, _schemaChanged_: boolean                  | The basemap was changed                          |
 | MAP_BLUR<br>'map/blur'                             | KeyboardEvent object                                           | The map lost focus                               |
 | MAP_CLICK<br>'map/click'                           | MapClick object                                                | The map was clicked                              |
 | MAP_CREATED<br>'map/created'                       | none                                                           | The map was created                              |
 | MAP_DESTROYED<br>'map/destroyed'                   | none                                                           | The map was destroyed                            |
 | MAP_DOUBLECLICK<br>'map/doubleclick'               | MapClick object                                                | The map was double clicked                       |
 | MAP_EXTENTCHANGE<br>'map/extentchanged'            | RAMP Extent object                                             | The map extent changed                           |
-| MAP_FOCUS<br>'map/focus'                           | KeyboardEvent object                                           | The map gained focus                                |
+| MAP_FOCUS<br>'map/focus'                           | KeyboardEvent object                                           | The map gained focus                             |
 | MAP_GRAPHICHIT<br>'map/graphichit'                 | _layer_: LayerInstance object, _graphicHit_: object, _attributes_: object, _icon_: string, _screenPoint_: object            | A graphic was found where the mouse/crosshair is |
 | MAP_IDENTIFY<br>'map/identify'                     | MapIdentifyResult object                                       | A map identify was requested                     |
 | MAP_KEYDOWN<br>'map/keydown'                       | KeyboardEvent object                                           | A key was pressed                                |
 | MAP_KEYUP<br>'map/keyup'                           | KeyboardEvent object                                           | A key was released                               |
 | MAP_MOUSEDOWN<br>'map/mousedown'                   | PointerEvent object                                            | A mouse button was depressed
-| MAP_MOUSELEAVE<br>'map/mouseleave'             |     PointerEvent object                                            | The mouse left the map                    |
+| MAP_MOUSELEAVE<br>'map/mouseleave'                 | PointerEvent object                                            | The mouse left the map                           |
 | MAP_MOUSEMOVE<br>'map/mousemove'                   | MapMove object                                                 | The mouse moved over the map                     |
 | MAP_MOUSEMOVE_END<br>'map/mousemoveend'            | MapMove object                                                 | The mouse started moving over the map            |
 | MAP_MOUSEMOVE_START<br>'map/mousemovestart'        | MapMove object                                                 | The mouse stopped moving over the map            |
 | MAP_REFRESH_END<br>'map/refreshend'                | none                                                           | The map view started refreshing                  |
 | MAP_REFRESH_START<br>'map/refreshstart'            | none                                                           | The map view finished refreshing                 |
-| MAP_REORDER<br>'map/reorder'                       | _newIndex_: z-index, _layer_: LayerInstance object               | A layer was reordered |
+| MAP_REORDER<br>'map/reorder'                       | _newIndex_: z-index, _layer_: LayerInstance object             | A layer was reordered |
 | MAP_RESIZED<br>'map/resized'                       | _height_: new height, _width_: new width                       | The map view changed size                        |
-| MAP_SCALECHANGE<br>'map/scalechanged'              | scale (denominator) number                                      | The map scale changed                            |
+| MAP_SCALECHANGE<br>'map/scalechanged'              | scale (denominator) number                                     | The map scale changed                            |
 | MAP_START<br>'map/start'                           | none                                                           | The map startup was requested                    |
 | PANEL_CLOSED<br>'panel/closed'                     | PanelInstance object                                           | A panel was closed                               |
-| PANEL_MINIMIZED<br>'panel/closed'                  | PanelInstance object                                           | A panel was minimized                             |
+| PANEL_MINIMIZED<br>'panel/closed'                  | PanelInstance object                                           | A panel was minimized                            |
 | PANEL_OPENED<br>'panel/opened'                     | PanelInstance object                                           | A panel was opened                               |
-| RAMP_MOBILEVIEW_CHANGE<br>'ramp/mobile'            | mobileMode boolean                                            | The screen changes to/from mobile resolution     |
+| RAMP_MOBILEVIEW_CHANGE<br>'ramp/mobileviewchange'  | mobileMode boolean                                             | The screen changes to/from mobile resolution     |
+| RAMP_RELOAD<br>'ramp/reload'                       | none                                                           | The instance was explicitly reloaded             |
 | USER_LAYER_ADDED<br>'user/layeradded'              | LayerInstance object                                           | A layer was added during the session             |
 
 ### Core Fixture Events
@@ -94,7 +95,6 @@ Along with the default fixtures, there are default event handlers that are appli
 
 Updates the map attribution in the map-caption by retrieving it from the current basemap config
 
-- `ramp_config_change_updates_map_attribs` when a configuration file changes (e.g. new language)
 - `ramp_map_basemap_updates_map_attribs` when the basemap changes
 - `ramp_map_created_updates_map_attribs` when the map is created
 
