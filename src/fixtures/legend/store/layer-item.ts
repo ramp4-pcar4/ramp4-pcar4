@@ -61,6 +61,39 @@ export class LayerItem extends LegendItem {
             };
         });
         this._maxLines = config.maxLines && [1, 2, 3, 4, 5, 6].includes(config.maxLines) ? config.maxLines : undefined;
+
+        // tomfoolery. The legend constructs itself rather quickly once ramp is "started".
+        // But layers don't get registered until the map view has fired up. This delay is long enough
+        // that changes to the legend items are noticeable when the layers appear.
+        // This fun code tries to shortcut the following scenario:
+        // - the legend block config did not define a name
+        // - the layer is in the config
+        // - the layer config does define a name (overriding any server response)
+        // In this case, we technically know the layer name. If we can set it here, we wont
+        // see any "layer id" placeholders during the wait.
+        // Layers that need their name from the server will continue to have the flicker. Thems the breaks.
+        // This block can be removed if it becomes a problem.
+        if (!this._name) {
+            const layerConfigs = this.$iApi.getConfig()?.layers;
+            if (layerConfigs && Array.isArray(layerConfigs)) {
+                const funhunt = layerConfigs.find(lc => lc.id === this._layerId);
+                if (funhunt) {
+                    if (this._isSublayer) {
+                        // need to hunt the sublayer config
+                        if (funhunt.sublayers && Array.isArray(funhunt.sublayers)) {
+                            const funnerhunt = funhunt.sublayers.find((slc: any) => slc.index === this._layerIdx);
+                            if (funnerhunt && funnerhunt.name) {
+                                // found a match, has a name. Level 6 triangle of doom achieved
+                                this._name = funnerhunt.name;
+                            }
+                        }
+                    } else if (funhunt.name) {
+                        // found a match, it has a name
+                        this._name = funhunt.name;
+                    }
+                }
+            }
+        }
     }
 
     /** Returns the id of the parent layer if this item is a sublayer. Otherwise undefined */
