@@ -1,0 +1,1 @@
+import{e,c as o,E as a}from"./themeUtils-DAT1zfwB.js";import{m as i}from"./ref-DfjuZvxd.js";const n=e(class extends o{constructor(){super(...arguments),this.key=a}render(r,s){return this.key=r,s}update(r,[s,t]){return s!==this.key&&(i(r),this.key=s),t}});export{n as i};
