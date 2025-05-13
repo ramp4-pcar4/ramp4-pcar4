@@ -16,7 +16,7 @@ export class OverviewMapAPI extends CommonMapAPI {
      * @param {InstanceAPI} iApi the RAMP instance
      */
     constructor(iApi: InstanceAPI) {
-        super(iApi);
+        super(iApi, 'overview');
         this.overviewGraphicLayer = this.$iApi.geo.layer.createLayer({
             id: 'RampOverviewGraphic',
             layerType: LayerType.GRAPHIC,
