@@ -9,6 +9,7 @@ import type EsriBasemap from '@arcgis/core/Basemap';
 import EsriColour from '@arcgis/core/Color';
 import EsriConfig from '@arcgis/core/config';
 import { watch as EsriWatch } from '@arcgis/core/core/reactiveUtils.js';
+import type EsriCollection from '@arcgis/core/core/Collection';
 import EsriExtent from '@arcgis/core/geometry/Extent';
 import EsriMultipoint from '@arcgis/core/geometry/Multipoint';
 import EsriPoint from '@arcgis/core/geometry/Point';
@@ -48,6 +49,7 @@ import type {
 } from '@arcgis/core/unionTypes.js';
 import type EsriMapView from '@arcgis/core/views/MapView';
 import type EsriColorBackground from '@arcgis/core/webmap/background/ColorBackground';
+import type EsriSwipe from '@arcgis/core/widgets/Swipe.js';
 
 // NOTE we need to have explicit strings in the `await import()` calls, as that's
 //      how Vite knows how to optimize the chunks.
@@ -152,6 +154,18 @@ class EsriAPI {
         const { fromJSON } = await import('@arcgis/core/renderers/support/jsonUtils');
         return fromJSON(json)!;
     }
+
+    // --- Components ---
+
+    static async Swipe(prams: __esri.SwipeProperties): Promise<EsriSwipe> {
+        const lib = await import('@arcgis/core/widgets/Swipe.js');
+        return Reflect.construct(lib.default, [prams]);
+    }
+
+    static async Collection(): Promise<EsriCollection> {
+        const lib = await import('@arcgis/core/core/Collection');
+        return Reflect.construct(lib.default, []);
+    }
 }
 
 // sorted by name
@@ -160,6 +174,7 @@ export {
     type EsriBasemap,
     type EsriClassBreakInfo,
     type EsriClassBreaksRenderer,
+    type EsriCollection,
     EsriColour,
     type EsriColorBackground,
     EsriConfig,
@@ -190,6 +205,7 @@ export {
     EsriSimpleMarkerSymbol,
     type EsriSimpleRenderer,
     EsriSpatialReference,
+    type EsriSwipe,
     type EsriSymbol,
     EsriSymbolFromJson,
     type EsriTileLayer,
