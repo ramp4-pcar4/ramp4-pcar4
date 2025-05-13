@@ -1,6 +1,6 @@
 # Geosearch
 
-The Geosearch component is contained inside a panel in the application. Geosearch makes use of the [Geogratis services](https://geogratis.gc.ca/), in particular the [Geolocation service](https://www.nrcan.gc.ca/science-and-data/science-and-research/earth-sciences/geography/topographic-information/web-services/geolocation-service/17304) and the [Geoname service](https://www.nrcan.gc.ca/maps-tools-and-publications/maps/geographical-names-canada/application-programming-interface-api/9249).
+The Geosearch component is contained inside a panel in the application. Geosearch makes use of the [Geogratis services](https://geogratis.gc.ca/), in particular the [Geolocation service](https://natural-resources.canada.ca/maps-tools-publications/satellite-elevation-air-photos/geolocation-service) and the [Geoname service](https://www.nrcan.gc.ca/maps-tools-and-publications/maps/geographical-names-canada/application-programming-interface-api/9249).
 
 ## Component Breakdown
 
@@ -60,13 +60,25 @@ The Geosearch panel has multiple options that can be adjusted through the config
 - `geoProvinceUrl: string`, endpoint for province codes provided by the Geoname service
 - `geoTypesUrl: string`, endpoint for type codes provided by the Geoname service
 
-Also, a `settings` object enables additional fixture customization:
+A `settings` object enables additional fixture customization:
 
 - `categories: string[]`, filter by [concise type](https://geogratis.gc.ca/services/geoname/en/codes/concise.json) or street address ('ADDR') when using the Geoname service
 - `sortOrder: string[]`, order search results based on category types, where missing types are appended to the bottom of the sorted list
 - `disabledSearchTypes: string[]`, omit results for given [search types](#supported-search-types) (`LAT/LNG`, `FSA`, and `NTS`)
 - `maxResults: number`, specifies the maximum number of results from a query
 - `officialOnly: boolean`, results only use official names for geographic names
+
+The geogratis service for FSA results does not provide boundaries. An additional service can be defined to provide this. The service must conform to the following:
+
+- Be an ArcGIS Server `Feature Layer` on a `MapServer`
+- Have one feature per FSA
+- The feature geometry is a polygon enclosing the area. We recommend low fidelity shapes (bounding box or minimal outline)
+- Has a field that contains the FSA code in uppercase
+
+The service can be defined in the `fsaBoundaries` config object.
+
+- `serviceUrl`: Path to the FSA boundary service. Should include the layer index and end there. Setting to an empty string will turn off any special FSA lookups.
+- `keyField`: The field name containing the FSA code.
 
 An example of a configured Geosearch panel is below
 
@@ -77,6 +89,10 @@ geosearch: {
         sortOrder: ['TOWN', 'CITY'],
         disabledSearchTypes: ['FSA'],
         maxResults: 20
+    },
+    fsaBoundaries: {
+        serviceUrl: 'https://funserver.com/fsaservice/mapserver/2',
+        keyField: 'FSACODE'
     }
 }
 ```
