@@ -20,13 +20,13 @@ import Sketch from '@arcgis/core/widgets/Sketch';
 import { LayerType } from '@/geo/api';
 import { useI18n } from 'vue-i18n';
 import {
-    EsriSimpleMarkerSymbol,
-    EsriSimpleLineSymbol,
-    EsriSimpleFillSymbol,
     EsriGraphic,
     EsriPoint,
+    EsriPolygon,
     EsriPolyline,
-    EsriPolygon
+    EsriSimpleFillSymbol,
+    EsriSimpleLineSymbol,
+    EsriSimpleMarkerSymbol
 } from '@/geo/esri';
 import { GlobalEvents } from '@/api';
 
@@ -65,7 +65,7 @@ const rampEventHandlers = reactive<Array<string>>([]);
  * and adds the highlight graphic to the graphics layer.
  * @param graphic The graphic to highlight.
  */
-const highlightSelectedGraphic = (graphic: __esri.Graphic | undefined) => {
+const highlightSelectedGraphic = (graphic?: __esri.Graphic | undefined) => {
     if (highlightGraphic) {
         graphicsLayer?.remove(highlightGraphic);
         highlightGraphic = null;
@@ -114,18 +114,18 @@ const highlightSelectedGraphic = (graphic: __esri.Graphic | undefined) => {
 // Watch changes to the selected graphic ID and update the Sketch widget and highlight.
 watch(
     () => drawStore.selectedGraphicId,
-    newSelectedId => {
+    (newId, oldId) => {
         if (!sketch || !graphicsLayer) return;
-        if (newSelectedId) {
+        if (!newId) {
+            sketch.cancel();
+            highlightSelectedGraphic();
+        } else if (newId !== oldId) {
             const graphics = graphicsLayer.graphics.toArray();
-            const selectedEsriGraphic = graphics.find(g => g.attributes && g.attributes.id === newSelectedId);
+            const selectedEsriGraphic = graphics.find(g => g.attributes && g.attributes.id === newId);
             if (selectedEsriGraphic) {
                 sketch.update([selectedEsriGraphic]);
                 highlightSelectedGraphic(selectedEsriGraphic);
             }
-        } else {
-            sketch.cancel();
-            highlightSelectedGraphic(undefined);
         }
     }
 );
@@ -137,7 +137,7 @@ watch(
  * Selects a graphic located at the center of the view using a hit test.
  */
 const selectCenteredGraphic = async () => {
-    if (!graphicsLayer || !sketch) return;
+    if (!graphicsLayer || !sketch || drawStore.activeTool !== 'edit') return;
     await iApi.geo.map.viewPromise;
     const view = iApi.geo.map.esriView!;
     const centerPoint = { x: view.width / 2, y: view.height / 2 };
@@ -308,7 +308,7 @@ const handleNavigationKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
         case 'Enter':
             e.preventDefault();
-            if (drawStore.activeTool) {
+            if (drawStore.activeTool && drawStore.activeTool !== 'edit') {
                 if (
                     (drawStore.activeTool === 'polyline' || drawStore.activeTool === 'polygon') &&
                     (multiPointMode || multiPointVertices.length === 0)
@@ -424,11 +424,7 @@ const handleNavigationKeyDown = (e: KeyboardEvent) => {
                 }
                 selectedGraphic = null;
                 highlightSelectedGraphic(undefined);
-                iApi.updateAlert(
-                    t('draw.graphic.deleted', {
-                        type: selectedGraphic!.attributes?.type || 'shape'
-                    })
-                );
+                iApi.updateAlert(t('draw.graphic.deleted'));
             }
             break;
 
@@ -487,10 +483,6 @@ const handleNavigationKeyDown = (e: KeyboardEvent) => {
             } else if (drawStore.activeTool) {
                 e.preventDefault();
                 drawStore.setActiveTool('');
-                sketch?.cancel();
-                iApi.updateAlert(t('draw.tool.canceled'));
-            } else if (selectedGraphic || sketch?.state === 'active') {
-                e.preventDefault();
                 sketch?.cancel();
                 selectedGraphic = null;
                 highlightSelectedGraphic(undefined);
@@ -658,22 +650,21 @@ const handleGraphicKeyboardEdit = (e: KeyboardEvent) => {
  * @param event The view click event.
  */
 const handleViewClick = async (event: __esri.ViewClickEvent) => {
-    if (drawStore.activeTool) return;
     const view = iApi.geo.map.esriView!;
     const response = await view.hitTest(event);
-    if (response.results.length) {
-        const hit = response.results.find(
-            (result): result is __esri.GraphicHit =>
-                'graphic' in result && result.graphic.layer === graphicsLayer && !!result.graphic.attributes?.id
-        );
-        if (hit) {
-            sketch?.update([hit.graphic]);
-            return;
-        }
+    const hit = response.results.find(
+        (result): result is __esri.GraphicHit =>
+            'graphic' in result && result.graphic.layer === graphicsLayer && !!result.graphic.attributes?.id
+    );
+
+    if (hit && drawStore.activeTool === 'edit') {
+        sketch?.update([hit.graphic]);
+    } else {
+        sketch?.cancel();
+        selectedGraphic = null;
+        drawStore.clearSelection();
+        highlightSelectedGraphic();
     }
-    sketch?.cancel();
-    selectedGraphic = null;
-    drawStore.clearSelection();
 };
 
 const initializeDrawTools = async () => {
@@ -686,6 +677,7 @@ const initializeDrawTools = async () => {
             id: DRAW_GRAPHICS_LAYER_ID,
             layerType: LayerType.GRAPHIC,
             cosmetic: true,
+            system: true,
             url: ''
         });
         // @ts-expect-error esri type mismatch
@@ -707,6 +699,11 @@ const initializeDrawTools = async () => {
             // @ts-expect-error esri type mismatch
             selectionTools: { enable: true },
             settingsMenu: false
+        },
+        defaultUpdateOptions: {
+            highlightOptions: {
+                enabled: false
+            }
         },
         visible: false
     });
@@ -769,6 +766,11 @@ const handleSketchUpdateEvent = (event: { state: string; graphics: (EsriGraphic 
     if (!graphic) return;
 
     if (event.state === 'start') {
+        if (drawStore.activeTool !== 'edit') {
+            sketch!.cancel();
+            return;
+        }
+
         selectedGraphic = graphic;
         if (graphic.attributes?.id) {
             drawStore.selectGraphic(graphic.attributes.id);
@@ -813,11 +815,10 @@ onMounted(async () => {
 watch(
     () => drawStore.activeTool,
     newTool => {
-        if (!sketch) return;
-        if (newTool) {
-            sketch.create(newTool as any);
-        } else {
-            sketch.cancel();
+        sketch!.cancel();
+        highlightSelectedGraphic();
+        if (newTool && newTool != 'edit') {
+            sketch!.create(newTool as any);
         }
     }
 );
