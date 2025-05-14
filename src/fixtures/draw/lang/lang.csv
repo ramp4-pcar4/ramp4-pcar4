@@ -32,3 +32,13 @@ draw.polyline.tooltip,Draw polyline,1,Dessiner une polyligne,0
 draw.polygon.tooltip,Draw polygon,1,Dessiner un polygone,0
 draw.circle.tooltip,Draw circle,1,Dessiner un cercle,0
 draw.rectangle.tooltip,Draw rectangle,1,Dessiner un rectangle,0
+draw.edit.tooltip,Edit Mode,1,Mode édition,0
+draw.graphic.moved,Graphic moved,1,Graphique déplacé,0
+draw.shape,shape,1,forme,0
+draw.point,point,1,indiquer,0
+draw.multipoint,multipoint,1,multipoint,0
+draw.polyline,polyline,1,polyligne,0
+draw.polygon,polygon,1,polygone,0
+draw.rectangle,rectangle,1,rectangle,0
+draw.circle,circle,1,cercle,0
+draw.unknown,unknown,1,inconnue,0
