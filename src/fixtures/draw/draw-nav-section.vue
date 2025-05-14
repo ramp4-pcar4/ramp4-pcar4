@@ -44,9 +44,14 @@ const drawingTools = [
 ];
 
 // only show tools listed in config
-const filteredDrawingTools = computed(() =>
-    drawingTools.filter(tool => drawStore.supportedTypes.some(item => item.type === tool.type))
-);
+const filteredDrawingTools = computed(() => {
+    const fTools = drawingTools.filter(tool => drawStore.supportedTypes.some(item => item.type === tool.type));
+    fTools.push({
+        type: 'edit',
+        icon: markRaw(defineAsyncComponent(() => import('./icons/edit-icon.vue')))
+    });
+    return fTools;
+});
 
 const toggleTool = (toolType: string) => {
     // If the tool is already active, deactivate it
