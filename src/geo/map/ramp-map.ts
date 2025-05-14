@@ -1203,9 +1203,9 @@ export class MapAPI extends CommonMapAPI {
      *
      * @param {MapClick | Point} targetPoint the place on the map to execute the identify
      * @memberof MapAPI
-     * @returns {Promise<MapIdentifyResult>} results of the identify
+     * @returns {MapIdentifyResult} results of the identify
      */
-    async runIdentify(targetPoint: MapClick | Point): Promise<MapIdentifyResult> {
+    runIdentify(targetPoint: MapClick | Point): MapIdentifyResult {
         const layers = this.$iApi.geo.layer.allLayersOnMap(false).filter(l => l.canIdentify());
 
         let mapClick: MapClick;
@@ -1225,23 +1225,10 @@ export class MapAPI extends CommonMapAPI {
         }
 
         const drawFixture = this.$iApi.fixture.get<DrawAPI>('draw');
-        let drawGraphicsLayerId: string | undefined;
-
-        // if draw is active or a shape is selected disable identify
-        if (drawFixture) {
+        if (drawFixture && this.esriView) {
+            // disable identify if any draw tools are active OR if a graphic is selected for editing
             if (drawFixture.store.activeTool || drawFixture.store.selectedGraphicId !== null) {
                 return { click: mapClick, results: [] };
-            }
-            drawGraphicsLayerId = drawFixture.graphicsLayerId;
-        }
-
-        // if draw is active, and the click was on the draw graphics layer, disable identify
-        if (drawGraphicsLayerId && this.esriView) {
-            const hitTestResults = await this.esriView.hitTest({ x: mapClick.screenX, y: mapClick.screenY });
-            for (const hr of hitTestResults.results) {
-                if (hr.layer && hr.layer.id === drawGraphicsLayerId) {
-                    return { click: mapClick, results: [] };
-                }
             }
         }
 

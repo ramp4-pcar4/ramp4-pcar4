@@ -29,6 +29,8 @@ const runPreTest = (config, options, utils) => {
     config.configs.en.fixtures.draw = drawConfig;
     config.configs.fr.fixtures.draw = drawConfig;
 
+    config.configs.en.fixtures.mapnav.items.push('draw');
+    config.configs.fr.fixtures.mapnav.items.push('draw');
     return { config, options };
 };
 
