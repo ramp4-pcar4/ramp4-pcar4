@@ -2,9 +2,11 @@
 
 The Draw fixture lets users create, edit, and manipulate graphics via mouse and keyboard controls. This document outlines the keyboard shortcuts available for users who prefer or require keyboard navigation.
 
-> ⚠️ **Advanced fixture:**  
-> The Draw tools are intended for advanced users and are _not_ enabled by default.  
-> To enable the Draw fixture, add `draw` to your starting fixtures and add a `draw` section under `fixtures` in your RAMP config. Each tool is defined in the `types` array, where you can enable/disable tools and provide tool-specific options.
+To enable the Draw fixture, add `draw` to your starting fixtures and add a `draw` section under `fixtures` in your RAMP config. Each tool is defined in the `types` array, where you can enable/disable tools and provide tool-specific options.
+
+::: warning NOTE
+The Draw tools are intended for advanced users and are _not_ enabled by default.  
+:::
 
 ## Configuration
 
@@ -42,14 +44,6 @@ The Draw fixture lets users create, edit, and manipulate graphics via mouse and 
   - **options** (object): Tool‐specific settings (see below).
 
 > If the draw config is missing, all types will be loaded with default configuration.
-
-### Tool-specific Options
-
-Each tool type can accept its own set of options. See [Draw Tool Options](#) for detailed documentation on available options for each type.
-
-### Draw Tool Options
-
-Specific options for draw types will be listed here.
 
 ## Basic Keyboard Controls
 

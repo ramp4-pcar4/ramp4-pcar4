@@ -669,7 +669,7 @@
         },
         "draw": {
             "type": "object",
-            "description": "Provides the configuration to the export fixture",
+            "description": "Provides the configuration to the draw fixture",
             "properties": {
                 "types": {
                     "type": "array",
