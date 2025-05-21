@@ -27,13 +27,13 @@
                     :class="`identifier-${item}-${index2}`"
                 ></default-button>
                 <component
-                    v-else-if="overflowFlags[`${item}-${index2}`] !== true"
+                    v-else-if="overflowFlags[`${item.id}-${index2}`] !== true"
                     :is="item.componentId"
-                    :key="`${item}-${index2}-custom`"
+                    :key="`${item.id}-${index2}-custom`"
                     :options="item.options"
                     class="appbar-item h-48"
-                    :id="item.id"
-                    :class="`identifier-${item}-${index2}`"
+                    :buttonId="item.id"
+                    :class="`identifier-${item.id}-${index2}`"
                 ></component>
             </template>
             <divider
@@ -72,13 +72,13 @@
                             overflow
                         ></default-button>
                         <component
-                            v-else-if="overflowFlags[`${item}-${index2}`]"
-                            :is="item!.componentId"
-                            :key="`${item}-${index2}-custom`"
+                            v-else-if="overflowFlags[`${item.id}-${index2}`]"
+                            :is="item.componentId"
+                            :key="`${item.id}-${index2}-custom`"
                             :options="item.options"
-                            :id="item.id"
+                            :buttonId="item.id"
                             class="appbar-item h-48"
-                            :class="`identifier-${item}-${index2}`"
+                            :class="`identifier-${item.id}-${index2}`"
                         ></component>
                     </template>
                     <divider

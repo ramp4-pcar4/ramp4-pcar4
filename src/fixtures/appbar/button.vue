@@ -34,7 +34,7 @@ const props = defineProps({
         type: Function,
         required: true
     },
-    id: {
+    buttonId: {
         type: String,
         required: true
     },
@@ -44,7 +44,7 @@ const props = defineProps({
     }
 });
 
-const onClick = () => iApi?.event.emit(GlobalEvents.APPBAR_BUTTON_CLICK, props.id);
+const onClick = () => iApi?.event.emit(GlobalEvents.APPBAR_BUTTON_CLICK, props.buttonId);
 </script>
 
 <style lang="scss" scoped>
