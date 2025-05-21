@@ -1,5 +1,14 @@
 import { CommonLayer, GlobalEvents, InstanceAPI } from '@/api/internal';
-import { DefPromise, DrawState, Extent, InitiationState, LayerState, ScaleSet, SpatialReference } from '@/geo/api';
+import {
+    DefPromise,
+    DrawState,
+    Extent,
+    InitiationState,
+    LayerState,
+    LayerType,
+    ScaleSet,
+    SpatialReference
+} from '@/geo/api';
 import type { DrawOrder, RampLayerConfig } from '@/geo/api';
 import { EsriWatch } from '@/geo/esri';
 import { markRaw } from 'vue';
@@ -257,18 +266,21 @@ export class MapLayer extends CommonLayer {
             this.identify = this.config.state?.identify ?? this.supportsIdentify;
         }
 
-        // layer base class doesnt have spatial ref, but we will assume all our layers do.
-        // consider adding fancy checks if its missing, and if so just promise.resolve .
-        // given the layer is dead without a success, we don't bother with any cancel-checking here.
-        const lookupPromise = this.$iApi.geo.proj.checkProj(this.getSR()).then(goodSR => {
-            if (goodSR) {
-                return Promise.resolve();
-            } else {
-                return Promise.reject();
-            }
-        });
+        // See issue 2648 for why this IF exists
+        if (this.layerType !== LayerType.WMS) {
+            // layer base class doesnt have spatial ref, but we will assume all our layers do.
+            // consider adding fancy checks if its missing, and if so just promise.resolve .
+            // given the layer is dead without a success, we don't bother with any cancel-checking here.
+            const lookupPromise = this.$iApi.geo.proj.checkProj(this.getSR()).then(goodSR => {
+                if (goodSR) {
+                    return Promise.resolve();
+                } else {
+                    return Promise.reject();
+                }
+            });
 
-        proms.push(lookupPromise);
+            proms.push(lookupPromise);
+        }
 
         return proms;
     }
