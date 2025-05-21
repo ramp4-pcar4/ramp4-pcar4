@@ -1,11 +1,3 @@
 {
-    "recommendations": [
-        "esbenp.prettier-vscode",
-        "bradlc.vscode-tailwindcss",
-        "austenc.tailwind-docs",
-        "gruntfuggly.todo-tree",
-        "Vue.volar",
-        "dbaeumer.vscode-eslint",
-        "EditorConfig.EditorConfig"
-    ]
+    "recommendations": ["esbenp.prettier-vscode", "bradlc.vscode-tailwindcss", "vue.volar", "dbaeumer.vscode-eslint"]
 }
