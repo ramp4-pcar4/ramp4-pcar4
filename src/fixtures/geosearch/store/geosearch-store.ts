@@ -2,6 +2,7 @@ import type { MapExtent, QueryParams } from './geosearch-state';
 import { defineStore } from 'pinia';
 import { GeoSearchUI } from './geosearch.feature';
 import { computed, ref } from 'vue';
+import type { IProvinceInfo, ISearchResult } from '../definitions';
 
 /**
  * Helper function that filters based on query parameters.
@@ -32,6 +33,7 @@ function filter(visibleOnly: boolean, queryParams: QueryParams, data: Array<any>
 }
 
 export const useGeosearchStore = defineStore('geosearch', () => {
+    // NOTE this is just defining the reactive instance of GSUI. The lang gets properly set in .initService()
     const GSservice = ref<GeoSearchUI>(new GeoSearchUI('en', undefined));
     const queryParams = ref<QueryParams>({
         type: '',
@@ -42,8 +44,21 @@ export const useGeosearchStore = defineStore('geosearch', () => {
     const searchVal = ref<string>('');
     const searchRegex = ref<string>('');
     const lastSearchVal = ref<string>('');
-    const searchResults = ref<Array<any>>([]);
-    const savedResults = ref<Array<any>>([]);
+
+    /**
+     * This represents the active, visible search (typed words and any filters)
+     */
+    const searchResults = ref<Array<ISearchResult>>([]);
+
+    /**
+     * This is the contents of the last server search result from the current search term.
+     * Is used as input for local filters (like bounding box, province, etc) without re-querying the services.
+     */
+    const savedResults = ref<Array<ISearchResult>>([]);
+
+    /**
+     * When true, shows the loading indicator
+     */
     const loadingResults = ref<boolean>(false);
     const failedServices = ref<Array<string>>([]);
 
@@ -55,15 +70,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
      *
      * @return {Promise<Array>} a promise that resolves to a list of all provinces in the form
      */
-    const getProvinces = computed<Promise<Array<any>>>(
-        () =>
-            new Promise(resolve => {
-                GSservice.value.fetchProvinces().then((provs: Array<any>) => {
-                    provs.sort((provA: any, provB: any) => (provA.name > provB.name ? 1 : -1));
-                    resolve(provs);
-                });
-            })
-    );
+    const getProvinces = computed<Promise<Array<IProvinceInfo>>>(() => GSservice.value.fetchProvinces());
 
     /**
      * Fetches the list of all possible types in a geoName query. Returned type objects contain the following properties:
@@ -88,10 +95,10 @@ export const useGeosearchStore = defineStore('geosearch', () => {
     }
 
     /**
-     * Runs geosearch query to update search and saved results.
+     * Runs the geosearch query to update visible search and the saved results.
      *
      * @function runQuery
-     * @param {boolean} forceReRun whether to force the query to run again
+     * @param {boolean} forceReRun whether to force the server query (i.e. the typed-in search) to run again
      */
     function runQuery(forceReRun?: boolean): void {
         // set loading flag to true and turn off when reach return

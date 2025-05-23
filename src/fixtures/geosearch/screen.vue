@@ -76,7 +76,11 @@ import GeosearchBar from './search-bar.vue';
 import GeosearchTopFilters from './top-filters.vue';
 import GeosearchBottomFilters from './bottom-filters.vue';
 import LoadingBar from './loading-bar.vue';
+import { jsonRequest } from './store/query';
 import { useI18n } from 'vue-i18n';
+import type { ISearchResult } from './definitions';
+import { FSATOKEN } from './definitions';
+import to from 'await-to-js';
 
 const { t } = useI18n();
 const iApi = inject<InstanceAPI>('iApi')!;
@@ -89,12 +93,41 @@ defineProps({
 });
 
 const cleanedSearchVal = computed<string>(() => geosearchStore.searchVal.replace(/["!*$+?^{}()|[\]\\]/g, '').trim());
-const searchResults = computed<Array<any>>(() => geosearchStore.searchResults);
+const searchResults = computed<Array<ISearchResult>>(() => geosearchStore.searchResults);
 const loadingResults = computed<boolean>(() => geosearchStore.loadingResults);
 const failedServices = computed<string[]>(() => geosearchStore.failedServices);
+const fsaLookupUrl = computed<string>(() => geosearchStore.GSservice.config.fsaUrl);
 
 // zoom in to a clicked result
-const zoomIn = (result: any) => {
+const zoomIn = async (result: ISearchResult): Promise<void> => {
+    // use fancy fsa boundary service if appropriate
+    if (result.flav === 'fsa' && fsaLookupUrl.value) {
+        const targetedUrl = fsaLookupUrl.value.replace(FSATOKEN, result.name);
+
+        const [rErr, rRes] = await to(jsonRequest(targetedUrl));
+
+        // if there was an error, we just fall-through to the regular zoom, targeting the fake bbox
+        if (!rErr) {
+            // rRes is the result object of an ArcServer featurelayer query
+            const poly = new Polygon(
+                'fsazoom',
+                rRes.features[0].geometry.rings,
+                SpatialReference.fromConfig(rRes.spatialReference), // technically not from a config, but config follows esri spec. this server result is raw, does not have esri class wrapper
+                true
+            );
+            iApi.geo.map.zoomMapTo(poly);
+
+            // donethanks
+            return;
+        }
+
+        // solution if the response time here becomes too noticeable.
+        // 1. add new property to ISearchResult -->  esriPoly?: { rings: number[][][], sr: any}
+        // 2. move the url check and json request into runFSAQuery()
+        // 3. if it runs & returns, stick the values on fancyResult.esriPoly
+        // 4. the logic here changes to check if result.esriPoly exists. if so, makes the new Polygon() and zoomies it
+    }
+
     const zoom = new Polygon(
         'zoomies',
         [
@@ -112,7 +145,12 @@ const zoomIn = (result: any) => {
     iApi.geo.map.zoomMapTo(zoom);
 };
 
-// highlight the search term in each listed geosearch result
+/**
+ * Highlight the search term in each listed geosearch result
+ *
+ * @param name the display name of the search result
+ * @param province object treated as boolean. If exists, we have a prov code after the name and should account for it
+ */
 const highlightSearchTerm = (name: string, province: any) => {
     // wrap matched search term in results inside span with styling
     const highlightedResult = name.replace(

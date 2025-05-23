@@ -4,9 +4,9 @@
  */
 import Provinces from './provinces';
 import Types from './types';
-import * as Q from './query';
-import type { IGeosearchConfig } from '../definitions';
-import type { Query } from './query';
+import * as GeoSearchQuery from './query';
+import type { IGeosearchConfig, IProvinceInfo, ISearchResult } from '../definitions';
+import { FSATOKEN } from '../definitions';
 
 // geosearch query services
 // note "geolocation" is a service for looking up locations in canada. It is not a geolocator for the browser's location.
@@ -15,36 +15,10 @@ const GEO_NAMES_URL = 'https://geogratis.gc.ca/services/geoname/@{language}/geon
 const GEO_PROVINCES_URL = 'https://geogratis.gc.ca/services/geoname/@{language}/codes/province.json';
 const GEO_TYPES_URL = 'https://geogratis.gc.ca/services/geoname/@{language}/codes/concise.json';
 
-// translates codes from json file to province abbreviations
-const CODE_TO_ABBR = {
-    10: 'NL',
-    11: 'PE',
-    12: 'NS',
-    13: 'NB',
-    24: 'QC',
-    35: 'ON',
-    46: 'MB',
-    47: 'SK',
-    48: 'AB',
-    59: 'BC',
-    60: 'YU',
-    61: 'NT',
-    62: 'NU',
-    72: 'UF',
-    73: 'IW'
-};
-
 /**
  * A class/interface that wraps around a GeoSearch object and provides additional services.
  * Can consume an optional config object upon creation.
- *
- * The following are valid config object properties:
- * {
- *      excludeTypes: string | Array<string>,
- *      language: string,
- *      geoNames: string,
- *      geoLocation: string
- * }
+ * The config structure can be found in schema.json, look for #/$defs/geosearch
  */
 export class GeoSearchUI {
     config: IGeosearchConfig;
@@ -75,6 +49,16 @@ export class GeoSearchUI {
         geoProvinceUrl = geoProvinceUrl.replace('@{language}', language);
         geoTypesUrl = geoTypesUrl.replace('@{language}', language);
 
+        // construct a query url with a token for the FSA
+
+        let fsaUrl = '';
+        const fsaLookup: any = uConfig?.fsaBoundaries;
+        if (fsaLookup && fsaLookup.serviceUrl) {
+            const fsaField = fsaLookup.keyField || 'CFSAUID';
+
+            fsaUrl = `${fsaLookup.serviceUrl}/query/?where=${fsaField}%3D'${FSATOKEN}'&outFields=${fsaField}&returnGeometry=true&f=json`;
+        }
+
         // set default config values, if settings object is provided
         const settings: any = uConfig?.settings;
         let categories: Array<string>;
@@ -101,8 +85,9 @@ export class GeoSearchUI {
             language,
             geoNameUrl,
             geoLocateUrl,
+            fsaUrl,
             types: Types(language, geoTypesUrl), // list of type filters
-            provinces: Provinces(language, geoProvinceUrl), // list of province filters
+            provinces: Provinces(geoProvinceUrl), // list of province filters
             categories,
             sortOrder,
             disabledSearchTypes,
@@ -111,28 +96,31 @@ export class GeoSearchUI {
         };
         // remove any types to be excluded from config
         this.config.types.filterValidTypes(uConfig?.excludeTypes);
-        (<any>this)._provinceList = [];
+
         (<any>this)._typeList = [];
         (<any>this)._excludedTypes = uConfig?.excludeTypes || [];
     }
 
-    get provinceList() {
-        return (<any>this)._provinceList;
-    }
     get typeList() {
         return (<any>this)._typeList;
     }
-    set provinceList(val) {
-        (<any>this)._provinceList = val;
-    }
+
     set typeList(val) {
         (<any>this)._typeList = val;
     }
 
-    levenshteinDistance(q: Query, result: string) {
+    /**
+     * Tests a string against a goal string and returns a levenshtein distance number.
+     * The lower the number, the better the match.
+     *
+     * @param goalText gold standard text we are comparing against
+     * @param testText text to evaluate against the goal
+     * @returns a weight number
+     */
+    levenshteinDistance(goalText: string, testText: string) {
         // sanitize strings
-        result = result.toLowerCase().trim();
-        const query = decodeURI(q.query!.toLowerCase().replace('*', ''));
+        testText = testText.toLowerCase().trim();
+        goalText = decodeURI(goalText.toLowerCase().replace('*', ''));
 
         /* Use a modified levenshtein distance algorithm to compute the 'distance' between the query and the result.
          The distance is computed by assessing each letter where:
@@ -140,184 +128,102 @@ export class GeoSearchUI {
          - deletion, substitution cost 1
         */
         const levDistance = [];
-        for (let i = 0; i <= result.length; i++) {
+        for (let i = 0; i <= testText.length; i++) {
             levDistance[i] = [i];
-            for (let j = 1; j <= query.length; j++) {
+            for (let j = 1; j <= goalText.length; j++) {
                 levDistance[i][j] =
                     i === 0
                         ? j
                         : Math.min(
                               levDistance[i][j - 1] + 1, // delete
                               levDistance[i - 1][j] + 0.2, // insert
-                              levDistance[i - 1][j - 1] + (query[j - 1] === result[i - 1] ? 0 : 1) // substitute
+                              levDistance[i - 1][j - 1] + (goalText[j - 1] === testText[i - 1] ? 0 : 1) // substitute
                           );
             }
         }
-        return levDistance[result.length][query.length];
+        return levDistance[testText.length][goalText.length];
     }
 
     /**
-     * Find and return the province object in the province list
+     * Given some string query, returns a promise that resolves as an array of search results
+     * and a report of any service failures
      *
-     * @param {string} province the target province
-     * @return {Object}         associated province object
-     */
-    findProvinceObj(province: string) {
-        return this.provinceList.find((p: any) => {
-            return p.name === province;
-        });
-    }
-
-    /**
-     * Given some string query, returns a promise that resolves as a formatted location object
-     *
-     * @param {string} q the search string this query is based on
+     * @param {string} userInput the search string this query is based on
      * @return {Promise}
      */
-    query(q: string) {
-        // run query based on search string input
-        return Q.make(this.config, q.toUpperCase()).onComplete.then((q: Query) => {
-            // any feature result requires a manual first entry
-            let featureResult: any[] = [];
-            if (q.featureResults.length > 0) {
-                if (q.resultType === 'fsa') {
-                    // add first geosearch result as location of FSA itself
-                    featureResult = q.featureResults.map((fsa: any) => ({
-                        name: fsa.fsa,
-                        bbox: [
-                            fsa.LatLon.lon + 0.02,
-                            fsa.LatLon.lat - 0.02,
-                            fsa.LatLon.lon - 0.02,
-                            fsa.LatLon.lat + 0.02
-                        ],
-                        type: fsa.desc,
-                        position: [fsa.LatLon.lon, fsa.LatLon.lat],
-                        location: {
-                            latitude: fsa.LatLon.lat,
-                            longitude: fsa.LatLon.lon,
-                            province: this.findProvinceObj(fsa.province)
-                        },
-                        order: -1
-                    }));
-                } else if (q.resultType === 'nts') {
-                    // add first geosearch result as location of NTS map number
-                    featureResult = q.featureResults.map((nts: any) => ({
-                        name: nts.nts,
-                        bbox: nts.bbox ?? [
-                            nts.LatLon.lon + 0.02,
-                            nts.LatLon.lat - 0.02,
-                            nts.LatLon.lon - 0.02,
-                            nts.LatLon.lat + 0.02
-                        ],
-                        type: nts.desc,
-                        position: [nts.LatLon.lon, nts.LatLon.lat],
-                        location: {
-                            city: nts.location,
-                            latitude: nts.LatLon.lat,
-                            longitude: nts.LatLon.lon
-                        },
-                        order: -1
-                    }));
-                } else if (q.resultType === 'address') {
-                    featureResult = q.featureResults.map((address: any) => ({
-                        name: address.name,
-                        bbox: [
-                            address.LatLon.lon + 0.002,
-                            address.LatLon.lat - 0.002,
-                            address.LatLon.lon - 0.002,
-                            address.LatLon.lat + 0.002
-                        ],
-                        type: address.desc,
-                        position: [address.LatLon.lon, address.LatLon.lat],
-                        location: {
-                            city: address.city,
-                            latitude: address.LatLon.lat,
-                            longitude: address.LatLon.lon,
-                            province: this.findProvinceObj(address.province)
-                        },
-                        order:
-                            this.config.sortOrder.indexOf('ADDR') >= 0
-                                ? this.config.sortOrder.indexOf('ADDR')
-                                : this.config.sortOrder.length
-                    }));
-                    if (this.config.sortOrder.length > 0) {
-                        // if custom sorting in place, apply lev only to street addresses
-                        featureResult = featureResult.sort((a: any, b: any) => {
-                            return this.levenshteinDistance(q, a.name) > this.levenshteinDistance(q, b.name) ? 1 : -1;
-                        });
-                    }
-                }
-            } else if (q.resultType === 'latlong') {
-                // add first geosearch result as location of lat/lon coordinates
-                featureResult = [q.latLongResult];
-                featureResult[0].order = -1;
-            }
-            // console.log('first feature result: ', featureResult);
-            // format returned query results appropriately to support zoom/extent functionality
-            const queryResult = q.results.map((item: any) => ({
-                name: item.name,
-                bbox: item.bbox,
-                type: item.type,
-                position: [item.LatLon.lon, item.LatLon.lat],
-                location: {
-                    city: item.location,
-                    latitude: item.LatLon.lat,
-                    longitude: item.LatLon.lon,
-                    province: this.findProvinceObj(item.province)
-                },
-                order: item.order
-            }));
+    async query(userInput: string) {
+        /*
+        Potential improvement for later.
+        Bulk of this methods work is to sort results by priority and then chop off at the max results.
+        This happens BEFORE any of the top-filters get applied (province, type, probably "visible on map").
+        So lets say we have 200 raw results, 20 are in Ontario. Then we chop to the top 100, leaving 10 Ontario
+        records in the return value.
+        The UI gets this, applies an Ontario filter, and shows 10 records. A better scenario would be to filter here
+        before the chop, then we would show all 20 records.
+        There is a trade-off to this. Doing the filters afterwards means we can change the filters without
+        re-running the server hits. The geosearch store maintains an array called savedResults, possibly
+        we could start putting the queryPayload.results in there instead of the sorted and clipped list.
+        Would then need to abstract the sort & clip to its own method, so it could be called here and
+        when a top-filter changes.
+        Also worth noting, queries against the name server are already capped at the max limit (see `getUrl()` ).
+        This "doubling" scenario only affects standard text searches, where you get a pile of name results,
+        and also a pile of address results. Might be a nothingburger, but could be helpful when user doesn't
+        have a very precise search word and it spams lots of results.
+        Becomes worse if max results is config'd to a lower value.
+        */
 
-            // console.log('remaining query results: ', queryResult);
-            return {
-                results: featureResult
-                    .concat(queryResult)
-                    .slice(0, this.config.maxResults)
-                    .sort((a: any, b: any) => {
-                        // use custom sort order if provided, otherwise lev sort by default
-                        if (this.config.sortOrder.length > 0) {
-                            return a.order > b.order ? 1 : -1;
-                        } else {
-                            return this.levenshteinDistance(q, a.name) > this.levenshteinDistance(q, b.name) ? 1 : -1;
-                        }
-                    }),
-                failedServs: q.failedServs
-            };
-        });
+        // run query based on search string input
+        const queryPayload = await GeoSearchQuery.runQuery(this.config, userInput.toUpperCase());
+
+        // anything with an order property lower than this has a defined priority (from config, or is very special)
+        const priorityLimit = this.config.sortOrder.length;
+        const priorityResults = queryPayload.results.filter(vr => vr.order < priorityLimit);
+        const normalResults = queryPayload.results.filter(vr => vr.order >= priorityLimit); // technically should never be greater
+
+        priorityResults.sort((a, b) => a.order - b.order);
+
+        // very fancy future enhancement. take the sorted priority results. split into buckets of same order values
+        // apply a levenshtein to each bucket. then recombine.
+        // e.g. if ADDR is priority 0 (top), they will come first, but be in random order. this will put best address
+        // matches first.
+
+        const maxRes = this.config.maxResults;
+        let final: Array<ISearchResult>;
+
+        if (priorityResults.length >= maxRes) {
+            // already enough hits in priority. givver.
+            final = priorityResults.slice(0, maxRes);
+        } else {
+            // levenshtein the rest.
+            // store calc in order field to avoid running it every sort operation
+            normalResults.forEach(vr => (vr.order = this.levenshteinDistance(queryPayload.query, vr.name)));
+            normalResults.sort((a, b) => a.order - b.order);
+
+            final = priorityResults.concat(normalResults.slice(0, maxRes - priorityResults.length));
+        }
+
+        return {
+            results: final,
+            failedServs: queryPayload.failedServs
+        };
     }
 
     /**
-     * Return a promise that resolves to a list of formatted province objects
+     * Waits for the download of province data from geogratis, then returns it
      *
-     * @return {Promise<Array>} a promise that resolves to a list of formatted province objects
+     * @return {Promise<Array>} resolves to a list of formatted province objects
      */
-    fetchProvinces(): Promise<Array<any>> {
+    fetchProvinces(): Promise<Array<IProvinceInfo>> {
+        // uses an interval to watch for the flag on the .provinces object.
+        // when the flag hits, it signals the download is done.
+
         return new Promise(resolve => {
             const provsWatcher = setInterval(() => {
                 if (this.config.provinces.listFetched) {
                     clearInterval(provsWatcher);
-                    const provinceList = [];
-                    // add a '...' option as a way to clear province filter
-                    const reset = {
-                        code: -1,
-                        abbr: '...',
-                        name: '...'
-                    };
-                    provinceList.push(reset);
-
-                    // obtain province filters stored in config
-                    const rawProvinces = this.config.provinces.list;
-                    for (const code in rawProvinces) {
-                        provinceList.push({
-                            code: code,
-                            abbr: (<any>CODE_TO_ABBR)[code],
-                            name: rawProvinces[code]
-                        });
-                    }
-                    this.provinceList = provinceList;
-                    resolve(this.provinceList);
+                    resolve(this.config.provinces.provinceList);
                 }
-            });
+            }, 100);
         });
     }
 
@@ -351,7 +257,7 @@ export class GeoSearchUI {
                     this.typeList = typeList;
                     resolve(this.typeList);
                 }
-            }, 250);
+            }, 100);
         });
     }
 }
