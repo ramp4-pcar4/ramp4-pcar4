@@ -1,3 +1,9 @@
+|
+<template>
+    <span>
+        <!-- The Sketch widget will be added to the map view programmatically - this is to appease vue -->
+    </span>
+</template>
 <script lang="ts">
 export const DRAW_GRAPHICS_LAYER_ID = 'RampDrawGraphicsLayer';
 </script>
@@ -432,66 +438,12 @@ const handleNavigationKeyDown = (e: KeyboardEvent) => {
             break;
 
         case 'Escape':
-            if (multiPointMode) {
-                e.preventDefault();
-                const minPoints = drawStore.activeTool === 'polyline' ? 2 : 3;
-                if (multiPointVertices.length >= minPoints) {
-                    const id = `graphic-${Date.now()}`;
-                    multiPointGraphic!.attributes.id = id;
-                    if (drawStore.activeTool === 'polygon') {
-                        const firstPoint = multiPointVertices[0];
-                        const lastPoint = multiPointVertices[multiPointVertices.length - 1];
-                        if (firstPoint[0] !== lastPoint[0] || firstPoint[1] !== lastPoint[1]) {
-                            multiPointVertices.push([firstPoint[0], firstPoint[1]]);
-                            multiPointGraphic!.geometry = new EsriPolygon({
-                                rings: [multiPointVertices],
-                                spatialReference: iApi.geo.map.esriView!.spatialReference
-                            });
-                        }
-                    }
-                    drawStore.addGraphic({
-                        id,
-                        type: drawStore.activeTool,
-                        geometry: multiPointGraphic!.geometry,
-                        attributes: multiPointGraphic!.attributes
-                    });
-                    selectedGraphic = multiPointGraphic!;
-                    drawStore.selectGraphic(id);
-                    drawStore.setActiveTool('');
-                    multiPointMode = false;
-                    multiPointVertices = [];
-                    sketch!.update([selectedGraphic]);
-                    iApi.updateAlert(
-                        t('draw.multiPoint.completed', {
-                            type: translateTerm(selectedGraphic?.attributes?.type),
-                            count:
-                                selectedGraphic.geometry?.type === 'polyline'
-                                    ? (selectedGraphic.geometry as EsriPolyline).paths[0].length
-                                    : (selectedGraphic.geometry as EsriPolygon).rings[0].length - 1
-                        })
-                    );
-                } else {
-                    graphicsLayer?.remove(multiPointGraphic!);
-                    multiPointGraphic = null;
-                    multiPointVertices = [];
-                    multiPointMode = false;
-                    drawStore.setActiveTool('');
-                    iApi.updateAlert(
-                        t('draw.multiPoint.notEnoughPoints', {
-                            type: translateTerm(drawStore.activeTool),
-                            min: minPoints
-                        })
-                    );
-                }
-            } else if (drawStore.activeTool) {
-                e.preventDefault();
-                drawStore.setActiveTool('');
-                sketch?.cancel();
-                selectedGraphic = null;
-                highlightSelectedGraphic(undefined);
-                drawStore.clearSelection();
-                iApi.updateAlert(t('draw.tool.canceled'));
-            }
+            drawStore.setActiveTool('');
+            sketch?.cancel();
+            selectedGraphic = null;
+            highlightSelectedGraphic(undefined);
+            drawStore.clearSelection();
+            iApi.updateAlert(t('draw.tool.canceled'));
             break;
     }
 };
