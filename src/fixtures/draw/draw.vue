@@ -1,6 +1,12 @@
 |
 <template>
+    <<<<<<< HEAD
     <arcgis-sketch ref="sketchEl" style="display: none" />
+    =======
+    <span>
+        <!-- The Sketch widget will be added to the map view programmatically - this is to appease vue -->
+    </span>
+    >>>>>>> 8e0389ce3 (remove highlight from escape key keyboard bug)
 </template>
 <script lang="ts">
 export const DRAW_GRAPHICS_LAYER_ID = 'RampDrawGraphicsLayer';
