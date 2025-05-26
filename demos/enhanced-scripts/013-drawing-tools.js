@@ -1,5 +1,5 @@
 /*
-Test 11: Drawing Tools
+Test 13: Drawing Tools
 - Adds a draw tool to the map
  */
 
