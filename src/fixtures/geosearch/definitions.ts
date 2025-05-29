@@ -2,12 +2,24 @@ export interface IGenericObjectType {
     [key: string]: string;
 }
 
-// config object is used by all query classes
-// this is a flattened version from the actual RAMP config. Easier to bind to.
+/**
+ * FSA / NTS / Address / Name / LatLon
+ */
+export type FlavourKey = 'fsa' | 'nts' | 'add' | 'nme' | 'llg';
+
+/**
+ * Config object is used by all query classes.
+ * this is a flattened version from the actual RAMP config. Easier to bind to.
+ */
 export interface IGeosearchConfig {
     geoNameUrl: string;
     geoLocateUrl: string;
+    fsaUrl: string;
     categories: string[];
+    /**
+     * These are concise codes in a priority order. Anything not in the list will come after codes in the list.
+     * If empty list, the levenshtein sort is used.
+     */
     sortOrder: string[];
     disabledSearchTypes: string[];
     maxResults: number;
@@ -17,6 +29,9 @@ export interface IGeosearchConfig {
     provinces: IProvinces;
 }
 
+/**
+ * Individual record from the geoname service
+ */
 export interface INameResponse {
     name: string;
     location: string;
@@ -35,75 +50,92 @@ export interface ITypes {
 }
 
 export interface IProvinces {
-    list: IGenericObjectType;
+    provinceList: Array<IProvinceInfo>;
     listFetched: boolean;
-    fsaToProvinces(fsa: string): IGenericObjectType;
+    fsaToProvince(fsa: string): IProvinceInfo;
+    codeToProvince(provCode: number): IProvinceInfo;
+    nameToProvince(provName: string): IProvinceInfo;
 }
 
-export interface ILatLon {
-    lat: number;
-    lon: number;
-}
-
+/**
+ * Query result object from geoname service
+ */
 export interface IRawNameResult {
     items: INameResponse[];
 }
 
-export interface IFSAResult {
-    fsa: string; // "H0H"
-    code: string; // "FSA"
-    desc: string; // "Forward Sortation Area"
-    province: string; // Ontario
-    _provinces: IGenericObjectType; // {ON: "Ontario"} or {ON: "Ontario", MB: "Manitoba"}
-    LatLon: ILatLon;
-}
-
-export interface INTSResult {
-    nts: string; // 064D or 064D06
-    location: string; // "NUMABIN BAY"
-    code: string; // "NTS"
-    desc: string; // "National Topographic System"
-    LatLon: ILatLon;
-    bbox: number[];
-}
-
-export interface IAddressResult {
-    name: string; // "123 Yonge Street"
-    city: string; // "Toronto"
-    province: string; // "ON"
-    desc: string; // "Street Address"
-    LatLon: ILatLon;
-    bbox: number[];
-}
-
-export interface ILatLongResult {
-    latlong: string; // "54.54,-91.45"
-    desc: string; // "Latitude/Longitude",
-    LatLon: ILatLon;
-    bbox: number[];
-}
-
-// defines results from a geoNames search
-export interface INameResult {
-    name: string;
-    location: string;
-    province: string; // "Ontario"
-    type: string; // "Lake"
-    LatLon: ILatLon;
-    bbox: number[];
-    order: number;
-}
-
-export interface ILocateResponse {
+/**
+ * Individual record from the geolocation service
+ */
+export interface ILocationResponse {
     title: string;
     type?: string;
     bbox?: number[];
     geometry: { coordinates: number[] };
 }
 
-export type LocateResponseList = ILocateResponse[];
-export type NameResultList = INameResult[];
-export type NTSResultList = INTSResult[];
-export type AddressResultList = IAddressResult[];
-export type ResultList = (INameResult | IAddressResult)[];
-export type queryFeatureResults = IFSAResult | INTSResult | IAddressResult | ILatLongResult | undefined;
+export type LocationResponseList = ILocationResponse[];
+
+// used for injecting the desired code in the fsa query url
+export const FSATOKEN = '~FSA~';
+
+export interface IProvinceInfo {
+    /**
+     * Numeric province code
+     */
+    code: number;
+    /**
+     * Province abbreviation
+     */
+    abbr: string;
+
+    /**
+     * Full name
+     */
+    name: string;
+}
+
+export interface ISearchResult {
+    /**
+     * Primary display name
+     */
+    name: string;
+
+    /**
+     * What shows on the second line.
+     */
+    type: string;
+
+    /**
+     * Bounding box to zoom to, in Latlon
+     */
+    bbox: Array<number>;
+
+    /**
+     * What the source of this entry was
+     */
+    flav: FlavourKey;
+
+    /**
+     * Encodes a position (usually a centroid) in Latlon
+     */
+    position: [number, number];
+    location: {
+        /**
+         * Not always an actual city. Name of appropriate sub-province location, if one exists
+         */
+        city?: string;
+
+        /**
+         * Province information object
+         */
+        province?: IProvinceInfo;
+    };
+
+    /**
+     * Lower number appears higher in the list
+     */
+    order: number;
+}
+
+export type SearchResultList = Array<ISearchResult>;

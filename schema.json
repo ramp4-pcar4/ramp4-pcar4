@@ -304,6 +304,22 @@
                     },
                     "description": "Set of urls for lookup services. Aligns with GeoGratis APIs."
                 },
+                "fsaBoundaries": {
+                    "type": "object",
+                    "properties": {
+                        "serviceUrl": {
+                            "type": "string",
+                            "default": "",
+                            "description": "Endpoint url for an FSA boundary service. ArcServer feature endpoint (e.g. serverpath/service/3/ ). If not provided, will just zoom to the center."
+                        },
+                        "keyField": {
+                            "type": "string",
+                            "default": "",
+                            "description": "Field containing FSA value in the boundary service. Ignored if no service is provided."
+                        }
+                    },
+                    "description": "Optional lookup for FSA boundary locations."
+                },
                 "settings": {
                     "type": "object",
                     "properties": {
