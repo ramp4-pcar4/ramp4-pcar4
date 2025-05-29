@@ -11,7 +11,18 @@ import dts from 'vite-plugin-dts';
 const distName = resolve(__dirname, process.env.DIST_NAME || 'dist');
 
 const baseConfig = {
-    plugins: [vue(), VitePluginI18n(), VitePluginVersion(), mkcert()],
+    plugins: [
+        vue({
+            template: {
+                compilerOptions: {
+                    isCustomElement: tag => tag.startsWith('arcgis-')
+                }
+            }
+        }),
+        VitePluginI18n(),
+        VitePluginVersion(),
+        mkcert()
+    ],
     define: {
         'process.env': process.env
     },

@@ -169,42 +169,47 @@ export class LayerAPI extends APIScope {
      * Waits for a layer to register, then returns it.
      *
      * @param {string} layerId layer id or uid of the layer
+     * @param {boolean} waitForView determines whether we should wait for the layer's `esriView` to be defined
      * @returns {Promise<LayerInstance>} The layer instance with the given id.
      */
-    async awaitLayer(layerId: string): Promise<LayerInstance> {
-        // test immediately
-        const fastTest = this.getLayer(layerId);
-        if (fastTest) {
-            return fastTest;
+    async awaitLayer(layerId: string, waitForView: boolean = false): Promise<LayerInstance> {
+        let registeredLayer = this.getLayer(layerId);
+        if (!registeredLayer) {
+            const defFun = new DefPromise<LayerInstance>();
+
+            // test ~3 times a second for 8 seconds
+            let expectedWait = 0;
+            const expectedPingTime = 300;
+            const stopExpected = setInterval(() => {
+                expectedWait += expectedPingTime;
+                const expTest = this.getLayer(layerId);
+                if (expTest) {
+                    clearInterval(stopExpected);
+                    defFun.resolveMe(expTest);
+                } else if (expectedWait > 8000) {
+                    clearInterval(stopExpected);
+
+                    // start slower pings every 1.5 seconds until found.
+                    // this code is super light, browser perf won't be impacted if a nothingburger request runs forever.
+                    const stopSlowpoke = setInterval(() => {
+                        const slowTest = this.getLayer(layerId);
+                        if (slowTest) {
+                            clearInterval(stopSlowpoke);
+                            defFun.resolveMe(slowTest);
+                        }
+                    }, 1500);
+                }
+            }, expectedPingTime);
+
+            registeredLayer = await defFun.getPromise();
         }
 
-        const defFun = new DefPromise<LayerInstance>();
+        // Wait for LayerInstance's esriView to be defined when flag is set
+        if (waitForView) {
+            await registeredLayer.viewPromise();
+        }
 
-        // test ~3 times a second for 8 seconds
-        let expectedWait = 0;
-        const expectedPingTime = 300;
-        const stopExpected = setInterval(() => {
-            expectedWait += expectedPingTime;
-            const expTest = this.getLayer(layerId);
-            if (expTest) {
-                clearInterval(stopExpected);
-                defFun.resolveMe(expTest);
-            } else if (expectedWait > 8000) {
-                clearInterval(stopExpected);
-
-                // start slower pings every 1.5 seconds until found.
-                // this code is super light, browser perf won't be impacted if a nothingburger request runs forever.
-                const stopSlowpoke = setInterval(() => {
-                    const slowTest = this.getLayer(layerId);
-                    if (slowTest) {
-                        clearInterval(stopSlowpoke);
-                        defFun.resolveMe(slowTest);
-                    }
-                }, 1500);
-            }
-        }, expectedPingTime);
-
-        return defFun.getPromise();
+        return registeredLayer;
     }
 
     /**

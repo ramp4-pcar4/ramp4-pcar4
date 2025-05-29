@@ -57,6 +57,7 @@ import type {
 } from '@arcgis/core/unionTypes.js';
 import type EsriMapView from '@arcgis/core/views/MapView';
 import type EsriColorBackground from '@arcgis/core/webmap/background/ColorBackground';
+import '@arcgis/map-components/components/arcgis-swipe';
 
 // NOTE we need to have explicit strings in the `await import()` calls, as that's
 //      how Vite knows how to optimize the chunks.
