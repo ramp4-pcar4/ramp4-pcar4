@@ -1,0 +1,28 @@
+span[data-v-207b7a12] {
+  height: 0 !important;
+}.dropdown[data-v-de544fde] {
+    left: 100%;
+    bottom: 0px
+}.number[data-v-830e6165] {
+  background: red;
+  font-size: 0.8em;
+}
+.notification-button[data-v-830e6165] {
+  position: absolute !important;
+}.appbar {
+  -webkit-backdrop-filter: blur(5px);
+          backdrop-filter: blur(5px);
+}
+.appbar .appbar-item {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  --tw-text-opacity: 1;
+  color: rgb(156 163 175 / var(--tw-text-opacity));
+}
+.appbar .appbar-item:first-child {
+  margin-top: 8px;
+}
+.appbar .appbar-item:hover {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
