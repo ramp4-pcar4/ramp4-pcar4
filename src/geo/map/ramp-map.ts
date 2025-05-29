@@ -38,6 +38,7 @@ import { MapCaptionAPI } from './caption';
 import { markRaw, toRaw } from 'vue';
 import { useConfigStore } from '@/stores/config';
 import { debounce, throttle } from 'throttle-debounce';
+import type { DrawAPI } from '@/fixtures/draw/api/drawApi';
 
 export class MapAPI extends CommonMapAPI {
     // API for managing the maptip
@@ -1282,6 +1283,14 @@ export class MapAPI extends CommonMapAPI {
             };
         } else {
             mapClick = targetPoint;
+        }
+
+        const drawFixture = this.$iApi.fixture.get<DrawAPI>('draw');
+        if (drawFixture && this.esriView) {
+            // disable identify if any draw tools are active OR if a graphic is selected for editing
+            if (drawFixture.store.activeTool || drawFixture.store.selectedGraphicId !== null) {
+                return { click: mapClick, results: [] };
+            }
         }
 
         // Don't perform an identify request if the layers array hasn't been established yet.
