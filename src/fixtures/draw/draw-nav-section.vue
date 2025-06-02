@@ -3,7 +3,8 @@
         <mapnav-button
             v-for="tool in filteredDrawingTools"
             :key="tool.type"
-            :onClickFunction="() => toggleTool(tool.type)"
+            @mousedown="mouseFocus"
+            :onClickFunction="() => toggleTool(tool.type as ActiveToolList)"
             :tooltip="t(`draw.${tool.type}.tooltip`)"
             :class="{ 'active-tool': drawStore.activeTool === tool.type }"
         >
@@ -14,9 +15,12 @@
 
 <script setup lang="ts">
 import { useDrawStore } from './store';
+import type { ActiveToolList } from './store';
 import { useI18n } from 'vue-i18n';
-import { markRaw, defineAsyncComponent, computed } from 'vue';
+import { markRaw, defineAsyncComponent, computed, inject } from 'vue';
+import { InstanceAPI } from '@/api/internal';
 
+const iApi = inject('iApi') as InstanceAPI;
 const { t } = useI18n();
 const drawStore = useDrawStore();
 
@@ -53,14 +57,19 @@ const filteredDrawingTools = computed(() => {
     return fTools;
 });
 
-const toggleTool = (toolType: string) => {
+const toggleTool = (toolType: ActiveToolList) => {
     // If the tool is already active, deactivate it
     if (drawStore.activeTool === toolType) {
-        drawStore.setActiveTool('');
+        drawStore.setActiveTool(null);
     } else {
         // Activate the selected tool
         drawStore.setActiveTool(toolType);
     }
+};
+
+const mouseFocus = () => {
+    // clicked on draw button, focus moves to map - don't want crosshairs
+    iApi.geo.map.setMouseFocus();
 };
 </script>
 

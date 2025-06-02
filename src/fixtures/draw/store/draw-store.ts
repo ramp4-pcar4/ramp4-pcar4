@@ -2,9 +2,13 @@ import { defineStore } from 'pinia';
 import type { DrawTypeConfig } from '../api/drawApi';
 import { reactive, ref } from 'vue';
 
+// DrawTypeConfig is a type that defines the configuration for each draw type
+
+export type ActiveToolList = 'circle' | 'point' | 'polygon' | 'polyline' | 'rectangle' | 'edit' | null;
+
 export const useDrawStore = defineStore('draw', () => {
     const supportedTypes = ref<DrawTypeConfig[]>([]);
-    const activeTool = ref('');
+    const activeTool = ref<ActiveToolList>(null);
     const graphics = reactive<any[]>([]);
     const selectedGraphicId = ref<string | null>(null);
 
@@ -12,7 +16,7 @@ export const useDrawStore = defineStore('draw', () => {
         supportedTypes.value.splice(0, supportedTypes.value.length, ...types);
     }
 
-    function setActiveTool(tool: string) {
+    function setActiveTool(tool: ActiveToolList) {
         activeTool.value = tool;
     }
 

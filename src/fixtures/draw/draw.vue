@@ -1,8 +1,6 @@
 |
 <template>
-    <span>
-        <!-- The Sketch widget will be added to the map view programmatically - this is to appease vue -->
-    </span>
+    <arcgis-sketch ref="sketchEl" style="display: none" />
 </template>
 <script lang="ts">
 export const DRAW_GRAPHICS_LAYER_ID = 'RampDrawGraphicsLayer';
@@ -11,18 +9,19 @@ export const DRAW_GRAPHICS_LAYER_ID = 'RampDrawGraphicsLayer';
 <script setup lang="ts">
 /**
  * @file draw.vue
- * @description Implements drawing functionality using the ESRI Sketch widget.
+ * @description Implements drawing functionality using the ESRI Sketch component.
  * It supports multiple drawing tools, multi-point mode, selection, deletion,
  * keyboard-based editing (including arrow key movement, resizing, and rotation),
  * and accessibility announcements.
+ * See: https://developers.arcgis.com/javascript/latest/references/map-components/arcgis-sketch/
 
 /* --------------------------------------------------------------------------
  * IMPORTS
  * -------------------------------------------------------------------------- */
-import { inject, onMounted, onUnmounted, watch, reactive } from 'vue';
+import { inject, onMounted, onUnmounted, watch, reactive, useTemplateRef } from 'vue';
 import { useDrawStore } from './store';
 import { InstanceAPI } from '@/api/internal';
-import Sketch from '@arcgis/core/widgets/Sketch';
+import '@arcgis/map-components/components/arcgis-sketch';
 import { LayerType } from '@/geo/api';
 import { useI18n } from 'vue-i18n';
 import {
@@ -48,7 +47,8 @@ const iApi = inject('iApi') as InstanceAPI;
 const drawStore = useDrawStore();
 
 // Sketch widget and graphics layer reference variables
-let sketch: __esri.Sketch | null = null;
+let sketch: HTMLArcgisSketchElement | null = null;
+const sketchEl = useTemplateRef<HTMLArcgisSketchElement>('sketchEl');
 let sketchHandler: { remove: () => void } | null = null;
 let graphicsLayer: __esri.GraphicsLayer | null = null;
 
@@ -132,7 +132,7 @@ watch(
             const graphics = graphicsLayer.graphics.toArray();
             const selectedEsriGraphic = graphics.find(g => g.attributes && g.attributes.id === newId);
             if (selectedEsriGraphic) {
-                sketch.update([selectedEsriGraphic]);
+                sketch.triggerUpdate([selectedEsriGraphic]);
                 highlightSelectedGraphic(selectedEsriGraphic);
             }
         }
@@ -163,7 +163,7 @@ const selectCenteredGraphic = async () => {
     });
     if (hits.length > 0) {
         selectedGraphic = hits[0].graphic;
-        sketch.update([selectedGraphic]);
+        sketch.triggerUpdate([selectedGraphic]);
         if (selectedGraphic.attributes?.id) {
             drawStore.selectGraphic(selectedGraphic.attributes.id);
         }
@@ -202,7 +202,7 @@ const createGraphicAtCenter = async () => {
                     y: centerPoint.y,
                     spatialReference: view.spatialReference
                 }),
-                symbol: sketch.viewModel.pointSymbol
+                symbol: sketch.pointSymbol
             });
             break;
         case 'polyline':
@@ -216,7 +216,7 @@ const createGraphicAtCenter = async () => {
                     ],
                     spatialReference: view.spatialReference
                 }),
-                symbol: sketch.viewModel.polylineSymbol
+                symbol: sketch.polylineSymbol
             });
             break;
         case 'polygon':
@@ -236,7 +236,7 @@ const createGraphicAtCenter = async () => {
                     spatialReference: view.spatialReference
                 }),
                 symbol:
-                    sketch.viewModel.polygonSymbol ||
+                    sketch.polygonSymbol ||
                     new EsriSimpleFillSymbol({
                         color: [0, 255, 0, 0.3],
                         outline: {
@@ -262,7 +262,7 @@ const createGraphicAtCenter = async () => {
                     spatialReference: view.spatialReference
                 }),
                 symbol:
-                    sketch.viewModel.polygonSymbol ||
+                    sketch.polygonSymbol ||
                     new EsriSimpleFillSymbol({
                         color: [255, 0, 255, 0.3],
                         outline: {
@@ -291,7 +291,7 @@ const createGraphicAtCenter = async () => {
         // cancel sketch if graphic is not a point
         if (drawStore.activeTool !== 'point') {
             drawStore.clearSelection();
-            drawStore.setActiveTool('');
+            drawStore.setActiveTool(null);
             sketch.cancel();
         }
 
@@ -335,7 +335,7 @@ const handleNavigationKeyDown = (e: KeyboardEvent) => {
                                     spatialReference: view.spatialReference
                                 }),
                                 symbol:
-                                    sketch?.viewModel.polylineSymbol ||
+                                    sketch?.polylineSymbol ||
                                     new EsriSimpleLineSymbol({ color: [0, 0, 255, 1], width: 2 })
                             });
                         } else {
@@ -345,7 +345,7 @@ const handleNavigationKeyDown = (e: KeyboardEvent) => {
                                     spatialReference: view.spatialReference
                                 }),
                                 symbol:
-                                    sketch?.viewModel.polygonSymbol ||
+                                    sketch?.polygonSymbol ||
                                     new EsriSimpleFillSymbol({
                                         color: [0, 255, 0, 0.3],
                                         outline: { color: [0, 255, 0, 1], width: 1 }
@@ -411,7 +411,7 @@ const handleNavigationKeyDown = (e: KeyboardEvent) => {
                 multiPointGraphic!.set('geometry', multiPointGraphic?.geometry);
                 iApi.updateAlert(
                     t('draw.multiPoint.pointRemoved', {
-                        type: translateTerm(drawStore.activeTool),
+                        type: translateTerm(drawStore.activeTool ?? undefined),
                         count: multiPointVertices.length
                     })
                 );
@@ -438,7 +438,7 @@ const handleNavigationKeyDown = (e: KeyboardEvent) => {
             break;
 
         case 'Escape':
-            drawStore.setActiveTool('');
+            drawStore.setActiveTool(null);
             sketch?.cancel();
             selectedGraphic = null;
             highlightSelectedGraphic(undefined);
@@ -613,7 +613,7 @@ const handleViewClick = async (event: __esri.ViewClickEvent) => {
     );
 
     if (hit && drawStore.activeTool === 'edit') {
-        sketch?.update([hit.graphic]);
+        sketch?.triggerUpdate([hit.graphic]);
     } else {
         sketch?.cancel();
         selectedGraphic = null;
@@ -643,30 +643,29 @@ const initializeDrawTools = async () => {
     }
     // @ts-expect-error esri type mismatch
     if (graphicsLayer?.esriLayer) graphicsLayer = graphicsLayer.esriLayer;
-    // Initialize the Sketch widget
-    sketch = new Sketch({
-        view: iApi.geo.map.esriView!, // viewPromise guaranteed ready
-        layer: graphicsLayer!, // we've just assigned it
+
+    Object.assign(sketchEl.value!, {
+        view: iApi.geo.map.esriView!,
+        layer: graphicsLayer!,
         availableCreateTools: ['point', 'multipoint', 'polyline', 'polygon', 'rectangle', 'circle'],
         updateOnGraphicClick: true,
         visibleElements: {
             createTools: { point: true, polyline: true, polygon: true, rectangle: true, circle: true },
-            // @ts-expect-error esri type mismatch
             selectionTools: { enable: true },
             settingsMenu: false
         },
-        defaultUpdateOptions: {
-            highlightOptions: {
-                enabled: false
-            }
-        },
-        visible: false
+        defaultUpdateOptions: { highlightOptions: { enabled: false } }
     });
-    iApi.geo.map.esriView!.ui.add(sketch, 'bottom-right');
+    iApi.geo.map.esriView!.ui.add(sketchEl.value!, 'bottom-right');
 
-    // Set up event listeners
-    sketchHandler = sketch.on('create', handleSketchCreateEvent);
-    sketch.on('update', handleSketchUpdateEvent);
+    sketchEl.value?.addEventListener('arcgisCreate', e => handleSketchCreateEvent(e.detail));
+    sketchEl.value?.addEventListener('arcgisUpdate', e => handleSketchUpdateEvent(e.detail));
+
+    sketchHandler = {
+        remove: () => sketchEl.value?.removeEventListener('arcgisCreate', e => handleSketchCreateEvent(e.detail))
+    };
+
+    sketch = sketchEl.value;
 
     // Add DOM event listeners
     iApi.geo.map.esriView!.on('click', handleViewClick);
@@ -697,7 +696,7 @@ const cleanupDrawTools = () => {
 };
 
 // Extract the existing sketch event handlers for reuse
-const handleSketchCreateEvent = (event: { state: string; graphic: EsriGraphic; tool: any }) => {
+const handleSketchCreateEvent = (event: __esri.SketchCreateEvent) => {
     if (event.state === 'complete') {
         const graphic = event.graphic;
         const id = `graphic-${Date.now()}`;
@@ -711,12 +710,12 @@ const handleSketchCreateEvent = (event: { state: string; graphic: EsriGraphic; t
         });
 
         if (event.tool !== 'point') {
-            drawStore.setActiveTool('');
+            drawStore.setActiveTool(null);
         }
     }
 };
 
-const handleSketchUpdateEvent = (event: { state: string; graphics: (EsriGraphic | undefined)[] }) => {
+const handleSketchUpdateEvent = (event: __esri.SketchUpdateEvent) => {
     const graphic = event.graphics[0];
     if (!graphic) return;
 
@@ -749,12 +748,8 @@ const handleSketchUpdateEvent = (event: { state: string; graphics: (EsriGraphic 
 /* --------------------------------------------------------------------------
  * INITIALIZATION & EVENT LISTENERS
  * -------------------------------------------------------------------------- */
-onMounted(async () => {
-    // Wait for the map view to be ready.
-    await iApi.geo.map.viewPromise;
-
-    // Initialize the drawing tools
-    await initializeDrawTools();
+onMounted(() => {
+    initializeDrawTools();
 
     // Listen for map creation/destruction events
     rampEventHandlers.push(
@@ -776,7 +771,7 @@ watch(
         multiPointVertices = [];
         multiPointMode = false;
         if (newTool && newTool != 'edit') {
-            sketch!.create(newTool as any);
+            sketch!.create(newTool);
         }
     }
 );
