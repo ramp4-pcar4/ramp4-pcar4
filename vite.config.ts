@@ -15,6 +15,7 @@ const baseConfig = {
         vue({
             template: {
                 compilerOptions: {
+                    // treat any <arcgis-*> tag as native
                     isCustomElement: tag => tag.startsWith('arcgis-')
                 }
             }
