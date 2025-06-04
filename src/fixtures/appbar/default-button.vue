@@ -14,7 +14,7 @@ import { computed, inject } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-const iApi = inject<InstanceAPI>('iApi');
+const iApi = inject<InstanceAPI>('iApi')!;
 
 const props = defineProps({
     panelId: {
@@ -30,13 +30,13 @@ const props = defineProps({
     }
 });
 
-const panelButton = computed(() => iApi?.panel.get(props.panelId)?.button);
+const panelButton = computed(() => iApi.panel.get(props.panelId)?.button);
 
 const onClickFunction = () => {
     if (props.minimize) {
-        iApi?.panel.toggleMinimize(props.panelId);
+        iApi.panel.toggleMinimize(props.panelId);
     } else {
-        iApi?.panel.toggle(props.panelId);
+        iApi.panel.toggle(props.panelId);
     }
 };
 </script>

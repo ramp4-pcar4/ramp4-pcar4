@@ -15,9 +15,9 @@ import { inject } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-const iApi = inject<InstanceAPI>('iApi');
+const iApi = inject<InstanceAPI>('iApi')!;
 
-const togglePanel = () => iApi?.panel.toggle('basemap');
+const togglePanel = () => iApi.panel.toggle('basemap');
 </script>
 
 <style lang="scss" scoped></style>

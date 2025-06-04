@@ -102,7 +102,7 @@ import { useI18n } from 'vue-i18n';
 import { useConfigStore } from '@/stores/config';
 
 const { t } = useI18n();
-const iApi = inject<InstanceAPI>('iApi');
+const iApi = inject<InstanceAPI>('iApi')!;
 const configStore = useConfigStore();
 const basemapInfo = useTemplateRef('basemapInfo');
 const infoTooltipToggle = ref(false);
@@ -122,7 +122,7 @@ const selectedBasemap = computed<RampBasemapConfig>(() => configStore.activeBase
 
 const selectBasemap = (basemap: any) => {
     if (basemap.id !== selectedBasemap.value.id) {
-        iApi?.geo.map.setBasemap(basemap.id);
+        iApi.geo.map.setBasemap(basemap.id);
     }
 };
 

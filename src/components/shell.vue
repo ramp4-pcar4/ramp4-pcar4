@@ -45,7 +45,7 @@ import { useFixtureStore } from '@/stores/fixture';
 import { useInstanceStore } from '@/stores/instance';
 import { usePanelStore } from '@/stores/panel';
 
-const iApi = inject<InstanceAPI>('iApi');
+const iApi = inject<InstanceAPI>('iApi')!;
 const instanceStore = useInstanceStore();
 const fixtureStore = useFixtureStore();
 const panelStore = usePanelStore();
@@ -53,7 +53,7 @@ const { t } = useI18n();
 
 const appbarFixture = computed(() => fixtureStore.items['appbar']);
 const openKeyboardInstructions = () => {
-    iApi?.event.emit('openKeyboardInstructions');
+    iApi.event.emit('openKeyboardInstructions');
 };
 
 const teleported = (): PanelInstance[] => panelStore.teleported;

@@ -156,8 +156,8 @@ const itemName = computed<string>(() => {
         layer && props.data.loaded ? layer.nameValue(props.data.data) : iApi.$i18n.t('details.items.title');
 
     // only replace html special chars if string represents plain text
-    if (iApi!.ui.isPlainText(returnValue)) {
-        returnValue = iApi!.ui.escapeHtml(returnValue);
+    if (iApi.ui.isPlainText(returnValue)) {
+        returnValue = iApi.ui.escapeHtml(returnValue);
     }
 
     return returnValue;

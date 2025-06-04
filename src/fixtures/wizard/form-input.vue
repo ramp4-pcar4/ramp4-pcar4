@@ -190,7 +190,7 @@ interface ValidationMsgs {
     failure?: string;
 }
 
-const iApi = inject<InstanceAPI>('iApi');
+const iApi = inject<InstanceAPI>('iApi')!;
 
 const { t } = useI18n();
 
@@ -319,7 +319,7 @@ const validName = (name: string) => {
     if (name.trim() !== '') valid.value = true;
     else {
         valid.value = false;
-        iApi!.updateAlert(t('wizard.configure.name.error.required'));
+        iApi.updateAlert(t('wizard.configure.name.error.required'));
     }
 };
 
@@ -378,16 +378,16 @@ function observeHeight() {
         setHeight();
     });
 
-    resizeObserver.value.observe(iApi!.$vApp.$el.querySelector('.vue-treeselect__control'));
-    resizeObserver.value.observe(iApi!.$vApp.$el.querySelector('.vue-treeselect__menu'));
+    resizeObserver.value.observe(iApi.$vApp.$el.querySelector('.vue-treeselect__control'));
+    resizeObserver.value.observe(iApi.$vApp.$el.querySelector('.vue-treeselect__menu'));
 }
 
 const setHeight = () => {
     // calculates height of tree selector
-    const menuElement = iApi!.$vApp.$el.querySelector('.vue-treeselect__menu');
+    const menuElement = iApi.$vApp.$el.querySelector('.vue-treeselect__menu');
     const menuHeight = menuElement?.clientHeight ?? 0;
 
-    const selectElement = iApi!.$vApp.$el.querySelector('.vue-treeselect__control');
+    const selectElement = iApi.$vApp.$el.querySelector('.vue-treeselect__control');
     const selectHeight = selectElement?.clientHeight ?? 0;
 
     el.value.style.height = `${menuHeight + selectHeight + 30}px`;

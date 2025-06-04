@@ -30,7 +30,7 @@ import { inject, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import type { InstanceAPI } from '@/api';
 import { useI18n } from 'vue-i18n';
 
-const iApi = inject<InstanceAPI>('iApi');
+const iApi = inject<InstanceAPI>('iApi')!;
 const { t } = useI18n();
 
 const open = ref(false);
@@ -42,7 +42,7 @@ const lastEl = ref(null as unknown as HTMLElement);
 
 onMounted(() => {
     handlers.value.push(
-        iApi!.event.on('openKeyboardInstructions', () => {
+        iApi.event.on('openKeyboardInstructions', () => {
             open.value = true;
             nextTick(() => {
                 firstEl.value.focus();
@@ -52,7 +52,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-    handlers.value.forEach(handler => iApi?.event.off(handler));
+    handlers.value.forEach(handler => iApi.event.off(handler));
 });
 
 const onKeydown = (event: KeyboardEvent) => {

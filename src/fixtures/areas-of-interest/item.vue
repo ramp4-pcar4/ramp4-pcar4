@@ -80,7 +80,7 @@ defineProps({
     }
 });
 
-const iApi = inject<InstanceAPI>('iApi');
+const iApi = inject<InstanceAPI>('iApi')!;
 
 const selectAreaOfInterest = (area: any) => {
     if (!area.extent) {
@@ -89,7 +89,7 @@ const selectAreaOfInterest = (area: any) => {
     }
 
     // zoom the map to this area's extent
-    iApi?.geo.map.zoomMapTo(Extent.fromConfig(`area-of-interest-extent`, area.extent));
+    iApi.geo.map.zoomMapTo(Extent.fromConfig(`area-of-interest-extent`, area.extent));
 };
 </script>
 
