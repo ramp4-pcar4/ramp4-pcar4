@@ -34,6 +34,7 @@ import {
     EsriSimpleMarkerSymbol
 } from '@/geo/esri';
 import { GlobalEvents } from '@/api';
+import { KeyboardnavAPI } from '../keyboardnav/api/keyboardnav';
 
 /* --------------------------------------------------------------------------
  * CONSTANTS & GLOBAL VARIABLES
@@ -64,6 +65,38 @@ type Vertex = [number, number]; // [x, y] coordinates
 let multiPointVertices: Vertex[] = [];
 
 const rampEventHandlers = reactive<Array<string>>([]);
+
+async function handleKeyboardShortcuts() {
+    if (!(await iApi.fixture.isLoaded('keyboardnav'))) return;
+    const keyboardNav = iApi.fixture.get('keyboardnav') as KeyboardnavAPI;
+
+    keyboardNav.registerNamespace('D', keyPressed => {
+        console.error(keyPressed, 'key pressed');
+        switch (keyPressed) {
+            case 'P':
+                drawStore.setActiveTool('point');
+                break;
+            case 'L':
+                drawStore.setActiveTool('polyline');
+                break;
+            case 'G':
+                drawStore.setActiveTool('polygon');
+                break;
+            case 'C':
+                drawStore.setActiveTool('circle');
+                break;
+            case 'R':
+                drawStore.setActiveTool('rectangle');
+                break;
+            case 'E':
+                drawStore.setActiveTool('edit');
+                break;
+            case 'ACTIVE':
+                break;
+        }
+        iApi.geo.map.esriView?.focus();
+    });
+}
 
 /* --------------------------------------------------------------------------
  * HELPER FUNCTIONS
@@ -749,6 +782,7 @@ const handleSketchUpdateEvent = (event: __esri.SketchUpdateEvent) => {
  * INITIALIZATION & EVENT LISTENERS
  * -------------------------------------------------------------------------- */
 onMounted(() => {
+    handleKeyboardShortcuts();
     initializeDrawTools();
 
     // Listen for map creation/destruction events

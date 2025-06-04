@@ -11,6 +11,7 @@ export const useDrawStore = defineStore('draw', () => {
     const activeTool = ref<ActiveToolList>(null);
     const graphics = reactive<any[]>([]);
     const selectedGraphicId = ref<string | null>(null);
+    const mapNavEl = ref<unknown | null>(null);
 
     function setSupportedTypes(types: DrawTypeConfig[]) {
         supportedTypes.value.splice(0, supportedTypes.value.length, ...types);
@@ -73,6 +74,7 @@ export const useDrawStore = defineStore('draw', () => {
         selectGraphic,
         clearSelection,
         getSelectedGraphic,
-        updateGraphicGeometry
+        updateGraphicGeometry,
+        mapNavEl
     };
 });

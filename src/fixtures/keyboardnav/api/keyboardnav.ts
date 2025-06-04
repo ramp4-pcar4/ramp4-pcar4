@@ -1,0 +1,51 @@
+import { FixtureInstance } from '@/api';
+import { useKeyboardnavStore } from '../store/keyboardnav-store';
+
+/**
+ * @internal
+ */
+export class KeyboardnavAPI extends FixtureInstance {
+    private keyboardnavStore = useKeyboardnavStore(this.$vApp.$pinia);
+
+    /**
+     * Register a namespace letter and its callback to handle shortcut events.
+     *
+     * @param namespace Uppercase letter for this fixture's namespace.
+     * @param callback Called when namespace is activated (key undefined) or a shortcut key is pressed.
+     */
+    registerNamespace(namespace: string, callback: (key?: string) => void): void {
+        const ns = namespace.toUpperCase();
+        this.keyboardnavStore.register(ns, callback);
+    }
+
+    /** @internal */
+    added(): void {
+        this.$iApi.$rootEl?.addEventListener('keydown', (e: Event) => this._handleKeyDown(e as KeyboardEvent));
+        this.$iApi.$rootEl?.addEventListener('blur', this._handleBlur);
+    }
+
+    /** @internal */
+    removed(): void {
+        this.$iApi.$rootEl?.removeEventListener('keydown', (e: Event) => this._handleKeyDown(e as KeyboardEvent));
+        this.$iApi.$rootEl?.removeEventListener('blur', this._handleBlur);
+    }
+
+    private _handleKeyDown = (e: KeyboardEvent): void => {
+        const key = e.key.toUpperCase();
+        if (e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
+            if (key in this.keyboardnavStore.handlers) {
+                e.preventDefault();
+                this.keyboardnavStore.activate(key);
+            }
+        } else if (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey && key.length === 1) {
+            if (this.keyboardnavStore.activeNamespace) {
+                e.preventDefault();
+                this.keyboardnavStore.trigger(key);
+            }
+        }
+    };
+
+    private _handleBlur = (): void => {
+        this.keyboardnavStore.deactivate();
+    };
+}

@@ -7,6 +7,7 @@
             :onClickFunction="() => toggleTool(tool.type as ActiveToolList)"
             :tooltip="t(`draw.${tool.type}.tooltip`)"
             :class="{ 'active-tool': drawStore.activeTool === tool.type }"
+            ref="mapNavEl"
         >
             <component :is="tool.icon" class="fill-current w-32 h-20"></component>
         </mapnav-button>
@@ -17,12 +18,14 @@
 import { useDrawStore } from './store';
 import type { ActiveToolList } from './store';
 import { useI18n } from 'vue-i18n';
-import { markRaw, defineAsyncComponent, computed, inject } from 'vue';
+import { markRaw, defineAsyncComponent, computed, inject, useTemplateRef } from 'vue';
 import { InstanceAPI } from '@/api/internal';
 
 const iApi = inject('iApi') as InstanceAPI;
 const { t } = useI18n();
 const drawStore = useDrawStore();
+
+drawStore.mapNavEl = useTemplateRef('mapNavEl');
 
 const drawingTools = [
     {
