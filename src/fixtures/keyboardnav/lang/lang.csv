@@ -1,2 +1,2 @@
 key,enValue,enValid,frValue,frValid
-keyboardnav.activeNamespace,Namespace Active: {ns},1,,0
+keyboardnav.activeNamespace,Namespace Active: {name},1,Espace de noms actif : {name},0

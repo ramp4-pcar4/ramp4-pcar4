@@ -1,16 +1,30 @@
 <template>
-    <div v-if="activeNamespace" class="ramp-keyboardnav-indicator" role="status" aria-live="assertive">
-        {{ $t('keyboardnav.activeNamespace', { ns: activeNamespace }) }}
+    <div
+        v-if="indicatorText"
+        class="ramp-keyboardnav-indicator"
+        role="status"
+        aria-live="assertive"
+    >
+        {{ indicatorText }}
     </div>
 </template>
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useKeyboardnavStore } from './store/keyboardnav-store';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 // grab store and expose its state
 const store = useKeyboardnavStore();
 const { activeNamespace } = storeToRefs(store);
+const { t } = useI18n();
+
+const indicatorText = computed(() => {
+    if (!activeNamespace.value) return '';
+    const name = t(`keyboardnav.ns.${activeNamespace.value}`);
+    return t('keyboardnav.activeNamespace', { name });
+});
 </script>
 
 <style scoped>

@@ -70,31 +70,73 @@ async function handleKeyboardShortcuts() {
     if (!(await iApi.fixture.isLoaded('keyboardnav'))) return;
     const keyboardNav = iApi.fixture.get('keyboardnav') as KeyboardnavAPI;
 
-    keyboardNav.registerNamespace('D', keyPressed => {
-        console.error(keyPressed, 'key pressed');
-        switch (keyPressed) {
-            case 'P':
-                drawStore.setActiveTool('point');
-                break;
-            case 'L':
-                drawStore.setActiveTool('polyline');
-                break;
-            case 'G':
-                drawStore.setActiveTool('polygon');
-                break;
-            case 'C':
-                drawStore.setActiveTool('circle');
-                break;
-            case 'R':
-                drawStore.setActiveTool('rectangle');
-                break;
-            case 'E':
-                drawStore.setActiveTool('edit');
-                break;
-            case 'ACTIVE':
-                break;
-        }
-        iApi.geo.map.esriView?.focus();
+    keyboardNav.register('D', {
+        name: {
+            en: 'Draw Tools',
+            fr: 'Outils de dessin'
+        },
+        keys: [
+            {
+                key: 'P',
+                description: {
+                    en: 'Draw a point',
+                    fr: 'Dessine un point'
+                },
+                handler: () => {
+                    drawStore.setActiveTool('point');
+                }
+            },
+            {
+                key: 'L',
+                description: {
+                    en: 'Draw a line',
+                    fr: 'Dessine une ligne'
+                },
+                handler: () => {
+                    drawStore.setActiveTool('polyline');
+                }
+            },
+            {
+                key: 'G',
+                description: {
+                    en: 'Draw a polygon',
+                    fr: 'Dessine un polygone'
+                },
+                handler: () => {
+                    drawStore.setActiveTool('polygon');
+                }
+            },
+            {
+                key: 'C',
+                description: {
+                    en: 'Draw a circle',
+                    fr: 'Dessine un cercle'
+                },
+                handler: () => {
+                    drawStore.setActiveTool('circle');
+                }
+            },
+            {
+                key: 'R',
+                description: {
+                    en: 'Draw a rectangle',
+                    fr: 'Dessine un rectangle'
+                },
+                handler: () => {
+                    drawStore.setActiveTool('rectangle');
+                }
+            },
+            {
+                key: 'E',
+                description: {
+                    en: 'Edit geometry',
+                    fr: 'Mode édition'
+                },
+                handler: () => {
+                    drawStore.setActiveTool('edit');
+                }
+            }
+        ]
     });
 }
 
