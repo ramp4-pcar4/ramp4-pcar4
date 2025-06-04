@@ -50,7 +50,7 @@ import { useI18n } from 'vue-i18n';
 import { useDetailsStore } from './store';
 
 const { t } = useI18n();
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 const detailsStore = useDetailsStore();
 
 const handlers = ref<Array<string>>([]);

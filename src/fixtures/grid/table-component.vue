@@ -502,7 +502,7 @@ export interface SpecialColumnDefinition {
 // these should match up with the `type` value returned by the attribute promise.
 const NUM_TYPES: string[] = [FieldType.OID, FieldType.DOUBLE, FieldType.SINGLE, FieldType.INTEGER];
 
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 const gridStore = useGridStore();
 const panelStore = usePanelStore();
 const mobileView = computed(() => panelStore.mobileView);

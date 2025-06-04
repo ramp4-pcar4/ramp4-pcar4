@@ -72,7 +72,7 @@ import { useAppbarStore } from '@/fixtures/appbar/store';
 const { t } = useI18n();
 const panelStore = usePanelStore();
 const appbarStore = useAppbarStore();
-const iApi = inject<InstanceAPI>('iApi');
+const iApi = inject('iApi') as InstanceAPI;
 const el = useTemplateRef('el');
 const contentEl = useTemplateRef('contentEl');
 const contentResizeObserver = ref<ResizeObserver | null>();
@@ -103,7 +103,7 @@ const props = defineProps({
         required: false
     }
 });
-const temporary = computed((): Array<string> | undefined => (iApi?.fixture.get('appbar') ? appbarStore.temporary : []));
+const temporary = computed((): Array<string> | undefined => (iApi.fixture.get('appbar') ? appbarStore.temporary : []));
 const mobileView = computed(() => panelStore.mobileView);
 const reorderable = computed(() => panelStore.reorderable);
 
@@ -122,7 +122,7 @@ const move = (direction: PanelDirection) => {
     }
 };
 const screenContent = computed(() => {
-    return props.screenId ? props.panel.screens[props.screenId][iApi?.$i18n.locale.value ?? 'en'] : null;
+    return props.screenId ? props.panel.screens[props.screenId][iApi.$i18n.locale.value ?? 'en'] : null;
 });
 
 onMounted(() => {

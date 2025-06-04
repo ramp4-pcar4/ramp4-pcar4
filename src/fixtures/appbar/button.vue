@@ -27,7 +27,7 @@ import { GlobalEvents } from '@/api';
 import type { InstanceAPI } from '@/api';
 import { inject } from 'vue';
 
-const iApi = inject<InstanceAPI>('iApi');
+const iApi = inject('iApi') as InstanceAPI;
 
 const props = defineProps({
     onClickFunction: {
@@ -44,7 +44,7 @@ const props = defineProps({
     }
 });
 
-const onClick = () => iApi?.event.emit(GlobalEvents.APPBAR_BUTTON_CLICK, props.buttonId);
+const onClick = () => iApi.event.emit(GlobalEvents.APPBAR_BUTTON_CLICK, props.buttonId);
 </script>
 
 <style lang="scss" scoped>

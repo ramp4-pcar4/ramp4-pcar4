@@ -29,7 +29,7 @@ import type { AttributeMapPair } from '../store';
 
 const props = defineProps(['params']);
 const { t } = useI18n();
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 const el = ref<HTMLElement>();
 
 /**

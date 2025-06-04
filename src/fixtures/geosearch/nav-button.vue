@@ -15,10 +15,10 @@ import { inject } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-const iApi = inject<InstanceAPI>('iApi');
+const iApi = inject('iApi') as InstanceAPI;
 
 const togglePanel = () => {
-    iApi?.panel.toggle('geosearch');
+    iApi.panel.toggle('geosearch');
 };
 </script>
 

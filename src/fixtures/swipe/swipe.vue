@@ -36,7 +36,7 @@ import type { InstanceAPI, LayerInstance } from '@/api';
 import type { EsriMapView } from '@/geo/esri';
 import type { BasemapChange } from '@/geo/api';
 
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 
 const panelStore = usePanelStore();
 const slider = useTemplateRef('slider');

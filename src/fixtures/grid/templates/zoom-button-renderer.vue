@@ -48,7 +48,7 @@ import { GeometryType, LayerType } from '@/geo/api';
 
 const zoomStatus = ref<'zooming' | 'zoomed' | 'error' | 'none'>('none');
 const props = defineProps(['params']);
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 const layerStore = useLayerStore();
 const button = ref<HTMLElement>();
 const { t } = useI18n();

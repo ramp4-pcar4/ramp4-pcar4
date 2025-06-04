@@ -164,7 +164,7 @@ const keyupEvent = (e: Event) => {
     }
 };
 
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 
 const detailsStore = useDetailsStore();
 const layerStore = useLayerStore();

@@ -15,7 +15,7 @@ defineProps({
     }
 });
 
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 
 const onClick = () => {
     iApi.panel.toggle({ id: 'p2', screen: 'p-2-screen-2' });

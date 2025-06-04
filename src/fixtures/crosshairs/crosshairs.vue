@@ -41,7 +41,7 @@ import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import { GlobalEvents } from '@/api';
 import type { InstanceAPI } from '@/api';
 
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 
 const visible = ref<boolean>(false);
 const handlers = ref<Array<string>>([]);

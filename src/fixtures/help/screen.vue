@@ -40,7 +40,7 @@ import axios from 'redaxios';
 import { marked } from 'marked';
 import { useI18n } from 'vue-i18n';
 
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 const helpStore = useHelpStore();
 const { t } = useI18n();
 

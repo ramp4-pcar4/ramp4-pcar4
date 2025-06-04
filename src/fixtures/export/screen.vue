@@ -53,7 +53,7 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 const exportStore = useExportStore();
 
 const fixture = ref<ExportAPI>();
