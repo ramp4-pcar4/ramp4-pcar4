@@ -19,28 +19,33 @@ export interface NamespaceRegistration {
 export interface KeyboardnavStore {
     activeNamespace: Ref<string | null>;
     namespaces: Ref<Record<string, NamespaceRegistration>>;
+    helpVisible: Ref<boolean>;
     register: (namespace: string, options: NamespaceRegistration) => string;
     unregister: (namespace: string) => void;
     activate: (namespace: string, e: KeyboardEvent) => void;
     deactivate: (e?: KeyboardEvent) => void;
     trigger: (key: string, e: KeyboardEvent) => void;
+    setHelpVisible: (val: boolean) => void;
 }
 
 export const useKeyboardnavStore = defineStore('keyboardnav', () => {
     const activeNamespace = ref<string | null>(null);
     const namespaces = ref<Record<string, NamespaceRegistration>>({});
+    const helpVisible = ref<boolean>(false);
+
+    const RESERVED = ['H', '?'];
 
     function findFreeLetter(): string | null {
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         for (const ch of alphabet) {
-            if (!namespaces.value[ch]) return ch;
+            if (!namespaces.value[ch] && !RESERVED.includes(ch)) return ch;
         }
         return null;
     }
 
     function register(namespace: string, options: NamespaceRegistration): string {
         let ns = namespace.toUpperCase();
-        if (namespaces.value[ns]) {
+        if (RESERVED.includes(ns) || namespaces.value[ns]) {
             const free = findFreeLetter();
             if (free) {
                 ns = free;
@@ -61,6 +66,11 @@ export const useKeyboardnavStore = defineStore('keyboardnav', () => {
 
         namespaces.value[ns] = options;
         return ns;
+    }
+
+    function setHelpVisible(val: boolean): void {
+        if (helpVisible.value === val) return;
+        helpVisible.value = val;
     }
 
     function unregister(namespace: string): void {
@@ -98,10 +108,12 @@ export const useKeyboardnavStore = defineStore('keyboardnav', () => {
     return {
         activeNamespace,
         namespaces,
+        helpVisible,
         register,
         unregister,
         activate,
         deactivate,
-        trigger
+        trigger,
+        setHelpVisible
     } as KeyboardnavStore;
 });

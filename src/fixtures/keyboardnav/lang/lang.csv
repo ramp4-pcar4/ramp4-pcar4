@@ -1,2 +1,4 @@
 key,enValue,enValid,frValue,frValid
 keyboardnav.activeNamespace,Namespace Active: {name},1,Espace de noms actif : {name},0
+keyboardnav.helpTitle,Keyboard Shortcuts,1,Raccourcis clavier,1
+keyboardnav.keysTitle,Keys for {name},1,Raccourcis pour {name},1
