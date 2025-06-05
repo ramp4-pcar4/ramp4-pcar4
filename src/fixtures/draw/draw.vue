@@ -75,6 +75,9 @@ async function handleKeyboardShortcuts() {
             en: 'Draw Tools',
             fr: 'Outils de dessin'
         },
+        activeHandler: () => {
+            drawStore.setActiveTool('');
+        },
         keys: [
             {
                 key: 'P',

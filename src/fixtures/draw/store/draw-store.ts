@@ -4,7 +4,7 @@ import { reactive, ref } from 'vue';
 
 // DrawTypeConfig is a type that defines the configuration for each draw type
 
-export type ActiveToolList = 'circle' | 'point' | 'polygon' | 'polyline' | 'rectangle' | 'edit' | null;
+export type ActiveToolList = 'circle' | 'point' | 'polygon' | 'polyline' | 'rectangle' | 'edit' | '' | null;
 
 export const useDrawStore = defineStore('draw', () => {
     const supportedTypes = ref<DrawTypeConfig[]>([]);

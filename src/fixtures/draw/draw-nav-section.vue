@@ -1,5 +1,8 @@
 <template>
-    <div class="mapnav-section bg-white-75 hover:bg-white">
+    <div
+        :class="{ active: drawStore.activeTool || drawStore.activeTool == '' }"
+        class="mapnav-section bg-white-75 hover:bg-white"
+    >
         <mapnav-button
             v-for="tool in filteredDrawingTools"
             :key="tool.type"
@@ -25,7 +28,7 @@ const iApi = inject('iApi') as InstanceAPI;
 const { t } = useI18n();
 const drawStore = useDrawStore();
 
-drawStore.mapNavEl = useTemplateRef('mapNavEl');
+drawStore.mapNavEl = useTemplateRef<HTMLElement>('mapNavEl');
 
 const drawingTools = [
     {
@@ -78,6 +81,9 @@ const mouseFocus = () => {
 
 <style lang="scss" scoped>
 .active-tool {
-    background-color: rgba(0, 0, 0, 0.1);
+    @apply ring-1 ring-indigo-500 bg-indigo-50;
+}
+div.active {
+    @apply shadow-xl ring-1 ring-indigo-500;
 }
 </style>
