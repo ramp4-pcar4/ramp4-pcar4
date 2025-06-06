@@ -55,9 +55,8 @@
                             <span class="text-sm cursor-text"> [{{ versionHash }}] </span>
                         </div>
                         <div>
-                            <span class="text-sm cursor-text">
-                                {{ buildDate }}
-                            </span>
+                            <span class="font-bold cursor-text">{{ buildDate[0] }}</span>
+                            <span class="ml-5 cursor-text">{{ buildDate[1] }}</span>
                         </div>
                         <div class="mt-5">
                             <a
@@ -124,12 +123,12 @@ const versionHash = computed<string>(() => {
 /**
  * Get RAMP build date
  */
-const buildDate = computed<string>(() => {
+const buildDate = computed(() => {
     const timestamp = new Date(version.timestamp);
-    if (isNaN(timestamp as any)) {
+    if (isNaN(timestamp.getTime())) {
         // this appears to be broken in dev serve mode (but not always).
         // likely the vite `git log -1 --format=%cd` command isnt working in that context
-        return 'dev mode, no date';
+        return ['dev mode', 'no date'];
     } else {
         const padZero = (num: number): string => {
             if (num < 10) {
@@ -138,20 +137,20 @@ const buildDate = computed<string>(() => {
                 return num.toString();
             }
         };
-        return `${timestamp.getFullYear()}-${
-            timestamp.getMonth() + 1
-        }-${timestamp.getDate()} ${timestamp.getHours()}:${padZero(
-            timestamp.getMinutes()
-        )}:${padZero(timestamp.getSeconds())}`;
+        return [
+            `${timestamp.getFullYear()}-${timestamp.getMonth() + 1}-${timestamp.getDate()}`,
+            `${timestamp.getHours()}:${padZero(timestamp.getMinutes())}:${padZero(timestamp.getSeconds())}`
+        ];
     }
 });
 </script>
 
 <style lang="scss" scoped>
 .about-ramp-dropdown {
-    @apply p-0 #{!important};
+    padding: 0 !important;
+
     &:hover {
-        @apply bg-white #{!important};
+        background-color: #fff !important;
     }
 }
 </style>
