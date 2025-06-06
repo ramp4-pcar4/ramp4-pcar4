@@ -20,7 +20,7 @@ import type { ComponentPublicInstance } from 'vue';
 import { usePanelStore } from '@/stores/panel';
 
 const panelStore = usePanelStore();
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 const el = ref<ComponentPublicInstance>();
 const opacity = computed(() => {
     return panelStore.opacity;
@@ -33,13 +33,13 @@ onMounted(() => {
     const resizeObserver = new ResizeObserver((entries: any) => {
         // determine if app is in mobile mode (app container ONLY has the `xs` class on it,
         // if it contains `sm` then the screen is too large)
-        const newMode = !(iApi?.$vApp.$root?.$refs['app-size'] as HTMLElement).classList.contains('sm');
+        const newMode = !(iApi.$vApp.$root?.$refs['app-size'] as HTMLElement).classList.contains('sm');
         const oldMode = mobileMode.value;
 
         // fire event when mobile mode changes
         if (oldMode !== newMode) {
             panelStore.mobileView = newMode;
-            iApi?.event.emit(GlobalEvents.RAMP_MOBILEVIEW_CHANGE, newMode);
+            iApi.event.emit(GlobalEvents.RAMP_MOBILEVIEW_CHANGE, newMode);
         }
 
         panelStore.setStackWidth(entries[0].contentRect.width);

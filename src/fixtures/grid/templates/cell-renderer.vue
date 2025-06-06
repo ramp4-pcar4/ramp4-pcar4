@@ -40,7 +40,7 @@ import { useI18n } from 'vue-i18n';
 import { usePanelStore } from '@/stores/panel';
 
 const panelStore = usePanelStore();
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 const { t } = useI18n();
 const copyTooltip = ref<HTMLElement>();
 const el = ref<HTMLElement>();

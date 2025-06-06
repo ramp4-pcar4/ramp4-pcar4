@@ -15,7 +15,7 @@ import { GlobalEvents } from '@/api/internal';
 import type { InstanceAPI } from '@/api/internal';
 import { useI18n } from 'vue-i18n';
 
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 const { t } = useI18n();
 
 const onClick = () => iApi.event.emit(GlobalEvents.HELP_TOGGLE);

@@ -25,7 +25,7 @@ import { computed, inject, onBeforeUnmount, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 const geosearchStore = useGeosearchStore();
 
 const resultsVisible = computed<boolean>(() => geosearchStore.resultsVisible);

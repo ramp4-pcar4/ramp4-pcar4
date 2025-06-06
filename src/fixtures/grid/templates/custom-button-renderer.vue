@@ -19,7 +19,7 @@ import type { InstanceAPI, LayerInstance } from '@/api/internal';
 import type { AttributeMapPair } from '../store';
 
 const props = defineProps(['params']);
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 const el = ref<HTMLElement>();
 
 const isButtonVisible = computed<boolean>(() => {

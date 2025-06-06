@@ -83,7 +83,7 @@ import { FSATOKEN } from './definitions';
 import to from 'await-to-js';
 
 const { t } = useI18n();
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 const geosearchStore = useGeosearchStore();
 
 defineProps({

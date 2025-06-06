@@ -23,7 +23,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const iApi = inject<InstanceAPI>('iApi');
+const iApi = inject('iApi') as InstanceAPI;
 
 const props = defineProps({
     fixtureFields: {
@@ -61,12 +61,12 @@ const itemData = () => {
     // Remove any fields of type geometry
     findAndDelete(props.fields, 'type', 'geometry', clonePayload);
 
-    if (!iApi?.ui.exposeOids) {
+    if (!iApi.ui.exposeOids) {
         // check global oid flag
         findAndDelete(props.fields, 'type', 'oid', clonePayload);
     }
 
-    if (!iApi?.ui.exposeMeasurements) {
+    if (!iApi.ui.exposeMeasurements) {
         // check global measurements flag
         findAndDelete(props.fields, 'name', 'shape_length', clonePayload);
         findAndDelete(props.fields, 'name', 'shape_area', clonePayload);
@@ -109,7 +109,7 @@ const itemData = () => {
             const cloneValue = clonePayload[key];
 
             displayMetadata[key] = {
-                value: typeof cloneValue === 'number' ? iApi?.ui.formatNumber(cloneValue) : cloneValue,
+                value: typeof cloneValue === 'number' ? iApi.ui.formatNumber(cloneValue) : cloneValue,
                 alias: fieldMD.name,
                 type: fieldMD.type
             };
@@ -118,8 +118,8 @@ const itemData = () => {
 
     for (const [key] of Object.entries(displayMetadata)) {
         // only replace html special chars if string represents plain text
-        if (iApi!.ui.isPlainText(displayMetadata[key].value)) {
-            displayMetadata[key].value = iApi!.ui.escapeHtml(displayMetadata[key].value);
+        if (iApi.ui.isPlainText(displayMetadata[key].value)) {
+            displayMetadata[key].value = iApi.ui.escapeHtml(displayMetadata[key].value);
         }
     }
 

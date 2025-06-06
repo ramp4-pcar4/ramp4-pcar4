@@ -46,7 +46,7 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 
 const enhancedCatActivities = () => {
     // shows a cat, also does an event API flex

@@ -70,7 +70,7 @@ import { useI18n } from 'vue-i18n';
 import type { IProvinceInfo } from './definitions';
 
 const { t } = useI18n();
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 const geosearchStore = useGeosearchStore();
 
 const provinces = ref<Array<IProvinceInfo>>([]);

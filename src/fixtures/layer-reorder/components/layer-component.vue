@@ -135,7 +135,7 @@ import draggable from 'vuedraggable';
 import { LayerState } from '@/geo/api';
 import { useI18n } from 'vue-i18n';
 
-const iApi = inject<InstanceAPI>('iApi')!;
+const iApi = inject('iApi') as InstanceAPI;
 const { t } = useI18n();
 
 const layersModel = ref<Array<LayerModel>>([]);
