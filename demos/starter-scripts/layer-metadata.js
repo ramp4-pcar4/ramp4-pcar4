@@ -75,11 +75,34 @@ let config = {
             layers: [
                 {
                     id: 'ecogeo-nature',
-                    name: 'Nature',
+                    name: 'Nature - Markdown metadata',
                     layerType: 'esri-feature',
                     url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/6',
                     metadata: {
                         url: 'https://raw.githubusercontent.com/ramp4-pcar4/ramp4-pcar4/main/public/help/en.md'
+                    }
+                },
+                {
+                    id: 'Happy',
+                    name: 'Happy - DCAT metadata',
+                    layerType: 'file-geojson',
+                    url: '../file-layers/geojson.json',
+                    colour: '#4ef542',
+                    nameField: 'name',
+                    metadata: {
+                        url: 'https://open.canada.ca/data/en/dataset/be54680b-ea62-46f3-aaa9-7644ed970aef.xml',
+                        xmlType: 'DCAT'
+                    }
+                },
+                {
+                    id: 'Happy2',
+                    name: 'Happy - HNAP metadata',
+                    layerType: 'file-geojson',
+                    url: '../file-layers/geojson.json',
+                    colour: '#fe3742',
+                    nameField: 'name',
+                    metadata: {
+                        url: '../sample-metadata/csw.xml'
                     }
                 }
             ],
@@ -89,6 +112,12 @@ let config = {
                         children: [
                             {
                                 layerId: 'ecogeo-nature'
+                            },
+                            {
+                                layerId: 'Happy'
+                            },
+                            {
+                                layerId: 'Happy2'
                             }
                         ]
                     }

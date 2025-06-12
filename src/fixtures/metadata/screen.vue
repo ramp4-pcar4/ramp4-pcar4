@@ -14,7 +14,7 @@
                     <div
                         v-else-if="payload.type === 'xml' && status == 'success'"
                         v-html="response"
-                        class="flex flex-col justify-center xml-content"
+                        class="flex flex-col justify-center max-w-full xml-content"
                     ></div>
 
                     <!-- Found Screen, HTML -->
@@ -50,6 +50,8 @@ import { marked } from 'marked';
 
 import XSLT_en from './files/xstyle_default_en.xsl?raw';
 import XSLT_fr from './files/xstyle_default_fr.xsl?raw';
+import XSLT_DCAT_en from './files/xstyle_dcat_en.xsl?raw';
+import XSLT_DCAT_fr from './files/xstyle_dcat_fr.xsl?raw';
 import { useI18n } from 'vue-i18n';
 
 const metadataStore = useMetadataStore();
@@ -175,7 +177,12 @@ const loadMetadata = () => {
  * @return {Promise} a promise resolving with an HTML fragment
  */
 const loadFromURL = (xmlUrl: string, params: any[]) => {
-    let XSLT = iApi.language === 'en' ? XSLT_en : XSLT_fr;
+    let XSLT;
+    if (props.payload.xmlType && props.payload.xmlType === 'DCAT') {
+        XSLT = iApi.language === 'en' ? XSLT_DCAT_en : XSLT_DCAT_fr;
+    } else {
+        XSLT = iApi.language === 'en' ? XSLT_en : XSLT_fr;
+    }
 
     // Translate headers.
     XSLT = XSLT.replace(/\{\{([\w.]+)\}\}/g, (_: string, tag: string) => t(tag));

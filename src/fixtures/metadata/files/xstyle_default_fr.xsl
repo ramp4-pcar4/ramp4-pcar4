@@ -50,30 +50,30 @@
         </xsl:if>
       </xsl:comment>
 
-      <xsl:if test="//gmd:pointOfContact//gmd:individualName/* != '' 
-              or //gmd:pointOfContact//gmd:organisationName//gmd:LocalisedCharacterString[@locale='#fra']/text() != ''
-              or //gmd:pointOfContact//gmd:positionName//gmd:LocalisedCharacterString[@locale='#fra']/text() != ''
-              or //gmd:pointOfContact//gmd:electronicMailAddress/* != ''
-              or //gmd:pointOfContact//gmd:role/gmd:CI_RoleCode/@codeListValue != ''">
+      <xsl:if test="//gmd:citedResponsibleParty//gmd:individualName/* != '' 
+              or //gmd:citedResponsibleParty//gmd:organisationName//gmd:LocalisedCharacterString[@locale='#fra']/text() != ''
+              or //gmd:citedResponsibleParty//gmd:positionName//gmd:LocalisedCharacterString[@locale='#fra']/text() != ''
+              or //gmd:citedResponsibleParty//gmd:electronicMailAddress/* != ''
+              or //gmd:citedResponsibleParty//gmd:role/gmd:CI_RoleCode/@codeListValue != ''">
         <h5 class="text-xl font-bold mb-3">{{metadata.xslt.contactInfo}}</h5>
         <p>
-          <xsl:value-of select="//gmd:pointOfContact//gmd:individualName" />
+          <xsl:value-of select="//gmd:citedResponsibleParty//gmd:individualName" />
         </p>
         <p>
-          <xsl:value-of select="//gmd:pointOfContact//gmd:organisationName//gmd:LocalisedCharacterString[@locale='#fra']/text()" />
+          <xsl:value-of select="//gmd:citedResponsibleParty//gmd:organisationName//gmd:LocalisedCharacterString[@locale='#fra']/text()" />
         </p>
         <p>
-          <xsl:value-of select="//gmd:pointOfContact//gmd:positionName//gmd:LocalisedCharacterString[@locale='#fra']/text()" />
+          <xsl:value-of select="//gmd:citedResponsibleParty//gmd:positionName//gmd:LocalisedCharacterString[@locale='#fra']/text()" />
         </p>
         <p>
-          <a href="mailto:{//gmd:pointOfContact//gmd:electronicMailAddress//gmd:LocalisedCharacterString[@locale='#fra']/text()}?Subject={//gmd:identificationInfo//gmd:title//gmd:LocalisedCharacterString[@locale='#fra']/text()}">
-            <xsl:value-of select="//gmd:pointOfContact//gmd:electronicMailAddress" />
+          <a href="mailto:{//gmd:citedResponsibleParty//gmd:electronicMailAddress//gmd:LocalisedCharacterString[@locale='#fra']/text()}?Subject={//gmd:identificationInfo//gmd:title//gmd:LocalisedCharacterString[@locale='#fra']/text()}">
+            <xsl:value-of select="//gmd:citedResponsibleParty//gmd:electronicMailAddress" />
           </a>
         </p>
         <p>
           <xsl:variable name="roleCode" >
-            <xsl:value-of select="concat(substring(//gmd:pointOfContact//gmd:role/gmd:CI_RoleCode/@codeListValue,1,1),
-                        substring(//gmd:pointOfContact//gmd:role/gmd:CI_RoleCode/@codeListValue, 2))" />
+            <xsl:value-of select="concat(substring(//gmd:citedResponsibleParty//gmd:role/gmd:CI_RoleCode/@codeListValue,1,1),
+                        substring(//gmd:citedResponsibleParty//gmd:role/gmd:CI_RoleCode/@codeListValue, 2))" />
           </xsl:variable>
 
           <xsl:choose>
