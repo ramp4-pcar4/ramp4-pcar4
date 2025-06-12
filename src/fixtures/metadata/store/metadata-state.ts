@@ -12,6 +12,7 @@ export interface MetadataPayload {
     url: string;
     catalogueUrl: string | undefined;
     layer: LayerInstance | undefined;
+    xmlType: string;
 }
 
 export interface MetadataCache {
