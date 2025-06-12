@@ -14,7 +14,7 @@
                     <div
                         v-else-if="payload.type === 'xml' && status == 'success'"
                         v-html="response"
-                        class="flex flex-col justify-center xml-content"
+                        class="flex flex-col justify-center max-w-full xml-content"
                     ></div>
 
                     <!-- Found Screen, HTML -->
@@ -50,7 +50,10 @@ import { marked } from 'marked';
 
 import XSLT_en from './files/xstyle_default_en.xsl?raw';
 import XSLT_fr from './files/xstyle_default_fr.xsl?raw';
+import XSLT_DCAT_en from './files/xstyle_dcat_en.xsl?raw';
+import XSLT_DCAT_fr from './files/xstyle_dcat_fr.xsl?raw';
 import { useI18n } from 'vue-i18n';
+import linkifyHtml from 'linkify-html';
 
 const metadataStore = useMetadataStore();
 const { t } = useI18n();
@@ -76,6 +79,7 @@ const handlers = reactive<Array<string>>([]);
 const watchers = reactive<Array<() => void>>([]);
 
 onMounted(() => {
+    metadataStore.status = 'loading';
     loadMetadata();
 
     // if layer is removed with its metadata open close this panel
@@ -94,6 +98,7 @@ onMounted(() => {
             (newUid: string, oldUid: string) => {
                 // update with new content
                 if (newUid !== oldUid) {
+                    metadataStore.status = 'loading';
                     loadMetadata();
                 }
             }
@@ -175,7 +180,12 @@ const loadMetadata = () => {
  * @return {Promise} a promise resolving with an HTML fragment
  */
 const loadFromURL = (xmlUrl: string, params: any[]) => {
-    let XSLT = iApi.language === 'en' ? XSLT_en : XSLT_fr;
+    let XSLT;
+    if (props.payload.xmlType && props.payload.xmlType === 'DCAT') {
+        XSLT = iApi.language === 'en' ? XSLT_DCAT_en : XSLT_DCAT_fr;
+    } else {
+        XSLT = iApi.language === 'en' ? XSLT_en : XSLT_fr;
+    }
 
     // Translate headers.
     XSLT = XSLT.replace(/\{\{([\w.]+)\}\}/g, (_: string, tag: string) => t(tag));
@@ -215,6 +225,15 @@ const applyXSLT = (xmlString: string, xslString: string, params: any[]) => {
             params.forEach(p => xsltProc.setParameter('', p.key, p.value || ''));
         }
         output = xsltProc.transformToFragment(xmlDoc, document);
+
+        const options = {
+            className: 'underline text-blue-700 break-all',
+            target: '_blank',
+            validate: {
+                url: (value: string) => /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
+            }
+        };
+        output.firstChild.innerHTML = linkifyHtml(output.firstChild.innerHTML, options);
     }
     // ('-')7 IE retirement (╯°□°）╯︵ ┻━┻
 
