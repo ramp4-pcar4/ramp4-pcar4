@@ -70,7 +70,14 @@ export const useGeosearchStore = defineStore('geosearch', () => {
      *
      * @return {Promise<Array>} a promise that resolves to a list of all provinces in the form
      */
-    const getProvinces = computed<Promise<Array<IProvinceInfo>>>(() => GSservice.value.fetchProvinces());
+    const getProvinces = computed<Promise<Array<IProvinceInfo>>>(() =>
+        GSservice.value.fetchProvinces().then((provs: Array<any>) => {
+            provs.sort((provA: any, provB: any) =>
+                provA.name.localeCompare(provB.name, undefined, { sensitivity: 'case' })
+            );
+            return provs;
+        })
+    );
 
     /**
      * Fetches the list of all possible types in a geoName query. Returned type objects contain the following properties:
@@ -84,7 +91,9 @@ export const useGeosearchStore = defineStore('geosearch', () => {
         () =>
             new Promise(resolve => {
                 GSservice.value.fetchTypes().then((types: Array<any>) => {
-                    types.sort((typeA: any, typeB: any) => (typeA.name > typeB.name ? 1 : -1));
+                    types.sort((typeA: any, typeB: any) =>
+                        typeA.name.localeCompare(typeB.name, undefined, { sensitivity: 'case' })
+                    );
                     resolve(types);
                 });
             })
