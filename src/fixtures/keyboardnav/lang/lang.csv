@@ -1,0 +1,6 @@
+key,enValue,enValid,frValue,frValid
+keyboardnav.activeNamespace,Namespace Active: {name},1,Espace de noms actif : {name},0
+keyboardnav.helpTitle,Keyboard Shortcuts,1,Raccourcis clavier,0
+keyboardnav.keysTitle,Keys for {name},1,Raccourcis pour {name},0
+keyboardnav.helpDescription,"To use keyboard shortcuts, start by activating a feature group using the combo <span class='key indigo'>SHIFT + [letter]</span>. Once a group is active, its specific shortcuts will appear beneath it. Use <span class='key zinc'>[key]</span> to trigger individual actions within that group.",1,Pour utiliser les raccourcis clavier, commencez par activer un groupe de fonctionnalités avec la combinaison <span class='key indigo'>SHIFT + [letter]</span>. Une fois le groupe actif, ses raccourcis spécifiques apparaîtront en dessous. Utilisez <span class='key zinc'>[letter]</span> pour déclencher les actions individuelles de ce groupe.,0
+keyboardnav.noShortcuts,No shortcuts available.,1,Aucun raccourci disponible.,0
