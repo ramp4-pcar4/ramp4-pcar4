@@ -84,6 +84,7 @@ const blurDropdownTrigger = () => {
 };
 
 onMounted(() => {
+    console.log("test");
     window.addEventListener(
         'click',
         event => {
