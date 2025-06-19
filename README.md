@@ -153,3 +153,7 @@ To enable demo previews on your forked repository, update the following settings
 
 4. **Workflow Permissions**:
    - Go to `Settings -> Actions -> General -> Workflow permissions`, and select **Read and write permissions**.
+
+5. **Enabling Workflow**:
+   - Go to the `Actions` tab and click on **I understand my workflows, go ahead and enable them**.
+   - **Note**: If you've already enabled workflows in the Actions tab for your fork, this prompt won't appear again.
