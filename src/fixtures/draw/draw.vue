@@ -34,6 +34,7 @@ import {
     EsriSimpleMarkerSymbol
 } from '@/geo/esri';
 import { GlobalEvents } from '@/api';
+import type { KeyboardnavAPI } from '@/fixtures/keyboardnav/api/keyboardnav';
 
 /* --------------------------------------------------------------------------
  * CONSTANTS & GLOBAL VARIABLES
@@ -64,6 +65,82 @@ type Vertex = [number, number]; // [x, y] coordinates
 let multiPointVertices: Vertex[] = [];
 
 const rampEventHandlers = reactive<Array<string>>([]);
+
+async function handleKeyboardShortcuts() {
+    const keyboardNav = (await iApi.fixture.isLoaded('keyboardnav')) as KeyboardnavAPI;
+
+    keyboardNav.register('D', {
+        name: {
+            en: 'Draw Tools',
+            fr: 'Outils de dessin'
+        },
+        activeHandler: () => {
+            drawStore.setActiveTool('');
+        },
+        keys: [
+            {
+                key: 'P',
+                description: {
+                    en: 'Draw a point',
+                    fr: 'Dessine un point'
+                },
+                handler: () => {
+                    drawStore.setActiveTool('point');
+                }
+            },
+            {
+                key: 'L',
+                description: {
+                    en: 'Draw a line',
+                    fr: 'Dessine une ligne'
+                },
+                handler: () => {
+                    drawStore.setActiveTool('polyline');
+                }
+            },
+            {
+                key: 'G',
+                description: {
+                    en: 'Draw a polygon',
+                    fr: 'Dessine un polygone'
+                },
+                handler: () => {
+                    drawStore.setActiveTool('polygon');
+                }
+            },
+            {
+                key: 'C',
+                description: {
+                    en: 'Draw a circle',
+                    fr: 'Dessine un cercle'
+                },
+                handler: () => {
+                    drawStore.setActiveTool('circle');
+                }
+            },
+            {
+                key: 'R',
+                description: {
+                    en: 'Draw a rectangle',
+                    fr: 'Dessine un rectangle'
+                },
+                handler: () => {
+                    drawStore.setActiveTool('rectangle');
+                }
+            },
+            {
+                key: 'E',
+                description: {
+                    en: 'Edit geometry',
+                    fr: 'Mode édition'
+                },
+                handler: () => {
+                    drawStore.setActiveTool('edit');
+                }
+            }
+        ]
+    });
+}
 
 /* --------------------------------------------------------------------------
  * HELPER FUNCTIONS
@@ -749,6 +826,7 @@ const handleSketchUpdateEvent = (event: __esri.SketchUpdateEvent) => {
  * INITIALIZATION & EVENT LISTENERS
  * -------------------------------------------------------------------------- */
 onMounted(() => {
+    handleKeyboardShortcuts();
     initializeDrawTools();
 
     // Listen for map creation/destruction events

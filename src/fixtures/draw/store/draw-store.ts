@@ -4,13 +4,14 @@ import { reactive, ref } from 'vue';
 
 // DrawTypeConfig is a type that defines the configuration for each draw type
 
-export type ActiveToolList = 'circle' | 'point' | 'polygon' | 'polyline' | 'rectangle' | 'edit' | null;
+export type ActiveToolList = 'circle' | 'point' | 'polygon' | 'polyline' | 'rectangle' | 'edit' | '' | null;
 
 export const useDrawStore = defineStore('draw', () => {
     const supportedTypes = ref<DrawTypeConfig[]>([]);
     const activeTool = ref<ActiveToolList>(null);
     const graphics = reactive<any[]>([]);
     const selectedGraphicId = ref<string | null>(null);
+    const mapNavEl = ref<unknown | null>(null);
 
     function setSupportedTypes(types: DrawTypeConfig[]) {
         supportedTypes.value.splice(0, supportedTypes.value.length, ...types);
@@ -73,6 +74,7 @@ export const useDrawStore = defineStore('draw', () => {
         selectGraphic,
         clearSelection,
         getSelectedGraphic,
-        updateGraphicGeometry
+        updateGraphicGeometry,
+        mapNavEl
     };
 });
