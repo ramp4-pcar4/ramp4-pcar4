@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   post-to-slack:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Check user permissions (allow only those w/ write access)
         id: permission_check
@@ -46,7 +46,7 @@ jobs:
         id: slack
         uses: slackapi/slack-github-action@v1.27.0
         with:
-          channel-id: 'C08080W3W0Y'
+          channel-id: 'C092GN5MG1H'
           payload: |
             {
               "blocks": [
