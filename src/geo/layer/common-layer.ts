@@ -537,19 +537,23 @@ export class CommonLayer extends LayerInstance {
      * @param type the type of timer to start (load or draw)
      */
     protected startTimer(type: TimerType): void {
-        this.stopTimer(type); // reset the timer if a timing is already in progress.
-        if (this.expectedTime[type] > 0) {
-            this.timers[type] = window.setTimeout(
-                () =>
-                    this.$iApi.notify.show(
-                        NotificationType.WARNING,
-                        // layer.longload or layer.longdraw
-                        this.$iApi.$i18n.t(`layer.long${type}`, {
-                            id: this.name || this.id
-                        })
-                    ),
-                this.expectedTime[type]
-            );
+        // don't show notifications on system layers.
+        // won't have any meaning to users, and these are typically graphic / local anyways.
+        if (!this.isSystem) {
+            this.stopTimer(type); // reset the timer if a timing is already in progress.
+            if (this.expectedTime[type] > 0) {
+                this.timers[type] = window.setTimeout(
+                    () =>
+                        this.$iApi.notify.show(
+                            NotificationType.WARNING,
+                            // layer.longload or layer.longdraw
+                            this.$iApi.$i18n.t(`layer.long${type}`, {
+                                id: this.name || this.id
+                            })
+                        ),
+                    this.expectedTime[type]
+                );
+            }
         }
     }
 

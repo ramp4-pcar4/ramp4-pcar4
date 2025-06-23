@@ -153,7 +153,18 @@ export class MapLayer extends CommonLayer {
                 EsriWatch(
                     () => e.layerView.updating,
                     (newval: boolean) => {
-                        this.updateDrawState(newval ? DrawState.REFRESH : DrawState.UP_TO_DATE);
+                        // terminating layers can sometimes signal a view updating.
+                        // when changing languages, this can cause the "slow draw"
+                        // timer to start and never finish, resulting in notifications
+                        // after the map reloads in new langauge.
+                        if (
+                            !(
+                                this.initiationState === InitiationState.TERMINATED ||
+                                this.initiationState === InitiationState.TERMINATING
+                            )
+                        ) {
+                            this.updateDrawState(newval ? DrawState.REFRESH : DrawState.UP_TO_DATE);
+                        }
                     }
                 )
             );

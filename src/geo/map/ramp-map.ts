@@ -60,8 +60,8 @@ export class MapAPI extends CommonMapAPI {
         // DEV NOTE these values get updated with any config overrides in createMap().
         //          But need to init values here on the chance layers start initializing prior to map
         //          getting "created". Affects overview map layers in particular.
-        draw: 10000,
-        load: 10000,
+        draw: 12000,
+        load: 12000,
         fail: 90000
     };
 
@@ -80,8 +80,8 @@ export class MapAPI extends CommonMapAPI {
         this.setMapMouseThrottle(config.mapMouseThrottle ?? 0);
         this.trackFirstBasemap = true; // we do this here (in this class) to prevent the overview map from tracking
 
-        this.layerDefaultTimes.draw = config.layerTimeDefault?.expectedDrawTime ?? 10000;
-        this.layerDefaultTimes.load = config.layerTimeDefault?.expectedLoadTime ?? 10000;
+        this.layerDefaultTimes.draw = config.layerTimeDefault?.expectedDrawTime ?? 12000;
+        this.layerDefaultTimes.load = config.layerTimeDefault?.expectedLoadTime ?? 12000;
 
         // using falsey || since a 0 would cause every layer to fail instantly
         this.layerDefaultTimes.fail = config.layerTimeDefault?.maxLoadTime || 90000;
