@@ -155,6 +155,8 @@ class EsriAPI {
 
     static async QueryByIds(url: string, query: EsriQuery, options?: __esri.RequestOptions): Promise<Array<number>> {
         const { executeForIds } = await import('@arcgis/core/rest/query');
+
+        // @ts-expect-error esri changed to allow strings as ids. afaik map services are always numbers for oid. if we start encountering strings, can refactor
         return executeForIds(url, query, options);
     }
 
