@@ -233,7 +233,12 @@ const applyXSLT = (xmlString: string, xslString: string, params: any[]) => {
                 url: (value: string) => /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
             }
         };
-        output.firstChild.innerHTML = linkifyHtml(output.firstChild.innerHTML, options);
+        console.log(output);
+        if (props.payload.treatXmlAsMarkdown) {
+            output.firstChild.innerHTML = marked.parse(output.firstChild.innerHTML);
+        } else {
+            output.firstChild.innerHTML = linkifyHtml(output.firstChild.innerHTML, options);
+        }
     }
     // ('-')7 IE retirement (╯°□°）╯︵ ┻━┻
 
