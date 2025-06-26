@@ -90,8 +90,9 @@ let config = {
                     colour: '#4ef542',
                     nameField: 'name',
                     metadata: {
-                        url: 'https://open.canada.ca/data/en/dataset/be54680b-ea62-46f3-aaa9-7644ed970aef.xml',
-                        xmlType: 'DCAT'
+                        url: 'https://open.canada.ca/data/en/dataset/2dac78ba-8543-48a6-8f07-faeef56f9895.xml',
+                        xmlType: 'DCAT',
+                        treatXmlAsMarkdown: true
                     }
                 },
                 {

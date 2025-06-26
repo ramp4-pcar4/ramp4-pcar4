@@ -1900,6 +1900,11 @@
                     "description": "What xslt to match to the metadata XML. HNAP and DCAT are currently supported.",
                     "enum": ["HNAP", "DCAT"],
                     "default": "HNAP"
+                },
+                "treatXmlAsMarkdown": {
+                    "type": "boolean",
+                    "description": "Whether to treat the text in the XML file as markdown",
+                    "default": false
                 }
             },
             "required": ["url"],
