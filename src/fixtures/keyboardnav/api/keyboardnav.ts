@@ -51,6 +51,30 @@ export class KeyboardnavAPI extends FixtureInstance {
 
     private _handleKeyDown = (e: KeyboardEvent): void => {
         if (this._isInput(e.target)) return;
+
+        if (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
+            if (/^[1-5]$/.test(e.key)) {
+                const idx = parseInt(e.key) - 1;
+                const panel = this.$iApi.panel.visible[idx];
+                if (panel) {
+                    e.preventDefault();
+                    this.$iApi.panel.focus(panel);
+                }
+                return;
+            } else if (e.key === 'Escape') {
+                const target = e.target as HTMLElement;
+                const container = target.closest('[data-cy]') as HTMLElement | null;
+                if (container && this.$iApi.$rootEl?.querySelector('.panel-container')?.contains(container)) {
+                    e.preventDefault();
+                    const id = container.getAttribute('data-cy');
+                    if (id) {
+                        this.$iApi.panel.close(id);
+                    }
+                }
+                return;
+            }
+        }
+
         const key = e.key.toUpperCase();
         if (e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
             if (key in this.keyboardnavStore.namespaces) {

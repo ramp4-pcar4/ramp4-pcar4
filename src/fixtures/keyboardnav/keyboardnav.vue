@@ -18,6 +18,38 @@
                     role="list"
                     class="m-0 max-w-[calc(var(--container-lg)-(--spacing(8)))] list-none divide-y divide-zinc-900/5 p-0 dark:divide-white/5"
                 >
+                    <li class="pl-24 mb-8 py-16">
+                        <div class="flex items-center gap-x-12">
+                            <span class="font-mono text-md text-zinc-600">
+                                {{ t('keyboardnav.mainShortcuts.title') }}
+                            </span>
+                        </div>
+
+                        <div class="space-y-4 p-16 pl-24">
+                            <div class="flex items-center gap-x-12">
+                                <span
+                                    class="font-mono px-6 text-[0.825rem]/6 font-semibold rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
+                                >
+                                    1-5
+                                </span>
+                                <span class="h-2 w-2 rounded-full bg-zinc-300 dark:bg-zinc-600"></span>
+                                <span class="font-mono text-md text-zinc-600">
+                                    {{ t('keyboardnav.mainShortcuts.numbers') }}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-x-12">
+                                <span
+                                    class="font-mono px-6 text-[0.825rem]/6 font-semibold rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
+                                >
+                                    ESC
+                                </span>
+                                <span class="h-2 w-2 rounded-full bg-zinc-300 dark:bg-zinc-600"></span>
+                                <span class="font-mono text-md text-zinc-600">
+                                    {{ t('keyboardnav.mainShortcuts.escape') }}
+                                </span>
+                            </div>
+                        </div>
+                    </li>
                     <li v-if="namespaceList.length === 0" class="pl-24 mb-8 py-16 border-b">
                         <p class="font-mono text-md text-zinc-600">
                             {{ t('keyboardnav.noShortcuts') }}

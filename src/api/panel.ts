@@ -311,6 +311,10 @@ export class PanelAPI extends APIScope {
             return panel;
         }
 
+        const visiblePanels = this.visible.slice();
+        const idx = visiblePanels.indexOf(panel);
+        const fallback = this.$vApp.$el.querySelector('[focus-container]') as HTMLElement | null;
+
         // unpin the panel before removing if it was pinned
         if (panel.isPinned) {
             panel.pin(false);
@@ -323,6 +327,15 @@ export class PanelAPI extends APIScope {
             })
         );
         this.$iApi.event.emit(GlobalEvents.PANEL_CLOSED, panel);
+
+        this.$vApp.$nextTick(() => {
+            const leftPanel = idx > 0 ? this.visible[idx - 1] : this.visible[0];
+            if (leftPanel) {
+                this.focus(leftPanel);
+            } else {
+                fallback?.focus();
+            }
+        });
 
         return panel;
     }
@@ -584,6 +597,21 @@ export class PanelAPI extends APIScope {
         this.panelStore.items[panel.id].expanded = expand !== undefined ? expand! : !panel.expanded;
 
         return panel;
+    }
+
+    /**
+     * Sets keyboard focus to the specified panel if it is currently visible.
+     *
+     * @param {(string | PanelInstance)} panelOrId
+     */
+    focus(panelOrId: string | PanelInstance): PanelInstance | undefined {
+        const panel = this.get(panelOrId);
+        if (!panel) return;
+
+        const el = this.$vApp.$el.querySelector(
+            `.panel-container [data-cy="${panel.id}"] [focus-container]`
+        ) as HTMLElement | null;
+        el?.focus();
     }
 }
 
