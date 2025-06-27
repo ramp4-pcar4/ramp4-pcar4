@@ -79,7 +79,11 @@ export class KeyboardnavAPI extends FixtureInstance {
         if (e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
             if (key in this.keyboardnavStore.namespaces) {
                 e.preventDefault();
-                this.keyboardnavStore.activate(key, e);
+                if (this.keyboardnavStore.activeNamespace === key) {
+                    this.keyboardnavStore.deactivate(e);
+                } else {
+                    this.keyboardnavStore.activate(key, e);
+                }
             }
         } else if (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey && key.length === 1) {
             if (this.keyboardnavStore.activeNamespace) {

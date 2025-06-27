@@ -2,14 +2,23 @@
     <div>
         <div
             v-if="helpVisible"
+            ref="overlayRef"
+            @click.self="closeHelp"
             class="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 transition-opacity"
+            tabindex="-1"
         >
             <div
-                class="w-[640px] max-h-[80vh] overflow-y-auto rounded-xl bg-white py-8 px-10 shadow-xl"
+                class="relative w-[640px] max-h-[80vh] overflow-y-auto rounded-xl bg-white py-8 px-10 shadow-xl"
                 role="dialog"
                 aria-modal="true"
                 aria-live="polite"
             >
+                <button
+                    class="absolute right-8 top-8 rounded px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    @click="closeHelp"
+                >
+                    {{ t('panels.controls.close') }}
+                </button>
                 <div class="border-b border-gray-200 bg-white px-4 py-20 sm:px-24">
                     <h3 class="text-base font-semibold text-gray-900">{{ t('keyboardnav.helpTitle') }}</h3>
                     <div v-html="t('keyboardnav.helpDescription')" class="mt-6 text-sm text-gray-500"></div>
@@ -90,7 +99,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useKeyboardnavStore } from './store/keyboardnav-store';
-import { computed } from 'vue';
+import { computed, useTemplateRef, watch, onBeforeUnmount } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const store = useKeyboardnavStore();
@@ -102,6 +111,30 @@ const activeKeys = computed(() => {
     const ns = activeNamespace.value;
     if (!ns) return [];
     return namespaces.value[ns]?.keys || [];
+});
+
+const overlayRef = useTemplateRef('overlayRef');
+function closeHelp() {
+    store.setHelpVisible(false);
+}
+
+function handleFocusIn(e: FocusEvent) {
+    const target = e.target as Node | null;
+    if (overlayRef.value && target && !overlayRef.value.contains(target)) {
+        closeHelp();
+    }
+}
+
+watch(helpVisible, val => {
+    if (val) {
+        document.addEventListener('focusin', handleFocusIn);
+    } else {
+        document.removeEventListener('focusin', handleFocusIn);
+    }
+});
+
+onBeforeUnmount(() => {
+    document.removeEventListener('focusin', handleFocusIn);
 });
 </script>
 

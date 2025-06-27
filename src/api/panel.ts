@@ -609,7 +609,7 @@ export class PanelAPI extends APIScope {
         if (!panel) return;
 
         const el = this.$vApp.$el.querySelector(
-            `.panel-container [data-cy="${panel.id}"] [focus-container]`
+            `.panel-container [data-cy="${panel.id}"] [focus-container], .panel-container [data-cy="${panel.id}"] [focus-list]`
         ) as HTMLElement | null;
         el?.focus();
     }

@@ -77,6 +77,9 @@ async function handleKeyboardShortcuts() {
         activeHandler: () => {
             drawStore.setActiveTool('');
         },
+        deactiveHandler: () => {
+            drawStore.setActiveTool(null);
+        },
         keys: [
             {
                 key: 'P',
