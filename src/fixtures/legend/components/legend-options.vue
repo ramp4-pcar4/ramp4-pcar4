@@ -236,7 +236,8 @@ const toggleMetadata = () => {
                 url: metaConfig.url,
                 catalogueUrl: catalogueUrl,
                 layer: props.legendItem!.layer,
-                xmlType: metaConfig.xmlType
+                xmlType: metaConfig.xmlType,
+                treatXmlAsMarkdown: metaConfig.treatXmlAsMarkdown
             });
         } else {
             console.warn('Layer does not have a metadata url defined');

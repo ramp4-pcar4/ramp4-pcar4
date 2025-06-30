@@ -13,6 +13,7 @@ export interface MetadataPayload {
     catalogueUrl: string | undefined;
     layer: LayerInstance | undefined;
     xmlType: string;
+    treatXmlAsMarkdown: boolean;
 }
 
 export interface MetadataCache {
