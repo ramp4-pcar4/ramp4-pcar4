@@ -121,6 +121,24 @@ onMounted(async () => {
 
     await initializeSwipe();
 
+    // remove tabindex from element in arcgis-swipe component that was duplicating our custom slider logic
+    const observer = new MutationObserver((mutations, obs) => {
+        const swipeContainer = swipeComponent.value?.querySelector('.arcgis-swipe__container');
+        if (swipeContainer) {
+            swipeContainer.removeAttribute('tabindex');
+            obs.disconnect();
+        }
+    });
+
+    observer.observe(swipeComponent.value!, {
+        childList: true,
+        subtree: true,
+        attributes: false
+    });
+
+    // Fallback: stop observing after 5 seconds
+    setTimeout(() => observer.disconnect(), 5000);
+
     // Upon a basemap schema change, geo.map.esriView gets set to a new MapView, meaning that the one used by the
     // swipe component wouldn't exist. So, we must reinitialize the swipe component
     iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, async (payload: BasemapChange) => {
