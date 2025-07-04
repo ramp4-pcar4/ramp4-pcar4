@@ -40,7 +40,7 @@ export const Truncate: Directive = {
             content: linkifyContent(el.textContent),
             onShow: onShow,
             allowHTML: true,
-            placement: 'bottom-start',
+            placement: 'top-start',
             maxWidth: 320,
             //flip: false, // can't find a replacement for Vue3
             //boundary: 'window',
