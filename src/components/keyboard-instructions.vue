@@ -34,7 +34,7 @@ const iApi = inject('iApi') as InstanceAPI;
 const { t } = useI18n();
 
 const open = ref(false);
-const instructionSections = ref(['app', 'lists', 'map']);
+const instructionSections = ref(['app', 'lists', 'map', 'panels']);
 const handlers = ref([] as Array<string>);
 
 const firstEl = ref(null as unknown as HTMLElement);
