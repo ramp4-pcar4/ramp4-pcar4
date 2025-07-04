@@ -2931,12 +2931,12 @@
                     "properties": {
                         "expectedDrawTime": {
                             "type": "number",
-                            "default": 10000,
+                            "default": 12000,
                             "description": "The time span (in milliseconds) after which a 'slow-to-draw' notification is shown for any drawing layer. Zero will disable notifications. Values on individual layer configs will override."
                         },
                         "expectedLoadTime": {
                             "type": "number",
-                            "default": 10000,
+                            "default": 12000,
                             "description": "The time span (in milliseconds) after which a 'slow-to-load' notification is shown for any loading layer. Zero will disable notifications. Values on individual layer configs will override."
                         },
                         "maxLoadTime": {

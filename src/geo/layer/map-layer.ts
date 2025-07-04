@@ -165,14 +165,14 @@ export class MapLayer extends CommonLayer {
     }
 
     async terminate(): Promise<void> {
+        this.esriWatches.forEach(w => w.remove());
+        this.esriWatches = [];
+
         this.esriLayer = undefined;
 
         await super.terminate();
 
         this.viewDefProm = new DefPromise();
-
-        this.esriWatches.forEach(w => w.remove());
-        this.esriWatches = [];
     }
 
     async reload(): Promise<void> {
