@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from transformers import pipeline
 
 # Get the PR body and labels from environment variables
@@ -10,6 +11,41 @@ pr_labels = json.loads(pr_labels_json)
 # Summarization (example model, could be adjusted)
 summarizer = pipeline('summarization', model='tuner007/pegasus_summarizer')
 neutral_summary = summarizer(pr_body, max_length=200, min_length=25, do_sample=False)[0]['summary_text']
+
+# Characters we don’t want treated as part of the URL itself
+TRAILING_PUNCT = '.,;:!?)\\]}"\''
+
+# ── URL matcher ──
+url_regex = re.compile(
+    r'(https?://\S+|'          # full http/https URL
+    r'www\.\S+|'               # www.example.com
+    r'[A-Za-z0-9.-]+\.[A-Za-z]{2,}\S*)',   # bare domain + path
+    re.IGNORECASE
+)
+
+def strip_unsafe_links(text: str) -> str:
+    def replace_bad_links(m: re.Match) -> str:
+        whole     = m.group(0)
+
+        # Split into "URL part" and any trailing punctuation
+        url_part  = whole.rstrip(TRAILING_PUNCT)
+        trailing  = whole[len(url_part):]
+
+        # Normalise so every comparison looks the same
+        normalized = url_part
+        if not normalized.lower().startswith(('http://', 'https://')):
+            normalized = 'https://' + normalized
+
+        # Keep only links in the ramp4-pcar4 org
+        if normalized.lower().startswith('https://github.com/ramp4-pcar4'):
+            return url_part + trailing         # keep + put the punctuation back
+
+        # Everything else gets scrubbed
+        return '(LINK EXPUNGED)' + trailing
+
+    return url_regex.sub(replace_bad_links, text)
+
+neutral_summary = strip_unsafe_links(neutral_summary)
 
 # Replace all double quotes with single quotes in the summary
 neutral_summary = neutral_summary.replace('"', "'")
@@ -37,7 +73,7 @@ reg_label_str = ", ".join(
 if (len(reg_label_str) == 0):
     reg_label_str = "None"
 
-# Write all results to environment 
+# Write all results to environment
 with open(os.environ['GITHUB_ENV'], 'a') as env_file:
     env_file.write(f'NEUTRAL_SUMMARY={neutral_summary}\n')
     env_file.write(f'PR_LABEL_STR={pr_label_str}\n')
