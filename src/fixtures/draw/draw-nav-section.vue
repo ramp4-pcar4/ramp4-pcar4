@@ -1,12 +1,15 @@
 <template>
     <div class="mapnav-section bg-white-75 hover:bg-white">
         <mapnav-button
-            v-for="tool in filteredDrawingTools"
+            v-for="(tool, index) in filteredDrawingTools"
             :key="tool.type"
             @mousedown="mouseFocus"
             :onClickFunction="() => toggleTool(tool.type as ActiveToolList)"
             :tooltip="t(`draw.${tool.type}.tooltip`)"
-            :class="{ 'active-tool': drawStore.activeTool === tool.type }"
+            :class="{
+                'active-tool': drawStore.activeTool === tool.type
+            }"
+            :style="{ marginBottom: index !== filteredDrawingTools.length - 1 ? '0px' : '0' }"
         >
             <component :is="tool.icon" class="fill-current w-32 h-20"></component>
         </mapnav-button>
@@ -19,6 +22,7 @@ import type { ActiveToolList } from './store';
 import { useI18n } from 'vue-i18n';
 import { markRaw, defineAsyncComponent, computed, inject } from 'vue';
 import { InstanceAPI } from '@/api/internal';
+import DividerNav from '@/fixtures/mapnav/buttons/divider-nav.vue';
 
 const iApi = inject('iApi') as InstanceAPI;
 const { t } = useI18n();
