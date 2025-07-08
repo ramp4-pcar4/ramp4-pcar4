@@ -5,7 +5,7 @@ class SwipeFixture extends FixtureInstance {
     async added(): Promise<void> {
         const { el, destroy } = this.mount(SwipeV, {
             app: this.$element,
-            props: { message: 'This is a swipe.', fixture: this }
+            props: { fixture: this }
         });
 
         if (el.childNodes[0]) this.$vApp.$el.appendChild(el.childNodes[0]);
