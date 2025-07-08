@@ -133,7 +133,9 @@ onBeforeUnmount(() => {
     // Remove all event handlers for this component
     handlers.forEach(handler => iApi.event.off(handler));
 
-    overviewMap.destroyMap();
+    overviewMap.removeMapGraphicLayer().then(() => {
+        overviewMap.destroyMap();
+    });
 });
 
 const cursorHitTest = async (e: MouseEvent) => {
