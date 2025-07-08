@@ -422,6 +422,8 @@ export class AttributeAPI extends APIScope {
             return;
         }
 
+        console.warn('Github actions, why do you hate gordon so?');
+
         // Find the fields that should be trimmed (have trim = true)...
         const fieldsToTrim = fieldMetadata.fieldInfo.filter(elem => elem.trim).map(elem => elem.name);
 
