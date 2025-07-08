@@ -6,7 +6,7 @@
         @keydown="onKeydown"
     >
         <div
-            class="bg-white w-500 pointer-events-auto shadow-2xl p-20 flex flex-col"
+            class="bg-white w-500 pointer-events-auto shadow-2xl p-20 flex flex-col keyboard-instructions-modal-content"
             @click.stop.prevent
             tabindex="0"
             ref="firstEl"

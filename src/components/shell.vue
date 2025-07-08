@@ -12,7 +12,7 @@
                     {{ t('keyboardInstructions.open') }}
                 </button>
             </div>
-            <keyboard-instructions-modal></keyboard-instructions-modal>
+            <keyboard-instructions-modal class="keyboard-instructions-modal"></keyboard-instructions-modal>
             <panel-stack
                 class="panel-stack sm:flex absolute inset-0 overflow-hidden sm:p-12 z-10 sm:pl-80 xs:pl-40 sm:pb-48 xs:pb-28 xs:pr-0 sm:pr-40"
             ></panel-stack>
