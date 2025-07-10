@@ -132,10 +132,9 @@
             <a
                 href="javascript:;"
                 class="flex leading-snug items-center text-left w-auto"
-                :class="{
-                    disabled: !reloadableLayer
-                }"
-                :content="!reloadableLayer ? t('legend.layer.controls.reloadDisabled') : ''"
+                :key="+reloadableLayer"
+                :class="{ disabled: !reloadableLayer }"
+                :content="reloadableLayer ? null : t('legend.layer.controls.reloadDisabled')"
                 @mouseover.stop="hover($event.currentTarget!)"
                 @mouseout="
                     //@ts-expect-error TODO: explain why this is needed or remove
