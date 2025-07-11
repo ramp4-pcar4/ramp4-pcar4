@@ -67,12 +67,14 @@
                         <reorder-button
                             :disabled="_isBoundary(element.componentIdx - 1)"
                             direction="up"
+                            :layerId="element.id"
                             class="px-7"
                             @click="onMoveLayerButton(element, 1)"
                         />
                         <reorder-button
                             :disabled="_isBoundary(element.componentIdx + 1)"
                             direction="down"
+                            :layerId="element.id"
                             class="px-7"
                             @click="onMoveLayerButton(element, -1)"
                         />
@@ -151,7 +153,7 @@ const watchers = ref<Array<() => void>>([]);
 const isAnimationEnabled = computed<boolean>(() => iApi.animate);
 
 /*
-General commentary on how this works. 
+General commentary on how this works.
 We only show stuff actually on the map, and not cosmetic. It's then ordered in the UI list top to bottom.
 The UI is build from a data model, layerModel.
 This model is reactive and gets recreated whenever
@@ -333,6 +335,9 @@ const onMoveLayerButton = (layerModel: LayerModel, direction: number): void => {
     // we want to do a "real" reorder to the global position that other layer
     // was occupying in the ramp map / layer store.
     const newRelativeIdx = currRelativeIdx - direction; // index of the "other" layer in fixture layersModel
+    if (newRelativeIdx < 0 || newRelativeIdx >= layersModel.value.length) {
+        return;
+    }
     const newGlobalIdx = layersModel.value[newRelativeIdx].orderIdx;
 
     // apply changes
@@ -344,6 +349,13 @@ const onMoveLayerButton = (layerModel: LayerModel, direction: number): void => {
             index: newGlobalIdx
         })!
     );
+
+    const directionStr = direction === 1 ? 'up' : 'down';
+    setTimeout(() => {
+        const selector = `button[data-layer-id="${layerModel.id}"][data-direction="${directionStr}"]`;
+        const btn = document.querySelector(selector) as HTMLElement | null;
+        btn?.focus();
+    }, 0);
 };
 
 /** ==================================== Helpers ==================================== **/
