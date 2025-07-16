@@ -33,6 +33,23 @@ legend.layer.controls.cancel,Cancel,1,Annuler,1
 legend.layer.controls.remove,Remove,1,Retirer,1
 legend.layer.controls.reload,Reload,1,Recharger,1
 legend.layer.controls.reloadDisabled,Layer cannot be reloaded,1,Le calque ne peut pas être rechargé,0
+legend.layer.features.count,{count} features,1,{count} fonctionnalités,0
+legend.layer.type.ESRIFeature,ESRI Feature Layer,1,Couche d'entités ESRI,0
+legend.layer.type.ESRIMapImage,ESRI Map Image Layer,1,Couche d'image cartographique ESRI,0
+legend.layer.type.ESRITile,ESRI Tile Layer,1,Couche de tuiles ESRI,0
+legend.layer.type.ESRIImagery,ESRI Image Service,1,Service d'images ESRI,0
+legend.layer.type.ESRIGraphic,ESRI Graphic Layer,1,Couche graphique ESRI,0
+legend.layer.type.wfs,OGC WFS 3.0 Layer,1,Couche OGC WFS 3.0,0
+legend.layer.type.wms,OGC WMS Layer,1,Couche WMS OGC,0
+legend.layer.type.geoJson,GeoJSON Layer,1,Couche GeoJSON,0
+legend.layer.type.csv,CSV File Layer,1,Couche de fichier CSV,0
+legend.layer.type.shapefile,Shapefile Layer,1,Couche Shapefile,0
+legend.layer.type.osm,OpenStreetMap Tile Layer,1,Couche de tuiles OpenStreetMap,0
+legend.layer.type.datatable,ESRI Table Layer,1,Couche de table ESRI,0
+legend.layer.type.dataCsv,Non-Spatial CSV File Layer,1,Couche de fichier CSV non spatiale,0
+legend.layer.type.dataJson,Compact JSON File Layer,1,Couche de fichiers JSON compacte,0
+legend.layer.type.sublayer,Sublayer,1,Sous-couche,0
+legend.layer.type.unknown,Unknown Layer Type,1,Type de couche inconnu,0
 legend.alert.symbologyExpanded,Layer legend expanded,1,Légende de la couche développée,1
 legend.alert.symbologyCollapsed,Layer legend collapsed,1,Légende de la couche réduite,1
 legend.alert.groupExpanded,Legend group expanded,1,Groupe de légende développé,1
