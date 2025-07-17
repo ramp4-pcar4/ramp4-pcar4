@@ -6,7 +6,7 @@ lang-fr,anglais,1,français,1
 lang-native,English,1,Français,1
 ramp.about.open,Open About RAMP,1,Ouvrir À propos de PCAR,1
 ramp.about,About RAMP,1,À propos de PCAR,1
-ramp.reload,Reload RAMP,1,Recharger PCAR,0
+ramp.reload,Reload RAMP,1,Recharger PCAR,1
 keyboardInstructions.title,Keyboard Instructions,1,Instructions clavier,1
 keyboardInstructions.open,Open keyboard instructions,1,Instructions clavier ouvert,1
 keyboardInstructions.app,"Use 'Tab' to navigate between sections of the application.",1,"Utilisez la touche Tab pour vous déplacer entre les sections de l'application.",1
