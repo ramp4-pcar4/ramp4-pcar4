@@ -1,0 +1,1 @@
+import{cM as e,cN as o,cO as a}from"./main-BRdNJ5Ne.js";import{m as c}from"./ref-CVzYAsvV.js";const i=e(class extends o{constructor(){super(...arguments),this.key=a}render(t,s){return this.key=t,s}update(t,[s,r]){return s!==this.key&&(c(t),this.key=s),r}});export{i};

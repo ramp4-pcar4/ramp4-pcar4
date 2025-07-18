@@ -1,0 +1,1 @@
+import{bm as a,bn as c}from"./main-CISBdIQH.js";function s(r){return{geometryType:a(r[0]),geometries:r.map(t=>t.toJSON())}}function f(r,t,n){const o=c(t);return r.map(m=>{const e=o.fromJSON(m);return e.spatialReference=n,e})}export{f as o,s as r};
