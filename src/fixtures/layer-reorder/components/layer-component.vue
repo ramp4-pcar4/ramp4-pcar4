@@ -65,14 +65,18 @@
 
                         <!-- controls -->
                         <reorder-button
+                            :ref="el => (buttonRefs[element.id + '-up'] = (el as any)?.buttonRef || null)"
                             :disabled="_isBoundary(element.componentIdx - 1)"
                             direction="up"
+                            :layerId="element.id"
                             class="px-7"
                             @click="onMoveLayerButton(element, 1)"
                         />
                         <reorder-button
+                            :ref="el => (buttonRefs[element.id + '-down'] = (el as any)?.buttonRef || null)"
                             :disabled="_isBoundary(element.componentIdx + 1)"
                             direction="down"
+                            :layerId="element.id"
                             class="px-7"
                             @click="onMoveLayerButton(element, -1)"
                         />
@@ -125,7 +129,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
+import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
 
 import { GlobalEvents, LayerInstance } from '@/api';
 import type { InstanceAPI } from '@/api';
@@ -139,6 +143,7 @@ const iApi = inject('iApi') as InstanceAPI;
 const { t } = useI18n();
 
 const layersModel = ref<Array<LayerModel>>([]);
+const buttonRefs = ref<Record<string, HTMLButtonElement | null>>({});
 
 /**
  * Snapshots positions when dragging starts. The array has same order as the layersModel.
@@ -151,7 +156,7 @@ const watchers = ref<Array<() => void>>([]);
 const isAnimationEnabled = computed<boolean>(() => iApi.animate);
 
 /*
-General commentary on how this works. 
+General commentary on how this works.
 We only show stuff actually on the map, and not cosmetic. It's then ordered in the UI list top to bottom.
 The UI is build from a data model, layerModel.
 This model is reactive and gets recreated whenever
@@ -319,7 +324,7 @@ const onMoveLayerDragEnd = (evt: any): void => {
  * @param {LayerModel} layerModel layer that is being moved
  * @param {number} direction direction to move the layer (+1 is up and -1 is down)
  */
-const onMoveLayerButton = (layerModel: LayerModel, direction: number): void => {
+const onMoveLayerButton = async (layerModel: LayerModel, direction: number): Promise<void> => {
     const layer = iApi.geo.layer.getLayer(layerModel.id);
 
     const currRelativeIdx = layersModel.value.indexOf(layerModel);
@@ -333,6 +338,9 @@ const onMoveLayerButton = (layerModel: LayerModel, direction: number): void => {
     // we want to do a "real" reorder to the global position that other layer
     // was occupying in the ramp map / layer store.
     const newRelativeIdx = currRelativeIdx - direction; // index of the "other" layer in fixture layersModel
+    if (newRelativeIdx < 0 || newRelativeIdx >= layersModel.value.length) {
+        return;
+    }
     const newGlobalIdx = layersModel.value[newRelativeIdx].orderIdx;
 
     // apply changes
@@ -344,6 +352,14 @@ const onMoveLayerButton = (layerModel: LayerModel, direction: number): void => {
             index: newGlobalIdx
         })!
     );
+
+    const directionStr = direction === 1 ? 'up' : 'down';
+
+    await nextTick();
+    await nextTick();
+
+    const btn = buttonRefs.value[layerModel.id + '-' + directionStr];
+    btn?.focus();
 };
 
 /** ==================================== Helpers ==================================== **/

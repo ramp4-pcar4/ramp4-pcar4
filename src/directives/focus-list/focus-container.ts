@@ -138,6 +138,10 @@ class FocusContainerManager {
      * Sets tabindex to -1 for EVERY element under the container element
      */
     disableTabbing() {
+        // Skip disabling tabbing if any element inside the container currently has focus
+        if (this.element.contains(document.activeElement)) {
+            return;
+        }
         const tab_list = Array.prototype.filter.call(this.element.querySelectorAll(TABBABLE_TAGS), () => {
             return true;
         }) as HTMLElement[];
