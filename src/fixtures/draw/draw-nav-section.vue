@@ -10,6 +10,7 @@
                 'active-tool': drawStore.activeTool === tool.type
             }"
             :style="{ marginBottom: index !== filteredDrawingTools.length - 1 ? '0px' : '0' }"
+            :showOutline="showOutline"
         >
             <component :is="tool.icon" class="fill-current w-32 h-20"></component>
         </mapnav-button>
@@ -22,7 +23,13 @@ import type { ActiveToolList } from './store';
 import { useI18n } from 'vue-i18n';
 import { markRaw, defineAsyncComponent, computed, inject } from 'vue';
 import { InstanceAPI } from '@/api/internal';
-import DividerNav from '@/fixtures/mapnav/buttons/divider-nav.vue';
+
+defineProps({
+    showOutline: {
+        type: Boolean,
+        default: false
+    }
+});
 
 const iApi = inject('iApi') as InstanceAPI;
 const { t } = useI18n();

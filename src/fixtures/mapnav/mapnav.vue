@@ -69,9 +69,9 @@
             }"
         >
             <div v-if="isDrawFixtureLoaded">
-                <draw-nav-section></draw-nav-section>
+                <draw-nav-section showOutline></draw-nav-section>
             </div>
-            <template v-for="(button, index) in visible" :key="button.id + 'button'">
+            <template v-for="button in visible" :key="button.id + 'button'">
                 <component
                     :is="button.id + '-nav-button'"
                     class="mapnav-section bg-white-75 hover:bg-white"
