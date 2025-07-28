@@ -3,7 +3,11 @@
         <button
             type="button"
             class="w-full h-full default-focus-style"
-            :class="[showOutline ? 'focus:outline focus:outline-2 focus:outline-blue-400' : 'focus:outline-none']"
+            :class="[
+                showOutline
+                    ? 'focus:outline focus:outline-2 focus:outline-blue-400 focus:absolute focus:z-50'
+                    : 'focus:outline-none'
+            ]"
             @click="onClickFunction()"
             v-focus-item
             :content="tooltip"
