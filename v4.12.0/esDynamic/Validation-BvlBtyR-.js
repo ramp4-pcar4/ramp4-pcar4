@@ -1,0 +1,1 @@
+import{cI as c,cJ as n,cO as o}from"./main-DnzmeE4U.js";const l={validationContainer:"validation-container"},r=({scale:a,status:i,id:s,icon:t,message:e})=>c`<div class=${n(l.validationContainer)}><calcite-input-message aria-live=polite .icon=${t} id=${s??o} .scale=${a} .status=${i}>${e}</calcite-input-message></div>`;export{r as m};
