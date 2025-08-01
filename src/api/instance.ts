@@ -2,6 +2,7 @@ import { createApp as createRampApp, Transition, TransitionGroup } from 'vue';
 import { createPinia } from 'pinia';
 import type { ComponentPublicInstance, App as VueApp, DefineComponent } from 'vue';
 import type { RampConfig, RampConfigs } from '@/types';
+import { geo } from '@/main';
 import { i18n } from '@/lang';
 import screenfull from 'screenfull';
 
@@ -808,8 +809,11 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     vueElement.config.globalProperties.$iApi = iApi;
     vueElement.config.globalProperties.$pinia = pinia;
 
+    // TODO testing only. will be removed
+    console.log('Behold, a uuid: ' + geo.sharedUtils.generateUUID());
+
     // set the id prefix for the app for use in generating unique ids with `useId`
-    vueElement.config.idPrefix = `ramp-${element.id || iApi.geo.shared.generateUUID()}`;
+    vueElement.config.idPrefix = `ramp-${element.id || geo.sharedUtils.generateUUID()}`;
 
     vueElement.provide('iApi', iApi);
 
