@@ -248,7 +248,6 @@
                     }
                 }
             },
-            "required": ["template"],
             "additionalProperties": false
         },
         "detailsField": {
