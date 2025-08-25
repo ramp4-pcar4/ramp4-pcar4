@@ -7,12 +7,14 @@ const runPreTest = (config, options, utils) => {
     const natureLayer = {
         id: 'Nature',
         layerType: 'esri-feature',
+        identifyMode: 'symbolic',
         url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/6'
     };
 
     const waterLayer = {
         id: 'Water',
         layerType: 'esri-feature',
+        identifyMode: 'symbolic',
         url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/8'
     };
 
@@ -44,6 +46,7 @@ const runPreTest = (config, options, utils) => {
         url: 'https://api.weather.gc.ca//collections/ahccd-trends/items?measurement_type__type_mesure=total_precip&period__periode=Ann&offset=0&limit=150&province__province=on',
         xyInAttribs: true,
         colour: '#55ffff',
+        identifyMode: 'symbolic',
         fixtures: {
             details: {
                 template: 'WFSLayer-Custom'
