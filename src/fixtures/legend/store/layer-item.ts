@@ -1,6 +1,6 @@
 import { GlobalEvents, LayerInstance, type InstanceAPI } from '@/api';
 import { DrawState, LayerControl } from '@/geo/api';
-import type { LegendSymbology } from '@/geo/api';
+import { CoreFilter, type LegendSymbology } from '@/geo/api';
 import { LegendItem, LegendType } from './legend-item';
 
 export class LayerItem extends LegendItem {
@@ -272,6 +272,22 @@ export class LayerItem extends LegendItem {
     }
 
     /**
+     * Sets the visibility of a specific symbology entry by its index
+     *
+     * Method that retrieves the symbology's UID at the given index, and
+     * delegates to `setSymbologyVisibility` to apply the visibility change
+     *
+     * @param {number | undefined} index the index of the legend symbology
+     * @param visible The new visibility value
+     */
+    setSymbologyVisibilityIndex(index: number | undefined, visible: boolean): void {
+        if (index === undefined) return;
+
+        const uid = this._symbologyStack[index].uid;
+        this.setSymbologyVisibility(uid, visible);
+    }
+
+    /**
      * Sets the visibility of the symbology with the given uid
      * If the provided UID is undefined, set the visibility of all symbols
      *
@@ -284,8 +300,24 @@ export class LayerItem extends LegendItem {
                 item.visibility = visible;
                 item.lastVisbility = visible;
             }
-            return uid !== undefined && item.uid === uid;
         });
+
+        if (this.layer?.supportsFeatures) {
+            const filterGuts = this._symbologyStack
+                .filter((item: LegendSymbology) => item.lastVisbility)
+                .map((item: LegendSymbology) => item.definitionClause || '');
+
+            let sql = '';
+            if (filterGuts.length === 0) {
+                // nothing visible.
+                sql = '1=2';
+            } else if (filterGuts.length < this._symbologyStack.length) {
+                // only a subset of checkboxes are checked. need filter
+                sql = filterGuts.join(' OR ');
+            }
+
+            this.layer.setSqlFilter(CoreFilter.SYMBOL, sql);
+        }
     }
 
     /**
