@@ -1,0 +1,1 @@
+import{et as a}from"./main-Dp4AS4_J.js";import{fromGeometryToGXGeometry as c,getSpatialReference as m}from"./jsonConverter-DKi4ciwJ.js";function f(t,n={}){const{unit:o}=n;let e=c(t).calculateLength2D();const r=m(t);return e&&o&&r&&(e=a(e,r,o)),e}export{f as execute};
