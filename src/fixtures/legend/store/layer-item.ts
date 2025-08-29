@@ -1,5 +1,5 @@
 import { GlobalEvents, LayerInstance, type InstanceAPI } from '@/api';
-import { DrawState, LayerControl } from '@/geo/api';
+import { CoreFilter, DrawState, LayerControl } from '@/geo/api';
 import type { LegendSymbology } from '@/geo/api';
 import { LegendItem, LegendType } from './legend-item';
 
@@ -272,8 +272,75 @@ export class LayerItem extends LegendItem {
     }
 
     /**
+     * Simulates a "click" interaction on a symbology item at a specific index in the symbol stack
+     *
+     * @param index the index of the legend symbology
+     * @param visible if we are clicking it on or off
+     */
+    clickSymbologyByIndex(index: number, visible: boolean): void {
+        const uid = this._symbologyStack[index].uid;
+        this.clickSymbology(uid, visible);
+    }
+
+    /**
+     * Indicates if any symbology stack items are visible
+     */
+    symbolsVisible(): boolean {
+        return this.symbologyStack.some(item => item.visibility);
+    }
+
+    /**
+     * Executes the "click" logic on a symbology item.
+     * Sets the checkbox visibility, propagates any edge-cases to this layer item,
+     * and applies any filters to the layer
+     *
+     * @param uid the uid of the legend symbology
+     * @param visible if we are clicking it on or off
+     */
+    clickSymbology(uid: string, visible: boolean): void {
+        if (!this.symbolsVisible() && visible) {
+            // If no symbols are visible, and we're turning on a symbol, then set the parent layer to visible
+            // since we toggled on one of the child symbols and set all other
+            // symbols to invisible (except for the one that is toggled on)
+
+            // TODO why this? didn't we just verify everything is invisible??
+            this.setSymbologyVisibility(undefined, false);
+            this.setSymbologyVisibility(uid, true);
+            this.toggleVisibility(true);
+        } else {
+            // Toggle the child symbology
+            this.setSymbologyVisibility(uid, visible);
+        }
+
+        // If all child symbols are toggled off, then toggle off the parent layer too
+        if (!this.symbolsVisible()) {
+            this.toggleVisibility(false);
+        }
+
+        // Update the layer definition to filter child symbols
+        // At the moment, only layers that support features will support sql filters
+        if (this.layer?.supportsFeatures) {
+            const filterGuts = this.symbologyStack
+                .filter(item => item.lastVisbility === true)
+                .map(item => item.definitionClause || '');
+
+            let sql = ''; // default value, this computes to "show all"
+            if (filterGuts.length === 0) {
+                // nothing visible.
+                sql = '1=2';
+            } else if (filterGuts.length < this.symbologyStack.length) {
+                // only a subset of checkboxes are checked. need filter
+                sql = filterGuts.join(' OR ');
+            }
+
+            this.layer.setSqlFilter(CoreFilter.SYMBOL, sql);
+        }
+    }
+
+    /**
      * Sets the visibility of the symbology with the given uid
      * If the provided UID is undefined, set the visibility of all symbols
+     * Only changes the visible state of the checkbox. Does not apply symbol filters.
      *
      * @param {uid | undefined} uid the uid of the legend symbology
      * @param visible The new visibility value
