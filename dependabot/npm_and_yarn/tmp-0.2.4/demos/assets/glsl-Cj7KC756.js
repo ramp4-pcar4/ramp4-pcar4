@@ -1,1 +1,0 @@
-function e(t,...o){let r="";for(let n=0;n<o.length;n++)r+=t[n]+o[n];return r+=t[t.length-1],r}function u(t,o,r=""){return t?o:r}(function(t){function o(n){return Math.round(n).toString()}function r(n){return n.toPrecision(8)}t.int=o,t.float=r})(e||(e={}));export{e as n,u as t};
