@@ -23,8 +23,9 @@
 </template>
 
 <script setup lang="ts">
-import { CoreFilter, type LegendSymbology } from '@/geo/api';
-import { onMounted, ref, type PropType } from 'vue';
+import type { LegendSymbology } from '@/geo/api';
+import { onMounted, ref } from 'vue';
+import type { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { LayerItem } from '../store/layer-item';
 import { LegendItem } from '../store/legend-item';
