@@ -2038,7 +2038,6 @@
                     }
                 }
             },
-            "required": ["mergeGrids"],
             "unevaluatedProperties": false
         },
         "grid": {
@@ -2652,7 +2651,6 @@
                             ]
                         }
                     },
-                    "required": ["mergeGrids"],
                     "unevaluatedProperties": false
                 },
                 "help": {

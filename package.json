@@ -39,8 +39,8 @@
     },
     "dependencies": {
         "@ag-grid-community/locale": "~32.0.0",
-        "@arcgis/core": "4.33.11",
-        "@arcgis/map-components": "4.33.12",
+        "@arcgis/core": "4.33.13",
+        "@arcgis/map-components": "4.33.17",
         "@popperjs/core": "^2.11.6",
         "@ramp4-pcar4/vue3-treeselect": "github:ramp4-pcar4/vue3-treeselect#v1.0.0",
         "@terraformer/arcgis": "^2.1.2",
