@@ -1,4 +1,5 @@
 import type {
+    ICustomSource,
     IGeosearchConfig,
     INameResponse,
     IRawNameResult,
@@ -91,6 +92,10 @@ export async function runQuery(config: IGeosearchConfig, query: string): Promise
         cleanedInput = encodeURIComponent(query.trim());
         queryPayload = new QueryPayload(config, cleanedInput);
         await runTextQuery(queryPayload);
+    }
+
+    if (config?.customSources?.length) {
+        await runCustomSourceQuery(queryPayload, config.customSources);
     }
 
     return queryPayload;
@@ -187,6 +192,15 @@ const normalizeNameItems = (config: IGeosearchConfig, items: INameResponse[]): S
                     ? config.sortOrder.indexOf(nr.concise.code)
                     : config.sortOrder.length
         }));
+};
+
+/**
+ * Runs the query for custom sources
+ */
+const runCustomSourceQuery = async (queryPayload: QueryPayload, sources: ICustomSource[]): Promise<void> => {
+    const resultsArrays = await Promise.all(sources.map(src => src.onSearch(queryPayload.query)));
+    const customResults = resultsArrays.flat();
+    queryPayload.addResult(customResults);
 };
 
 /**

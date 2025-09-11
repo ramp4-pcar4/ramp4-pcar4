@@ -5,7 +5,7 @@
 import Provinces from './provinces';
 import Types from './types';
 import * as GeoSearchQuery from './query';
-import type { IGeosearchConfig, IProvinceInfo, ISearchResult } from '../definitions';
+import type { ICustomSource, IGeosearchConfig, IProvinceInfo, ISearchResult } from '../definitions';
 import { FSATOKEN } from '../definitions';
 
 // geosearch query services
@@ -66,6 +66,8 @@ export class GeoSearchUI {
         let disabledSearchTypes: Array<string>;
         let maxResults: number;
         let officialOnly: boolean;
+        let customSources: ICustomSource[] = uConfig?.customSources ?? [];
+
         if (settings) {
             categories = settings.categories ? settings.categories : [];
             sortOrder = settings.sortOrder ? settings.sortOrder : [];
@@ -78,6 +80,36 @@ export class GeoSearchUI {
             disabledSearchTypes = [];
             maxResults = 100;
             officialOnly = false;
+        }
+        if (customSources) {
+            customSources = customSources.map(src => ({
+                ...src,
+                onSearch:
+                    src.onSearch ??
+                    (async (searchTerm: string): Promise<ISearchResult[]> => {
+                        const data: Array<any> = (src as any).data ?? [];
+                        const cleanedTerm = searchTerm
+                            .replace('*', '')
+                            .normalize('NFD')
+                            .replace(/[\u0300-\u036f]/g, '')
+                            .toLowerCase();
+
+                        return data
+                            .filter(item => item.name.toLowerCase().includes(cleanedTerm))
+                            .map<ISearchResult>(item => ({
+                                name: item.name,
+                                type: src.catName,
+                                bbox: item.bbox,
+                                flav: item.flav,
+                                position: item.position,
+                                location: {
+                                    province: this.config.provinces.abbrToProvince(item.prov),
+                                    city: item.city
+                                },
+                                order: sortOrder.indexOf(src.code) >= 0 ? sortOrder.indexOf(src.code) : sortOrder.length
+                            }));
+                    })
+            }));
         }
 
         // match a new config object with the one defined in definitions.ts
@@ -92,7 +124,8 @@ export class GeoSearchUI {
             sortOrder,
             disabledSearchTypes,
             maxResults,
-            officialOnly
+            officialOnly,
+            customSources
         };
         // remove any types to be excluded from config
         this.config.types.filterValidTypes(uConfig?.excludeTypes);
@@ -253,6 +286,14 @@ export class GeoSearchUI {
                                 name: rawTypes[type]
                             });
                         }
+                    }
+                    if (this.config.customSources) {
+                        this.config.customSources.forEach(src => {
+                            typeList.push({
+                                code: src.code,
+                                name: src.catName
+                            });
+                        });
                     }
                     this.typeList = typeList;
                     resolve(this.typeList);

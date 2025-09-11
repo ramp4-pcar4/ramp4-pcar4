@@ -29,6 +29,7 @@
                 <option value="011-clusterer">11. Point Clusterer</option>
                 <option value="012-layer-swipe">12. Layer Swipe</option>
                 <option value="013-drawing-tools">13. Drawing Tools</option>
+                <option value="014-geosearch-sources">14. Custom Geosearch Sources</option>
             </select>
             <nav class="linky-container">
                 <a class="linky" href="enhanced-all.html">Catalogue</a
@@ -337,6 +338,9 @@
                             },
                             layers: [],
                             fixtures: {
+                                geosearch: {
+                                    customSources: []
+                                },
                                 legend: {
                                     root: {
                                         children: []
@@ -603,6 +607,9 @@
                             },
                             layers: [],
                             fixtures: {
+                                geosearch: {
+                                    customSources: []
+                                },
                                 legend: {
                                     root: {
                                         children: []
@@ -644,8 +651,17 @@
                 const langConfigs = [config.configs.en, config.configs.fr];
 
                 // test script common utils.
-                // update the header comment in `a-sample.js` script when new methods are added.
+                // update the header comment in `000-template.js` script when new methods are added.
                 const utils = {
+                    //adds custom geosearch source(s)
+                    addGeosearchSource: (source, lang) => {
+                        const langConfig = config.configs[lang];
+                        if (Array.isArray(source)) {
+                            langConfig.fixtures.geosearch.customSources.push(...source);
+                        } else {
+                            langConfig.fixtures.geosearch.customSources.push(source);
+                        }
+                    },
                     // adds a layer to both languages
                     addLayer: layerConfig => {
                         langConfigs.forEach(lang => {

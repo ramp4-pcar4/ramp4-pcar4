@@ -98,6 +98,14 @@ class Provinces {
         return this.provinceList.find(pvi => pvi.name === provName)!;
     }
 
+        /**
+     * Get the province information for a province abbreviation
+     * @param provAbbr the prov abbreviation
+     */
+    abbrToProvince(provAbbr: string): IProvinceInfo {
+        return this.provinceList.find(pvi => pvi.abbr === provAbbr)!;
+    }
+
     /**
      * Get the province information belonging to an FSA
      * @param fsa three-char FSA
