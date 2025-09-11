@@ -359,6 +359,29 @@
                             "description": "Whether to return only official names for the geographic names. Default is false which will return both official names and formerly official names."
                         }
                     }
+                },
+                "customSources": {
+                    "type": "array",
+                    "description": "List of custom search sources to include in geosearch",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "description": "Unique code identifier for the type"
+                            },
+                            "catName": {
+                                "type": "string",
+                                "description": "Category name for the type (shown in UI)"
+                            },
+                            "data": {
+                                "type": "array",
+                                "description": "Array of data for each item of the type"
+                            }
+                        },
+                        "required": ["code", "catName", "data"]
+                    },
+                    "default": []
                 }
             },
             "unevaluatedProperties": false
