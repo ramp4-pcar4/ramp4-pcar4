@@ -5,8 +5,9 @@
 import Provinces from './provinces';
 import Types from './types';
 import * as GeoSearchQuery from './query';
-import type { IGeosearchConfig, IProvinceInfo, ISearchResult } from '../definitions';
+import type { ICustomSource, IGeosearchConfig, IProvinceInfo, ISearchResult } from '../definitions';
 import { FSATOKEN } from '../definitions';
+import { useGeosearchStore } from './geosearch-store';
 
 // geosearch query services
 // note "geolocation" is a service for looking up locations in canada. It is not a geolocator for the browser's location.
@@ -66,6 +67,8 @@ export class GeoSearchUI {
         let disabledSearchTypes: Array<string>;
         let maxResults: number;
         let officialOnly: boolean;
+        let customSources: ICustomSource[];
+
         if (settings) {
             categories = settings.categories ? settings.categories : [];
             sortOrder = settings.sortOrder ? settings.sortOrder : [];
@@ -79,6 +82,29 @@ export class GeoSearchUI {
             maxResults = 100;
             officialOnly = false;
         }
+        customSources = uConfig?.customSources ?? [];
+        customSources = customSources.map(src => ({
+            ...src,
+            onSearch: async (searchTerm: string): Promise<ISearchResult[]> => {
+                const data: Array<any> = (src as any).data ?? [];
+                const geosearchStore = useGeosearchStore();
+                const cleanedTerm = geosearchStore.cleanVal(searchTerm).replace('*', '');
+                return data
+                    .filter(item => item.name.toLowerCase().includes(cleanedTerm))
+                    .map<ISearchResult>(item => ({
+                        name: item.name,
+                        type: src.catName,
+                        bbox: item.bbox,
+                        flav: 'nme',
+                        position: [0, 0],
+                        location: {
+                            province: this.config.provinces.abbrToProvince(item.prov),
+                            city: item.city
+                        },
+                        order: sortOrder.indexOf(src.code) >= 0 ? sortOrder.indexOf(src.code) : sortOrder.length
+                    }));
+            }
+        }));
 
         // match a new config object with the one defined in definitions.ts
         this.config = {
@@ -92,7 +118,8 @@ export class GeoSearchUI {
             sortOrder,
             disabledSearchTypes,
             maxResults,
-            officialOnly
+            officialOnly,
+            customSources
         };
         // remove any types to be excluded from config
         this.config.types.filterValidTypes(uConfig?.excludeTypes);
@@ -237,7 +264,7 @@ export class GeoSearchUI {
             const typesWatcher = setInterval(() => {
                 if (this.config.types.typesFetched) {
                     clearInterval(typesWatcher);
-                    const typeList = [];
+                    const typeList: { code: any; name: any }[] = [];
                     // add a '...' option as a way to clear province filter
                     const reset = {
                         code: -1,
@@ -253,6 +280,16 @@ export class GeoSearchUI {
                                 name: rawTypes[type]
                             });
                         }
+                    }
+                    if (this.config.customSources.length) {
+                        this.config.customSources.forEach(src => {
+                            if (!typeList.some(t => t.code === src.code)) {
+                                typeList.push({
+                                    code: src.code,
+                                    name: src.catName
+                                });
+                            }
+                        });
                     }
                     this.typeList = typeList;
                     resolve(this.typeList);

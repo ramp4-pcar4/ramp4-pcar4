@@ -359,6 +359,50 @@
                             "description": "Whether to return only official names for the geographic names. Default is false which will return both official names and formerly official names."
                         }
                     }
+                },
+                "customSources": {
+                    "type": "array",
+                    "description": "List of custom search sources to include in geosearch",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "description": "Unique code identifier for the type"
+                            },
+                            "catName": {
+                                "type": "string",
+                                "description": "Category name for the type (shown in UI)"
+                            },
+                            "data": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "description": "Display name"
+                                        },
+                                        "bbox": {
+                                            "type": "array",
+                                            "items": { "type": "number" },
+                                            "minItems": 4,
+                                            "maxItems": 4,
+                                            "description": "Bounding box coordinates"
+                                        },
+                                        "prov": {
+                                            "type": "string",
+                                            "description": "Province or territory code"
+                                        }
+                                    },
+                                    "required": ["name", "bbox", "prov"]
+                                },
+                                "description": "Array of locations and their data"
+                            }
+                        },
+                        "required": ["code", "catName", "data"]
+                    },
+                    "default": []
                 }
             },
             "unevaluatedProperties": false
