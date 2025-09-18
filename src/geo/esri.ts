@@ -28,6 +28,7 @@ import type EsriMapImageLayer from '@arcgis/core/layers/MapImageLayer';
 import type EsriOpenStreetMapLayer from '@arcgis/core/layers/OpenStreetMapLayer';
 import type EsriTileLayer from '@arcgis/core/layers/TileLayer';
 import type EsriWMSLayer from '@arcgis/core/layers/WMSLayer';
+import type EsriVectorTileLayer from '@arcgis/core/layers/VectorTileLayer.js';
 import type EsriFeatureFilter from '@arcgis/core/layers/support/FeatureFilter';
 import type EsriFeatureReductionCluster from '@arcgis/core/layers/support/FeatureReductionCluster';
 import type EsriField from '@arcgis/core/layers/support/Field';
@@ -116,6 +117,11 @@ class EsriAPI {
 
     static async TileLayer(prams: __esri.TileLayerProperties): Promise<EsriTileLayer> {
         const lib = await import('@arcgis/core/layers/TileLayer');
+        return Reflect.construct(lib.default, [prams]);
+    }
+
+    static async VectorTileLayer(prams: __esri.VectorTileLayerProperties): Promise<EsriVectorTileLayer> {
+        const lib = await import('@arcgis/core/layers/VectorTileLayer');
         return Reflect.construct(lib.default, [prams]);
     }
 
@@ -215,6 +221,7 @@ export {
     type EsriTileLayer,
     type EsriUniqueValueInfo,
     type EsriUniqueValueRenderer,
+    type EsriVectorTileLayer,
     EsriWatch,
     type EsriWMSLayer,
     type EsriWMSSublayer

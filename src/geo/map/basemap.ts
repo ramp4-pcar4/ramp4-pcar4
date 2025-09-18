@@ -42,20 +42,19 @@ export class Basemap {
         // generate the inner layers (async requests)
         const baseLayerProms = rampConfig.layers.map(layerConfig => {
             // convert to switch statement if we add more types?
+            const universalNugget = {
+                url: layerConfig.url,
+                opacity: layerConfig.opacity
+            };
+
             if (layerConfig.layerType === LayerType.TILE) {
-                return EsriAPI.TileLayer({
-                    url: layerConfig.url,
-                    opacity: layerConfig.opacity
-                });
+                return EsriAPI.TileLayer(universalNugget);
+            } else if (layerConfig.layerType === LayerType.VECTORTILE) {
+                return EsriAPI.VectorTileLayer(universalNugget);
             } else if (layerConfig.layerType === LayerType.MAPIMAGE) {
-                return EsriAPI.MapImageLayer({
-                    url: layerConfig.url,
-                    opacity: layerConfig.opacity
-                });
+                return EsriAPI.MapImageLayer(universalNugget);
             } else if (layerConfig.layerType === LayerType.OSM) {
-                return EsriAPI.OpenStreetMapLayer({
-                    opacity: layerConfig.opacity
-                });
+                return EsriAPI.OpenStreetMapLayer(universalNugget);
             } else {
                 throw new Error(`Unsupported layer type provided to basemap config: ${layerConfig.layerType}`);
             }

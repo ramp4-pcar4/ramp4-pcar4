@@ -21,6 +21,7 @@ import {
     ShapefileLayer,
     TableLayer,
     TileLayer,
+    VectorTileLayer,
     WfsLayer,
     WmsLayer
 } from '@/api/internal';
@@ -91,6 +92,9 @@ export class LayerAPI extends APIScope {
                 break;
             case LayerType.GEOJSONZIPPED:
                 closs = GeoJsonZipLayer;
+                break;
+            case LayerType.VECTORTILE:
+                closs = VectorTileLayer;
                 break;
             case LayerType.FLATGEOBUFZIPPED:
                 closs = FlatGeobufZipLayer;

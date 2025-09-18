@@ -891,7 +891,7 @@
                 },
                 "layerType": {
                     "type": "string",
-                    "enum": ["esri-imagery", "esri-tile"],
+                    "enum": ["esri-imagery", "esri-tile", "esri-vector-tile", "esri-imagery-tile"],
                     "description": "Service type for basic layers."
                 },
                 "extent": {
@@ -2331,7 +2331,7 @@
                             "layerType": {
                                 "type": "string",
                                 "description": "Base layer's type",
-                                "enum": ["esri-map-image", "esri-tile", "osm-tile"]
+                                "enum": ["esri-map-image", "esri-tile", "esri-vector-tile", "osm-tile"]
                             },
                             "url": {
                                 "type": "string",

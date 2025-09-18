@@ -23,8 +23,9 @@ Valid values:
 - `esri-feature`: ESRI Feature Layer
 - `esri-map-image`: ESRI Map Image Layer (formerly known as Dynamic Layer)
 - `esri-tile`: ESRI Tile Layer
-- `esri-imagery`: ESRI Image Service
-- `esri-imagery-tile`: ESRI ImageryTile Service
+- `esri-vector-tile`: ESRI Vector Tile Layer
+- `esri-imagery-tile`: ESRI Imagery Tile Layer
+- `esri-imagery`: ESRI Image Service Layer
 - `esri-graphic`: ESRI Graphic Layer
 - `ogc-wfs`: OGC WFS 3.0
 - `ogc-wms`: OGC WMS
