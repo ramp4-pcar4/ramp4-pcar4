@@ -62,7 +62,9 @@ const iApi = inject('iApi') as InstanceAPI;
 const configStore = useConfigStore();
 const el = ref();
 
-const activeBasemap = computed<RampBasemapConfig>(() => configStore.activeBasemapConfig as RampBasemapConfig);
+const mainMapActiveBasemapConfig = computed<RampBasemapConfig>(
+    () => configStore.activeBasemapConfig as RampBasemapConfig
+);
 const mapConfig = computed(() => overviewmapStore.mapConfig);
 const basemaps = computed(() => overviewmapStore.basemaps as { [key: string]: RampBasemapConfig });
 const startMinimized = computed(() => overviewmapStore.startMinimized);
@@ -101,6 +103,10 @@ onMounted(async () => {
     //           e.g. overviewMap.viewPromise.then(()=> _adaptBasemap())
 
     // adapt the overview map's basemap whenever the main map is created
+    // NOTE: this will not trigger on the first "map created". We await on the main map's viewPromise
+    //       before adding this handler. So the map will already be created by the time we being listening.
+    //       Not sure what scenario this will actually handle. Some kind of non-refresh map destruction and recreation
+    //       that doesn't obliterate the mounted Vue component (this file)?
     handlers.push(
         iApi.event.on(GlobalEvents.MAP_CREATED, () => {
             _adaptBasemap();
@@ -119,7 +125,14 @@ onMounted(async () => {
     handlers.push(
         iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, async (payload: BasemapChange) => {
             if (!payload.schemaChanged && overviewMap.created) {
-                if (activeBasemap.value && basemaps.value[activeBasemap.value.tileSchemaId] === undefined) {
+                // this IF ensures we have something to switch to, and that the overview fixture does not have an override basemap
+                // for the current tile schema
+                if (
+                    mainMapActiveBasemapConfig.value &&
+                    basemaps.value[mainMapActiveBasemapConfig.value.tileSchemaId] === undefined
+                ) {
+                    // TODO why are we removing and adding the graphic? no schema change, shouldn't it just be fine?
+                    //      try removing and see what happens. Comment explanation or delete the two
                     await overviewMap.removeMapGraphicLayer();
                     await overviewMap.setBasemap(payload.basemapId);
                     await overviewMap.addMapGraphicLayer();
@@ -169,25 +182,27 @@ const toggleStyle = () => {
 const _adaptBasemap = () => {
     // try to find a suitable basemap
 
-    if (!activeBasemap.value) {
+    if (!mainMapActiveBasemapConfig.value) {
         console.error('Overview Map could not obtain the basemap config used by the main map');
         return;
     }
 
     try {
-        const tileSchemaId: string | undefined = activeBasemap.value?.tileSchemaId;
+        const tileSchemaId = mainMapActiveBasemapConfig.value?.tileSchemaId;
 
         if (!tileSchemaId) {
-            throw new Error('Overview Map could not obtain the tile schema of the main map');
+            // Overview Map could not obtain the tile schema of the main map's basemap.
+            // we throw a dummy error to hop to the catch block.
+            throw new Error('x');
         }
 
         // find a basemap in this tile schema
         const basemap = basemaps.value[tileSchemaId];
 
         if (!basemap) {
-            throw new Error(
-                'Overview Map could not find a suitable basemap that matches the tile schema of the main map'
-            );
+            // Overview Map was not configured with an overriding basemap in the current tile schema.
+            // we throw a dummy error to hop to the catch block.
+            throw new Error('x');
         }
 
         if (overviewMap.created) {
@@ -206,13 +221,20 @@ const _adaptBasemap = () => {
         //       above to a unique key of sorts, since it wont be visibile to eyes.
         // console.warn(`${err}. Will default to the main map's basemap.`);
 
+        // idea:
+        // make this logic similar to the block above.
+        // if map is created, we don't need to set the initial (too late, already been setup).
+        // otherwise we set it.  This lets us get rid of the initial setup flag
+
         // override the intial basemap id in the overview map config
         if (!overviewMap.created) {
-            overviewmapStore.updateInitialBasemap(activeBasemap.value.id);
+            overviewmapStore.updateInitialBasemap(mainMapActiveBasemapConfig.value.id);
         }
 
-        // set the basemap once the map loads
-        overviewMap.viewPromise.then(() => overviewMap.setBasemap(activeBasemap.value.id));
+        // set the basemap once the map loads.
+        // if this is our initial setup, the creation of the overview map will handle setting the basemap
+
+        overviewMap.viewPromise.then(() => overviewMap.setBasemap(mainMapActiveBasemapConfig.value.id));
     }
 };
 </script>

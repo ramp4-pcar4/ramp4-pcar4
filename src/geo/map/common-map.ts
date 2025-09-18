@@ -199,6 +199,7 @@ export class CommonMapAPI extends APIScope {
             );
         }
         */
+
         this.esriMap = markRaw(await EsriAPI.Map(esriConfig));
         this.pointZoomScale = config.pointZoomScale && config.pointZoomScale > 0 ? config.pointZoomScale : 50000;
         this._targetDiv = targetDiv;
@@ -324,7 +325,12 @@ export class CommonMapAPI extends APIScope {
         }
 
         const bm: Basemap = typeof basemap === 'string' ? await this.findBasemap(basemap) : basemap;
-        this.esriMap.basemap = toRaw(bm.esriBasemap);
+
+        // avoid double-setting due to competing event handlers
+        const currentBasemap = this.esriMap.basemap?.id || '';
+        if (bm.esriBasemap.id !== currentBasemap) {
+            this.esriMap.basemap = toRaw(bm.esriBasemap);
+        }
     }
 
     /**

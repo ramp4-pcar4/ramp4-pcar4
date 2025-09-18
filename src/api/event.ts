@@ -1,5 +1,5 @@
 import { TinyEmitter } from 'tiny-emitter';
-import { APIScope, InstanceAPI, LayerInstance, PanelInstance, TileLayer } from './internal';
+import { APIScope, CommonTileLayer, InstanceAPI, LayerInstance, PanelInstance } from './internal';
 import type { AppbarAPI } from '@/fixtures/appbar/api/appbar';
 import type { DetailsAPI } from '@/fixtures/details/api/details';
 import type { GridAPI } from '@/fixtures/grid/api/grid';
@@ -12,7 +12,7 @@ import type { SettingsAPI } from '@/fixtures/settings/api/settings';
 import type { WizardAPI } from '@/fixtures/wizard/api/wizard';
 import { useAppbarStore } from '@/fixtures/appbar/store';
 import { useGridStore } from '@/fixtures/grid/store';
-import { LayerState, LayerType } from '@/geo/api';
+import { DataFormat, LayerState } from '@/geo/api';
 import type { BasemapChange, IdentifyResultFormat, MapClick, MapMove, ScreenPoint } from '@/geo/api';
 import { debounce, throttle } from 'throttle-debounce';
 import { useMapCaptionStore } from '@/stores/map-caption';
@@ -758,9 +758,9 @@ export class EventAPI extends APIScope {
                     if (payload.schemaChanged) {
                         this.$iApi.geo.layer
                             .allLayers()
-                            .filter(l => l.layerType === LayerType.TILE)
+                            .filter(l => l.dataFormat === DataFormat.ESRI_TILE && (l as CommonTileLayer).schemaLocked)
                             .forEach(tl => {
-                                (tl as TileLayer).checkProj();
+                                (tl as CommonTileLayer).checkProj();
                             });
                     }
                 };

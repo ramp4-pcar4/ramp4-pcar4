@@ -54,23 +54,25 @@ Use the `$attr` variable to access attribute values. E.g.:
 
 This indicates which layer types can support certain sets of abilities
 
-| Layer Type      | Map Layer | Identify  | Attributes   | Local Data | Client Data Format |
-| ----------- | ----------- | ----------- | ------------ | ------------ | ------------ |
-| ESRI Feature Layer  |  Yes  |  Yes     | Yes               | No  | Vector |
-| ESRI Map Image Layer |  Yes  | Yes | No | No | Raster |
-| ESRI M.I.L. Feature Sublayer |  Yes  | Yes | Yes | No | Raster |
-| ESRI M.I.L. Raster Sublayer |  Yes  | No | No | No | Raster |
-| ESRI Image Server Layer |  Yes  | No | No | No | Raster |
-| ESRI Tile Layer |  Yes  | No | No | No | Raster |
-| OGC WMS Layer |  Yes  | Yes | No | No | Raster |
-| OGC WFS 3.0 Layer |  Yes  | Yes | Yes | Yes | Vector |
-| GeoJSON Layer |  Yes  | Yes | Yes | Yes | Vector |
-| Zipped GeoJSON Layer |  Yes  | Yes | Yes | Yes | Vector |
-| CSV Layer |  Yes  | Yes | Yes | Yes | Vector |
-| Shapefile Layer |  Yes  | Yes | Yes | Yes | Vector |
-| FlatGeobuf Layer |  Yes  | Yes | Yes | Yes | Vector |
-| Zipped FlatGeobuf Layer |  Yes  | Yes | Yes | Yes | Vector |
-| OpenStreetMap Tile Layer |  Yes  | No | No | No | Raster |
-| ESRI Table Layer |  No  | No | Yes | No | N/A |
-| Non Spatial CSV Layer |  No  | No | Yes | Yes | N/A |
-| Compact JSON Layer |  No  | No | Yes | Yes | N/A |
+| Layer Type                   | Map Layer | Identify | Attributes | Local Data | Client Data Format |
+|------------------------------|-----------|----------|------------|------------|--------------------|
+| ESRI Feature Layer           | Yes       | Yes      | Yes        | No         | Vector             |
+| ESRI Map Image Layer         | Yes       | Yes      | No         | No         | Raster             |
+| ESRI M.I.L. Feature Sublayer | Yes       | Yes      | Yes        | No         | Raster             |
+| ESRI M.I.L. Raster Sublayer  | Yes       | No       | No         | No         | Raster             |
+| ESRI Image Server Layer      | Yes       | No       | No         | No         | Raster             |
+| ESRI Tile Layer              | Yes       | No       | No         | No         | Raster             |
+| ESRI Vector Tile Layer       | Yes       | No       | No         | No         | Vector             |
+| ESRI Imagery Tile Layer      | Yes       | No       | No         | No         | Raster             |
+| OGC WMS Layer                | Yes       | Yes      | No         | No         | Raster             |
+| OGC WFS 3.0 Layer            | Yes       | Yes      | Yes        | Yes        | Vector             |
+| GeoJSON Layer                | Yes       | Yes      | Yes        | Yes        | Vector             |
+| Zipped GeoJSON Layer         | Yes       | Yes      | Yes        | Yes        | Vector             |
+| CSV Layer                    | Yes       | Yes      | Yes        | Yes        | Vector             |
+| Shapefile Layer              | Yes       | Yes      | Yes        | Yes        | Vector             |
+| FlatGeobuf Layer             | Yes       | Yes      | Yes        | Yes        | Vector             |
+| Zipped FlatGeobuf Layer      | Yes       | Yes      | Yes        | Yes        | Vector             |
+| OpenStreetMap Tile Layer     | Yes       | No       | No         | No         | Raster             |
+| ESRI Table Layer             | No        | No       | Yes        | No         | N/A                |
+| Non Spatial CSV Layer        | No        | No       | Yes        | Yes        | N/A                |
+| Compact JSON Layer           | No        | No       | Yes        | Yes        | N/A                |

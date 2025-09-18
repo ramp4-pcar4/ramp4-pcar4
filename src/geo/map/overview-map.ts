@@ -239,20 +239,18 @@ export class OverviewMapAPI extends CommonMapAPI {
             return false;
         }
 
-        const bm: Basemap = await this.findBasemap(basemapId);
+        const newBm = await this.findBasemap(basemapId);
 
         // get the current basemap
-        const currBm: Basemap | undefined = this.getCurrentBasemapId()
-            ? await this.findBasemap(this.getCurrentBasemapId()!)
-            : undefined;
+        const currBm = this.getCurrentBasemapId() ? await this.findBasemap(this.getCurrentBasemapId()!) : undefined;
 
-        const differentSchema: boolean = currBm?.tileSchemaId !== bm.tileSchemaId;
+        const differentSchema = currBm?.tileSchemaId !== newBm.tileSchemaId;
 
         if (differentSchema) {
             this.destroyMapView();
-            await this.createMapView(bm);
+            await this.createMapView(newBm);
         } else {
-            await this.applyBasemap(bm);
+            await this.applyBasemap(newBm);
         }
 
         return differentSchema;
