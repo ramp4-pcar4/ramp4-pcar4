@@ -12,6 +12,8 @@ LayerInstance: RAMP's internal "base class" for layers. Any code dealing with ge
 
 ~ ~ ~ ImageryLayer: Handles ArcGIS Server Imagery layers.
 
+~ ~ ~ ImageryTileLayer: Handles ArcGIS Server Imagery Tile layers.
+
 ~ ~ ~ WMSLayer: Handles WMS layers.
 
 ~ ~ ~ MapImageLayer: Handles ArcGIS Server Map Image layers (formerly Dynamic layers).
@@ -53,7 +55,7 @@ This chain is the `onInitiate()` calls. They tend to go backwards (subclass --> 
 
 ~ ~ MapLayer: Just wires up layer events, sets statuses.
 
-~ ~ ~ FeatureLayer, MapImageLayer, WMSLayer, TileLayer, ImageryLayer, GraphicLayer: Generates ESRI layer.
+~ ~ ~ FeatureLayer, MapImageLayer, WMSLayer, TileLayer, ImageryLayer, ImageryTileLayer, GraphicLayer: Generates ESRI layer.
 
 ~ ~ ~ FileLayer: Converts GeoJSON to EsriJSON. Blocks, but only for projection validation
 
