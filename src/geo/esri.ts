@@ -23,6 +23,7 @@ import EsriGraphic from '@arcgis/core/Graphic';
 import type EsriFeatureLayer from '@arcgis/core/layers/FeatureLayer';
 import type EsriGraphicsLayer from '@arcgis/core/layers/GraphicsLayer';
 import type EsriImageryLayer from '@arcgis/core/layers/ImageryLayer';
+import type EsriImageryTileLayer from '@arcgis/core/layers/ImageryTileLayer';
 import type EsriMapImageLayer from '@arcgis/core/layers/MapImageLayer';
 import type EsriOpenStreetMapLayer from '@arcgis/core/layers/OpenStreetMapLayer';
 import type EsriTileLayer from '@arcgis/core/layers/TileLayer';
@@ -95,6 +96,11 @@ class EsriAPI {
 
     static async ImageryLayer(prams: __esri.ImageryLayerProperties): Promise<EsriImageryLayer> {
         const lib = await import('@arcgis/core/layers/ImageryLayer');
+        return Reflect.construct(lib.default, [prams]);
+    }
+
+    static async ImageryTileLayer(prams: __esri.ImageryTileLayerProperties): Promise<EsriImageryTileLayer> {
+        const lib = await import('@arcgis/core/layers/ImageryTileLayer');
         return Reflect.construct(lib.default, [prams]);
     }
 
@@ -185,6 +191,7 @@ export {
     EsriGraphic,
     type EsriGraphicsLayer,
     type EsriImageryLayer,
+    type EsriImageryTileLayer,
     type EsriLOD,
     type EsriMap,
     type EsriMapImageLayer,
