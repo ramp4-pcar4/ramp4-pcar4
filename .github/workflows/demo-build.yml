@@ -2,7 +2,7 @@ name: Build demo site and deploy to GitHub Pages
 
 on:
     push:
-        branches: [main] # or your default branch
+        branches: [AddEsriImageryTileSupport] # or your default branch
     workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
