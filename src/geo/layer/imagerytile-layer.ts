@@ -41,18 +41,6 @@ export class ImageryTileLayer extends MapLayer {
 
         this.layerTree.name = this.name;
 
-        const startTime = Date.now();
-
-        const legendPromise = this.$iApi.geo.symbology
-            .mapServerToLocalLegend(this.origRampConfig.url!)
-            .then(legArray => {
-                if (startTime > this.lastCancel) {
-                    this.legend = legArray;
-                }
-            });
-
-        loadPromises.push(legendPromise);
-
         return loadPromises;
     }
 }
