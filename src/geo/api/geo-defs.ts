@@ -157,6 +157,7 @@ export const enum LayerType {
     MAPIMAGE = 'esri-map-image',
     TILE = 'esri-tile',
     IMAGERY = 'esri-imagery',
+    IMAGERYTILE = 'esri-imagery-tile',
     GRAPHIC = 'esri-graphic',
 
     // OGS
@@ -189,6 +190,7 @@ export const enum LayerFormat {
     FEATURE = 'feature',
     GRAPHIC = 'graphic',
     IMAGERY = 'imagery',
+    IMAGERYTILE = 'imagery-tile',
     MAPIMAGE = 'map-image',
     NOLAYER = 'no-layer',
     OSM = 'osm-tile',
