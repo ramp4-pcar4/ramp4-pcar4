@@ -116,6 +116,7 @@ The ESRI formats assume being hosted on an ArcGIS Server `MapServer`. `FeatureSe
 - ESRI Map Image Layer (formerly known as Dynamic Layer) (`esri-map-image`)
 - ESRI Tile Layer (`esri-tile`)
 - ESRI Image Service (`esri-imagery`)
+- ESRI Image Tile Service (`esri-imagery-tile`)
 - ESRI Graphic Layer (`esri-graphic`)
 - OGC WFS 3.0 (`ogc-wfs`)
 - OGC WMS (`ogc-wms`)
