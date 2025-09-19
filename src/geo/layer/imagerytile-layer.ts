@@ -6,7 +6,7 @@ import { EsriAPI } from '@/geo/esri';
 import { markRaw } from 'vue';
 
 /**
- * A layer class which implements an ESRI Imagery Layer.
+ * A layer class which implements an ESRI ImageryTile Layer.
  */
 export class ImageryTileLayer extends MapLayer {
     declare esriLayer: EsriImageryTileLayer | undefined;

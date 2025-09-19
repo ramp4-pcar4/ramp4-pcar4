@@ -12,7 +12,7 @@ LayerInstance: RAMP's internal "base class" for layers. Any code dealing with ge
 
 ~ ~ ~ ImageryLayer: Handles ArcGIS Server Imagery layers.
 
-~ ~ ~ ImageryTileLayer: Handles ArcGIS Server Imagery Tile layers.
+~ ~ ~ ImageryTileLayer: Handles ArcGIS Server ImageryTile layers.
 
 ~ ~ ~ WMSLayer: Handles WMS layers.
 

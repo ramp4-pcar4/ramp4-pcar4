@@ -24,7 +24,7 @@ Valid values:
 - `esri-map-image`: ESRI Map Image Layer (formerly known as Dynamic Layer)
 - `esri-tile`: ESRI Tile Layer
 - `esri-imagery`: ESRI Image Service
-- `esri-imagery-tile`: ESRI Image Service
+- `esri-imagery-tile`: ESRI ImageryTile Service
 - `esri-graphic`: ESRI Graphic Layer
 - `ogc-wfs`: OGC WFS 3.0
 - `ogc-wms`: OGC WMS
