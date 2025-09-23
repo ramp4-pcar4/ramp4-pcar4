@@ -96,7 +96,9 @@ function linkifyContent(content: string | null): TippyContent {
         return '';
     }
 
-    let res = linkifyHtml(content, {
+    const escapedContent = content.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    let res = linkifyHtml(escapedContent, {
         target: '_blank',
         validate: {
             url: (value: string) => /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
