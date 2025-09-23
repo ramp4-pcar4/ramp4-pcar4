@@ -86,6 +86,22 @@ function onShow(instance: any) {
 }
 
 /**
+ * Escapes special HTML characters in a string to their corresponding HTML entities.
+ *
+ * @param content input string that may contain special characters
+ * @returns escaped string
+ */
+const escapeHtml = (content: string) => {
+    const specialChars: Record<string, string> = {
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return content.replace(/[<>"']/g, m => specialChars[m]);
+};
+
+/**
  * Applies hyperlinks to any URLs in the provided content.
  *
  * @param the text content
@@ -96,7 +112,9 @@ function linkifyContent(content: string | null): TippyContent {
         return '';
     }
 
-    let res = linkifyHtml(content, {
+    const escapedContent = escapeHtml(content);
+
+    let res = linkifyHtml(escapedContent, {
         target: '_blank',
         validate: {
             url: (value: string) => /^https?:\/\//.test(value) // only links that begin with a protocol will be hyperlinked
