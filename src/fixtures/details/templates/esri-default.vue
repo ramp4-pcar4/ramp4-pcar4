@@ -55,7 +55,7 @@ const findAndDelete = (fields: FieldDefinition[], propertyType: 'type' | 'name',
  * - alias (display text for field. See aliases.name below)
  * - type (field data type)
  */
-const itemData = () => {
+const itemData = (): Record<string, { value: string; alias: string; type: string }> => {
     const clonePayload = Object.assign({}, props.identifyData.data);
 
     // Remove any fields of type geometry

@@ -288,14 +288,14 @@ export class InstanceAPI {
             /**
              * Return the string with all special html chars replaced by their corresponding entities
              */
+            // Note: This function is duplicated in truncate.ts
             this.ui.escapeHtml = (content: string) => {
-                const specialChars = {
+                const specialChars: Record<string, string> = {
                     '<': '&lt;',
                     '>': '&gt;',
                     '"': '&quot;',
                     "'": '&#039;'
                 };
-                // @ts-expect-error TODO: explain why this is needed or remove
                 return content.replace(/[<>"']/g, m => specialChars[m]);
             };
 
