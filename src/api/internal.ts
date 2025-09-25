@@ -35,6 +35,7 @@ export * from '@/geo/layer/map-image-layer';
 export * from '@/geo/layer/map-image-sublayer';
 export * from '@/geo/layer/osm-tile-layer';
 export * from '@/geo/layer/imagery-layer';
+export * from '@/geo/layer/imagerytile-layer';
 export * from '@/geo/layer/tile-layer';
 export * from '@/geo/layer/wms-layer';
 export * from '@/geo/layer/wfs-layer';
