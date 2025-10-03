@@ -5,6 +5,21 @@ import { computed, ref } from 'vue';
 import type { IProvinceInfo, ISearchResult } from '../definitions';
 
 /**
+ * Custom geosearch search source structure
+ *
+ * @interface ICustomSource
+ * @property {String} code Unique code identifier for the type
+ * @property {String} catName Category name for the type
+ * @property {(term: string) => Promise<ISearchResult[]>} onSearch Function that searches by a term and returns matching results
+ */
+
+export interface ICustomSource {
+    code: string;
+    catName: string;
+    onSearch: (term: string) => Promise<ISearchResult[]>;
+}
+
+/**
  * Helper function that filters based on query parameters.
  *
  * @function filter
@@ -44,6 +59,15 @@ export const useGeosearchStore = defineStore('geosearch', () => {
     const searchVal = ref<string>('');
     const searchRegex = ref<string>('');
     const lastSearchVal = ref<string>('');
+    const appLang = ref<string>('');
+
+    /**
+     * This holds a list of custom sources in English and French
+     */
+    const customSources = {
+        en: ref<ICustomSource[]>([]),
+        fr: ref<ICustomSource[]>([])
+    };
 
     /**
      * This represents the active, visible search (typed words and any filters)
@@ -89,16 +113,53 @@ export const useGeosearchStore = defineStore('geosearch', () => {
         () =>
             new Promise(resolve => {
                 GSservice.value.fetchTypes().then((types: Array<any>) => {
-                    types.sort((typeA: any, typeB: any) =>
+                    const customTypes = customSources[appLang.value].value.map(src => ({
+                        code: src.code,
+                        name: src.catName
+                    }));
+                    const allTypes = [...types, ...customTypes];
+                    allTypes.sort((typeA: any, typeB: any) =>
                         typeA.name.localeCompare(typeB.name, undefined, { sensitivity: 'case' })
                     );
-                    resolve(types);
+                    resolve(allTypes);
                 });
             })
     );
 
     function initService(lang: string, config: any) {
+        appLang.value = lang;
         GSservice.value = new GeoSearchUI(lang, config);
+        customSources[lang].value = [];
+        if (config?.customSources) {
+            config.customSources.forEach((source: any) => {
+                if (!customSources[lang].value.some(s => s.code === source.code)) {
+                    registerSource(source, lang);
+                }
+            });
+        }
+    }
+
+    function registerSource(source: { code: string; catName: string; data: any[] }) {
+        const { code, catName, data } = source;
+        customSources[appLang.value].value.push({
+            code,
+            catName,
+            async onSearch(searchTerm: string) {
+                searchTerm = searchTerm
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .toLowerCase();
+                return data
+                    .map(d => ({ ...d, type: catName }))
+                    .filter(r =>
+                        r.name
+                            .normalize('NFD')
+                            .replace(/[\u0300-\u036f]/g, '')
+                            .toLowerCase()
+                            .includes(searchTerm)
+                    );
+            }
+        });
     }
 
     /**
@@ -130,15 +191,24 @@ export const useGeosearchStore = defineStore('geosearch', () => {
                             lastSearchVal.value = cleanedSearchVal;
                             savedResults.value = data.results;
 
-                            // replace old saved results
-                            const filteredData = filter(
-                                resultsVisible.value,
-                                //@ts-expect-error TODO: explain why this is needed or remove
-                                queryParams.value,
-                                savedResults.value
-                            );
-                            searchResults.value = filteredData || [];
-                            loadingResults.value = false;
+                            Promise.all(
+                                customSources[appLang.value].value.map(src => src.onSearch(cleanedSearchVal))
+                            ).then(customResultsArrays => {
+                                const customResults = customResultsArrays.flat();
+
+                                // merge normal and custom
+                                savedResults.value = [...savedResults.value, ...customResults];
+
+                                // replace old saved results
+                                const filteredData = filter(
+                                    resultsVisible.value,
+                                    //@ts-expect-error TODO: explain why this is needed or remove
+                                    queryParams.value,
+                                    savedResults.value
+                                );
+                                searchResults.value = filteredData || [];
+                                loadingResults.value = false;
+                            });
                         });
                     }
                 }, 250);

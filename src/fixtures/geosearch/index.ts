@@ -11,8 +11,8 @@ class GeosearchFixture extends GeosearchAPI {
     async added() {
         // console.log(`[fixture] ${this.id} added`);
 
-        const geosearchStore = useGeosearchStore(this.$vApp.$pinia);
-        geosearchStore.initService(this.$iApi.language, this.config);
+        // const geosearchStore = useGeosearchStore(this.$vApp.$pinia);
+        // geosearchStore.initService(this.$iApi.language, this.config);
 
         this.$iApi.component('geosearch-nav-button', GeosearchNavButtonV);
 
