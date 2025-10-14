@@ -760,7 +760,7 @@ export interface RampLayerConfig {
     longField?: string; // csv coord field
     mouseTolerance?: number; // mouse tolerance
     touchTolerance?: number; // touch tolerance
-    metadata?: { url: string; name?: string };
+    metadata?: { url: string; name?: string, xmlType?: string, treatXmlAsMarkdown?: boolean };
     catalogueUrl?: string;
     fixtures?: any; // layer-based fixture config
     cosmetic?: boolean;
