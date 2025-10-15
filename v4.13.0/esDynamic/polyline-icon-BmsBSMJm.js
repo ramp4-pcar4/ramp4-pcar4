@@ -1,0 +1,1 @@
+import{dn as o,dp as r,dq as l,dr as t}from"./main-BFDurRCu.js";const s={},d={xmlns:"http://www.w3.org/2000/svg",viewBox:"0 0 24 24"};function e(i,n){return l(),r("svg",d,n[0]||(n[0]=[t("path",{d:"M0 0h24v24H0z",fill:"none"},null,-1),t("path",{d:"M5 17l3-3 4 4 8-8","stroke-width":"2",fill:"none",stroke:"currentColor"},null,-1)]))}const a=o(s,[["render",e]]);export{a as default};
