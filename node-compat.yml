@@ -1,0 +1,9 @@
+prod:
+  - "22.12.0"
+likely:
+  - ">=22.12.1 <23.0.0"
+options:
+  requireConfirmOnUnknown: true
+  allowProceedInCI: true
+  cacheConsentTtlHours: 24
+  cacheFile: ".node-compat-cache.json"
