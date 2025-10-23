@@ -1,0 +1,1 @@
+import{u as a,e as m}from"./operatorSimplify-QULEuNSK.js";import{fromGeometry as o,toGeometry as n}from"./jsonConverter-CpWW5Jd1.js";function s(t){const e=o(t),r=e.getSpatialReference();return n(m(e.getGeometry(),r,!1),r)}function c(t){const e=o(t);return a(e.getGeometry(),e.getSpatialReference(),!1)}export{s as execute,c as isSimple};

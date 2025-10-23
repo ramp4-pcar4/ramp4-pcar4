@@ -1,0 +1,1 @@
+var I,A;(function(E){E[E.OBJECT=0]="OBJECT",E[E.HUD=1]="HUD",E[E.TERRAIN=2]="TERRAIN",E[E.OVERLAY=3]="OVERLAY",E[E.I3S=4]="I3S",E[E.PCL=5]="PCL",E[E.LOD=6]="LOD",E[E.VOXEL=7]="VOXEL",E[E.TILES3D=8]="TILES3D"})(I||(I={})),function(E){E[E.MIN=0]="MIN",E[E.MINMAX=1]="MINMAX",E[E.ALL=2]="ALL"}(A||(A={}));export{A as e,I as i};
