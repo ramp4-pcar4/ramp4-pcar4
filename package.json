@@ -15,9 +15,11 @@
         "dist/*.css"
     ],
     "scripts": {
+        "predev": "node scripts/check-node.mjs",
         "dev": "vite",
         "dev-http": "vite --https=false",
         "launch": "vite --no-open",
+        "prebuild": "node scripts/check-node.mjs",
         "build": "rm -rf dist && run-p -c -s build:* && npm run ts:copy",
         "build:npm": "vite build --mode npm",
         "build:esDynamic": "vite build --mode esDynamic",
@@ -77,9 +79,6 @@
         "vue-tippy": "^6.4.4",
         "vuedraggable": "next"
     },
-    "engines": {
-        "node": "=22.12.0"
-    },
     "devDependencies": {
         "@cypress/vite-dev-server": "^2.2.2",
         "@cypress/vue": "^3.1.1",
@@ -115,6 +114,7 @@
         "postcss-import": "^16.1.0",
         "prettier": "^3.3.2",
         "sass": "^1.50.0",
+        "semver": "^7.6.3",
         "start-server-and-test": "^2.0.8",
         "tailwindcss": "^3.4.11",
         "typedoc": "^0.26.3",
@@ -123,6 +123,7 @@
         "vite-plugin-dts": "^4.4.0",
         "vite-plugin-mkcert": "^1.17.6",
         "vitepress": "1.6.1",
-        "vue-tsc": "^2.1.6"
+        "vue-tsc": "^2.1.6",
+        "yaml": "^2.6.0"
     }
 }

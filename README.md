@@ -33,7 +33,22 @@ RAMP should still work on most other browsers, but we cannot promise support or 
 
 ### Project Setup
 
-Download [Node v22.12.0](https://nodejs.org/en/blog/release/v22.12.0).
+Use [**Node v22.12.0**](https://nodejs.org/en/blog/release/v22.12.0) for local development and **all production builds**. This version is officially supported and required for production build environments.
+
+Developers may use **any Node v22.x.x** version for local work if preferred, though results may vary.
+Versions **below 22** or **23 and above** are **not tested** and **not recommended**.
+
+See `node-compat.yml` in the repo root for versions we consider production or likely supported. As we test newer Node releases, we’ll expand those ranges.
+
+**Quickstart with nvs for Windows**
+
+- Install nvs: https://github.com/jasongin/nvs#readme (`winget install jasongin.nvs`).
+- In a new terminal:
+  ```powershell
+  nvs add 22.12.0
+  nvs link 22.12.0
+  ```
+- Open a fresh terminal so your PATH is updated.
 
 ```sh
 npm ci
@@ -156,4 +171,3 @@ To enable demo previews on your forked repository, update the following settings
 
 5. **Enabling Workflow**:
    - Go to the `Actions` tab and click on **I understand my workflows, go ahead and enable them**.
-   - **Note**: If you've already enabled workflows in the Actions tab for your fork, this prompt won't appear again.
