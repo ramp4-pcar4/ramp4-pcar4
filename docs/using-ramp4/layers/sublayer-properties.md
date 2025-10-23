@@ -19,6 +19,7 @@ The sublayer also supports the following properties (see above for details). Som
 - `labels` (see below)
 - `name`
 - `nameField` (feature only)
+- `legendField` (feature only)
 - `state`
 
 ```js

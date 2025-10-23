@@ -37,7 +37,7 @@ import type {
     TabularAttributeSet
 } from '@/geo/api';
 
-import { EsriAPI, EsriWatch } from '@/geo/esri';
+import { EsriAPI, EsriWatch, type EsriRenderer, type EsriUniqueValueRenderer } from '@/geo/esri';
 
 import { toRaw } from 'vue';
 
@@ -133,6 +133,7 @@ export class AttribLayer extends MapLayer {
 
             this.fields = sData.fields;
             this.nameField = sData.displayField;
+            this.legendField = sData.typeIdField || "";
             this.oidField = sData.objectIdField;
             this.sourceSR = sData.sourceSR;
 
@@ -153,7 +154,9 @@ export class AttribLayer extends MapLayer {
                     ? options.customRenderer
                     : sData.renderer!;
 
-            this.renderer = this.$iApi.geo.symbology.makeRenderer(esriRenderer, this.fields);
+            const updatedRenderer = await this.updateRenderer(esriRenderer, this.origRampConfig);
+
+            this.renderer = this.$iApi.geo.symbology.makeRenderer(updatedRenderer, this.fields);
 
             // this array will have a set of promises that resolve when all the legend svg has drawn.
             // for now, will not include that set (promise.all'd) on the layer load blocker;
@@ -178,6 +181,42 @@ export class AttribLayer extends MapLayer {
             this.supportsFeatures = false;
             this.supportsIdentify = false;
         }
+    }
+
+    /**
+     * Modifies the specified renderer to use the specified legendField if it uses unique value symbology. Returns the updated renderer.
+     *
+     * @param renderer {EsriRenderer} ESRI renderer object
+     * @param rampConfig {RampLayerConfig} RAMP layer configuration object
+     */
+    async updateRenderer(esriRenderer: EsriRenderer, rampConfig: RampLayerConfig): Promise<EsriRenderer> {
+        const configField = rampConfig.legendField;
+        const renderField = esriRenderer.type === 'unique-value' ? esriRenderer.field : null;
+        if (configField && renderField && configField !== renderField) {
+
+            const query = await EsriAPI.Query();
+            query.where = "1=1";
+            query.outFields = [configField,renderField];
+            query.returnGeometry = false;
+            query.returnDistinctValues = true;
+
+            const localResult = await (this.esriLayer as __esri.FeatureLayer)!.queryFeatures(query);
+
+            const lookup: Record<string, string> = {};
+            localResult.features.forEach(feat => {
+                const key = feat.attributes[renderField];
+                const val = feat.attributes[configField];
+                if (key != null && val != null) {
+                    lookup[key] = val;
+                }
+            });
+
+            (esriRenderer as EsriUniqueValueRenderer).uniqueValueInfos?.forEach(uvi => {
+                uvi.label = lookup[uvi.value] || uvi.label;
+            });
+        }
+
+        return esriRenderer;
     }
 
     /**

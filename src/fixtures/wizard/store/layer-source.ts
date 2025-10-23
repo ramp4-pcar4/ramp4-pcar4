@@ -137,13 +137,14 @@ export class LayerSource extends APIScope {
             name: response.data.name,
             nameField: response.data.displayField,
             tooltipField: response.data.displayField,
+            legendField: response.data.drawingInfo?.renderer?.field1 || response.data.typeIdField,
             state: { opacity: 1, visibility: true }
         };
 
         return {
             config,
             fields: response.data.fields,
-            configOptions: ['name', 'nameField', 'tooltipField']
+            configOptions: ['name', 'nameField', 'tooltipField', 'legendField']
         };
     }
 

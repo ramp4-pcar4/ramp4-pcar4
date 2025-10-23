@@ -433,6 +433,7 @@ export interface ArcGisServerMetadata {
     fields: Array<FieldDefinition>;
     displayField: string;
     objectIdField: string;
+    typeIdField?: string;
     renderer?: EsriRenderer;
     currentVersion: number;
     name: string;
@@ -701,6 +702,7 @@ export interface RampLayerMapImageSublayerConfig {
     name?: string;
     nameField?: string;
     nameArcade?: string;
+    legendField?: string;
     state?: RampLayerStateConfig;
 
     extent?: RampExtentConfig;
@@ -751,6 +753,7 @@ export interface RampLayerConfig {
     nameArcade?: string;
     tooltipField?: string;
     tooltipArcade?: string;
+    legendField?: string;
     featureInfoMimeType?: string; // used by WMS layer
     controls?: Array<LayerControl>;
     disabledControls?: Array<LayerControl>;

@@ -366,6 +366,7 @@ export class MapImageLayer extends MapLayer {
                 //      .nameField already contains the service value of the sublayer from the miSL.loadLayerMetadata()
                 //      call above.
                 await miSL.nameInitializer(subC, miSL.nameField);
+                await miSL.legendInitializer(subC, miSL.legendField);
 
                 // get feature count
                 const count = await this.$iApi.geo.layer.loadFeatureCount(

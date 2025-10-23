@@ -607,6 +607,12 @@ Set the Arcade formula that calculates the content for `tooltipValue`. An empty 
 myLayer.setNameArcade("'Visit sunny ' + $attr.landmark"); // Promise<void>
 ```
 
+Get or set the field that provides the content for `legendValue` for a feature. This value will be ignored if missing or empty string or if the symbology is not `uniqueValue`.
+
+```js
+myLayer.legendField; // "site_name"
+```
+
 ### Methods
 
 Request the set of attributes. The result includes an array of attributes (key value objects), and an object that provides an indexed lookup by Object ID into the array. The first request will incur the server hit. Subsequent requests will use the cached result.

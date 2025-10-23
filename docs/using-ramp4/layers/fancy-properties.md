@@ -224,6 +224,23 @@ Specifies the attribute field containing the latitude co-ordinate of the layer. 
 }
 ```
 
+## legendField
+
+*string*, only applies to layers that [support attributes](./additional-layer-sections.md#layer-abilities)
+
+Specifies an attribute field name to use as the `legendValue` for a feature.
+
+- This will be utilized in the Legend fixture.
+- Will be ignored unless the symbology is `uniqueValue`
+- If missing, will use the symbology provided by the server.
+- Field name is case sensitive.
+
+```js
+{
+    legendField: "alt_street_name"
+}
+```
+
 ## longField
 
 *string*, only applies to `file-csv`
