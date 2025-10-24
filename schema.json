@@ -1124,6 +1124,11 @@
                     "default": "",
                     "description": "An arcade formula to be used for the feature name. If not present, the viewer will use value of nameField."
                 },
+                "legendField": {
+                    "type": "string",
+                    "default": "",
+                    "description": "The field to be used for the legend for a feature. Ignored unless the layer's symbology is set to 'uniqueValue'."
+                },
                 "extent": {
                     "$ref": "#/$defs/extentWithReference"
                 },
@@ -1351,6 +1356,11 @@
                     "type": "string",
                     "default": "",
                     "description": "An arcade formula to be used for tooltips. If not present, the viewer will use tooltipField."
+                },
+                "legendField": {
+                    "type": "string",
+                    "default": "",
+                    "description": "The field to be used for the legend for a feature. Ignored unless the layer's symbology is set to 'uniqueValue'."
                 },
                 "url": {
                     "type": "string",

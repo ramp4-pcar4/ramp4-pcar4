@@ -31,6 +31,7 @@ wizard.configure.name.error.required,Name is required,1,Le champ Nom est obligat
 wizard.configure.name.label,Layer Name,1,Nom de la couche,1
 wizard.configure.nameField.label,Primary Field,1,Champ clé,1
 wizard.configure.tooltipField.label,Tooltip Field,1,Champ infobulle,1
+wizard.configure.legendField.label,Legend Field,1,Champ légende,1
 wizard.configure.latField.label,Latitude Field,1,Champ latitude,1
 wizard.configure.longField.label,Longitude Field,1,Champ longitude,1
 wizard.configure.sublayers.error.required,Sublayers are required,1,Des sous-couches sont requises,1

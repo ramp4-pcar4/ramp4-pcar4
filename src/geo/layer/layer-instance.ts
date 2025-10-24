@@ -135,6 +135,11 @@ export class LayerInstance extends APIScope {
     nameField: string;
 
     /**
+     * Field name used for the legend. Applicable only for unique value fields.
+     */
+    legendField: string;
+
+    /**
      * Arcade formula to derive name of feature. Empty string indicates no formula in use. Not applicable for attribute-less layers.
      */
     get nameArcade(): string {
@@ -323,6 +328,7 @@ export class LayerInstance extends APIScope {
         this.fields = [];
         this.fieldList = '';
         this.nameField = '';
+        this.legendField = '';
         this.tooltipField = '';
         this.oidField = '';
         this.supportsSublayers = false;

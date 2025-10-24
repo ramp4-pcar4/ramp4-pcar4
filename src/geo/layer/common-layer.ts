@@ -725,4 +725,23 @@ export class CommonLayer extends LayerInstance {
             return '';
         }
     }
+
+    /**
+     * Handles initialization logic for feature names.
+     * Only valid for layers that support attributes.
+     * Typically called by internal processes.
+     *
+     * @param config a ramp layer configuration object. Can pass empty object if n/a.
+     * @param serviceDefault legend field as defined by the layer service. Not required
+     */
+    async legendInitializer(
+        config: RampLayerConfig | RampLayerMapImageSublayerConfig,
+        serviceDefault: string = ''
+    ): Promise<void> {
+        if (this.supportsFeatures) {
+            this.legendField = (config?.legendField || '').trim() || serviceDefault || this.oidField;
+        } else {
+            console.error('Attempted to init a legend field on an unsupported layer.');
+        }
+    }
 }

@@ -123,6 +123,7 @@ export class FeatureLayer extends AttribLayer {
                 //      .nameField will already contian any server-based definitions
                 await this.nameInitializer(this.origRampConfig, this.nameField);
                 await this.tooltipInitializer(this.origRampConfig);
+                await this.legendInitializer(this.origRampConfig, this.legendField);
             }
         };
 

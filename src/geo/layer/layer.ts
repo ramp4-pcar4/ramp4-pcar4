@@ -426,6 +426,7 @@ export class LayerAPI extends APIScope {
             defaultVisibility: true,
             fields: [],
             displayField: '',
+            typeIdField: '',
             objectIdField: '',
             renderer: undefined,
             currentVersion: 0,
@@ -454,6 +455,7 @@ export class LayerAPI extends APIScope {
         if (sData.type === 'Feature Layer' || sData.type === 'Table') {
             md.dataFormat = DataFormat.ESRI_FEATURE;
             md.displayField = sData.displayField || '';
+            md.typeIdField = sData.drawingInfo?.renderer?.field1 || sData.typeIdField || '';
 
             if (Array.isArray(sData.fields)) {
                 // parse fields to our format

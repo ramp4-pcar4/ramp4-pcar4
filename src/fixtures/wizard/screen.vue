@@ -143,6 +143,16 @@
                             :options="fieldOptions()"
                         />
                         <wizard-input
+                            v-if="layerInfo?.configOptions.includes(`legendField`)"
+                            type="select"
+                            name="legendField"
+                            v-model="layerInfo.config.legendField"
+                            :label="t('wizard.configure.legendField.label')"
+                            :aria-label="t('wizard.configure.legendField.label')"
+                            :defaultOption="true"
+                            :options="fieldOptions()"
+                        />
+                        <wizard-input
                             v-if="layerInfo?.configOptions.includes(`latField`)"
                             type="select"
                             name="latField"

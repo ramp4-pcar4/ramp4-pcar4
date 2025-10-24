@@ -25,6 +25,7 @@ Below is a list of the various properties that can be specified for a layer conf
 - [initialFilteredQuery](./layers/fancy-properties.md#initialfilteredquery)
 - [latField](./layers/fancy-properties.md#latfield)
 - [layerType](./layers/required-properties.md#layertype)
+- [legendField](./layers/fancy-properties.md#legendfield)
 - [longField](./layers/fancy-properties.md#longfield)
 - [maxLoadTime](./layers/basic-properties.md#maxloadtime)
 - [metadata](./layers/basic-properties.md#metadata)
