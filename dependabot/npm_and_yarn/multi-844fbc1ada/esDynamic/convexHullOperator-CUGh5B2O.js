@@ -1,1 +1,0 @@
-import{w as o}from"./operatorConvexHull-CNQgVloI.js";import{fromGeometry as r,toGeometry as m}from"./jsonConverter-BY1QTLuM.js";function a(t){const e=r(t);return m(o(e.getGeometry()),e.getSpatialReference())}export{a as execute};
