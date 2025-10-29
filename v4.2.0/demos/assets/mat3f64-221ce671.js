@@ -1,0 +1,1 @@
+function f(){return[1,0,0,0,1,0,0,0,1]}function i(r){return[r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8]]}function _(r,t,n,e,o,u,c,l,a){return[r,t,n,e,o,u,c,l,a]}function b(r,t){return new Float64Array(r,t,9)}Object.freeze(Object.defineProperty({__proto__:null,clone:i,create:f,createView:b,fromValues:_},Symbol.toStringTag,{value:"Module"}));export{f as e,b as n,_ as t};

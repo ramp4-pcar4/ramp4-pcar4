@@ -1,0 +1,1 @@
+import{B as a,bh as s,h as c,v as t,x as n,z as l}from"./main-BFDurRCu.js";var r;let o=r=class extends a{constructor(e){super(e),this.color=new s([0,0,0,1])}clone(){return new r(c({color:this.color}))}};t([n({type:s,json:{write:!0}})],o.prototype,"color",void 0),o=r=t([l("esri.webmap.background.ColorBackground")],o);const p=o;export{p as default};
