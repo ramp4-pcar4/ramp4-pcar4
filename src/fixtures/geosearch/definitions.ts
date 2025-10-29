@@ -1,3 +1,5 @@
+import type { ICustomSource } from "./store";
+
 export interface IGenericObjectType {
     [key: string]: string;
 }
@@ -27,6 +29,7 @@ export interface IGeosearchConfig {
     language: string;
     types: ITypes;
     provinces: IProvinces;
+    customSources : ICustomSource[];
 }
 
 /**
@@ -55,6 +58,22 @@ export interface IProvinces {
     fsaToProvince(fsa: string): IProvinceInfo;
     codeToProvince(provCode: number): IProvinceInfo;
     nameToProvince(provName: string): IProvinceInfo;
+    abbrToProvince(provAbbr: string): IProvinceInfo;
+}
+
+/**
+ * Custom geosearch search source structure
+ *
+ * @interface ICustomSource
+ * @property {String} code Unique code identifier for the type
+ * @property {String} catName Category name for the type
+ * @property {(term: string) => Promise<ISearchResult[]>} onSearch Function that searches by a term and returns matching results
+ */
+
+export interface ICustomSource {
+    code: string;
+    catName: string;
+    onSearch: (term: string) => Promise<ISearchResult[]>;
 }
 
 /**
