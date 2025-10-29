@@ -95,7 +95,7 @@ let config = {
                         name: 'Canada Base Map - Transportation (CBMT)',
                         description:
                             'The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.',
-                        altText: 'altText - The Canada Base Map - Transportation (CBMT)',
+                        altText: 'The Canada Base Map - Transportation (CBMT)',
                         layers: [
                             {
                                 id: 'CBMT',
@@ -109,7 +109,7 @@ let config = {
                         id: 'baseSimple',
                         name: 'Canada Base Map - Simple',
                         description: 'Canada Base Map - Simple',
-                        altText: 'altText - Canada base map - Simple',
+                        altText: 'Canada base map - Simple',
                         layers: [
                             {
                                 id: 'SMR',
@@ -124,7 +124,7 @@ let config = {
                         name: 'Canada Base Map - Elevation (CBME)',
                         description:
                             'The Canada Base Map - Elevation (CBME) web mapping services of the Earth Sciences Sector at Natural Resources Canada, is intended primarily for online mapping application users and developers.',
-                        altText: 'altText - Canada Base Map - Elevation (CBME)',
+                        altText: 'Canada Base Map - Elevation (CBME)',
                         layers: [
                             {
                                 id: 'CBME_CBCE_HS_RO_3978',
@@ -139,7 +139,7 @@ let config = {
                         name: 'Canada Base Map - Transportation (CBMT)',
                         description:
                             ' The Canada Base Map - Transportation (CBMT) web mapping services of the Earth Sciences Sector at Natural Resources Canada, are intended primarily for online mapping application users and developers.',
-                        altText: 'altText - Canada Base Map - Transportation (CBMT)',
+                        altText: 'Canada Base Map - Transportation (CBMT)',
                         layers: [
                             {
                                 id: 'CBMT_CBCT_GEOM_3978',
@@ -154,7 +154,7 @@ let config = {
                         name: 'World Imagery',
                         description:
                             'World Imagery provides one meter or better satellite and aerial imagery in many parts of the world and lower resolution satellite imagery worldwide.',
-                        altText: 'altText - World Imagery',
+                        altText: 'World Imagery',
                         layers: [
                             {
                                 id: 'World_Imagery',
@@ -169,7 +169,7 @@ let config = {
                         name: 'World Physical Map',
                         description:
                             'This map presents the Natural Earth physical map at 1.24km per pixel for the world and 500m for the coterminous United States.',
-                        altText: 'altText - World Physical Map',
+                        altText: 'World Physical Map',
                         layers: [
                             {
                                 id: 'World_Physical_Map',
@@ -184,7 +184,7 @@ let config = {
                         name: 'World Shaded Relief',
                         description:
                             'This map portrays surface elevation as shaded relief. This map is used as a basemap layer to add shaded relief to other GIS maps, such as the ArcGIS Online World Street Map.',
-                        altText: 'altText - World Shaded Relief',
+                        altText: 'World Shaded Relief',
                         layers: [
                             {
                                 id: 'World_Shaded_Relief',
@@ -198,7 +198,7 @@ let config = {
                         id: 'baseEsriStreet',
                         name: 'World Street Map',
                         description: 'This worldwide street map presents highway-level data for the world.',
-                        altText: 'altText - ESWorld Street Map',
+                        altText: 'ESWorld Street Map',
                         layers: [
                             {
                                 id: 'World_Street_Map',
@@ -213,7 +213,7 @@ let config = {
                         name: 'World Terrain Base',
                         description:
                             'This map is designed to be used as a base map by GIS professionals to overlay other thematic layers such as demographics or land cover.',
-                        altText: 'altText - World Terrain Base',
+                        altText: 'World Terrain Base',
                         layers: [
                             {
                                 id: 'World_Terrain_Base',
@@ -228,7 +228,7 @@ let config = {
                         name: 'World Topographic Map',
                         description:
                             'This map is designed to be used as a basemap by GIS professionals and as a reference map by anyone.',
-                        altText: 'altText - World Topographic Map',
+                        altText: 'World Topographic Map',
                         layers: [
                             {
                                 id: 'World_Topo_Map',
