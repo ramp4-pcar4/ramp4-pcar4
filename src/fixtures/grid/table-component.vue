@@ -752,6 +752,13 @@ const exportData = () => {
         .getAllDisplayedColumns()
         .filter(column => !(column.getColDef() as any).preventExport);
 
+    // Replaces HTML symbols with their corresponding string character (i.e., &quot; -> ")
+    const temp = document.createElement('p');
+    const decodeEntities = (s: string): string => {
+        temp.innerHTML = s;
+        return temp.textContent || temp.innerText;
+    };
+
     agGridApi.value.exportDataAsCsv({
         columnKeys: columnsToExport,
         suppressQuotes: true,
@@ -768,7 +775,7 @@ const exportData = () => {
                     minute: '2-digit',
                     second: '2-digit'
                 })}"`;
-            else return `"${cell.value.toString().replace(/"/g, '""')}"`;
+            else return `"${decodeEntities(cell.value).replace(/"/g, '""')}"`;
         }
     });
 };
