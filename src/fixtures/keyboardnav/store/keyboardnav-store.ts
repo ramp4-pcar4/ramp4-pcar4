@@ -20,11 +20,11 @@ export interface NamespaceRegistration {
 export type ChainState = 'idle' | 'awaitNamespace' | 'awaitAction' | 'complete';
 
 export interface KeyboardnavStore {
-    activeNamespace: string | null;
+    activeNamespace: string | undefined;
     namespaces: Record<string, NamespaceRegistration>;
     helpVisible: boolean;
     keyChain: string[];
-    lastAction: { namespace: string; key: string } | null;
+    lastAction: { namespace: string; key: string } | undefined;
     chainState: ChainState;
     register: (namespace: string, options: NamespaceRegistration) => string;
     unregister: (namespace: string) => void;
@@ -33,7 +33,7 @@ export interface KeyboardnavStore {
     trigger: (
         key: string,
         e: KeyboardEvent
-    ) => { namespace: string; key: string; chainAction?: KeyboardnavChainAction } | null;
+    ) => { namespace: string; key: string; chainAction?: KeyboardnavChainAction } | undefined;
     setHelpVisible: (val: boolean) => void;
     resetChain: (options?: {
         event?: KeyboardEvent;
@@ -44,27 +44,27 @@ export interface KeyboardnavStore {
     setChain: (keys: string[]) => void;
     appendKey: (key: string) => void;
     popChain: () => string | undefined;
-    setLastAction: (action: { namespace: string; key: string } | null) => void;
+    setLastAction: (action: { namespace: string; key: string } | undefined) => void;
     setChainState: (state: ChainState) => void;
     finalizeChain: (options?: { event?: KeyboardEvent }) => void;
 }
 
 export const useKeyboardnavStore = defineStore('keyboardnav', () => {
-    const activeNamespace = ref<string | null>(null);
+    const activeNamespace = ref<string | undefined>();
     const namespaces = ref<Record<string, NamespaceRegistration>>({});
     const helpVisible = ref<boolean>(false);
     const keyChain = ref<string[]>([]);
-    const lastAction = ref<{ namespace: string; key: string } | null>(null);
+    const lastAction = ref<{ namespace: string; key: string } | undefined>();
     const chainState = ref<ChainState>('idle');
 
     const RESERVED = ['H', '?'];
 
-    function findFreeLetter(): string | null {
+    function findFreeLetter(): string | undefined {
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         for (const ch of alphabet) {
             if (!namespaces.value[ch] && !RESERVED.includes(ch)) return ch;
         }
-        return null;
+        return undefined;
     }
 
     function register(namespace: string, options: NamespaceRegistration): string {
@@ -99,7 +99,7 @@ export const useKeyboardnavStore = defineStore('keyboardnav', () => {
 
     function unregister(namespace: string): void {
         if (activeNamespace.value === namespace) {
-            activeNamespace.value = null;
+            activeNamespace.value = undefined;
         }
         delete namespaces.value[namespace];
     }
@@ -117,7 +117,7 @@ export const useKeyboardnavStore = defineStore('keyboardnav', () => {
                 return;
             }
             setChain([ROOT_KEY, nsKey]);
-            setLastAction(null);
+            setLastAction(undefined);
             setChainState('awaitAction');
             store.activeNamespace = nsKey;
         }
@@ -133,17 +133,17 @@ export const useKeyboardnavStore = defineStore('keyboardnav', () => {
         if (activeNamespace.value && !options?.suppressHandler) {
             namespaces.value[activeNamespace.value]?.deactiveHandler?.(store, e);
         }
-        activeNamespace.value = null;
+        activeNamespace.value = undefined;
     }
 
     function trigger(
         key: string,
         e: KeyboardEvent
-    ): { namespace: string; key: string; chainAction?: KeyboardnavChainAction } | null {
+    ): { namespace: string; key: string; chainAction?: KeyboardnavChainAction } | undefined {
         const ns = activeNamespace.value;
-        if (!ns) return null;
+        if (!ns) return undefined;
         const options = namespaces.value[ns];
-        if (!options) return null;
+        if (!options) return undefined;
 
         if (options.handler) {
             const action = options.handler(store, e, key);
@@ -153,7 +153,7 @@ export const useKeyboardnavStore = defineStore('keyboardnav', () => {
 
         const item = options.keys.find(k => k.key === key);
         if (!item) {
-            return null;
+            return undefined;
         }
 
         const action = item.handler?.(store, e);
@@ -169,7 +169,7 @@ export const useKeyboardnavStore = defineStore('keyboardnav', () => {
     }): void {
         deactivate(options?.event, { suppressHandler: options?.suppressHandler });
         if (!options?.preserveChain) keyChain.value = [];
-        if (!options?.preserveLastAction) lastAction.value = null;
+        if (!options?.preserveLastAction) lastAction.value = undefined;
         chainState.value = 'idle';
     }
 
@@ -189,7 +189,7 @@ export const useKeyboardnavStore = defineStore('keyboardnav', () => {
         return popped;
     }
 
-    function setLastAction(action: { namespace: string; key: string } | null): void {
+    function setLastAction(action: { namespace: string; key: string } | undefined): void {
         lastAction.value = action;
     }
 

@@ -38,6 +38,13 @@ export class KeyboardnavAPI extends FixtureInstance {
     }
 
     /**
+     * Removes a namespace registration and associated handlers.
+     */
+    unregister(namespace: string): void {
+        this.keyboardnavStore.unregister(namespace.toUpperCase());
+    }
+
+    /**
      * Returns the navigation chain to the active namespace so another action can be
      * selected without restarting the shortcut sequence.
      */
@@ -49,7 +56,7 @@ export class KeyboardnavAPI extends FixtureInstance {
             return 'reset';
         }
         store.setChain([ROOT_KEY, nsKey]);
-        store.setLastAction(null);
+        store.setLastAction(undefined);
         store.setChainState('awaitAction');
         store.activeNamespace = nsKey;
         return 'reset';
@@ -113,7 +120,7 @@ export class KeyboardnavAPI extends FixtureInstance {
             const suppressHandler = store.chainState === 'complete';
             store.resetChain({ suppressHandler });
             store.setChain([ROOT_KEY]);
-            store.setLastAction(null);
+            store.setLastAction(undefined);
             store.setChainState('awaitNamespace');
             return;
         }
@@ -143,7 +150,7 @@ export class KeyboardnavAPI extends FixtureInstance {
             if (!chain.length) return;
             e.preventDefault();
             const previousState = store.chainState;
-            store.setLastAction(null);
+            store.setLastAction(undefined);
             store.popChain();
 
             if (!store.keyChain.length) {
@@ -188,7 +195,7 @@ export class KeyboardnavAPI extends FixtureInstance {
             if (namespaces.includes(key)) {
                 e.preventDefault();
                 store.appendKey(key);
-                store.setLastAction(null);
+                store.setLastAction(undefined);
                 store.activate(key, e);
                 store.setChainState('awaitAction');
                 return;

@@ -73,6 +73,7 @@ type Vertex = [number, number]; // [x, y] coordinates
 let multiPointVertices: Vertex[] = [];
 
 const rampEventHandlers = reactive<Array<string>>([]);
+let keyboardNamespace: string | undefined;
 
 async function handleKeyboardShortcuts() {
     const keyboardNav = iApi.keyboardNav;
@@ -81,7 +82,12 @@ async function handleKeyboardShortcuts() {
         return;
     }
 
-    keyboardNav.register('D', {
+    if (keyboardNamespace) {
+        keyboardNav.unregister(keyboardNamespace);
+        keyboardNamespace = undefined;
+    }
+
+    keyboardNamespace = keyboardNav.register('D', {
         name: buildLocaleRecord('draw.keyboard.namespace'),
         activeHandler: () => {
             drawStore.setActiveTool('');
@@ -745,7 +751,20 @@ const initializeDrawTools = async () => {
     document.addEventListener('keydown', handleGraphicKeyboardEdit, { capture: true });
 };
 
+const cleanupKeyboardShortcuts = () => {
+    if (!keyboardNamespace) return;
+    const keyboardNav = iApi.keyboardNav;
+    if (!keyboardNav) {
+        keyboardNamespace = undefined;
+        return;
+    }
+    keyboardNav.unregister(keyboardNamespace);
+    keyboardNamespace = undefined;
+};
+
 const cleanupDrawTools = () => {
+    cleanupKeyboardShortcuts();
+
     if (sketch) {
         if (iApi.geo.map.esriView) {
             iApi.geo.map.esriView.ui.remove(sketch);
