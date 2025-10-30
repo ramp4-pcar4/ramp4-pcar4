@@ -12,6 +12,7 @@ keyboardInstructions.open,Open keyboard instructions,1,Instructions clavier ouve
 keyboardInstructions.app,"Use 'Tab' to navigate between sections of the application.",1,"Utilisez la touche Tab pour vous déplacer entre les sections de l'application.",1
 keyboardInstructions.lists,"Use the arrow keys to move between items in lists. With a list item selected you can press 'Space' or 'Enter' to click the item. You can also navigate within the list item using 'Tab'.",1,"Lorsqu'un élément de la liste est sélectionné, vous pouvez appuyer sur « Espace » ou « Entrée » pour cliquer sur l'élément. Vous pouvez également vous déplacer au sein de l'élément de la liste au moyen de la touche « Tab ».",1
 keyboardInstructions.map,"When the map is selected, use the arrow keys to move around and 'Enter' to select a point.",1,"Lorsque la carte est sélectionnée, utilisez le pavé curseur pour vous déplacer et appuyez sur « Entrée »  pour sélectionner un point.",1
+keyboardInstructions.keyboardNav,"Press the key 'S' then 'H' to view available keyboard shortcuts",1,"Appuyez sur la touche « S » puis « H » pour afficher les raccourcis clavier disponibles",0
 keyboardInstructions.OK,OK,1,OK,1
 map.toggleScaleToMetric,Switch to metric map scale,1,Passer à l'échelle métrique,1
 map.toggleScaleToImperial,Switch to imperial map scale,1,Passer à l'échelle impériale,1

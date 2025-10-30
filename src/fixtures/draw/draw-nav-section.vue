@@ -1,16 +1,18 @@
 <template>
-    <div class="mapnav-section bg-white-75 hover:bg-white">
+    <div
+        :class="{ active: drawStore.activeTool || drawStore.activeTool == '' }"
+        class="mapnav-section bg-white-75 hover:bg-white"
+    >
         <mapnav-button
             v-for="(tool, index) in filteredDrawingTools"
             :key="tool.type"
             @mousedown="mouseFocus"
             :onClickFunction="() => toggleTool(tool.type as ActiveToolList)"
             :tooltip="t(`draw.${tool.type}.tooltip`)"
-            :class="{
-                'active-tool': drawStore.activeTool === tool.type
-            }"
             :style="{ marginBottom: index !== filteredDrawingTools.length - 1 ? '0px' : '0' }"
             :showOutline="showOutline"
+            :class="{ 'active-tool': drawStore.activeTool === tool.type }"
+            ref="mapNavEl"
         >
             <component :is="tool.icon" class="fill-current w-32 h-20"></component>
         </mapnav-button>
@@ -21,7 +23,7 @@
 import { useDrawStore } from './store';
 import type { ActiveToolList } from './store';
 import { useI18n } from 'vue-i18n';
-import { markRaw, defineAsyncComponent, computed, inject } from 'vue';
+import { markRaw, defineAsyncComponent, computed, inject, useTemplateRef } from 'vue';
 import { InstanceAPI } from '@/api/internal';
 
 defineProps({
@@ -34,6 +36,8 @@ defineProps({
 const iApi = inject('iApi') as InstanceAPI;
 const { t } = useI18n();
 const drawStore = useDrawStore();
+
+drawStore.mapNavEl = useTemplateRef<HTMLElement>('mapNavEl');
 
 const drawingTools = [
     {
@@ -86,6 +90,9 @@ const mouseFocus = () => {
 
 <style lang="scss" scoped>
 .active-tool {
-    background-color: rgba(0, 0, 0, 0.1);
+    @apply ring-1 ring-indigo-500 bg-indigo-50;
+}
+div.active {
+    @apply shadow-xl ring-1 ring-indigo-500;
 }
 </style>

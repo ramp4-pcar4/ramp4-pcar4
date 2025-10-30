@@ -38,13 +38,22 @@ import { GlobalEvents } from '@/api';
 /* --------------------------------------------------------------------------
  * CONSTANTS & GLOBAL VARIABLES
  * -------------------------------------------------------------------------- */
-const { t } = useI18n();
+const { t, availableLocales, locale } = useI18n();
 
 // add helper to translate raw tool names (fallbacks to "unknown")
 const translateTerm = (key?: string): string => (key ? t(`draw.${key}`) : t('draw.unknown'));
 
 const iApi = inject('iApi') as InstanceAPI;
 const drawStore = useDrawStore();
+
+const buildLocaleRecord = (messageKey: string): Record<string, string> => {
+    const locales = availableLocales.length ? availableLocales : [locale.value];
+    const translations: Record<string, string> = {};
+    for (const locale of locales) {
+        translations[locale] = t(messageKey, {}, { locale });
+    }
+    return translations;
+};
 
 // Sketch widget and graphics layer reference variables
 let sketch: HTMLArcgisSketchElement | null = null;
@@ -64,6 +73,74 @@ type Vertex = [number, number]; // [x, y] coordinates
 let multiPointVertices: Vertex[] = [];
 
 const rampEventHandlers = reactive<Array<string>>([]);
+let keyboardNamespace: string | undefined;
+
+async function handleKeyboardShortcuts() {
+    const keyboardNav = iApi.keyboardNav;
+    if (!keyboardNav) {
+        console.warn('Keyboard navigation fixture is not available; draw shortcuts are disabled.');
+        return;
+    }
+
+    if (keyboardNamespace) {
+        keyboardNav.unregister(keyboardNamespace);
+        keyboardNamespace = undefined;
+    }
+
+    keyboardNamespace = keyboardNav.register('D', {
+        name: buildLocaleRecord('draw.keyboard.namespace'),
+        activeHandler: () => {
+            drawStore.setActiveTool('');
+        },
+        deactiveHandler: () => {
+            drawStore.setActiveTool(null);
+        },
+        keys: [
+            {
+                key: 'P',
+                description: buildLocaleRecord('draw.keyboard.key.point'),
+                handler: () => {
+                    drawStore.setActiveTool('point');
+                }
+            },
+            {
+                key: 'L',
+                description: buildLocaleRecord('draw.keyboard.key.polyline'),
+                handler: () => {
+                    drawStore.setActiveTool('polyline');
+                }
+            },
+            {
+                key: 'G',
+                description: buildLocaleRecord('draw.keyboard.key.polygon'),
+                handler: () => {
+                    drawStore.setActiveTool('polygon');
+                }
+            },
+            {
+                key: 'C',
+                description: buildLocaleRecord('draw.keyboard.key.circle'),
+                handler: () => {
+                    drawStore.setActiveTool('circle');
+                }
+            },
+            {
+                key: 'R',
+                description: buildLocaleRecord('draw.keyboard.key.rectangle'),
+                handler: () => {
+                    drawStore.setActiveTool('rectangle');
+                }
+            },
+            {
+                key: 'E',
+                description: buildLocaleRecord('draw.keyboard.key.edit'),
+                handler: () => {
+                    drawStore.setActiveTool('edit');
+                }
+            }
+        ]
+    });
+}
 
 /* --------------------------------------------------------------------------
  * HELPER FUNCTIONS
@@ -291,7 +368,8 @@ const createGraphicAtCenter = async () => {
         // cancel sketch if graphic is not a point
         if (drawStore.activeTool !== 'point') {
             drawStore.clearSelection();
-            drawStore.setActiveTool(null);
+            drawStore.setActiveTool('');
+            iApi.keyboardNav?.reset();
             sketch.cancel();
         }
 
@@ -673,7 +751,20 @@ const initializeDrawTools = async () => {
     document.addEventListener('keydown', handleGraphicKeyboardEdit, { capture: true });
 };
 
+const cleanupKeyboardShortcuts = () => {
+    if (!keyboardNamespace) return;
+    const keyboardNav = iApi.keyboardNav;
+    if (!keyboardNav) {
+        keyboardNamespace = undefined;
+        return;
+    }
+    keyboardNav.unregister(keyboardNamespace);
+    keyboardNamespace = undefined;
+};
+
 const cleanupDrawTools = () => {
+    cleanupKeyboardShortcuts();
+
     if (sketch) {
         if (iApi.geo.map.esriView) {
             iApi.geo.map.esriView.ui.remove(sketch);
@@ -710,7 +801,8 @@ const handleSketchCreateEvent = (event: __esri.SketchCreateEvent) => {
         });
 
         if (event.tool !== 'point') {
-            drawStore.setActiveTool(null);
+            drawStore.setActiveTool('');
+            iApi.keyboardNav?.reset();
         }
     }
 };
@@ -749,6 +841,7 @@ const handleSketchUpdateEvent = (event: __esri.SketchUpdateEvent) => {
  * INITIALIZATION & EVENT LISTENERS
  * -------------------------------------------------------------------------- */
 onMounted(() => {
+    handleKeyboardShortcuts();
     initializeDrawTools();
 
     // Listen for map creation/destruction events

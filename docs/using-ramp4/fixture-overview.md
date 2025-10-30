@@ -34,6 +34,10 @@ The `help` provides a means to display user help for the application.
 
 The `hilight` enables specific features on the map to become visually prominent.
 
+### Keyboardnav
+
+The `keyboardnav` fixture exposes the keyboard command chain and help overlay. See the [Keyboard Navigation docs](./fixtures/keyboardnav) for more information.
+
 ### Layer Reorder
 
 The `layer-reorder` provides an interface to reorder the stack of layers on the map.

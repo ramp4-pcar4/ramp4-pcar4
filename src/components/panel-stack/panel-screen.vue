@@ -127,7 +127,7 @@ const screenContent = computed(() => {
 
 onMounted(() => {
     el.value?.addEventListener('blur', () => {
-        (el.value as any)._tippy.hide();
+        (el.value as any)?._tippy?.hide();
     });
 
     el.value?.addEventListener('keyup', (e: KeyboardEvent) => {

@@ -33,6 +33,13 @@ draw.polygon.tooltip,Draw polygon,1,Dessiner un polygone,0
 draw.circle.tooltip,Draw circle,1,Dessiner un cercle,0
 draw.rectangle.tooltip,Draw rectangle,1,Dessiner un rectangle,0
 draw.edit.tooltip,Edit Mode,1,Mode édition,0
+draw.keyboard.namespace,Draw Tools,1,Outils de dessin,0
+draw.keyboard.key.point,Draw a point,1,Dessine un point,0
+draw.keyboard.key.polyline,Draw a line,1,Dessine une ligne,0
+draw.keyboard.key.polygon,Draw a polygon,1,Dessine un polygone,0
+draw.keyboard.key.circle,Draw a circle,1,Dessine un cercle,0
+draw.keyboard.key.rectangle,Draw a rectangle,1,Dessine un rectangle,0
+draw.keyboard.key.edit,Edit geometry,1,Mode édition,0
 draw.graphic.moved,Graphic moved,1,Graphique déplacé,0
 draw.shape,shape,1,forme,0
 draw.point,point,1,indiquer,0
