@@ -156,12 +156,12 @@ const mapConfig = computed(() => configStore.config.map);
 const { keyChain, lastAction, chainState, namespaces, activeNamespace } = storeToRefs(keyboardnavStore);
 
 const chainDisplay = computed(() => {
-    if (!keyChain.value.length) return null;
+    if (!keyChain.value.length) return undefined;
 
     const keys = keyChain.value.join(' ');
     const cursor = chainState.value === 'awaitNamespace' || chainState.value === 'awaitAction';
 
-    let description: string | null = null;
+    let description: string | undefined;
     const action = lastAction.value;
     if (action) {
         if (action.namespace === HELP_NAMESPACE) {
@@ -175,7 +175,7 @@ const chainDisplay = computed(() => {
         }
     }
 
-    let options: string | null = null;
+    let options: string | undefined;
     if (chainState.value === 'awaitNamespace') {
         const helpOption = `H - ${t('keyboardnav.chain.help')}`;
         const namespaceOptions = Object.keys(namespaces.value).map(nsKey => {
