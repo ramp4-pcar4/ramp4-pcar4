@@ -752,6 +752,14 @@ const exportData = () => {
         .getAllDisplayedColumns()
         .filter(column => !(column.getColDef() as any).preventExport);
 
+    // Replace Unicode characters in the string with their character representation.
+    const cleanupString = (str: string): string => {
+        return str
+            .toString()
+            .replace(/"/g, '""')
+            .replace(/&#(\d+);/g, (m: string, d: number) => String.fromCharCode(d));
+    };
+
     agGridApi.value.exportDataAsCsv({
         columnKeys: columnsToExport,
         suppressQuotes: true,
@@ -768,7 +776,7 @@ const exportData = () => {
                     minute: '2-digit',
                     second: '2-digit'
                 })}"`;
-            else return `"${cell.value.toString().replace(/"/g, '""')}"`;
+            else return `"${cleanupString(cell.value)}"`;
         }
     });
 };
