@@ -74,3 +74,4 @@ ts-docs
 
 # Personal IDE settings
 .idea
+.node-compat-cache.json
