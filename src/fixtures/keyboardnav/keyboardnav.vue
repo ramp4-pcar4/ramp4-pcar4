@@ -1,12 +1,12 @@
 <template>
     <div
         v-if="helpVisible"
-        ref="overlayRef"
         class="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 transition-opacity pointer-events-auto"
         tabindex="-1"
         @click="handleOverlayClick"
     >
         <div
+            ref="dialogRef"
             class="relative w-[640px] max-h-[80vh] overflow-y-auto rounded-xl bg-white py-8 px-10 shadow-xl"
             role="dialog"
             aria-modal="true"
@@ -42,7 +42,7 @@
                     <div class="space-y-4 p-16 pl-24">
                         <div class="flex items-center gap-x-12">
                             <span
-                                class="font-mono px-6 text-[0.825rem]/6 font-semibold rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
+                                class="font-mono px-6 text-[0.825rem]/6 font-semibold whitespace-nowrap rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
                             >
                                 1-5
                             </span>
@@ -53,7 +53,7 @@
                         </div>
                         <div class="flex items-center gap-x-12">
                             <span
-                                class="font-mono px-6 text-[0.825rem]/6 font-semibold rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
+                                class="font-mono px-6 text-[0.825rem]/6 font-semibold whitespace-nowrap rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
                             >
                                 ESC
                             </span>
@@ -64,7 +64,7 @@
                         </div>
                         <div class="flex items-center gap-x-12">
                             <span
-                                class="font-mono px-6 text-[0.825rem]/6 font-semibold rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
+                                class="font-mono px-6 text-[0.825rem]/6 font-semibold whitespace-nowrap rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
                             >
                                 S
                             </span>
@@ -75,7 +75,7 @@
                         </div>
                         <div class="flex items-center gap-x-12">
                             <span
-                                class="font-mono px-6 text-[0.825rem]/6 font-semibold rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
+                                class="font-mono px-6 text-[0.825rem]/6 font-semibold whitespace-nowrap rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
                             >
                                 Backspace
                             </span>
@@ -98,11 +98,11 @@
                     >
                         <div class="flex items-center gap-x-4">
                             <span
-                                class="font-mono px-6 text-[0.825rem]/6 font-semibold rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
+                                class="font-mono px-6 text-[0.825rem]/6 font-semibold whitespace-nowrap rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
                                 >S</span
                             >
                             <span
-                                class="font-mono px-6 text-[0.825rem]/6 font-semibold rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
+                                class="font-mono px-6 text-[0.825rem]/6 font-semibold whitespace-nowrap rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
                                 >{{ entry.id }}</span
                             >
                         </div>
@@ -116,7 +116,7 @@
                         <div v-for="item in entry.keys" :key="item.key" class="flex items-center gap-x-12">
                             <div class="flex items-center gap-x-4">
                                 <span
-                                    class="font-mono px-6 text-[0.825rem]/6 font-semibold rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
+                                    class="font-mono px-6 text-[0.825rem]/6 font-semibold whitespace-nowrap rounded-lg px-1.5 ring-1 ring-inset ring-zinc-300 bg-zinc-400/10 text-zinc-500 dark:ring-zinc-400/30 dark:bg-zinc-400/10 dark:text-zinc-400"
                                     >{{ item.key }}</span
                                 >
                             </div>
@@ -134,8 +134,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useKeyboardnavStore } from './store/keyboardnav-store';
-import { computed, useTemplateRef, watch, onBeforeUnmount } from 'vue';
+import { computed, useTemplateRef, watch, nextTick, inject, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import type { InstanceAPI } from '@/api';
 
 const store = useKeyboardnavStore();
 const { activeNamespace, namespaces, helpVisible } = storeToRefs(store);
@@ -148,17 +149,53 @@ const namespaceEntries = computed(() =>
     }))
 );
 
-const overlayRef = useTemplateRef('overlayRef');
+const dialogRef = useTemplateRef('dialogRef');
+const iApi = inject('iApi') as InstanceAPI | undefined;
+const previouslyFocused = ref<HTMLElement | null>(null);
+
+const FOCUSABLE_SELECTOR =
+    'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+function ensureElementFocusable(el: HTMLElement | null): HTMLElement | null {
+    if (!el) return null;
+    if (el.tabIndex < 0) {
+        el.setAttribute('tabindex', '-1');
+    }
+    return el;
+}
+
+function focusFirstElement(): void {
+    const dialogEl = dialogRef.value;
+    if (!dialogEl) return;
+
+    const firstFocusable = dialogEl.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+    const target = ensureElementFocusable(firstFocusable ?? dialogEl);
+    target?.focus({ preventScroll: true });
+}
+
+function getMapFocusTarget(): HTMLElement | null {
+    const container = (iApi?.geo?.map?.esriView?.container as HTMLElement | null) ?? document.getElementById('esriMap');
+    if (!container) return null;
+
+    const candidate =
+        container.querySelector<HTMLElement>('.esri-view-surface') ??
+        container.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+
+    return candidate ?? container;
+}
+
+function focusMapElement(): void {
+    const mapTarget = getMapFocusTarget();
+    const fallback =
+        previouslyFocused.value && document.contains(previouslyFocused.value) ? previouslyFocused.value : null;
+    const target = ensureElementFocusable(mapTarget ?? fallback);
+    target?.focus({ preventScroll: true });
+    previouslyFocused.value = null;
+}
+
 function closeHelp() {
     store.setHelpVisible(false);
     store.resetChain({ suppressHandler: true });
-}
-
-function handleFocusIn(e: FocusEvent) {
-    const target = e.target as Node | null;
-    if (overlayRef.value && target && !overlayRef.value.contains(target)) {
-        closeHelp();
-    }
 }
 
 function handleOverlayClick(e: MouseEvent) {
@@ -168,22 +205,25 @@ function handleOverlayClick(e: MouseEvent) {
     }
 }
 
-watch(helpVisible, val => {
+watch(helpVisible, async val => {
     if (val) {
-        document.addEventListener('focusin', handleFocusIn);
+        previouslyFocused.value = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        await nextTick();
+        if (helpVisible.value) {
+            focusFirstElement();
+        }
     } else {
-        document.removeEventListener('focusin', handleFocusIn);
+        await nextTick();
+        if (!helpVisible.value) {
+            focusMapElement();
+        }
     }
-});
-
-onBeforeUnmount(() => {
-    document.removeEventListener('focusin', handleFocusIn);
 });
 </script>
 
 <style lang="scss">
 .key {
-    @apply contents font-mono px-6 text-[0.825rem]/6 font-semibold rounded-lg ring-1 ring-inset;
+    @apply contents font-mono px-6 text-[0.825rem]/6 font-semibold whitespace-nowrap rounded-lg ring-1 ring-inset;
 
     &.indigo {
         @apply ring-indigo-300 bg-indigo-400/10 text-indigo-500 dark:ring-indigo-400/30 dark:bg-indigo-400/10 dark:text-indigo-400;
