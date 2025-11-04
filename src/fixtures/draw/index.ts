@@ -7,15 +7,6 @@ import { GlobalEvents } from '@/api';
 
 class DrawFixture extends DrawAPI {
     async init() {
-        // Mount a new instance of the component
-        const { el } = this.mount(DrawV, {
-            app: this.$element
-        });
-
-        // Add it to the DOM
-        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
-        innerShell.appendChild(el.childNodes[0]);
-
         // Add language messages
         Object.entries(messages).forEach(value => this.$iApi.$i18n.mergeLocaleMessage(...value));
         this._parseConfig(this.config);
@@ -26,6 +17,15 @@ class DrawFixture extends DrawAPI {
             const name = `${typeCfg.type}-icon`;
             this.$iApi.component(name, markRaw(import(`./icons/${typeCfg.type}-icon.vue`)));
         });
+
+        // Mount a new instance of the component
+        const { el } = this.mount(DrawV, {
+            app: this.$element
+        });
+
+        // Add it to the DOM
+        const innerShell = this.$vApp.$el.getElementsByClassName('inner-shell')[0];
+        innerShell.appendChild(el.childNodes[0]);
     }
 
     async added() {

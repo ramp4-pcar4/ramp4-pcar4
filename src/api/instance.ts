@@ -33,6 +33,7 @@ import HomeNavV from '@/fixtures/mapnav/buttons/home-nav.vue';
 import MapnavButtonV from '@/fixtures/mapnav/button.vue';
 
 import AppbarButtonV from '@/fixtures/appbar/button.vue';
+import type { KeyboardnavAPI } from '@/fixtures/keyboardnav/api/keyboardnav';
 import type { MaptipAPI } from '@/geo/map/maptip';
 import type { Composer } from 'vue-i18n';
 
@@ -46,6 +47,7 @@ import { useFixtureStore } from '@/stores/fixture';
 import { useGeosearchStore } from '@/fixtures/geosearch/store';
 import { useGridStore } from '@/fixtures/grid/store';
 import { useHelpStore } from '@/fixtures/help/store';
+import { useKeyboardnavStore } from '@/fixtures/keyboardnav/store/keyboardnav-store';
 import { useInstanceStore } from '@/stores/instance';
 import { useLayerStore } from '@/stores/layer';
 import { useLegendStore } from '@/fixtures/legend/store';
@@ -512,6 +514,7 @@ export class InstanceAPI {
             'geosearch',
             'grid',
             'help',
+            'keyboardnav',
             'legend',
             'mapnav',
             'metadata',
@@ -544,6 +547,8 @@ export class InstanceAPI {
                 return <Readonly<T>>useGridStore(this.$vApp.$pinia);
             case 'help':
                 return <Readonly<T>>useHelpStore(this.$vApp.$pinia);
+            case 'keyboardnav':
+                return <Readonly<T>>useKeyboardnavStore(this.$vApp.$pinia);
             case 'legend':
                 return <Readonly<T>>useLegendStore(this.$vApp.$pinia);
             case 'mapnav':
@@ -633,6 +638,13 @@ export class InstanceAPI {
      */
     get language(): string {
         return this.$vApp.$i18n.locale;
+    }
+
+    /**
+     * Provides access to the keyboard navigation API if the fixture is available.
+     */
+    get keyboardNav(): KeyboardnavAPI | undefined {
+        return this.fixture.get<KeyboardnavAPI>('keyboardnav');
     }
 
     /**
