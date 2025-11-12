@@ -29,7 +29,8 @@
 </template>
 
 <script setup lang="ts">
-import { FixtureInstance, GlobalEvents } from '@/api';
+import { GlobalEvents } from '@/api';
+import SwipeFixture from '.';
 import { computed, inject, onBeforeMount, onBeforeUnmount, onMounted, ref, useTemplateRef } from 'vue';
 import { usePanelStore } from '@/stores/panel';
 import type { InstanceAPI, LayerInstance } from '@/api';
@@ -70,9 +71,9 @@ const lineBottom = computed(() => {
     return `${-clientHeight.value / 2 - 18}px`;
 });
 
-defineProps({
+const props = defineProps({
     fixture: {
-        type: FixtureInstance,
+        type: SwipeFixture,
         required: true
     },
     message: String
@@ -202,8 +203,8 @@ const initializeSwipe = async (): Promise<void> => {
     await iApi.geo.map.viewPromise;
     view.value = iApi.geo.map.esriView;
 
-    const trailing = ['Nature', 'WFSLayer'];
-    const leading = ['Water', 'GeoMet'];
+    const trailing = props.fixture.trailing;
+    const leading = props.fixture.trailing;
 
     trailing.forEach(layerId => {
         iApi.geo.layer.awaitLayer(layerId, true).then((layerInstance: LayerInstance) => {
