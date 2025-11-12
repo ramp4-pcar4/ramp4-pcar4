@@ -70,7 +70,7 @@ const lineBottom = computed(() => {
     return `${-clientHeight.value / 2 - 18}px`;
 });
 
-defineProps({
+const props = defineProps({
     fixture: {
         type: FixtureInstance,
         required: true
@@ -203,8 +203,10 @@ const initializeSwipe = async (): Promise<void> => {
     await iApi.geo.map.viewPromise;
     view.value = iApi.geo.map.esriView;
 
-    const trailing = ['Nature', 'WFSLayer'];
-    const leading = ['Water', 'GeoMet'];
+    // the fixture is SwipeFixture.  The builder is being angry about using the type here
+
+    const trailing = (props.fixture as any).trailing as Array<string>;
+    const leading = (props.fixture as any).leading as Array<string>;
 
     trailing.forEach(layerId => {
         iApi.geo.layer.awaitLayer(layerId, true).then((layerInstance: LayerInstance) => {
