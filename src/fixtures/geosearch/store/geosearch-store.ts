@@ -2,7 +2,7 @@ import type { MapExtent, QueryParams } from './geosearch-state';
 import { defineStore } from 'pinia';
 import { GeoSearchUI } from './geosearch.feature';
 import { computed, ref } from 'vue';
-import type { IProvinceInfo, ISearchResult } from '../definitions';
+import type { IProvinceInfo, ISearchResult} from '../definitions';
 
 /**
  * Helper function that filters based on query parameters.
@@ -15,12 +15,13 @@ import type { IProvinceInfo, ISearchResult } from '../definitions';
 function filter(visibleOnly: boolean, queryParams: QueryParams, data: Array<any>) {
     if (visibleOnly && queryParams.extent) {
         // ensure bbox boundaries are within the current map extent properties
+        const extent = queryParams.extent!;
         data = data.filter(
             r =>
-                r.bbox[0] <= queryParams.extent!.xmax &&
-                r.bbox[1] <= queryParams.extent!.ymax &&
-                r.bbox[2] >= queryParams.extent!.xmin &&
-                r.bbox[3] >= queryParams.extent!.ymin
+                r.bbox[0] <= extent.xmax &&
+                r.bbox[1] <= extent.ymax &&
+                r.bbox[2] >= extent.xmin &&
+                r.bbox[3] >= extent.ymin
         );
     }
     if (queryParams.province && queryParams.province !== '...') {
@@ -99,6 +100,13 @@ export const useGeosearchStore = defineStore('geosearch', () => {
 
     function initService(lang: string, config: any) {
         GSservice.value = new GeoSearchUI(lang, config);
+    }
+
+    function cleanVal(val: string) {
+        return val
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase();
     }
 
     /**
@@ -236,10 +244,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
 
         // Strip out all accents first, to make life easier
         // For highlighting purposes, we want to treat accented characters as normal ones & vice versa
-        searchTerm = searchTerm
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .toLowerCase();
+        searchTerm = cleanVal(searchTerm);
 
         searchRegex.value = Array.from(searchTerm)
             .map(c => {
@@ -302,6 +307,7 @@ export const useGeosearchStore = defineStore('geosearch', () => {
         setType,
         setSearchTerm,
         setSearchRegex,
-        setMapExtent
+        setMapExtent,
+        cleanVal
     };
 });

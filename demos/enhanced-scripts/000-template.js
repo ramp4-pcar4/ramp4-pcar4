@@ -31,6 +31,9 @@ addLegend(legendConfig)
 // adds a legend config to the root level legend entryof the given language key (en, fr)
 addLegendLang(legendConfig, langKey)
 
+// adds a custom geosearch source
+addGeosearchSource(customSource, langKey)
+
 */
 
 // All available params:
