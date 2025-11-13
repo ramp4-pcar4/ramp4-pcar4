@@ -1,5 +1,5 @@
-import { InstanceAPI, MapLayer } from '@/api/internal';
-import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
+import { CommonTileLayer, InstanceAPI } from '@/api/internal';
+import { LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import type { EsriImageryTileLayer } from '@/geo/esri';
 import { EsriAPI } from '@/geo/esri';
@@ -8,15 +8,15 @@ import { markRaw } from 'vue';
 /**
  * A layer class which implements an ESRI ImageryTile Layer.
  */
-export class ImageryTileLayer extends MapLayer {
+export class ImageryTileLayer extends CommonTileLayer {
     declare esriLayer: EsriImageryTileLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
-        this.supportsIdentify = false;
+
         this.layerType = LayerType.IMAGERYTILE;
         this.layerFormat = LayerFormat.IMAGERYTILE;
-        this.dataFormat = DataFormat.ESRI_RASTER;
+        this.schemaLocked = false;
     }
 
     protected async onInitiate(): Promise<void> {
@@ -34,13 +34,5 @@ export class ImageryTileLayer extends MapLayer {
         const esriConfig: __esri.ImageryTileLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         return esriConfig;
-    }
-
-    protected onLoadActions(): Array<Promise<void>> {
-        const loadPromises: Array<Promise<void>> = super.onLoadActions();
-
-        this.layerTree.name = this.name;
-
-        return loadPromises;
     }
 }

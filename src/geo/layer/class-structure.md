@@ -8,11 +8,7 @@ LayerInstance: RAMP's internal "base class" for layers. Any code dealing with ge
 
 ~ ~ MapLayer: The generic class for layers that implement a layer on the map.
 
-~ ~ ~ TileLayer: Handles ArcGIS Server Tile layers.
-
 ~ ~ ~ ImageryLayer: Handles ArcGIS Server Imagery layers.
-
-~ ~ ~ ImageryTileLayer: Handles ArcGIS Server ImageryTile layers.
 
 ~ ~ ~ WMSLayer: Handles WMS layers.
 
@@ -33,6 +29,14 @@ LayerInstance: RAMP's internal "base class" for layers. Any code dealing with ge
 ~ ~ ~ ~ ~ WfsLayer: Handles layers populated by a WFS service.
 
 ~ ~ ~ ~ ~ ShapefileLayer: Handles layers populated by a zipped shapefile.
+
+~ ~ ~ CommonTileLayer: The generic class for Tile layers.
+
+~ ~ ~ ~ TileLayer: Handles ArcGIS Server Tile layers.
+
+~ ~ ~ ~ VectorTileLayer: Handles ArcGIS Server Vector Tile layers.
+
+~ ~ ~ ~ ImageryTileLayer: Handles ArcGIS Server ImageryTile layers.
 
 ~ ~ ~ CommonGraphicLayer: The generic class for Graphic layers.
 

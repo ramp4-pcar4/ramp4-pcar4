@@ -156,6 +156,7 @@ export const enum LayerType {
     FEATURE = 'esri-feature',
     MAPIMAGE = 'esri-map-image',
     TILE = 'esri-tile',
+    VECTORTILE = 'esri-vector-tile',
     IMAGERY = 'esri-imagery',
     IMAGERYTILE = 'esri-imagery-tile',
     GRAPHIC = 'esri-graphic',
@@ -185,7 +186,7 @@ export const enum LayerType {
     SUBLAYER = 'sublayer'
 }
 
-// describes how the layer is implemented in the map stack (i.e. hints at the ESRI Layer class)
+// describes how the layer is implemented in the map stack (i.e. indicates at the ESRI Layer class)
 export const enum LayerFormat {
     FEATURE = 'feature',
     GRAPHIC = 'graphic',
@@ -196,6 +197,7 @@ export const enum LayerFormat {
     OSM = 'osm-tile',
     TILE = 'tile',
     UNKNOWN = 'unknown',
+    VECTORTILE = 'vector-tile',
     WMS = 'wms'
 }
 
@@ -760,7 +762,7 @@ export interface RampLayerConfig {
     longField?: string; // csv coord field
     mouseTolerance?: number; // mouse tolerance
     touchTolerance?: number; // touch tolerance
-    metadata?: { url: string; name?: string, xmlType?: string, treatXmlAsMarkdown?: boolean };
+    metadata?: { url: string; name?: string; xmlType?: string; treatXmlAsMarkdown?: boolean };
     catalogueUrl?: string;
     fixtures?: any; // layer-based fixture config
     cosmetic?: boolean;

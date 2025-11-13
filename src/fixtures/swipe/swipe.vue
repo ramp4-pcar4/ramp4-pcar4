@@ -151,6 +151,7 @@ onMounted(async () => {
     // Upon a basemap schema change, geo.map.esriView gets set to a new MapView, meaning that the one used by the
     // swipe component wouldn't exist. So, we must reinitialize the swipe component
     iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, async (payload: BasemapChange) => {
+        // TODO should we be listening for map refresh end event instead?
         if (payload.schemaChanged) {
             // Remove all layers
             swipeComponent.value?.trailingLayers.forEach(layer => {
