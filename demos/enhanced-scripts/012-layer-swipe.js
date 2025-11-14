@@ -71,6 +71,14 @@ const runPreTest = (config, options, utils) => {
     utils.addLayerLegend(wfsLayer);
     utils.addLayerLegend(cloudCoverageLayer);
 
+    // set swipe config to know what layers to use
+    const swipeConfig = {
+        leading: ['Water', 'GeoMet'],
+        trailing: ['Nature', 'WFSLayer']
+    };
+
+    config.configs.en.fixtures.swipe = structuredClone(swipeConfig);
+    config.configs.fr.fixtures.swipe = structuredClone(swipeConfig);
     return { config, options };
 };
 

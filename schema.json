@@ -116,6 +116,31 @@
                 }
             }
         },
+        "swipe": {
+            "type": "object",
+            "description": "Provides configuration to the swipe fixture.",
+            "properties": {
+                "leading": {
+                    "type": "array",
+                    "description": "List of layer ids that are visible to the left of the swipe UI.",
+                    "default": [],
+                    "items": {
+                        "type": "string",
+                        "description": "A layer id. The swipe fixture will wait for this layer to load as it initializes."
+                    }
+                },
+                "trailing": {
+                    "type": "array",
+                    "description": "List of layer ids that are visible to the right of the swipe UI.",
+                    "default": [],
+                    "items": {
+                        "type": "string",
+                        "description": "A layer id. The swipe fixture will wait for this layer to load as it initializes."
+                    }
+                }
+            },
+            "additionalProperties": false
+        },
         "areas-of-interest": {
             "type": "object",
             "description": "Provides the configuration to the areas of interest fixture",
@@ -2802,6 +2827,10 @@
                             "$ref": "#/$defs/panelTeleport"
                         }
                     }
+                },
+                "swipe": {
+                    "$ref": "#/$defs/swipe",
+                    "description": "Provides configuration to the swipe fixture"
                 },
                 "wizard": {
                     "description": "Provides configuration to the wizard fixture",
