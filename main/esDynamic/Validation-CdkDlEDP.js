@@ -1,0 +1,1 @@
+import{cC as n,cG as o,cB as l,cJ as r}from"./main-CX1EfQb_.js";const d={validationContainer:"validation-container"},$=()=>{},v=({scale:a,status:i,id:s,icon:t,message:e,ref:c})=>l`<div class=${n(d.validationContainer)} ${o(c||$)}><calcite-input-message aria-live=polite .icon=${t} id=${s??r} .scale=${a} .status=${i}>${e}</calcite-input-message></div>`;export{v as V};

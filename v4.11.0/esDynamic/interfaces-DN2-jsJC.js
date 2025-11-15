@@ -1,0 +1,1 @@
+class u{}const i=u;function e(n,...r){let o="";for(let t=0;t<r.length;t++)o+=n[t]+r[t];return o+=n[n.length-1],o}function c(n,r,o=""){return n?r:o}(function(n){function r(t){return Math.round(t).toString()}function o(t){return t.toPrecision(8)}n.int=r,n.float=o})(e||(e={}));export{e as o,c as r,i as t};

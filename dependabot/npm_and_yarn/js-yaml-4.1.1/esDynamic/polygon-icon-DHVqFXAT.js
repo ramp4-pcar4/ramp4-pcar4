@@ -1,0 +1,1 @@
+import{e6 as l,e7 as s,e8 as e,e9 as t}from"./main-BdfHWGJs.js";const o={},a={xmlns:"http://www.w3.org/2000/svg",viewBox:"0 0 24 24"};function r(u,n){return e(),s("svg",a,n[0]||(n[0]=[t("path",{d:"M0 0h24v24H0z",fill:"none"},null,-1),t("path",{d:"M3 6l6-3 6 3 6-3v12l-6 3-6-3-6 3z"},null,-1)]))}const p=l(o,[["render",r]]);export{p as default};

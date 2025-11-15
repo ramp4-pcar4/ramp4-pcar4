@@ -1,0 +1,1 @@
+import{aQ as s,aR as e}from"./main-BdfHWGJs.js";class n{static{this.instance=new s("Etc/UTC")}}function a(t){return t instanceof e?t===n.instance:t?.toString().toLowerCase()==="unknown"}function o(t){return a(t)?n.instance:t}export{a as e,o as i,n as o};

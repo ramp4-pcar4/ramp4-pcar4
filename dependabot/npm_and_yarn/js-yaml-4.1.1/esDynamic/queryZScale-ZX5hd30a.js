@@ -1,0 +1,1 @@
+import{b as n}from"./projectionUtils-Bie2wyUY.js";function s(r,o,t){if(!t?.features||!t.hasZ)return;const e=n(t.geometryType,o,r.outSpatialReference);if(e!=null)for(const f of t.features)e(f.geometry)}export{s as t};

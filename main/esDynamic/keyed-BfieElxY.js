@@ -1,0 +1,1 @@
+import{cH as r,cI as a,cJ as c,cK as i}from"./main-CX1EfQb_.js";const n=r(class extends a{constructor(){super(...arguments),this.key=c}render(t,s){return this.key=t,s}update(t,[s,e]){return s!==this.key&&(i(t),this.key=s),e}});export{n as i};
