@@ -26,6 +26,7 @@
                 @click.stop="removeNotification(notification)"
                 class="mx-4 p-4 text-gray-500 hover:text-black"
                 :content="t('notifications.controls.dismiss')"
+                :aria-label="t('notifications.controls.dismiss')"
                 v-tippy="{ theme: 'ramp4', animation: 'scale' }"
             >
                 <svg
