@@ -57,7 +57,7 @@
 
             <div class="flex flex-1 grow-[1.4] items-center max-w-full">
                 <!-- show global search -->
-                <div class="flex flex-1 min-w-0 items-center pb-4 mr-8" v-show="config.state.search">
+                <div class="search-bar flex flex-1 min-w-0 items-center pb-4 mr-8" v-show="config.state.search">
                     <!-- global search bar -->
                     <input
                         @input="updateQuickSearch()"
@@ -76,7 +76,7 @@
                         :placeholder="t('grid.filters.label.global')"
                     />
                     <!-- clear search button -->
-                    <div class="-ml-30">
+                    <div class="-ml-30 text-gray-500 search-clear-container">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fit=""
@@ -93,7 +93,7 @@
                             </g>
                         </svg>
                         <button
-                            class="flex justify-center fill-current ml-6 cursor-pointer"
+                            class="flex justify-center fill-current ml-6 cursor-pointer text-gray-500 hover:text-black"
                             @click="resetQuickSearch()"
                             :aria-label="t('grid.search.clear')"
                             v-else
@@ -102,7 +102,7 @@
                                 data-v-486a0302=""
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 352 512"
-                                class="w-18 h-18 mt-2"
+                                class="fill-current w-18 h-18 mt-2"
                             >
                                 <path
                                     data-v-486a0302=""
@@ -1777,6 +1777,12 @@ onBeforeUnmount(() => {
 :deep(a) {
     color: rgba(37, 99, 235, 1);
     text-decoration: underline;
+}
+
+.search-bar:hover {
+    .search-clear-container {
+        @apply text-black;
+    }
 }
 
 .shadow-clip {
