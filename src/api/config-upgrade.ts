@@ -179,9 +179,9 @@ function mapUpgrader(r2Map: any, r4c: any): void {
                 },
                 scaleBar: {
                     disabled: false,
-                    imperialScale:
-                        r2Map?.components?.scaleBar?.scalebarUnit === 'english' ||
-                        (r2Map?.components?.scaleBar?.scalebarUnit === 'dual' && Math.floor(Math.random() * 2) === 0)
+                    // old ESRI docs have been removed from internet (rude!).
+                    // 'english' was imperial. 'metric' was....metric. 'dual' would show both, which doesnt fly for us, so dual goes to metric
+                    imperialScale: r2Map?.components?.scaleBar?.scalebarUnit === 'english'
                 }
             };
             switch (r2Map.components?.mouseInfo?.spatialReference?.wkid) {
