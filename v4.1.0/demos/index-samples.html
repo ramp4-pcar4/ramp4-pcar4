@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <title>ramp-core</title>
+      <script type="module" crossorigin src="./assets/samples-63879a83.js"></script>
+      <link rel="modulepreload" crossorigin href="./assets/preload-helper-388ac9d5.js">
+    </head>
+    <body style="margin: 0">
+        <section id="header" style="width: 100%">
+            <div class="row">
+                <!--
+                    PAY ATTENTION! :'0  The order of these options is hard-linked to the
+                    direct load url parameter. So page.html?sample=4 will take the fourth
+                    option, not option "04. ". Unless the list order is maintained impeccably.
+                    So no gaps or switcheroos in lable numbering or else things will look funny.
+                 -->
+                <select id="selectConfig" class="tool">
+                    <option value="main">01. Default</option>
+                    <option value="panel-party">02. Lots of panels</option>
+                    <option value="basemap-only">03. Basemap only</option>
+                    <option value="lambert">04. Lambert projection</option>
+                    <option value="map-image-layer">05. Map Image Layer</option>
+                    <option value="wms-layer">06. WMS Layer</option>
+                    <option value="custom-renderer">07. Custom renderer</option>
+                    <option value="custom-overviewmap">
+                        08. Custom Overview Map
+                    </option>
+                    <option value="custom-appbar-button">
+                        09. Custom Appbar Button
+                    </option>
+                    <option value="custom-arrow">10. Custom North Arrow</option>
+                    <option value="grid">11. Grid</option>
+                    <option value="geosearch">12. Geosearch</option>
+                    <option value="help">13. Help</option>
+                    <option value="mapnav">14. Mapnav</option>
+                    <option value="simple-feature">
+                        15. Basic Map with Feature Layers
+                    </option>
+                    <option value="simple-mil">
+                        16. Basic Map with Map Image Layers
+                    </option>
+                    <option value="r2-config-upgraded">
+                        17. RAMP 2 config upgraded
+                    </option>
+                    <option value="error-layers">
+                        18. Layers in error state
+                    </option>
+                    <option value="disabled-options">
+                        19. Layers with disabled options
+                    </option>
+                    <option value="layer-metadata">
+                        20. Layer with metadata
+                    </option>
+                    <option value="section-item">21. Section Items</option>
+                    <option value="info-section">22. Info Sections</option>
+                    <option value="cam">23. Climate Action Map (CAM)</option>
+                    <option value="cesi">
+                        24. Canadian Environmental Sustainability Indicators
+                        (CESI)
+                    </option>
+                    <option value="cccs">
+                        25. Canadian Centre for Climate Services (CCCS)
+                    </option>
+                    <option value="fog-hilight">
+                        26. Feature Highlighting with Fog Hilighter
+                    </option>
+                    <option value="simple-file">
+                        27. Basic Map with File Layers
+                    </option>
+                    <option value="exclusive-fields">
+                        28. Layers with exclusive fields
+                    </option>
+                    <option value="grid-config">
+                        29. Layer with configured datatable
+                    </option>
+                    <option value="tree-grow">
+                        30. Map Image Layers with groups
+                    </option>
+                    <option value="custom-symbology">
+                        31. Custom symbology stack
+                    </option>
+                    <option value="offscale-layer">32. Offscale Layer</option>
+                    <option value="delayed-start">33. Delayed Start</option>
+                    <option value="perm-filter">
+                        34. Permanent Layer Filters
+                    </option>
+                    <option value="geosearch-filtered">
+                        35. Geosearch with filtered results
+                    </option>
+                    <option value="basemaps">
+                        36. Basemap fixture with configured thumbnails
+                    </option>
+                    <option value="custom-store">37. Custom Store</option>
+                </select>
+                <a class="linky" href="index-all.html">Catalogue</a>
+            </div>
+        </section>
+
+        <noscript>
+            <strong
+                >We're sorry but ramp-core doesn't work properly without
+                JavaScript enabled. Please enable it to continue.</strong
+            >
+        </noscript>
+
+        <div id="IE"></div>
+        <div id="app"></div>
+
+        <style>
+            #instance-language {
+                margin-left: 20px;
+            }
+            #container {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+                max-height: 100vh;
+                overflow: hidden;
+            }
+            #header {
+                width: 100%;
+                background-color: grey;
+                display: flex;
+                justify-content: center;
+                height: 4vh;
+            }
+            .row {
+                margin: 10px;
+                flex-grow: 1;
+            }
+            .linky {
+                margin: 10px;
+                flex-grow: 0;
+                white-space: nowrap;
+            }
+            #selectConfig {
+                width: 90%;
+            }
+            #app {
+                height: 96vh;
+            }
+        </style>
+
+        
+    </body>
+</html>
