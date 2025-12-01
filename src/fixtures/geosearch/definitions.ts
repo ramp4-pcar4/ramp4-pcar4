@@ -1,5 +1,3 @@
-import type { ICustomSource } from "./store";
-
 export interface IGenericObjectType {
     [key: string]: string;
 }
@@ -29,7 +27,7 @@ export interface IGeosearchConfig {
     language: string;
     types: ITypes;
     provinces: IProvinces;
-    customSources : ICustomSource[];
+    customSources: ICustomSource[];
 }
 
 /**
