@@ -15,12 +15,10 @@
         "dist/*.css"
     ],
     "scripts": {
-        "predev": "node scripts/check-node.mjs",
-        "dev": "vite",
+        "dev": "node scripts/check-node.mjs && vite",
         "dev-http": "vite --https=false",
         "launch": "vite --no-open",
-        "prebuild": "node scripts/check-node.mjs",
-        "build": "rm -rf dist && run-p -c -s build:* && npm run ts:copy",
+        "build": "node scripts/check-node.mjs && rm -rf dist && run-p -c -s build:* && npm run ts:copy",
         "build:npm": "vite build --mode npm",
         "build:esDynamic": "vite build --mode esDynamic",
         "build:inline": "vite build --mode inline",
