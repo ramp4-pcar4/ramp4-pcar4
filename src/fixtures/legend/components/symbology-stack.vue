@@ -33,6 +33,9 @@
 </template>
 
 <script setup lang="ts">
+// this generates the icon / icon stack that sits in the layer item. I.e. the thing you can click to expand the symbology under the layer item.
+// it does not generate the symbology entries that appear when expanded.
+
 import type { LegendSymbology } from '@/geo/api';
 import { toRaw, onMounted, type PropType, ref } from 'vue';
 import type { LayerItem } from '../store/layer-item';
