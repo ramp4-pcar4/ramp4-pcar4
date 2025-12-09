@@ -247,7 +247,7 @@ export class LayerItem extends LegendItem {
         if (this.layer && this.layer.layerExists) {
             this.layer.visibility = this.visibility;
 
-            // check child symobls for visibility
+            // check child symbols for visibility
             const someVisible = this._symbologyStack.some((item: LegendSymbology) => item.lastVisbility);
 
             this._symbologyStack.forEach((item: LegendSymbology) => {
@@ -294,16 +294,19 @@ export class LayerItem extends LegendItem {
      * Sets the checkbox visibility, propagates any edge-cases to this layer item,
      * and applies any filters to the layer
      *
-     * @param uid the uid of the legend symbology
-     * @param visible if we are clicking it on or off
+     * @param {string} uid the uid of the legend symbology
+     * @param {boolean | undefined} visible if we are clicking it on or off. Undefined will perform a toggle.
      */
-    clickSymbology(uid: string, visible: boolean): void {
-        if (!this.symbolsVisible() && visible) {
+    clickSymbology(uid: string, visible?: boolean | undefined): void {
+        // careful now. need to use ` !== false `, as we want the undefined value to count
+        if (!this.symbolsVisible() && visible !== false) {
             // If no symbols are visible, and we're turning on a symbol, then set the parent layer to visible
             // since we toggled on one of the child symbols and set all other
             // symbols to invisible (except for the one that is toggled on)
 
-            // TODO why this? didn't we just verify everything is invisible??
+            // why do this, given we just verify everything is invisible?
+            // it will also clear the .lastVisbility property on all the other symbols.
+            // since we are "turning on" at the symbol level, we assume user wants only this symbol on.
             this.setSymbologyVisibility(undefined, false);
             this.setSymbologyVisibility(uid, true);
             this.toggleVisibility(true);
@@ -321,7 +324,7 @@ export class LayerItem extends LegendItem {
         // At the moment, only layers that support features will support sql filters
         if (this.layer?.supportsFeatures) {
             const filterGuts = this.symbologyStack
-                .filter(item => item.lastVisbility === true)
+                .filter(item => item.lastVisbility)
                 .map(item => item.definitionClause || '');
 
             let sql = ''; // default value, this computes to "show all"
@@ -343,15 +346,18 @@ export class LayerItem extends LegendItem {
      * Only changes the visible state of the checkbox. Does not apply symbol filters.
      *
      * @param {uid | undefined} uid the uid of the legend symbology
-     * @param visible The new visibility value
+     * @param {boolean | undefined} visible The new visibility value. Undefined will perform a toggle.
      */
-    setSymbologyVisibility(uid: string | undefined, visible: boolean): void {
+    setSymbologyVisibility(uid: string | undefined, visible?: boolean | undefined): void {
+        const uidIsUndefined = uid === undefined;
+
         this._symbologyStack.some((item: LegendSymbology) => {
-            if (uid === undefined || item.uid === uid) {
-                item.visibility = visible;
-                item.lastVisbility = visible;
+            if (uidIsUndefined || item.uid === uid) {
+                const actualViz = visible ?? !item.lastVisbility;
+                item.visibility = actualViz;
+                item.lastVisbility = actualViz;
             }
-            return uid !== undefined && item.uid === uid;
+            return !uidIsUndefined && item.uid === uid;
         });
     }
 
@@ -362,7 +368,7 @@ export class LayerItem extends LegendItem {
      * @param {LayerInstance | undefined} layer the layer to load. If undefined, layer will be fetched via instance API using id/uid.
      */
     // TS complaining as usual. Can maybe remove the parameter and expect caller to set the layer first?
-    // @ts-expect-error TODO: explain why this is needed or remove
+    // @ts-expect-error super-class LegendItem doesn't need a parameter on load(). TS doesn't like that we're overloading.
     load(layer: LayerInstance | undefined) {
         // manage the variant param.
         const layerInst =

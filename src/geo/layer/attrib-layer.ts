@@ -410,7 +410,7 @@ export class AttribLayer extends MapLayer {
             }
         };
 
-        setTimeout(refreshCheck, 100);
+        setTimeout(refreshCheck, 80);
     }
 
     applySqlFilter(exclusions: Array<string> = []): void {

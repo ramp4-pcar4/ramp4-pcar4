@@ -406,10 +406,10 @@
             class="symbology-stack default-focus-style"
         >
             <div v-if="symbologyStack.length > 0">
-                <!-- display each symbol -->
                 <p v-if="legendItem instanceof LayerItem && legendItem.description" class="m-5">
                     {{ legendItem.description }}
                 </p>
+                <!-- display each symbol -->
                 <div class="m-5" v-for="item in symbologyStack" :key="item.uid">
                     <!-- for WMS layers and image render styles -->
                     <div
