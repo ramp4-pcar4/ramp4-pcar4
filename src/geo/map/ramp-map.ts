@@ -1311,6 +1311,7 @@ export class MapAPI extends CommonMapAPI {
 
         const p: IdentifyParameters = {
             geometry: mapClick.mapPoint,
+            coord: { x: mapClick.screenX, y: mapClick.screenY },
             hitTest: hitTestProm
         };
 

@@ -501,6 +501,7 @@ export interface QueryFeaturesArcServerParams extends QueryFeaturesParams {
 
 export interface IdentifyParameters {
     geometry: BaseGeometry;
+    coord: { x: number, y: number };
     tolerance?: number;
     sublayerIds?: Array<string | number>; // Optional array of sublayer uids or server indices. When defined, the given sublayers are queried for instead of the default (visible, queryable, on-scale sublayers)
     hitTest?: Promise<Array<GraphicHitResult>>; // Optional results of local hits to incorporate in the identify
