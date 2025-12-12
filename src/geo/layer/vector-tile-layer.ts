@@ -1,6 +1,6 @@
-import { CommonTileLayer, InstanceAPI, IdentifyResultFormat, ReactiveIdentityFactory } from '@/api/internal';
+import { CommonTileLayer, InstanceAPI, ReactiveIdentityFactory } from '@/api/internal';
 import type { IdentifyResult } from '@/api/internal';
-import { LayerFormat, LayerType } from '@/geo/api';
+import { IdentifyResultFormat, LayerFormat, LayerType } from '@/geo/api';
 import type { IdentifyParameters, RampLayerConfig } from '@/geo/api';
 import { EsriAPI } from '@/geo/esri';
 import type { EsriVectorTileLayer } from '@/geo/esri';
@@ -42,8 +42,12 @@ export class VectorTileLayer extends CommonTileLayer {
     //       don't appear to expose legends, so no legend grabbing in onLoadActions here
 
     runIdentify(options: IdentifyParameters): Array<IdentifyResult> {
+        if (!this.canIdentify() || !this.esriView) {
+            // not loaded
+            return [];
+        }
+
         const dProm = new DefPromise<void>();
-        // const qOpts: QueryFeaturesParams = {};
 
         const result: IdentifyResult = reactive({
             items: [],
@@ -55,18 +59,19 @@ export class VectorTileLayer extends CommonTileLayer {
             requestTime: Date.now()
         });
 
-        // qOpts.filterGeometry = options.geometry;
 
-        // DO Query
-            result.items.push(ReactiveIdentifyFactory.makeRawItem(IdentifyResultFormat.TEXT, "TESTING"));
+        this.esriView.hitTest({ x: options.geometry.x, y: options.geometry.y }).then(results => {
+            results.forEach(hit => {
+                result.items.push(ReactiveIdentifyFactory.makeRawItem(IdentifyResultFormat.TEXT, hit.graphic.attributes[this.nameField]));
+            });
 
             result.loaded = true;
             dProm.resolveMe();
-        //})
-        //   .catch(() => {
-        //        result.errored = true;
-        //        dProm.resolveMe(); // keeping it this way so that we don't need to make annoying changes
-        //    });
+        })
+        .catch(() => {
+            result.errored = true;
+            dProm.resolveMe(); // keeping it this way so that we don't need to make annoying changes
+        });
 
         return [ result ];
     }
