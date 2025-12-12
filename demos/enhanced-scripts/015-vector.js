@@ -12,8 +12,8 @@ const runPreTest = (config, options, utils) => {
     };
 
     utils.addLayerLegend(wdpa);
-    config.configs.en.map.initialBaseMapId = 'baseEsriTerrain';
-    config.configs.fr.map.initialBaseMapId = 'baseEsriTerrain';
+    config.configs.en.map.initialBasemapId = 'baseEsriTerrain';
+    config.configs.fr.map.initialBasemapId = 'baseEsriTerrain';
 
     return { config, options };
 };
