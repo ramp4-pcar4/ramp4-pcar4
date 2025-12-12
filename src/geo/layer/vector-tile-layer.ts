@@ -1,6 +1,7 @@
-import { CommonTileLayer, InstanceAPI } from '@/api/internal';
+import { CommonTileLayer, InstanceAPI, IdentifyResultFormat, ReactiveIdentityFactory } from '@/api/internal';
+import type { IdentifyResult } from '@/api/internal';
 import { LayerFormat, LayerType } from '@/geo/api';
-import type { RampLayerConfig } from '@/geo/api';
+import type { IdentifyParameters, RampLayerConfig } from '@/geo/api';
 import { EsriAPI } from '@/geo/esri';
 import type { EsriVectorTileLayer } from '@/geo/esri';
 import { markRaw } from 'vue';
@@ -16,6 +17,8 @@ export class VectorTileLayer extends CommonTileLayer {
 
         this.layerType = LayerType.VECTORTILE;
         this.layerFormat = LayerFormat.VECTORTILE;
+        this.supportsIdentify = true;
+        this.identifyMode = LayerIdentifyMode.GEOMETRIC;
     }
 
     protected async onInitiate(): Promise<void> {
@@ -37,4 +40,34 @@ export class VectorTileLayer extends CommonTileLayer {
 
     // Note: the samples seen so far are hosted on tiles.arcgis.com, not a typical ArcGis Server. The endpoints
     //       don't appear to expose legends, so no legend grabbing in onLoadActions here
+
+    runIdentify(options: IdentifyParameters): Array<IdentifyResult> {
+        const dProm = new DefPromise<void>();
+        // const qOpts: QueryFeaturesParams = {};
+
+        const result: IdentifyResult = reactive({
+            items: [],
+            loading: dProm.getPromise(),
+            loaded: false,
+            errored: false,
+            uid: this.uid,
+            layerId: this.id,
+            requestTime: Date.now()
+        });
+
+        // qOpts.filterGeometry = options.geometry;
+
+        // DO Query
+            result.items.push(ReactiveIdentifyFactory.makeRawItem(IdentifyResultFormat.TEXT, "TESTING"));
+
+            result.loaded = true;
+            dProm.resolveMe();
+        //})
+        //   .catch(() => {
+        //        result.errored = true;
+        //        dProm.resolveMe(); // keeping it this way so that we don't need to make annoying changes
+        //    });
+
+        return [ result ];
+    }
 }
