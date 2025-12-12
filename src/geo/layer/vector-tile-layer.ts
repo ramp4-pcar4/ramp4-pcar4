@@ -61,7 +61,7 @@ export class VectorTileLayer extends CommonTileLayer {
 
         this.esriView.view.hitTest(options.coord, { include: this.esriLayer }).then((hitResults) => {
             hitResults.results.filter(hr => hr.type === 'graphic').forEach((hit: any) => {
-                result.items.push(ReactiveIdentifyFactory.makeRawItem(IdentifyResultFormat.ESRI, hit.graphic.attributes));
+                result.items.push(ReactiveIdentifyFactory.makeRawItem(IdentifyResultFormat.HTML, this.toHTML(hit.graphic.attributes)));
             });
 
             result.loaded = true;
@@ -73,5 +73,11 @@ export class VectorTileLayer extends CommonTileLayer {
         });
 
         return [ result ];
+    }
+
+    toHTML(attributes: { [key: string]: object }): string {
+        const string = Object.entries(attributes).map(([key,value]) => `<div class="p-5 pl-3 flex justify-end flex-wrap even:bg-gray-300"><span class="inline font-bold">${key}</span><span class="flex-auto"></span><span class="inline">${value}</span></div>`).join("");
+
+        return `<div class="p-8">${string}</div>`;
     }
 }
