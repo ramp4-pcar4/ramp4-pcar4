@@ -1,10 +1,10 @@
-import { CommonTileLayer, InstanceAPI, ReactiveIdentityFactory } from '@/api/internal';
+import { CommonTileLayer, InstanceAPI, ReactiveIdentifyFactory } from '@/api/internal';
 import type { IdentifyResult } from '@/api/internal';
-import { IdentifyResultFormat, LayerFormat, LayerType } from '@/geo/api';
-import type { IdentifyParameters, RampLayerConfig } from '@/geo/api';
+import { DefPromise, IdentifyResultFormat, LayerFormat, LayerIdentifyMode, LayerType } from '@/geo/api';
+import type { IdentifyParameters, Point, RampLayerConfig } from '@/geo/api';
 import { EsriAPI } from '@/geo/esri';
 import type { EsriVectorTileLayer } from '@/geo/esri';
-import { markRaw } from 'vue';
+import { markRaw, reactive } from 'vue';
 
 /**
  * A layer class which implements an ESRI Vector Tile Layer.
@@ -59,9 +59,9 @@ export class VectorTileLayer extends CommonTileLayer {
             requestTime: Date.now()
         });
 
-
-        this.esriView.hitTest({ x: options.geometry.x, y: options.geometry.y }).then(results => {
-            results.forEach(hit => {
+        var point = options.geometry as Point;
+        (this.esriView as any).hitTest({ x: point.x, y: point.y }).then((results: any) => {
+            results.forEach((hit: any) => {
                 result.items.push(ReactiveIdentifyFactory.makeRawItem(IdentifyResultFormat.TEXT, hit.graphic.attributes[this.nameField]));
             });
 
