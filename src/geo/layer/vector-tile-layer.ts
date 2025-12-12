@@ -59,8 +59,7 @@ export class VectorTileLayer extends CommonTileLayer {
             requestTime: Date.now()
         });
 
-        var point = options.geometry as Point;
-        (this.esriView as any).hitTest({ x: point.x, y: point.y }).then((results: any) => {
+        (this.esriView as any).hitTest(options.geometry, options.geometry).then((results: any) => {
             results.forEach((hit: any) => {
                 result.items.push(ReactiveIdentifyFactory.makeRawItem(IdentifyResultFormat.TEXT, hit.graphic.attributes[this.nameField]));
             });
