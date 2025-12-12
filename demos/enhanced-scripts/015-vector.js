@@ -7,11 +7,13 @@ const runPreTest = (config, options, utils) => {
     const wdpa = {
         id: 'WDPA',
         name: 'WDPA World Database of Protected Areas',
-        layerType: 'vector-tile-layer',
+        layerType: 'esri-vector-tile',
         url: 'https://vectortileservices5.arcgis.com/Mj0hjvkNtV7NRhA7/arcgis/rest/services/WDPA_World_Database_of_Protected_Areas_VTS/VectorTileServer'
     };
 
     utils.addLayerLegend(wdpa);
+    config.configs.en.map.initialBaseMapId = 'baseEsriTerrain';
+    config.configs.fr.map.initialBaseMapId = 'baseEsriTerrain';
 
     return { config, options };
 };
