@@ -59,8 +59,8 @@ export class VectorTileLayer extends CommonTileLayer {
             requestTime: Date.now()
         });
 
-        (this.esriView as any).hitTest(options.coord, { include: this.esriLayer }).then((results: any) => {
-            results.forEach((hit: any) => {
+        this.esriView.view.hitTest(options.coord, { include: this.esriLayer }).then((hitResults) => {
+            hitResults.results.filter(hr => hr.type === 'graphic').forEach((hit: any) => {
                 result.items.push(ReactiveIdentifyFactory.makeRawItem(IdentifyResultFormat.TEXT, hit.graphic.attributes[this.nameField]));
             });
 
