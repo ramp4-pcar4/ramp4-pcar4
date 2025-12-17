@@ -339,42 +339,60 @@ const advanceItemIndex = (direction: number) => {
 
 /**
  * Updates the highlighter when something changes (panel minimized, opened, change in selected result, etc.)
+ * @param {boolean} waitForListLoad indicates we want to highlight a list, and need to wait for it to load
  */
-const updateHighlight = () => {
+const updateHighlight = async (waitForListLoad: boolean = false) => {
     /*
     Dev notes for paths that hit this method, since its a bit spicey.
+
     currentIdentifyItem watcher -> initDetails : handles changes in the details view of an item.
         includes initial load, layer change, item pagination. Anything that isn't in list mode.
     uidCompute watcher : handles a new layer being selected and we are in list mode.
     advanceItemIndex : handles pagination change when in list mode
     onHilightToggle : handles user mashing the toggler button
     clickShowList : handles user going from detail view to list view on same layer
-    clickListItem : handles weird scenario where user clicks first (top) item in list view to switch to its detail view
+    clickListItem : handles scenario where user clicks first (top) item in list view to switch to its detail view.
+                    the detail view defaults to the first item being active, so it doesn't notice anything changing.
+    itemRequestTime watcher : handles a new identify payload arriving when we're already in list view
     BASEMAP_CHANGE event : handles re-applying hilight if schema changed
     */
 
-    const resultItems = getLayerIdentifyItems();
+    if (hilightToggle.value && canHighlight.value) {
+        // ramp is in a highlighting state.
 
-    if (hilightToggle.value && isLayerResultLoaded.value && resultItems.length > 0 && canHighlight.value) {
-        // we are highlighting, and there is something that could be hilighted.
-        // the hilightDetailsItems will handle the waiting for items to finish loading, as well as ensuring
-        // that any stale loads will not be drawn / removed when users spam their highlights real fast.
-
-        if (showList.value) {
-            // highlight what is on current page of the list.
-            detailsFixture.value.hilightDetailsItems(resultItems.slice(currentIdx.value, endIdx.value), props.uid);
-        } else {
-            // highlight current item being displayed.
-            // being extra careful just incase our index went beyond the array bounds
-            const currItem = resultItems[currentIdx.value];
-            if (currItem) {
-                detailsFixture.value.hilightDetailsItems([currItem], props.uid);
+        if (waitForListLoad) {
+            const layerPayload = getBoundLayerResult();
+            if (layerPayload) {
+                await layerPayload.loading;
             }
         }
-    } else {
-        // nothing to hilight. This ensures any old details highlights get wiped
-        detailsFixture.value.removeDetailsHilight();
+
+        const resultItems = getLayerIdentifyItems();
+        if (isLayerResultLoaded.value && resultItems.length > 0) {
+            // there are results, so there are things to highlight.
+
+            if (showList.value) {
+                // highlight what is on current page of the list.
+                detailsFixture.value.hilightDetailsItems(resultItems.slice(currentIdx.value, endIdx.value), props.uid);
+            } else {
+                // highlight current item being displayed.
+                // being extra careful just incase our index went beyond the array bounds
+
+                const currItem = resultItems[currentIdx.value];
+                if (currItem) {
+                    // hilightDetailsItems will handle the waiting for items to finish loading, as well as ensuring
+                    // that any stale loads will not be drawn / removed when users spam their highlights real fast.
+                    detailsFixture.value.hilightDetailsItems([currItem], props.uid);
+                }
+            }
+
+            // if we made it this far, we do not want to hit the removal call at the bottom of the method
+            return;
+        }
     }
+
+    // nothing to hilight. This ensures any old details highlights get wiped.
+    detailsFixture.value.removeDetailsHilight();
 };
 
 /**
@@ -530,10 +548,13 @@ onBeforeMount(() => {
         )
     );
 
-    // If a new request is made, reset the index.
+    // If a new request is made, reset the index. If we're in list mode, update the highlight
     watchers.value.push(
         watch(itemRequestTime, () => {
             currentIdx.value = 0;
+            if (showList.value) {
+                updateHighlight(true);
+            }
         })
     );
 
