@@ -152,8 +152,7 @@ const autoOpen = (newPayload: Array<IdentifyResult>): void => {
 
                 if (selectedResult.items.length > 0) {
                     // got a hit. update items screen with new results and turn off greedy loading
-                    detailsStore.activeGreedy = 0;
-                    noResults.value = false;
+                    openDoneThanks(false);
                 } else {
                     // current layer has no hits, fall back to examining all.
                     autoOpenAny(newPayload);
@@ -207,8 +206,22 @@ const autoOpenAny = (newPayload: Array<IdentifyResult>, priorityStack?: Array<[n
     if (priStack.length === 0) {
         // handles case of no identifiable layers (either from initial conditions, or all priorities have been popped).
         // Stop & exit.
-        detailsStore.activeGreedy = 0;
-        noResults.value = true;
+
+        if (payload.value.length) {
+            openDoneThanks(true);
+        } else {
+            // shenanigans to fix issue #2765
+            // when there is no valid things in the payload to inspect, we flip our noResults flag
+            // before ever getting into the async inspection stuff below.
+            // this is apparently too fast. The noResults=true causes the ResultList component to unmount.
+            // that component has watchers that update the highlight when stuff changes. Without a little
+            // async delay, the unmount occurs before the watcher can watch.
+
+            Promise.resolve().then(() => {
+                openDoneThanks(true);
+            });
+        }
+
         return;
     }
 
@@ -219,6 +232,7 @@ const autoOpenAny = (newPayload: Array<IdentifyResult>, priorityStack?: Array<[n
         .map(payloadIR =>
             payloadIR.loading.then(() => (payloadIR.items.length > 0 ? Promise.resolve(payloadIR) : Promise.reject()))
         );
+
     const lastTime = newPayload.length === 0 ? 0 : newPayload[0].requestTime;
 
     // wait on any layer promise to resolve first with new identify results
@@ -230,9 +244,9 @@ const autoOpenAny = (newPayload: Array<IdentifyResult>, priorityStack?: Array<[n
             }
 
             // open results item screen and turn off greedy loading
-            detailsStore.activeGreedy = 0;
+
             selectedLayer.value = winningResult.uid;
-            noResults.value = false;
+            openDoneThanks(false);
         })
         .catch(() => {
             if (lastTime === activeGreedy.value) {
@@ -242,6 +256,14 @@ const autoOpenAny = (newPayload: Array<IdentifyResult>, priorityStack?: Array<[n
                 autoOpenAny(newPayload, priStack);
             }
         });
+};
+
+/**
+ * Common flag setting when we've concluded our opening process
+ */
+const openDoneThanks = (nothingFound: boolean) => {
+    detailsStore.activeGreedy = 0;
+    noResults.value = nothingFound;
 };
 
 /* Vue Lifecycle Functions */
