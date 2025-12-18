@@ -6,8 +6,8 @@ legend.header.groups,Toggle Groups,1,Basculer les Groupes,1
 legend.header.groups.expand,Expand All,1,Élargir les groupes,1
 legend.header.groups.collapse,Collapse All,1,Réduire les groupes,1
 legend.header.visible,Toggle Visibility,1,Basculer la Visibilité,1
-legend.header.visible.show,Show All,1,Montrer tout,1
-legend.header.visible.hide,Hide All,1,Cacher tout,1
+legend.header.visible.show,Show All Layers,1,Montrer tous les couches,0
+legend.header.visible.hide,Hide All Layers,1,Cacher tous les couches,0
 legend.group.expand,Expand Group,1,Développer un groupe,1
 legend.group.collapse,Collapse Group,1,Réduire un groupe,1
 legend.visibility.showLayer,Show layer,1,Afficher la couche,1

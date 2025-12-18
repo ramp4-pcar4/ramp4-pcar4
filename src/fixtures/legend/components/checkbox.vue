@@ -47,6 +47,22 @@ const props = defineProps({
     disabled: { type: Boolean }
 });
 
+/**
+ * What this is wasn't documented when it was written.
+ * Appears to be some kind of initialization mismatch check?
+ * The checkbox will never appear as "checked" if this var is false.
+ * When we mount, it gets set to false if the legend item this checkbox belongs to has a different visibility
+ * value than the checkbox's "checked" value (via props).
+ * If the checkbox gets toggled by the user, this flag gets set to true. I guess because things are now forced
+ * to be in-synch.
+ *
+ * TODO It would also appear that if this mis-matched state happens,
+ *      our aria-label and content attributes will be telling big lies?
+ *
+ * Given that every usage of this Checkbox template initilzes with a variant of:
+ *    :checked="item.visibility"
+ * does this value even matter? I'm not seeing how it could ever be false when mounting happens.
+ */
 const initialChecked = ref(props.legendItem.visibility);
 
 onMounted(() => {
@@ -59,13 +75,12 @@ onMounted(() => {
  */
 const toggleVisibility = (): void => {
     if (props.value instanceof LegendItem) {
-        // Toggle parent symbology checkbox
+        // Checkbox is sitting in a normal legend block. Toggle its visibility
         props.legendItem.toggleVisibility();
     } else if (props.legendItem instanceof LayerItem) {
-        // we clicked a symbol checkbox thats a child of a layer item
-        props.legendItem.clickSymbology(props.value.uid, !props.value.lastVisbility);
+        // Checkbox is sitting in a symbol block, and is the child of a layer item
+        props.legendItem.clickSymbology(props.value.uid);
 
-        // TODO figure out and document what this prop is actually accomplishing and why.
         initialChecked.value = true;
     }
 };
