@@ -145,9 +145,8 @@ export class FocusListManager {
         //     focusManager.onFocusOut(event);
         // });
 
-        // Focuses a legend item after it's reload button is clicked. See issue 2605.
-        // Also handles refocusing list items after removal (e.g., notifications).
-        element.addEventListener('refocusLegendItem', e => {
+        // Switches current focus item, used when the previous item is deleted from the list etc.
+        element.addEventListener('switchFocusItem', e => {
             const evt = e as CustomEvent;
             const focusItem = evt.detail.focusItem;
             focusManager.element.focus();

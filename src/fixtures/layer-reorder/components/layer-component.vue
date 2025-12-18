@@ -4,7 +4,6 @@
             <span class="p-5">{{ t('layer-reorder.nolayers') }}</span>
         </div>
         <draggable
-            v-else
             class="p-3"
             v-model="layersModel"
             item-key="uid"
@@ -21,7 +20,6 @@
                         ${element.isExpanded ? 'hover:bg-gray-200' : ''}
                         border-2
                         border-gray-300
-                        default-focus-style
                     `"
                     v-tippy="{
                         placement: 'top-start',
@@ -29,10 +27,10 @@
                     }"
                     :aria-label="element.name"
                     :content="element.name"
-                    v-focus-container
+                    :ref="el => (itemRefs[element.id] = (el as HTMLElement) || null)"
                 >
                     <!-- TODO: fix this hack that prevents duplicate UI bug on prod (to reproduce: remove this, run prod build and open -> close -> re-open reorder panel) -->
-                    <div class="display-none"></div>
+                    <div class="display-none" ref="list"></div>
 
                     <div class="flex items-center p-5 h-44 cursor-pointer hover:bg-gray-200">
                         <!-- dropdown toggle  -->
@@ -42,7 +40,6 @@
                             @click="toggleExpand(element)"
                             class="text-gray-500 hover:text-black p-5"
                             :content="t(`layer-reorder.${!element.isExpanded ? 'expand' : 'collapse'}`)"
-                            v-focus-item
                             v-tippy="{
                                 placement: 'right',
                                 aria: 'describedby'
@@ -84,14 +81,13 @@
 
                     <!-- display children of the parent layer. -->
                     <div
-                        class="items-center p-5 pl-30 default-focus-style cursor-pointer"
+                        class="items-center p-5 pl-30 cursor-pointer"
                         v-if="element.isExpanded && element.sublayers.length > 0"
-                        v-focus-list
                     >
                         <div
                             v-for="sublayer in element.sublayers"
                             :key="sublayer.id"
-                            class="m-15 default-focus-style"
+                            class="m-15"
                             v-truncate
                             v-tippy="{
                                 placement: 'bottom-start',
@@ -99,7 +95,6 @@
                             }"
                             :content="sublayer.name"
                             :aria-label="sublayer.name"
-                            v-focus-container
                         >
                             {{ sublayer.name }}
                         </div>
@@ -108,14 +103,13 @@
                 <!-- else show loading spinner -->
                 <div
                     v-else
-                    class="flex items-center p-5 mx-8 h-44 default-focus-style"
+                    class="flex items-center p-5 mx-8 h-44"
                     :content="t('layer-reorder.loading')"
                     v-tippy="{
                         placement: 'top-start',
                         aria: 'describedby'
                     }"
                     :aria-label="t('layer-reorder.loading')"
-                    v-focus-container
                     truncate-trigger
                 >
                     <div class="animate-spin spinner h-20 w-20 px-5"></div>
@@ -129,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
 
 import { GlobalEvents, LayerInstance } from '@/api';
 import type { InstanceAPI } from '@/api';
@@ -144,6 +138,7 @@ const { t } = useI18n();
 
 const layersModel = ref<Array<LayerModel>>([]);
 const buttonRefs = ref<Record<string, HTMLButtonElement | null>>({});
+const itemRefs = ref<Record<string, HTMLElement | null>>({});
 
 /**
  * Snapshots positions when dragging starts. The array has same order as the layersModel.
@@ -355,11 +350,11 @@ const onMoveLayerButton = async (layerModel: LayerModel, direction: number): Pro
 
     const directionStr = direction === 1 ? 'up' : 'down';
 
-    await nextTick();
-    await nextTick();
-
-    const btn = buttonRefs.value[layerModel.id + '-' + directionStr];
-    btn?.focus();
+    // Prevents a race condition between setting new focus and the button existing. Unfortunately nextTick doesn't work so we get a setTimeout...
+    setTimeout(() => {
+        const btn = buttonRefs.value[layerModel.id + '-' + directionStr];
+        btn?.focus();
+    }, 0);
 };
 
 /** ==================================== Helpers ==================================== **/
@@ -375,7 +370,7 @@ const _isBoundary = (index: number): boolean => {
     return index < 0 || index > layersModel.value.length - 1;
 };
 
-onMounted(() => {
+onMounted(async () => {
     loadLayers();
 
     // watch for layer remove events (this is mainly used to react to sublayer removals)
