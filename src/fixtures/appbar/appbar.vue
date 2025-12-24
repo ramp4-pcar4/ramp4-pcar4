@@ -163,6 +163,87 @@ const keyupEvent = (e: Event) => {
     }
 };
 
+const overflowCheck = () => {
+    const element: Element = el.value!;
+    let key: string | undefined = undefined;
+    const children: Element[] = [...element.children];
+    let bound: number | undefined = children[children.length - 2].getBoundingClientRect().top;
+    if (!panelStore.mobileView) {
+        bound = element.getBoundingClientRect().bottom - 38;
+    }
+    const dropdown: Element | null = element.querySelector('#dropdown');
+    // check positions of appbar buttons
+    for (let i = children.length - 4; i >= 0; i--) {
+        const bottom: number = children[i].getBoundingClientRect().bottom;
+        if (bound && dropdown && (bottom > bound || (overflow.value && bottom + 56 > bound))) {
+            children[i].classList.forEach(cl => {
+                if (cl.includes('identifier')) {
+                    key = cl.slice(11);
+                }
+            });
+            if (key) {
+                overflowFlags.value[key] = true;
+                if (!(key as string).includes('divider')) {
+                    numberOverflow.value++;
+                }
+                popperRerender.value++;
+            }
+            if (!overflow.value) overflow.value = true;
+        } else if (bottom !== 0) {
+            break;
+        }
+    }
+    // check position of more button
+    const more: Element | null = element.querySelector('#more');
+    let moreBottom = more!.getBoundingClientRect().bottom;
+    key = undefined;
+    if (
+        overflow.value &&
+        bound &&
+        more &&
+        dropdown &&
+        moreBottom !== 0 &&
+        (moreBottom <= bound - 56 || (dropdown.childElementCount == 1 && moreBottom <= bound))
+    ) {
+        // dropdown.classList.add(`max-h-${moreBottom - 8}`);
+        let buttonsRemaining: number = dropdown.childElementCount;
+        let index: number = 0;
+        while (moreBottom <= bound - 56 || buttonsRemaining == 1) {
+            const item: Element | null = dropdown.children[index];
+            if (item) {
+                item.classList.forEach(cl => {
+                    if (cl.includes('identifier')) {
+                        key = cl.slice(11);
+                    }
+                });
+                if (key) {
+                    overflowFlags.value[key] = false;
+                    if (!(key as string).includes('divider')) {
+                        numberOverflow.value--;
+                    }
+                }
+                moreBottom += 48;
+                buttonsRemaining -= 1;
+                index += 1;
+            }
+            if (buttonsRemaining === 0) {
+                overflow.value = false;
+                break;
+            }
+        }
+    }
+    // clean up flags for items that were removed.
+    Object.keys(overflowFlags.value).forEach((key: string) => {
+        if (!element.querySelector(`.identifier-${key}`)) {
+            delete overflowFlags.value[key];
+            if (!key.includes('divider')) {
+                numberOverflow.value = Math.max(0, numberOverflow.value - 1);
+            }
+            popperRerender.value++;
+        }
+    });
+};
+
 onMounted(() => {
     el.value?.addEventListener('blur', blurEvent);
 
@@ -183,87 +264,9 @@ onBeforeUnmount(() => {
     el.value?.removeEventListener('keyup', keyupEvent);
 });
 
-onUpdated(() => {
-    nextTick(() => {
-        const element: Element = el.value!;
-        let key: string | undefined = undefined;
-        const children: Element[] = [...element.children];
-        let bound: number | undefined = children[children.length - 2].getBoundingClientRect().top;
-        if (!panelStore.mobileView) {
-            bound = element.getBoundingClientRect().bottom - 38;
-        }
-        const dropdown: Element | null = element.querySelector('#dropdown');
-        // check positions of appbar buttons
-        for (let i = children.length - 4; i >= 0; i--) {
-            const bottom: number = children[i].getBoundingClientRect().bottom;
-            if (bound && dropdown && (bottom > bound || (overflow.value && bottom + 56 > bound))) {
-                children[i].classList.forEach(cl => {
-                    if (cl.includes('identifier')) {
-                        key = cl.slice(11);
-                    }
-                });
-                if (key) {
-                    overflowFlags.value[key] = true;
-                    if (!(key as string).includes('divider')) {
-                        numberOverflow.value++;
-                    }
-                    popperRerender.value++;
-                }
-                if (!overflow.value) overflow.value = true;
-            } else if (bottom !== 0) {
-                break;
-            }
-        }
-        // check position of more button
-        const more: Element | null = element.querySelector('#more');
-        let moreBottom = more!.getBoundingClientRect().bottom;
-        key = undefined;
-        if (
-            overflow.value &&
-            bound &&
-            more &&
-            dropdown &&
-            moreBottom !== 0 &&
-            (moreBottom <= bound - 56 || (dropdown.childElementCount == 1 && moreBottom <= bound))
-        ) {
-            // dropdown.classList.add(`max-h-${moreBottom - 8}`);
-            let buttonsRemaining: number = dropdown.childElementCount;
-            let index: number = 0;
-            while (moreBottom <= bound - 56 || buttonsRemaining == 1) {
-                const item: Element | null = dropdown.children[index];
-                if (item) {
-                    item.classList.forEach(cl => {
-                        if (cl.includes('identifier')) {
-                            key = cl.slice(11);
-                        }
-                    });
-                    if (key) {
-                        overflowFlags.value[key] = false;
-                        if (!(key as string).includes('divider')) {
-                            numberOverflow.value--;
-                        }
-                    }
-                    moreBottom += 48;
-                    buttonsRemaining -= 1;
-                    index += 1;
-                }
-                if (buttonsRemaining === 0) {
-                    overflow.value = false;
-                    break;
-                }
-            }
-        }
-        // clean up flags for items that were removed.
-        Object.keys(overflowFlags.value).forEach((key: string) => {
-            if (!element.querySelector(`.identifier-${key}`)) {
-                delete overflowFlags.value[key];
-                if (!key.includes('divider')) {
-                    numberOverflow.value = Math.max(0, numberOverflow.value - 1);
-                }
-                popperRerender.value++;
-            }
-        });
-    });
+onUpdated(async () => {
+    // This puts the check behind the appbar buttons rendering in queue, nextTick does not delay it properly
+    setTimeout(() => overflowCheck(), 0);
 });
 </script>
 
