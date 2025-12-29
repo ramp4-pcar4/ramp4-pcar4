@@ -11,6 +11,7 @@
             :animation="isAnimationEnabled ? 200 : 0"
             @change="onMoveLayerDragEnd"
             @start="onMoveLayerDragStart"
+            v-focus-list
         >
             <template #item="{ element }">
                 <div
@@ -29,10 +30,11 @@
                     }"
                     :aria-label="element.name"
                     :content="element.name"
-                    v-focus-container
+                    :ref="el => (itemRefs[element.id] = (el as HTMLElement) || null)"
+                    v-focus-item
                 >
                     <!-- TODO: fix this hack that prevents duplicate UI bug on prod (to reproduce: remove this, run prod build and open -> close -> re-open reorder panel) -->
-                    <div class="display-none"></div>
+                    <div class="display-none" ref="list"></div>
 
                     <div class="flex items-center p-5 h-44 cursor-pointer hover:bg-gray-200">
                         <!-- dropdown toggle  -->
@@ -42,7 +44,6 @@
                             @click="toggleExpand(element)"
                             class="text-gray-500 hover:text-black p-5"
                             :content="t(`layer-reorder.${!element.isExpanded ? 'expand' : 'collapse'}`)"
-                            v-focus-item
                             v-tippy="{
                                 placement: 'right',
                                 aria: 'describedby'
@@ -99,7 +100,7 @@
                             }"
                             :content="sublayer.name"
                             :aria-label="sublayer.name"
-                            v-focus-container
+                            v-focus-item
                         >
                             {{ sublayer.name }}
                         </div>
@@ -129,7 +130,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
 
 import { GlobalEvents, LayerInstance } from '@/api';
 import type { InstanceAPI } from '@/api';
@@ -144,6 +145,9 @@ const { t } = useI18n();
 
 const layersModel = ref<Array<LayerModel>>([]);
 const buttonRefs = ref<Record<string, HTMLButtonElement | null>>({});
+const itemRefs = ref<Record<string, HTMLElement | null>>({});
+
+const list = ref<Element>();
 
 /**
  * Snapshots positions when dragging starts. The array has same order as the layersModel.
@@ -355,11 +359,14 @@ const onMoveLayerButton = async (layerModel: LayerModel, direction: number): Pro
 
     const directionStr = direction === 1 ? 'up' : 'down';
 
-    await nextTick();
-    await nextTick();
-
-    const btn = buttonRefs.value[layerModel.id + '-' + directionStr];
-    btn?.focus();
+    // Prevents a race condition between setting new focus and the button existing. Unfortunately nextTick doesn't work so we get a setTimeout...
+    setTimeout(() => {
+        const focusItem = itemRefs.value[layerModel.id];
+        const focusItemEvent = new CustomEvent('switchFocusItem', { bubbles: true, detail: { focusItem } });
+        const btn = buttonRefs.value[layerModel.id + '-' + directionStr];
+        list.value?.dispatchEvent(focusItemEvent);
+        btn?.focus();
+    }, 0);
 };
 
 /** ==================================== Helpers ==================================== **/
