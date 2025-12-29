@@ -1,0 +1,1 @@
+import{H as i}from"./vec32-Dy-aMR70.js";import{a as n}from"./SketchViewModel-C29X0Atm.js";class o extends n{constructor(t,r,s){super(r,s),this.point=t}equals(t){return t instanceof o&&i(this.point,t.point)}}export{o as n};
