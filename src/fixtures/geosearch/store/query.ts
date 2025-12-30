@@ -182,7 +182,6 @@ const normalizeNameItems = (config: IGeosearchConfig, items: INameResponse[]): S
             flav: 'nme',
             bbox: nr.bbox,
             type: config.types.allTypes[nr.concise.code],
-            position: [nr.longitude, nr.latitude],
             location: {
                 city: nr.location,
                 province: config.provinces.codeToProvince(parseInt(nr.province.code))
@@ -281,7 +280,6 @@ const runLatLongQuery = async (queryPayload: QueryPayload): Promise<void> => {
         flav: 'llg',
         location: {},
         type: 'Latitude/Longitude',
-        position: [lon, lat],
         bbox: fakeBBox(lon, lat, 0.015),
         order: -1
     };
@@ -313,7 +311,6 @@ const runFSAQuery = async (queryPayload: QueryPayload): Promise<void> => {
             flav: 'fsa',
             bbox: fakeBBox(lon, lat, 0.03),
             type: config.types.allTypes.FSA,
-            position: [lon, lat],
             location: {
                 province: config.provinces.fsaToProvince(queryPayload.query)
             },
@@ -371,7 +368,6 @@ const runNTSQuery = async (queryPayload: QueryPayload): Promise<void> => {
             flav: 'nts',
             bbox: ntsNugget.bbox ?? fakeBBox(lon, lat, 0.03),
             type: config.types.allTypes.NTS, // "National Topographic System"
-            position: [lon, lat],
             location: {
                 city: location
             },
@@ -416,7 +412,6 @@ const runTextQuery = async (queryPayload: QueryPayload): Promise<void> => {
                     flav: 'add',
                     bbox: fakeBBox(lon, lat, 0.002),
                     type: config.types.allTypes.ADDRESS,
-                    position: [lon, lat],
                     location: {
                         city: city.split(' Of ').pop(), // prevents redundant label i.e. 'City Of Kingston'
                         province: config.provinces.nameToProvince(province)
