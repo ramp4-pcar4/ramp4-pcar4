@@ -133,10 +133,6 @@ export interface ISearchResult {
      */
     flav: FlavourKey;
 
-    /**
-     * Encodes a position (usually a centroid) in Latlon
-     */
-    position: [number, number];
     location: {
         /**
          * Not always an actual city. Name of appropriate sub-province location, if one exists

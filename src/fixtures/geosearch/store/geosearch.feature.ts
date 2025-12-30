@@ -96,7 +96,6 @@ export class GeoSearchUI {
                         type: src.catName,
                         bbox: item.bbox,
                         flav: 'nme',
-                        position: [0, 0],
                         location: {
                             province: this.config.provinces.abbrToProvince(item.prov),
                             city: item.city
