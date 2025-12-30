@@ -70,35 +70,35 @@ const fixed = ref<boolean>(props.params.stateManager.columns[props.params.column
 
 const minValChanged = () => {
     minVal.value = minVal.value !== '' && !isNaN(minVal.value) ? minVal.value : null;
-    props.params.parentFilterInstance((instance: any) => {
-        setFilterModel(instance);
+    setFilterModel();
 
-        // Save the new filter value in the state manager. Allows for quick recovery if the grid is
-        // closed and re-opened.
-        props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, minVal.value, 'min');
-    });
+    // Save the new filter value in the state manager. Allows for quick recovery if the grid is
+    // closed and re-opened.
+    props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, minVal.value, 'min');
 };
 
 const maxValChanged = () => {
     maxVal.value = maxVal.value !== '' && !isNaN(maxVal.value) ? maxVal.value : null;
-    props.params.parentFilterInstance((instance: any) => {
-        setFilterModel(instance);
+    setFilterModel();
 
-        // Save the new filter value in the state manager. Allows for quick recovery if the grid is
-        // closed and re-opened.
-        props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, maxVal.value, 'max');
-    });
+    // Save the new filter value in the state manager. Allows for quick recovery if the grid is
+    // closed and re-opened.
+    props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, maxVal.value, 'max');
 };
 
-const setFilterModel = (instance: any) => {
+const setFilterModel = () => {
     // If the value is not a number, or is null, set its value to the empty string.
     if (isNaN(minVal.value) || minVal.value === null) minVal.value = '';
     if (isNaN(maxVal.value) || maxVal.value === null) maxVal.value = '';
 
-    if (maxVal.value !== '' && minVal.value !== '') {
+    const field = props.params.column.colDef.field as string;
+    if (maxVal.value === '' && minVal.value === '') {
+        // Clear the filter if neither value is set.
+        props.params.api.setColumnFilterModel(field, null);
+    } else if (maxVal.value !== '' && minVal.value !== '') {
         // If both min and max values are set, set the filter to display
         // all items in between the two numbers.
-        instance.setModel({
+        props.params.api.setColumnFilterModel(field, {
             filterType: 'number',
             type: 'inRange',
             filter: minVal.value,
@@ -107,41 +107,22 @@ const setFilterModel = (instance: any) => {
     } else if (minVal.value === '') {
         // If only the maximum value is set, set the filter to display all items
         // that are lower than it.
-        instance.setModel({
+        props.params.api.setColumnFilterModel(field, {
             filterType: 'number',
             type: 'lessThanOrEqual',
             filter: maxVal.value
         });
-    } else if (maxVal.value === '') {
+    } else {
         // If only the minimum value is set, set the filter to display all items
         // that are higher than it.
-        instance.setModel({
+        props.params.api.setColumnFilterModel(field, {
             filterType: 'number',
             type: 'greaterThanOrEqual',
             filter: minVal.value
         });
-    } else {
-        // Clear the filter if neither value is set.
-        instance.setModel(null);
     }
     props.params.api.onFilterChanged();
 };
-
-// const onParentModelChanged = (parentModel: any) => {
-//     if (!parentModel || Object.keys(parentModel).length === 0) {
-//         minVal.value = '';
-//         maxVal.value = '';
-//     }
-// };
-
-// const setModel = () => {
-//     return {
-//         filterType: 'number',
-//         type: 'inRange',
-//         filter: minVal.value,
-//         filterTo: maxVal.value
-//     };
-// };
 
 onBeforeMount(() => {
     // Load previously stored values (if saved in table state manager)
