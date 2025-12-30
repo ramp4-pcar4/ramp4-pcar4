@@ -116,10 +116,10 @@
                 <div class="pb-2 flex ml-auto justify-end">
                     <!-- show/hide columns -->
                     <column-dropdown
-                        :columnApi="columnApi"
+                        :gridApi="agGridApi!"
                         :columnDefs="columnDefs"
                         :systemCols="systemCols"
-                        @refreshHeaders="agGridApi.refreshHeader()"
+                        @refreshHeaders="agGridApi!.refreshHeader()"
                     ></column-dropdown>
 
                     <!-- clear all filters -->
@@ -381,21 +381,19 @@ import {
 } from 'vue';
 
 import { GlobalEvents, InstanceAPI, LayerInstance, NotificationType, PanelInstance } from '@/api/internal';
-
 import { DefPromise } from '@/geo/api';
-
 import type { Attributes, TabularAttributeSet } from '@/geo/api';
 
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-material.css';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-material.css';
 import { AgGridVue } from 'ag-grid-vue3';
-import ColumnDropdown from './column-dropdown.vue';
 import { useGridStore, type AttributeMapPair } from './store';
 import { usePanelStore } from '@/stores/panel';
+import { GridAccessibilityManager, tabToNextCellHandler, tabToNextHeaderHandler } from './accessibility';
 import type { ActionButtonDefinition, GridConfig } from './store';
+import ColumnDropdown from './column-dropdown.vue';
 import TableStateManager from './store/table-state-manager';
 import ColumnStateManager from './store/column-state-manager';
-import { GridAccessibilityManager, tabToNextCellHandler, tabToNextHeaderHandler } from './accessibility';
 
 // custom filter templates
 import GridCustomNumberFilterV from './templates/custom-number-filter.vue';
@@ -416,8 +414,7 @@ import { CoreFilter, FieldType } from '@/geo/api';
 import { AG_GRID_LOCALE_EN, AG_GRID_LOCALE_FR } from '@ag-grid-community/locale';
 
 import { debounce } from 'throttle-debounce';
-import type { RowNode } from 'ag-grid-community';
-import { ColumnApi, GridApi } from 'ag-grid-community';
+import type { ColDef, GridApi, RowNode } from 'ag-grid-community';
 import { useI18n } from 'vue-i18n';
 
 // to prevent lint complaining about regex expressions
@@ -429,11 +426,11 @@ export interface FilterParams {
     textMatcher?: (params: any) => void;
     textFormatter?: (s: string) => void;
 }
+
 export interface TableComponent {
     config: GridConfig;
     agGridOptions: any;
     agGridApi: any;
-    columnApi: any;
     columnDefs: any;
     rowData: any;
     frameworkComponents: any;
@@ -446,6 +443,7 @@ export interface TableComponent {
     filterStatus: string;
     filterByExtent: boolean;
 }
+
 export interface ColumnDefinition {
     field: string;
     headerName: string;
@@ -460,43 +458,46 @@ export interface ColumnDefinition {
     floatingFilter?: boolean;
     floatingFilterComponent?: string;
     floatingFilterComponentParams?: {
-        suppressFilterButton: boolean;
         stateManager: TableStateManager;
         clearFilters?: () => void;
         rowData?: Attributes[];
     };
     filterParams: FilterParams;
-    cellRenderer: (cell: any) => void;
+    cellRenderer: (cell: any) => any;
     cellRendererParams?: any;
     sortable: boolean;
     hide: boolean;
-    isSelector: boolean;
     lockPosition: boolean;
+    suppressFloatingFilterButton?: boolean;
     suppressHeaderKeyboardEvent: (params: any) => void;
     autoHeight?: boolean;
 }
+
 // column definition for specialized columns (index, symbols, etc.)
 export interface SpecialColumnDefinition {
+    field?: string;
+    headerName?: string;
     sortable: boolean;
     filter: boolean;
     lockPosition: boolean;
-    isStatic?: boolean;
     valueGetter?: string;
     suppressMovable?: boolean;
-    suppressMenu?: boolean;
+    suppressFloatingFilterButton?: boolean;
+    suppressHeaderMenuButton?: boolean;
+    suppressHeaderContextMenu?: boolean;
     floatingFilter?: any;
     floatingFilterComponent?: string;
     floatingFilterComponentParams?: {
-        suppressFilterButton: boolean;
         stateManager: TableStateManager;
         clearFilters?: () => void;
     };
     pinned?: string;
     maxWidth?: number;
-    cellStyle: () => void;
-    cellRenderer?: () => void;
+    headerComponent?: string;
+    headerComponentParams?: any;
+    cellStyle?: () => void;
+    cellRenderer?: any;
     cellRendererParams?: any;
-    preventExport: boolean;
 }
 
 // these should match up with the `type` value returned by the attribute promise.
@@ -529,8 +530,9 @@ const config = ref<GridConfig>({
     state: new TableStateManager(),
     fieldMap: {}
 });
+
 const showGrid = ref(true);
-const agGridApi = ref<GridApi>(new GridApi());
+const agGridApi = ref<GridApi | null>(null);
 const agGridOptions = ref();
 const frameworkComponents = ref();
 const isLoadingGrid = ref<boolean>(false);
@@ -540,8 +542,7 @@ const totalRecordCount = ref<number>(0);
 const handlers = ref<Array<string>>([]);
 const watchers = ref<Array<() => void>>([]);
 const gridTitle = ref<string>('');
-const columnApi = ref<ColumnApi>(new ColumnApi());
-const columnDefs = ref<Array<any>>([]);
+const columnDefs = ref<Array<ColumnDefinition | SpecialColumnDefinition>>([]);
 const rowData = ref<Array<Attributes>>([]);
 const oidField = ref<string>('OBJECTID'); // this is just placeholder, will get overwritten below
 const gridAccessibilityManager = ref<GridAccessibilityManager | undefined>(undefined);
@@ -567,22 +568,23 @@ const systemCols = ref<Set<string>>(new Set<string>());
 // in order to avoid race conditions
 const filterQueue = ref<Array<DefPromise<void>>>([]);
 
+const gridApi = computed(() => agGridApi.value!);
+
 const addAriaLabels = () => {
     const checkboxInputs = iApi.$vApp.$el.querySelectorAll(
         '.ag-input-field-input.ag-checkbox-input'
     ) as NodeListOf<Element>;
 
     checkboxInputs.forEach((input, index) => {
-        const allColumns = columnApi.value.getAllDisplayedColumns();
-        const column = allColumns[index].getColDef();
+        const allColumns = gridApi.value.getAllDisplayedColumns();
+        const column = allColumns?.[index].getColDef();
 
-        input.setAttribute('aria-label', column.headerName ?? t('grid.label.specialColumn'));
+        input.setAttribute('aria-label', column?.headerName ?? t('grid.label.specialColumn'));
     });
 };
 
 const onGridReady = (params: any) => {
     agGridApi.value = params.api;
-    columnApi.value = params.columnApi;
 
     // get grid title
     gridTitle.value = config.value.state.title || layer?.name || props.gridId;
@@ -592,13 +594,13 @@ const onGridReady = (params: any) => {
 
     // don't need to wait for data to render if rowData available
     if (rowData.value.length > 0) {
-        columnApi.value.autoSizeAllColumns();
+        gridApi.value.autoSizeAllColumns();
     }
 
     // Initial load
     addAriaLabels();
 
-    agGridApi.value.addEventListener('rowDataChanged', addAriaLabels);
+    gridApi.value.addEventListener('rowDataUpdated', addAriaLabels);
 
     // listen for layer filter and visibility events and update grid appropriately
     handlers.value.push(
@@ -630,7 +632,7 @@ const onGridReady = (params: any) => {
     handlers.value.push(
         iApi.event.on(GlobalEvents.LANG_CHANGE, () => {
             // Refresh the grid when the language changes
-            agGridApi.value.redrawRows({
+            gridApi.value.redrawRows({
                 force: true
             } as any);
         })
@@ -658,20 +660,14 @@ const onGridReady = (params: any) => {
 
 const gridRendered = () => {
     // size grid columns
-    columnApi.value.autoSizeAllColumns();
-
-    gridAccessibilityManager.value = new GridAccessibilityManager(
-        el.value!,
-        agGridApi.value as GridApi,
-        columnApi.value as ColumnApi
-    );
-
+    gridApi.value.autoSizeAllColumns();
+    gridAccessibilityManager.value = new GridAccessibilityManager(el.value!, agGridApi.value as GridApi);
     addAriaLabels();
 };
 
 // Updates the global search value.
 const updateQuickSearch = () => {
-    agGridApi.value.setQuickFilter(config.value.state.searchFilter);
+    gridApi.value.setGridOption('quickFilterText', config.value.state.searchFilter);
 };
 
 const resetQuickSearch = () => {
@@ -692,15 +688,15 @@ const toggleFilterByExtent = () => {
 
 // Toggles the floating (column) filters on and off.
 const toggleShowFilters = () => {
-    const colDefs = agGridOptions.value.api.getColumnDefs();
+    const colDefs = gridApi.value.getColumnDefs();
     config.value.state.colFilter = !config.value.state.colFilter;
 
-    colDefs.forEach((col: ColumnDefinition) => {
+    colDefs?.forEach((col: ColDef) => {
         col.floatingFilter = config.value.state.colFilter;
     });
 
     // Update the column definitions with the new filter value.
-    agGridOptions.value.api.setColumnDefs(colDefs);
+    gridApi.value.setGridOption('columnDefs', colDefs);
 };
 
 // Updates the current status of the filter.
@@ -711,46 +707,51 @@ const updateFilterInfo = () => {
             applyFiltersToMap();
         }
         nextTick(() => {
-            const cols = columnApi.value.getAllDisplayedColumns();
-            agGridOptions.value.api.refreshCells({
-                columns: [cols[0]] // Limits the refresh action to the row number column.
-            });
+            const cols = gridApi.value.getAllDisplayedColumns();
+            if (cols && cols.length > 0) {
+                gridApi.value.refreshCells({
+                    columns: [cols[0]] // Limits the refresh action to the row number column.
+                });
+            }
             updateRowInfo();
         });
     }
 };
 
 const updateRowInfo = () => {
-    filterInfo.value.firstRow = agGridApi.value.getFirstDisplayedRow() + 1;
-    filterInfo.value.lastRow = agGridApi.value.getLastDisplayedRow() + 1;
-    filterInfo.value.visibleRows = agGridApi.value.getDisplayedRowCount();
+    filterInfo.value.firstRow = gridApi.value.getFirstDisplayedRowIndex() + 1;
+    filterInfo.value.lastRow = gridApi.value.getLastDisplayedRowIndex() + 1;
+    filterInfo.value.visibleRows = gridApi.value.getDisplayedRowCount();
 };
 
 // Clear all table filters.
 const clearFilters = () => {
     // Replace the filter model with an empty model.
-    agGridApi.value.setFilterModel({});
+    gridApi.value.setFilterModel({});
 
     // Clear any saved filter state in the table state manager.
     config.value.state.clearFilters();
 
     // Refresh the column filters to reset inputs.
-    agGridApi.value.refreshHeader();
+    gridApi.value.refreshHeader();
 };
 
 const togglePinned = () => {
     pinned.value = !pinned.value;
     const pinSetting = pinned.value ? 'left' : null;
 
-    const cols = columnApi.value.getAllDisplayedColumns();
-    columnApi.value.setColumnsPinned(cols.slice(1, 3), pinSetting);
+    const cols = gridApi.value.getAllDisplayedColumns();
+    if (cols && cols.length >= 3) {
+        gridApi.value.setColumnsPinned(cols.slice(1, 3), pinSetting);
+    }
 };
 
 const exportData = () => {
     // Filter out the 'special columns'
-    const columnsToExport = columnApi.value
-        .getAllDisplayedColumns()
-        .filter(column => !(column.getColDef() as any).preventExport);
+    const columnsToExport = gridApi.value.getAllDisplayedColumns().filter(column => {
+        const colDef = column.getColDef();
+        return !colDef.headerComponentParams?.preventExport;
+    });
 
     // Replaces HTML symbols with their corresponding string character (i.e., &quot; -> ")
     const temp = document.createElement('p');
@@ -759,7 +760,7 @@ const exportData = () => {
         return temp.textContent || temp.innerText;
     };
 
-    agGridApi.value.exportDataAsCsv({
+    gridApi.value.exportDataAsCsv({
         columnKeys: columnsToExport,
         suppressQuotes: true,
         processCellCallback: cell => {
@@ -809,8 +810,8 @@ const setUpDateFilter = (colDef: ColumnDefinition, state: TableStateManager) => 
         return entry.getUTCDate() - filterDate.getUTCDate();
     };
     colDef.filterParams.inRangeInclusive = true;
+    colDef.suppressFloatingFilterButton = true;
     colDef.floatingFilterComponentParams = {
-        suppressFilterButton: true,
         stateManager: state
     };
 };
@@ -818,8 +819,8 @@ const setUpDateFilter = (colDef: ColumnDefinition, state: TableStateManager) => 
 const setUpSelectorFilter = (colDef: ColumnDefinition, rowData: Attributes[], state: TableStateManager) => {
     colDef.floatingFilterComponent = 'selectorFloatingFilter';
     colDef.filterParams.inRangeInclusive = true;
+    colDef.suppressFloatingFilterButton = true;
     colDef.floatingFilterComponentParams = {
-        suppressFilterButton: true,
         stateManager: state,
         rowData: rowData
     };
@@ -828,16 +829,16 @@ const setUpSelectorFilter = (colDef: ColumnDefinition, rowData: Attributes[], st
 const setUpNumberFilter = (colDef: ColumnDefinition, state: TableStateManager) => {
     colDef.floatingFilterComponent = 'numberFloatingFilter';
     colDef.filterParams.inRangeInclusive = true;
+    colDef.suppressFloatingFilterButton = true;
     colDef.floatingFilterComponentParams = {
-        suppressFilterButton: true,
         stateManager: state
     };
 };
 
 const setUpTextFilter = (colDef: ColumnDefinition, state: TableStateManager) => {
     colDef.floatingFilterComponent = 'textFloatingFilter';
+    colDef.suppressFloatingFilterButton = true;
     colDef.floatingFilterComponentParams = {
-        suppressFilterButton: true,
         stateManager: state
     };
 
@@ -877,17 +878,21 @@ const setUpTextFilter = (colDef: ColumnDefinition, state: TableStateManager) => 
 
 const setUpSpecialColumns = (
     col: ColumnDefinition,
-    colDef: (ColumnDefinition | SpecialColumnDefinition)[],
+    colDefs: Array<ColumnDefinition | SpecialColumnDefinition>,
     state: TableStateManager
 ) => {
     // set up row number column
     if (col.field === 'rvRowIndex') {
-        const indexDef = {
+        const indexDef: SpecialColumnDefinition = {
+            field: 'rvRowIndex',
+            headerName: '',
+            headerComponentParams: { preventExport: true },
             sortable: false,
             lockPosition: true,
             valueGetter: 'node.rowIndex + 1',
             suppressMovable: true,
-            suppressMenu: true,
+            suppressHeaderMenuButton: true,
+            suppressHeaderContextMenu: true,
             floatingFilter: config.value.state.colFilter,
             pinned: 'left',
             maxWidth: 42,
@@ -900,28 +905,29 @@ const setUpSpecialColumns = (
                 };
             },
             floatingFilterComponent: 'clearFloatingFilter',
+            suppressFloatingFilterButton: true,
             floatingFilterComponentParams: {
                 stateManager: state,
-                clearFilters: clearFilters,
-                suppressFilterButton: true
+                clearFilters: clearFilters
             },
-            filter: true,
-            preventExport: true
+            filter: true
         };
 
-        colDef.push(indexDef);
+        colDefs.push(indexDef);
     }
 
     // Set up the interactive column that contains the zoom and details button.
     if (col.field === 'rvInteractive') {
         const buttonControls = config.value.state.controls;
 
-        const detailsDef = {
+        const detailsDef: SpecialColumnDefinition = {
+            field: 'rvDetailsButton',
+            headerName: '',
+            headerComponentParams: { isStatic: true, preventExport: true },
             sortable: false,
             pinned: mobileView.value ? '' : 'left',
             filter: false,
             lockPosition: true,
-            isStatic: true,
             maxWidth: 42,
             cellStyle: () => {
                 return {
@@ -934,24 +940,24 @@ const setUpSpecialColumns = (
                 t: t,
                 layerCols: layerCols.value,
                 isTeleport: props.panel.teleport !== undefined
-            },
-            preventExport: true
+            }
         };
 
         // Only add this button if it is defined in the grid controls.
         if (buttonControls.includes('details')) {
-            //@ts-expect-error TODO: explain why this is needed or remove
-            colDef.push(detailsDef);
+            colDefs.push(detailsDef);
         }
 
         // only render the zoom buttons if there is at least one map layer in the grid
         if (hasMapLayers.value) {
-            const zoomDef = {
+            const zoomDef: SpecialColumnDefinition = {
+                field: 'rvZoomButton',
+                headerName: '',
+                headerComponentParams: { isStatic: true, preventExport: true },
                 sortable: false,
                 pinned: mobileView.value ? '' : 'left',
                 filter: false,
                 lockPosition: true,
-                isStatic: true,
                 maxWidth: 42,
                 cellStyle: () => {
                     return {
@@ -963,14 +969,12 @@ const setUpSpecialColumns = (
                     $iApi: iApi,
                     layerCols: layerCols.value,
                     isTeleport: props.panel.teleport !== undefined
-                },
-                preventExport: true
+                }
             };
 
             // Only add this button if it is defined in the grid controls.
             if (buttonControls.includes('zoom')) {
-                //@ts-expect-error TODO: explain why this is needed or remove
-                colDef.push(zoomDef);
+                colDefs.push(zoomDef);
             }
         }
 
@@ -978,12 +982,14 @@ const setUpSpecialColumns = (
         buttonControls.forEach((buttonConfig: string | ActionButtonDefinition) => {
             if (buttonConfig === 'zoom' || buttonConfig === 'details') return;
 
-            const buttonDef = {
+            const buttonDef: SpecialColumnDefinition = {
+                field: `rvCustomButton_${typeof buttonConfig === 'string' ? buttonConfig : buttonConfig.actionEvent}`,
+                headerName: '',
+                headerComponentParams: { isStatic: true, preventExport: true },
                 sortable: false,
                 pinned: mobileView.value ? '' : 'left',
                 filter: false,
                 lockPosition: true,
-                isStatic: true,
                 maxWidth: 42,
                 cellStyle: () => {
                     return {
@@ -996,21 +1002,21 @@ const setUpSpecialColumns = (
                     t: t,
                     layerCols: layerCols.value,
                     config: buttonConfig
-                },
-                preventExport: true
+                }
             };
-            //@ts-expect-error TODO: explain why this is needed or remove
-            colDef.push(buttonDef);
+            colDefs.push(buttonDef);
         });
     }
 
     // Set up the symbol column.
     if (col.field === 'rvSymbol') {
-        const iconDef = {
+        const iconDef: SpecialColumnDefinition = {
+            field: 'rvSymbol',
+            headerName: '',
+            headerComponentParams: { isStatic: true, preventExport: true },
             sortable: false,
             filter: false,
             lockPosition: true,
-            isStatic: true,
             maxWidth: 42,
             cellRenderer: (cell: any) => {
                 const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(cell.data.rvUid);
@@ -1033,11 +1039,9 @@ const setUpSpecialColumns = (
             cellRendererParams: {
                 $iApi: iApi,
                 oidField: oidField.value
-            },
-            preventExport: true
+            }
         };
-        //@ts-expect-error TODO: explain why this is needed or remove
-        colDef.push(iconDef);
+        colDefs.push(iconDef);
     }
 };
 
@@ -1047,7 +1051,7 @@ const isExternalFilterPresent = () => {
 };
 
 // filters row based on layer filter
-const doesExternalFilterPass = (node: RowNode) => {
+const doesExternalFilterPass = (node: any) => {
     const oids = filteredOids.value[node.data.rvUid];
     return oids === undefined || oids.includes(node.data[oidField.value]);
 };
@@ -1094,7 +1098,7 @@ const applyLayerFilters = async () => {
     );
 
     // filterOids are now up to date. Apply them to the grid
-    agGridApi.value.onFilterChanged();
+    gridApi.value.onFilterChanged();
 
     // unblock our promise, letting any filter behind us start.
     thisFilterDef.resolveMe();
@@ -1128,15 +1132,15 @@ const applyFiltersToMap = () => {
 
 // get filter SQL query string
 const getFiltersQuery = (id: string) => {
-    const filterModel = agGridApi.value.getFilterModel();
+    const filterModel = gridApi.value.getFilterModel();
     const colStrs: (string | undefined)[] = [];
-    Object.keys(filterModel).forEach(col => {
+    Object.keys(filterModel || {}).forEach(col => {
         // check if filter is applied to an attribute of this layer
         const attrs = getAttrPair(id, col);
         if (attrs) {
             // create SQL string with original attribute name, because otherwise the the layer wouldn't recognize the attribute name in the filter
             // i.e a layer with 'LAT' mapped to 'LATITUDE' in the grid must query '___ IN LAT' instead of '___ IN LATITUDE'
-            colStrs.push(filterToSql(attrs.origAttr, filterModel[col]));
+            colStrs.push(filterToSql(attrs.origAttr, filterModel?.[col]));
         } else {
             // filter out layer when searching a column it doesn't have
             colStrs.push('1=2');
@@ -1229,8 +1233,11 @@ const globalSearchToSql = (id: string): string => {
     // to implement quick filters, first need to split the search text on white space
     const searchVals = val.split(' ');
 
-    const sortedRows = (agGridApi.value as any).rowModel.rowsToDisplay;
-    const columns = columnApi.value
+    const sortedRows: RowNode[] = [];
+    gridApi.value.forEachNodeAfterFilterAndSort(node => {
+        sortedRows.push(node as RowNode);
+    });
+    const columns = gridApi.value
         .getAllDisplayedColumns()
         .filter(
             (column: any) =>
@@ -1249,7 +1256,7 @@ const globalSearchToSql = (id: string): string => {
             const filterVal = `%${searchVal.replace(/\*/g, '%').split(' ').join('%').toUpperCase()}`;
             // if any column data matches the search val in regex form, set foundVal to true and proceed to next search term
             let foundVal = false;
-            for (const column of columns) {
+            for (const column of columns ?? []) {
                 const colId = column.getColId();
                 const origColId = getAttrPair(id, column.getColId())?.origAttr;
                 const colDef = column.getColDef();
@@ -1521,6 +1528,7 @@ const setUpColumns = () => {
                     }
 
                     const colConfig = config.value.state?.columns[column.data];
+                    const isSelector = colConfig.filter.type === 'selector';
                     const col: ColumnDefinition = {
                         headerName: colConfig.title ?? column.title,
                         headerComponent: 'agColumnHeader',
@@ -1528,7 +1536,6 @@ const setUpColumns = () => {
                             sort: colConfig.sort
                         },
                         field: column.data ?? column,
-                        isSelector: colConfig.filter.type === 'selector',
                         sortable: true,
                         lockPosition: true,
                         filterParams: {},
@@ -1581,7 +1588,7 @@ const setUpColumns = () => {
                                 type: 'date'
                             };
                         } else if (fieldInfo!.type === FieldType.STRING) {
-                            if (col.isSelector) {
+                            if (isSelector) {
                                 // set up a selector filter instead of a text filter if the `isSelector` flag is true.
                                 setUpSelectorFilter(col, mergedTableAttrs.rows, config.value.state);
                             } else {
@@ -1686,7 +1693,7 @@ onBeforeMount(() => {
         // tab vertically instead of horizontally
         tabToNextHeader: tabToNextHeaderHandler,
         onModelUpdated: debounce(300, () => {
-            columnApi.value.autoSizeAllColumns();
+            gridApi.value.autoSizeAllColumns();
             addAriaLabels();
         })
     };

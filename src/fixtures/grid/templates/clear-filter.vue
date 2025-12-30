@@ -36,6 +36,8 @@ import { useI18n } from 'vue-i18n';
 const props = defineProps(['params']);
 const { t } = useI18n();
 const el = ref<HTMLElement>();
+const headerCell = ref<HTMLElement>();
+const grid = ref<Element>();
 
 const clearFilters = () => props.params.clearFilters();
 
@@ -43,44 +45,43 @@ onMounted(async () => {
     // need to hoist events to top level cell wrapper to be keyboard accessible
     await nextTick();
     // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    const headerCell: HTMLElement = el.value?.closest('.ag-header-cell')!;
-    const grid: HTMLElement = headerCell.closest('.ag-pinned-left-header')!;
-    headerCell.addEventListener('keydown', async (e: KeyboardEvent) => {
+    headerCell.value = el.value?.closest('.ag-header-cell')!;
+    grid.value = headerCell.value.closest('.ag-pinned-left-header')!;
+    headerCell.value.addEventListener('keydown', async (e: KeyboardEvent) => {
         if (e.key === 'Enter') {
             e.stopPropagation();
             clearFilters();
             await nextTick();
-            (grid.querySelector('.ag-header-cell.ag-floating-filter') as HTMLElement).focus();
+            (grid.value?.querySelector('.ag-header-cell.ag-floating-filter') as HTMLElement).focus();
         }
     });
 
-    headerCell.addEventListener('focus', () => {
+    headerCell.value.addEventListener('focus', () => {
         (el.value as any)._tippy.show();
     });
-    headerCell.addEventListener('blur', () => {
+    headerCell.value.addEventListener('blur', () => {
         (el.value as any)._tippy.hide();
     });
 });
 
 onBeforeUnmount(() => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    const headerCell: HTMLElement = el.value?.closest('.ag-header-cell')!;
-    const grid: HTMLElement = headerCell.closest('.ag-pinned-left-header')!;
-    headerCell.removeEventListener('keydown', async (e: KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            e.stopPropagation();
-            clearFilters();
-            await nextTick();
-            (grid.querySelector('.ag-header-cell.ag-floating-filter') as HTMLElement).focus();
-        }
-    });
+    if (headerCell.value) {
+        headerCell.value.removeEventListener('keydown', async (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                e.stopPropagation();
+                clearFilters();
+                await nextTick();
+                (grid.value?.querySelector('.ag-header-cell.ag-floating-filter') as HTMLElement).focus();
+            }
+        });
 
-    headerCell.removeEventListener('focus', () => {
-        (el.value as any)._tippy.show();
-    });
-    headerCell.removeEventListener('blur', () => {
-        (el.value as any)._tippy.hide();
-    });
+        headerCell.value.removeEventListener('focus', () => {
+            (el.value as any)._tippy.show();
+        });
+        headerCell.value.removeEventListener('blur', () => {
+            (el.value as any)._tippy.hide();
+        });
+    }
 });
 </script>
 

@@ -1,4 +1,4 @@
-import type { ColumnApi, GridApi } from 'ag-grid-community';
+import type { GridApi } from 'ag-grid-community';
 
 const GRID_SELECTOR = '.ag-root';
 const HEADER_ROW_SELECTOR = '.ag-header-viewport .ag-header-row';
@@ -8,7 +8,6 @@ export class GridAccessibilityManager {
     agGrid: HTMLElement;
     headerRows: HTMLElement[];
     agGridApi: GridApi;
-    agColumnApi: ColumnApi;
     mousedown = false;
 
     /**
@@ -47,10 +46,9 @@ export class GridAccessibilityManager {
      * @param {GridApi} agGridApi The ag-grid grid api
      * @param {ColumnApi} agColumnApi The ag-grid column api
      */
-    constructor(element: HTMLElement, agGridApi: GridApi, agColumnApi: ColumnApi) {
+    constructor(element: HTMLElement, agGridApi: GridApi) {
         this.element = element;
         this.agGridApi = agGridApi;
-        this.agColumnApi = agColumnApi;
         this.agGrid = this.element.querySelector(GRID_SELECTOR) as HTMLElement;
         this.headerRows = Array.prototype.slice.call(
             this.element.querySelectorAll(HEADER_ROW_SELECTOR)
@@ -242,7 +240,6 @@ interface TabToNextHeaderParams {
     // The number of header rows present in the grid
     headerRowCount: number;
     agApi: GridApi;
-    agColumnApi: ColumnApi;
 }
 
 interface HeaderPosition {
@@ -287,7 +284,6 @@ interface TabToNextCellParams {
     // The cell the grid would normally pick as the next cell for navigation.
     nextCellPosition: CellPosition | null;
     agApi: GridApi;
-    agColumnApi: ColumnApi;
 }
 
 interface CellPosition {
