@@ -116,10 +116,10 @@
                 <div class="pb-2 flex ml-auto justify-end">
                     <!-- show/hide columns -->
                     <column-dropdown
-                        :columnApi="columnApi"
+                        :gridApi="agGridApi!"
                         :columnDefs="columnDefs"
                         :systemCols="systemCols"
-                        @refreshHeaders="agGridApi.refreshHeader()"
+                        @refreshHeaders="agGridApi!.refreshHeader()"
                     ></column-dropdown>
 
                     <!-- clear all filters -->
@@ -381,21 +381,19 @@ import {
 } from 'vue';
 
 import { GlobalEvents, InstanceAPI, LayerInstance, NotificationType, PanelInstance } from '@/api/internal';
-
 import { DefPromise } from '@/geo/api';
-
 import type { Attributes, TabularAttributeSet } from '@/geo/api';
 
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-material.css';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-material.css';
 import { AgGridVue } from 'ag-grid-vue3';
-import ColumnDropdown from './column-dropdown.vue';
 import { useGridStore, type AttributeMapPair } from './store';
 import { usePanelStore } from '@/stores/panel';
+import { GridAccessibilityManager, tabToNextCellHandler, tabToNextHeaderHandler } from './accessibility';
 import type { ActionButtonDefinition, GridConfig } from './store';
+import ColumnDropdown from './column-dropdown.vue';
 import TableStateManager from './store/table-state-manager';
 import ColumnStateManager from './store/column-state-manager';
-import { GridAccessibilityManager, tabToNextCellHandler, tabToNextHeaderHandler } from './accessibility';
 
 // custom filter templates
 import GridCustomNumberFilterV from './templates/custom-number-filter.vue';
@@ -416,9 +414,13 @@ import { CoreFilter, FieldType } from '@/geo/api';
 import { AG_GRID_LOCALE_EN, AG_GRID_LOCALE_FR } from '@ag-grid-community/locale';
 
 import { debounce } from 'throttle-debounce';
-import type { RowNode } from 'ag-grid-community';
-import { ColumnApi, GridApi } from 'ag-grid-community';
+import type { ColDef, GridApi, RowNode } from 'ag-grid-community';
 import { useI18n } from 'vue-i18n';
+
+// module registration required for latest ag-grid versions
+// import { ModuleRegistry, AllCommunityModule, provideGlobalGridOptions } from 'ag-grid-community';
+// ModuleRegistry.registerModules([AllCommunityModule]);
+// provideGlobalGridOptions({ theme: 'legacy' });
 
 // to prevent lint complaining about regex expressions
 /* eslint no-useless-escape: 0 */
@@ -429,11 +431,11 @@ export interface FilterParams {
     textMatcher?: (params: any) => void;
     textFormatter?: (s: string) => void;
 }
+
 export interface TableComponent {
     config: GridConfig;
     agGridOptions: any;
     agGridApi: any;
-    columnApi: any;
     columnDefs: any;
     rowData: any;
     frameworkComponents: any;
@@ -446,6 +448,7 @@ export interface TableComponent {
     filterStatus: string;
     filterByExtent: boolean;
 }
+
 export interface ColumnDefinition {
     field: string;
     headerName: string;
@@ -475,6 +478,7 @@ export interface ColumnDefinition {
     suppressHeaderKeyboardEvent: (params: any) => void;
     autoHeight?: boolean;
 }
+
 // column definition for specialized columns (index, symbols, etc.)
 export interface SpecialColumnDefinition {
     sortable: boolean;
@@ -529,8 +533,9 @@ const config = ref<GridConfig>({
     state: new TableStateManager(),
     fieldMap: {}
 });
+
 const showGrid = ref(true);
-const agGridApi = ref<GridApi>(new GridApi());
+const agGridApi = ref<GridApi | null>(null);
 const agGridOptions = ref();
 const frameworkComponents = ref();
 const isLoadingGrid = ref<boolean>(false);
@@ -540,7 +545,6 @@ const totalRecordCount = ref<number>(0);
 const handlers = ref<Array<string>>([]);
 const watchers = ref<Array<() => void>>([]);
 const gridTitle = ref<string>('');
-const columnApi = ref<ColumnApi>(new ColumnApi());
 const columnDefs = ref<Array<any>>([]);
 const rowData = ref<Array<Attributes>>([]);
 const oidField = ref<string>('OBJECTID'); // this is just placeholder, will get overwritten below
@@ -573,16 +577,15 @@ const addAriaLabels = () => {
     ) as NodeListOf<Element>;
 
     checkboxInputs.forEach((input, index) => {
-        const allColumns = columnApi.value.getAllDisplayedColumns();
-        const column = allColumns[index].getColDef();
+        const allColumns = agGridApi.value?.getAllDisplayedColumns();
+        const column = allColumns?.[index].getColDef();
 
-        input.setAttribute('aria-label', column.headerName ?? t('grid.label.specialColumn'));
+        input.setAttribute('aria-label', column?.headerName ?? t('grid.label.specialColumn'));
     });
 };
 
 const onGridReady = (params: any) => {
     agGridApi.value = params.api;
-    columnApi.value = params.columnApi;
 
     // get grid title
     gridTitle.value = config.value.state.title || layer?.name || props.gridId;
@@ -592,13 +595,13 @@ const onGridReady = (params: any) => {
 
     // don't need to wait for data to render if rowData available
     if (rowData.value.length > 0) {
-        columnApi.value.autoSizeAllColumns();
+        agGridApi.value?.autoSizeAllColumns();
     }
 
     // Initial load
     addAriaLabels();
 
-    agGridApi.value.addEventListener('rowDataChanged', addAriaLabels);
+    agGridApi.value?.addEventListener('rowDataUpdated', addAriaLabels);
 
     // listen for layer filter and visibility events and update grid appropriately
     handlers.value.push(
@@ -630,7 +633,7 @@ const onGridReady = (params: any) => {
     handlers.value.push(
         iApi.event.on(GlobalEvents.LANG_CHANGE, () => {
             // Refresh the grid when the language changes
-            agGridApi.value.redrawRows({
+            agGridApi.value?.redrawRows({
                 force: true
             } as any);
         })
@@ -658,20 +661,14 @@ const onGridReady = (params: any) => {
 
 const gridRendered = () => {
     // size grid columns
-    columnApi.value.autoSizeAllColumns();
-
-    gridAccessibilityManager.value = new GridAccessibilityManager(
-        el.value!,
-        agGridApi.value as GridApi,
-        columnApi.value as ColumnApi
-    );
-
+    agGridApi.value?.autoSizeAllColumns();
+    gridAccessibilityManager.value = new GridAccessibilityManager(el.value!, agGridApi.value as GridApi);
     addAriaLabels();
 };
 
 // Updates the global search value.
 const updateQuickSearch = () => {
-    agGridApi.value.setQuickFilter(config.value.state.searchFilter);
+    agGridApi.value?.setGridOption('quickFilterText', config.value.state.searchFilter);
 };
 
 const resetQuickSearch = () => {
@@ -692,15 +689,15 @@ const toggleFilterByExtent = () => {
 
 // Toggles the floating (column) filters on and off.
 const toggleShowFilters = () => {
-    const colDefs = agGridOptions.value.api.getColumnDefs();
+    const colDefs = agGridApi.value?.getColumnDefs();
     config.value.state.colFilter = !config.value.state.colFilter;
 
-    colDefs.forEach((col: ColumnDefinition) => {
+    colDefs?.forEach((col: ColDef) => {
         col.floatingFilter = config.value.state.colFilter;
     });
 
     // Update the column definitions with the new filter value.
-    agGridOptions.value.api.setColumnDefs(colDefs);
+    agGridApi.value?.setGridOption('columnDefs', colDefs);
 };
 
 // Updates the current status of the filter.
@@ -711,45 +708,51 @@ const updateFilterInfo = () => {
             applyFiltersToMap();
         }
         nextTick(() => {
-            const cols = columnApi.value.getAllDisplayedColumns();
-            agGridOptions.value.api.refreshCells({
-                columns: [cols[0]] // Limits the refresh action to the row number column.
-            });
+            const cols = agGridApi.value?.getAllDisplayedColumns();
+            if (cols && cols.length > 0) {
+                agGridApi.value?.refreshCells({
+                    columns: [cols[0]] // Limits the refresh action to the row number column.
+                });
+            }
             updateRowInfo();
         });
     }
 };
 
 const updateRowInfo = () => {
-    filterInfo.value.firstRow = agGridApi.value.getFirstDisplayedRow() + 1;
-    filterInfo.value.lastRow = agGridApi.value.getLastDisplayedRow() + 1;
-    filterInfo.value.visibleRows = agGridApi.value.getDisplayedRowCount();
+    if (agGridApi.value) {
+        filterInfo.value.firstRow = agGridApi.value.getFirstDisplayedRowIndex() + 1;
+        filterInfo.value.lastRow = agGridApi.value.getLastDisplayedRowIndex() + 1;
+        filterInfo.value.visibleRows = agGridApi.value.getDisplayedRowCount();
+    }
 };
 
 // Clear all table filters.
 const clearFilters = () => {
     // Replace the filter model with an empty model.
-    agGridApi.value.setFilterModel({});
+    agGridApi.value?.setFilterModel({});
 
     // Clear any saved filter state in the table state manager.
     config.value.state.clearFilters();
 
     // Refresh the column filters to reset inputs.
-    agGridApi.value.refreshHeader();
+    agGridApi.value?.refreshHeader();
 };
 
 const togglePinned = () => {
     pinned.value = !pinned.value;
     const pinSetting = pinned.value ? 'left' : null;
 
-    const cols = columnApi.value.getAllDisplayedColumns();
-    columnApi.value.setColumnsPinned(cols.slice(1, 3), pinSetting);
+    const cols = agGridApi.value?.getAllDisplayedColumns();
+    if (cols && cols.length >= 3) {
+        agGridApi.value?.setColumnsPinned(cols.slice(1, 3), pinSetting);
+    }
 };
 
 const exportData = () => {
     // Filter out the 'special columns'
-    const columnsToExport = columnApi.value
-        .getAllDisplayedColumns()
+    const columnsToExport = agGridApi.value
+        ?.getAllDisplayedColumns()
         .filter(column => !(column.getColDef() as any).preventExport);
 
     // Replaces HTML symbols with their corresponding string character (i.e., &quot; -> ")
@@ -759,7 +762,7 @@ const exportData = () => {
         return temp.textContent || temp.innerText;
     };
 
-    agGridApi.value.exportDataAsCsv({
+    agGridApi.value?.exportDataAsCsv({
         columnKeys: columnsToExport,
         suppressQuotes: true,
         processCellCallback: cell => {
@@ -887,7 +890,8 @@ const setUpSpecialColumns = (
             lockPosition: true,
             valueGetter: 'node.rowIndex + 1',
             suppressMovable: true,
-            suppressMenu: true,
+            suppressHeaderMenuButton: true,
+            suppressHeaderContextMenu: true,
             floatingFilter: config.value.state.colFilter,
             pinned: 'left',
             maxWidth: 42,
@@ -1047,7 +1051,7 @@ const isExternalFilterPresent = () => {
 };
 
 // filters row based on layer filter
-const doesExternalFilterPass = (node: RowNode) => {
+const doesExternalFilterPass = (node: any) => {
     const oids = filteredOids.value[node.data.rvUid];
     return oids === undefined || oids.includes(node.data[oidField.value]);
 };
@@ -1094,7 +1098,7 @@ const applyLayerFilters = async () => {
     );
 
     // filterOids are now up to date. Apply them to the grid
-    agGridApi.value.onFilterChanged();
+    agGridApi.value?.onFilterChanged();
 
     // unblock our promise, letting any filter behind us start.
     thisFilterDef.resolveMe();
@@ -1128,15 +1132,15 @@ const applyFiltersToMap = () => {
 
 // get filter SQL query string
 const getFiltersQuery = (id: string) => {
-    const filterModel = agGridApi.value.getFilterModel();
+    const filterModel = agGridApi.value?.getFilterModel();
     const colStrs: (string | undefined)[] = [];
-    Object.keys(filterModel).forEach(col => {
+    Object.keys(filterModel || {}).forEach(col => {
         // check if filter is applied to an attribute of this layer
         const attrs = getAttrPair(id, col);
         if (attrs) {
             // create SQL string with original attribute name, because otherwise the the layer wouldn't recognize the attribute name in the filter
             // i.e a layer with 'LAT' mapped to 'LATITUDE' in the grid must query '___ IN LAT' instead of '___ IN LATITUDE'
-            colStrs.push(filterToSql(attrs.origAttr, filterModel[col]));
+            colStrs.push(filterToSql(attrs.origAttr, filterModel?.[col]));
         } else {
             // filter out layer when searching a column it doesn't have
             colStrs.push('1=2');
@@ -1229,9 +1233,12 @@ const globalSearchToSql = (id: string): string => {
     // to implement quick filters, first need to split the search text on white space
     const searchVals = val.split(' ');
 
-    const sortedRows = (agGridApi.value as any).rowModel.rowsToDisplay;
-    const columns = columnApi.value
-        .getAllDisplayedColumns()
+    const sortedRows: RowNode[] = [];
+    agGridApi.value!.forEachNodeAfterFilterAndSort(node => {
+        sortedRows.push(node as RowNode);
+    });
+    const columns = agGridApi.value
+        ?.getAllDisplayedColumns()
         .filter(
             (column: any) =>
                 (column.colDef.filter === 'agTextColumnFilter' || column.colDef.filter === 'agNumberColumnFilter') &&
@@ -1249,7 +1256,7 @@ const globalSearchToSql = (id: string): string => {
             const filterVal = `%${searchVal.replace(/\*/g, '%').split(' ').join('%').toUpperCase()}`;
             // if any column data matches the search val in regex form, set foundVal to true and proceed to next search term
             let foundVal = false;
-            for (const column of columns) {
+            for (const column of columns ?? []) {
                 const colId = column.getColId();
                 const origColId = getAttrPair(id, column.getColId())?.origAttr;
                 const colDef = column.getColDef();
@@ -1686,7 +1693,7 @@ onBeforeMount(() => {
         // tab vertically instead of horizontally
         tabToNextHeader: tabToNextHeaderHandler,
         onModelUpdated: debounce(300, () => {
-            columnApi.value.autoSizeAllColumns();
+            agGridApi.value?.autoSizeAllColumns();
             addAriaLabels();
         })
     };
