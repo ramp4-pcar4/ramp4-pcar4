@@ -17,6 +17,7 @@ export interface NotificationStore {
 }
 
 export const useNotificationStore = defineStore('notification', () => {
+    let notificationIdCounter = 0;
     const notificationStack = ref<(Notification | NotificationGroup)[]>([]);
     const groups = ref<{ [id: string]: NotificationGroup }>({});
 
@@ -25,7 +26,8 @@ export const useNotificationStore = defineStore('notification', () => {
     });
 
     function showNotification(notification: Notification) {
-        notificationStack.value = [notification, ...notificationStack.value];
+        const notificationId = { ...notification, id: `notif-${notificationIdCounter++}` };
+        notificationStack.value = [notificationId, ...notificationStack.value];
     }
 
     function removeNotification(notification: Notification | NotificationGroup) {

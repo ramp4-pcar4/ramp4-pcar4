@@ -3,6 +3,7 @@ import type { NotificationType } from '@/api';
 export interface Notification {
     message: string;
     type: NotificationType;
+    id: string;
 }
 
 export interface NotificationGroup {
