@@ -12,9 +12,11 @@
             <template v-for="(notification, index) in notificationStack" :key="notification.message + index">
                 <div v-if="index > 0" class="w-full border-b border-black" />
                 <notification-item
+                    :ref="el => (itemRefs[index] = el)"
                     :class="[notification.type]"
                     :notification="notification"
                     v-focus-item
+                    @remove="handleRemove(index)"
                 ></notification-item>
             </template>
         </ul>
@@ -34,7 +36,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import type { ComponentPublicInstance } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useNotificationStore } from '@/stores/notification';
 import NotificationItem from './notification-item.vue';
@@ -42,6 +45,7 @@ import NotificationItem from './notification-item.vue';
 const notificationStore = useNotificationStore();
 const { t } = useI18n();
 const el = ref<Element>();
+const itemRefs = ref<(ComponentPublicInstance | Element | null)[]>([]);
 
 const blurEvent = () => {
     (el.value as any)._tippy.hide();
@@ -52,6 +56,19 @@ const keyupEvent = (e: Event) => {
     if (evt.key === 'Tab' && el.value?.matches(':focus')) {
         (el.value as any)._tippy.show();
     }
+};
+
+const handleRemove = (index: number) => {
+    const nextFocusIndex = index < notificationStack.value.length - 1 ? index : index - 1;
+    notificationStore.removeNotification(notificationStack.value[index]);
+
+    nextTick(() => {
+        const nextComp = itemRefs.value[nextFocusIndex];
+        const el = (nextComp as any)?.$el ?? nextComp;
+
+        const event = new CustomEvent('refocusLegendItem', { detail: { focusItem: el }, bubbles: true });
+        el?.dispatchEvent(event);
+    });
 };
 
 onMounted(() => {

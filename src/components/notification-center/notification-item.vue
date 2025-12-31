@@ -23,7 +23,7 @@
             </div>
             <button
                 type="button"
-                @click.stop="removeNotification(notification)"
+                @click.stop="() => emit('remove')"
                 class="mx-4 p-4 text-gray-500 hover:text-black"
                 :content="t('notifications.controls.dismiss')"
                 :aria-label="t('notifications.controls.dismiss')"
@@ -55,10 +55,9 @@
 import { reactive, ref } from 'vue';
 import { NotificationType } from '@/api/notifications';
 import { useI18n } from 'vue-i18n';
-import { useNotificationStore } from '@/stores/notification';
 
-const notificationStore = useNotificationStore();
 const { t } = useI18n();
+const emit = defineEmits(['remove']);
 
 const props = defineProps({
     notification: {
@@ -74,9 +73,6 @@ const icons = reactive({
     [NotificationType.ERROR]: '❌'
 });
 
-const removeNotification = (notif: any) => {
-    notificationStore.removeNotification(notif);
-};
 const tooltipShow = () => {
     if (!props.notification.messageList) {
         return false;
