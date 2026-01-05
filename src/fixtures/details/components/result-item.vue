@@ -93,10 +93,12 @@
 
 import { useLayerStore } from '@/stores/layer';
 import { GeometryType, LayerType } from '@/geo/api';
+import { NotificationType } from '@/api';
 import { DetailsItemInstance, useDetailsStore, type DetailsFieldItem } from '../store';
 import { computed, inject, onBeforeMount, onBeforeUnmount, ref, resolveDynamicComponent, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import linkifyHtml from 'linkify-html';
+import { nextTick } from 'vue';
 
 import ESRIDefault from '../templates/esri-default.vue';
 import HTMLDefault from '../templates/html-default.vue';
@@ -247,15 +249,18 @@ const detailsTemplate = computed(() => {
     // If there is a custom template binding for this layer in the store, then
     // return its name.
     const templateVal = layer && detailProperties.value[layer.id] && detailProperties.value[layer.id].template;
-
     if (templateVal) {
         const customTemplateExists = typeof resolveDynamicComponent(templateVal) !== 'string';
-
         // If the custom template exists, render it. Otherwise, fall through and use the default template.
         if (customTemplateExists) {
             return templateVal;
         } else {
-            console.error(`Could not find custom details template named ${templateVal}. Was it registered correctly?`);
+            nextTick(() =>
+                iApi.notify.show(
+                    NotificationType.WARNING,
+                    iApi.$i18n.t('details.template.notFound', { layer: templateVal })
+                )
+            );
         }
     }
 
