@@ -1,17 +1,17 @@
 /*
 Test 15: Vector Tile Layer
-- Loads a vector tile layer from an external source (WDPA)
+- Loads a vector tile layer from an external source (Mangroves)
  */
 
 const runPreTest = (config, options, utils) => {
-    const wdpa = {
-        id: 'WDPA',
-        name: 'WDPA World Database of Protected Areas',
+    const mangroves = {
+        id: 'mangroves',
+        name: 'Mangroves',
         layerType: 'esri-vector-tile',
-        url: 'https://vectortileservices5.arcgis.com/Mj0hjvkNtV7NRhA7/arcgis/rest/services/WDPA_World_Database_of_Protected_Areas_VTS/VectorTileServer'
+        url: 'https://vectortileservices2.arcgis.com/TjBp1jQZXKD8DAF6/arcgis/rest/services/North_America_Mangroves_Py/VectorTileServer'
     };
 
-    utils.addLayerLegend(wdpa);
+    utils.addLayerLegend(mangroves);
     config.configs.en.map.initialBasemapId = 'baseEsriTerrain';
     config.configs.fr.map.initialBasemapId = 'baseEsriTerrain';
 
