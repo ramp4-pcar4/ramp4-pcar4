@@ -41,11 +41,24 @@
                 $emit('refreshHeaders');
             "
             href="javascript:;"
-            class="flex leading-snug items-center w-256"
+            class="flex leading-snug items-center max-w-[268px]"
         >
-            <div class="md-icon-small inline">
-                {{ col.headerName }}
-                <svg height="18" width="18" viewBox="0 0 24 24" class="inline float-right" v-if="!col.hide">
+            <div class="md-icon-small inline flex w-full">
+                <span
+                    class="flex-1 truncate whitespace-nowrap overflow-hidden"
+                    v-tippy="{
+                        content: col.headerName,
+                        placement: 'left',
+                        theme: 'ramp4',
+                        animation: 'scale',
+                        trigger: 'manual'
+                    }"
+                    @mouseenter="showTooltip"
+                    @mouseleave="hideTooltip"
+                >
+                    {{ col.headerName }}
+                </span>
+                <svg height="18" width="18" viewBox="0 0 24 24" :class="{ invisible: col.hide }">
                     <g id="done">
                         <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                     </g>
@@ -62,6 +75,17 @@ import { useI18n } from 'vue-i18n';
 
 const iApi = inject('iApi') as InstanceAPI;
 const { t } = useI18n();
+
+const showTooltip = (event: MouseEvent) => {
+    const el = event.currentTarget as HTMLElement;
+    if (el.scrollWidth > el.clientWidth) {
+        (el as any)._tippy?.show();
+    }
+};
+
+const hideTooltip = (event: MouseEvent) => {
+    (event.currentTarget as any)?._tippy?.hide();
+};
 
 defineProps({
     columnDefs: { type: Object as PropType<Array<any>>, required: true },
