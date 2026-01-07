@@ -1,5 +1,5 @@
 import { InstanceAPI, MapLayer, NotificationType } from '@/api/internal';
-import { DataFormat, LayerState } from '@/geo/api';
+import { DataFormat, DrawState, LayerState } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 
 /**
@@ -58,6 +58,11 @@ export class CommonTileLayer extends MapLayer {
 
             grouse();
             this.onError();
+
+            // typically happens after projection change. The layer-views get regenerated but the layers
+            // themselves do not reload. The new view flips the layer into drawing state.
+            // The onError doesn't mess with drawing state, so turn it off here.
+            this.updateDrawState(DrawState.NOT_LOADED);
         } else if (this.layerState === LayerState.ERROR && isEqual) {
             // the layer has errored and the projections now match, reload the layer
             this.reload();
