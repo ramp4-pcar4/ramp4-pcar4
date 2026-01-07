@@ -3,20 +3,31 @@
         <div v-if="layersModel.length === 0" class="flex-1 ms-10" v-truncate>
             <span class="p-5">{{ t('layer-reorder.nolayers') }}</span>
         </div>
-        <draggable
+        <div
             v-else
-            class="p-3"
-            v-model="layersModel"
-            item-key="uid"
-            :animation="isAnimationEnabled ? 200 : 0"
-            @change="onMoveLayerDragEnd"
-            @start="onMoveLayerDragStart"
-            v-focus-list
+            :content="t('panels.controls.items')"
+            v-tippy="{
+                trigger: 'manual',
+                placement: 'top-start',
+                touch: false,
+                maxWidth: 190
+            }"
+            ref="tooltip"
         >
-            <template #item="{ element }">
-                <div
-                    v-if="element.isLoaded"
-                    :class="`
+            <draggable
+                class="p-3"
+                v-model="layersModel"
+                item-key="uid"
+                :animation="isAnimationEnabled ? 200 : 0"
+                @change="onMoveLayerDragEnd"
+                @start="onMoveLayerDragStart"
+                ref="el"
+                v-focus-list
+            >
+                <template #item="{ element }">
+                    <div
+                        v-if="element.isLoaded"
+                        :class="`
                         mt-4
                         relative
                         ${element.isExpanded ? 'hover:bg-gray-200' : ''}
@@ -24,113 +35,113 @@
                         border-gray-300
                         default-focus-style
                     `"
-                    v-tippy="{
-                        placement: 'top-start',
-                        aria: 'describedby'
-                    }"
-                    :aria-label="element.name"
-                    :content="element.name"
-                    :ref="el => (itemRefs[element.id] = (el as HTMLElement) || null)"
-                    v-focus-item
-                >
-                    <!-- TODO: fix this hack that prevents duplicate UI bug on prod (to reproduce: remove this, run prod build and open -> close -> re-open reorder panel) -->
-                    <div class="display-none" ref="list"></div>
-
-                    <div class="flex items-center p-5 h-44 cursor-pointer hover:bg-gray-200">
-                        <!-- dropdown toggle  -->
-                        <button
-                            type="button"
-                            v-if="element.supportsSublayers"
-                            @click="toggleExpand(element)"
-                            class="text-gray-500 hover:text-black p-5"
-                            :content="t(`layer-reorder.${!element.isExpanded ? 'expand' : 'collapse'}`)"
-                            v-tippy="{
-                                placement: 'right',
-                                aria: 'describedby'
-                            }"
-                            :aria-label="t(`layer-reorder.${!element.isExpanded ? 'expand' : 'collapse'}`)"
-                        >
-                            <svg v-if="element.isExpanded" class="fill-current w-20 h-20 mx-4" viewBox="0 0 24 24">
-                                <path d="M0 0h24v24H0z" fill="none" />
-                                <path d="M19 13H5v-2h14v2z" />
-                            </svg>
-                            <svg v-else class="fill-current w-20 h-20 mx-4" viewBox="0 0 24 24">
-                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
-                            </svg>
-                        </button>
-
-                        <!-- name -->
-                        <div class="flex-1 mx-10" v-truncate>
-                            <span>{{ element.name }} </span>
-                        </div>
-
-                        <!-- controls -->
-                        <reorder-button
-                            :ref="el => (buttonRefs[element.id + '-up'] = (el as any)?.buttonRef || null)"
-                            :disabled="_isBoundary(element.componentIdx - 1)"
-                            direction="up"
-                            :layerId="element.id"
-                            class="px-7"
-                            @click="onMoveLayerButton(element, 1)"
-                        />
-                        <reorder-button
-                            :ref="el => (buttonRefs[element.id + '-down'] = (el as any)?.buttonRef || null)"
-                            :disabled="_isBoundary(element.componentIdx + 1)"
-                            direction="down"
-                            :layerId="element.id"
-                            class="px-7"
-                            @click="onMoveLayerButton(element, -1)"
-                        />
-                    </div>
-
-                    <!-- display children of the parent layer. -->
-                    <div
-                        class="items-center p-5 pl-30 default-focus-style cursor-pointer"
-                        v-if="element.isExpanded && element.sublayers.length > 0"
-                        v-focus-list
+                        v-tippy="{
+                            placement: 'top-start',
+                            aria: 'describedby'
+                        }"
+                        :aria-label="element.name"
+                        :content="element.name"
+                        :ref="el => (itemRefs[element.id] = (el as HTMLElement) || null)"
+                        v-focus-item
                     >
+                        <!-- TODO: fix this hack that prevents duplicate UI bug on prod (to reproduce: remove this, run prod build and open -> close -> re-open reorder panel) -->
+                        <div class="display-none" ref="list"></div>
+
+                        <div class="flex items-center p-5 h-44 cursor-pointer hover:bg-gray-200">
+                            <!-- dropdown toggle  -->
+                            <button
+                                type="button"
+                                v-if="element.supportsSublayers"
+                                @click="toggleExpand(element)"
+                                class="text-gray-500 hover:text-black p-5"
+                                :content="t(`layer-reorder.${!element.isExpanded ? 'expand' : 'collapse'}`)"
+                                v-tippy="{
+                                    placement: 'right',
+                                    aria: 'describedby'
+                                }"
+                                :aria-label="t(`layer-reorder.${!element.isExpanded ? 'expand' : 'collapse'}`)"
+                            >
+                                <svg v-if="element.isExpanded" class="fill-current w-20 h-20 mx-4" viewBox="0 0 24 24">
+                                    <path d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M19 13H5v-2h14v2z" />
+                                </svg>
+                                <svg v-else class="fill-current w-20 h-20 mx-4" viewBox="0 0 24 24">
+                                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path>
+                                </svg>
+                            </button>
+
+                            <!-- name -->
+                            <div class="flex-1 mx-10" v-truncate>
+                                <span>{{ element.name }} </span>
+                            </div>
+
+                            <!-- controls -->
+                            <reorder-button
+                                :ref="el => (buttonRefs[element.id + '-up'] = (el as any)?.buttonRef || null)"
+                                :disabled="_isBoundary(element.componentIdx - 1)"
+                                direction="up"
+                                :layerId="element.id"
+                                class="px-7"
+                                @click="onMoveLayerButton(element, 1)"
+                            />
+                            <reorder-button
+                                :ref="el => (buttonRefs[element.id + '-down'] = (el as any)?.buttonRef || null)"
+                                :disabled="_isBoundary(element.componentIdx + 1)"
+                                direction="down"
+                                :layerId="element.id"
+                                class="px-7"
+                                @click="onMoveLayerButton(element, -1)"
+                            />
+                        </div>
+
+                        <!-- display children of the parent layer. -->
                         <div
-                            v-for="sublayer in element.sublayers"
-                            :key="sublayer.id"
-                            class="m-15 default-focus-style"
-                            v-truncate
-                            v-tippy="{
-                                placement: 'bottom-start',
-                                aria: 'describedby'
-                            }"
-                            :content="sublayer.name"
-                            :aria-label="sublayer.name"
-                            v-focus-item
+                            class="items-center p-5 pl-30 default-focus-style cursor-pointer"
+                            v-if="element.isExpanded && element.sublayers.length > 0"
+                            v-focus-list
                         >
-                            {{ sublayer.name }}
+                            <div
+                                v-for="sublayer in element.sublayers"
+                                :key="sublayer.id"
+                                class="m-15 default-focus-style"
+                                v-truncate
+                                v-tippy="{
+                                    placement: 'bottom-start',
+                                    aria: 'describedby'
+                                }"
+                                :content="sublayer.name"
+                                :aria-label="sublayer.name"
+                                v-focus-item
+                            >
+                                {{ sublayer.name }}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!-- else show loading spinner -->
-                <div
-                    v-else
-                    class="flex items-center p-5 mx-8 h-44 default-focus-style"
-                    :content="t('layer-reorder.loading')"
-                    v-tippy="{
-                        placement: 'top-start',
-                        aria: 'describedby'
-                    }"
-                    :aria-label="t('layer-reorder.loading')"
-                    v-focus-container
-                    truncate-trigger
-                >
-                    <div class="animate-spin spinner h-20 w-20 px-5"></div>
-                    <div class="flex-1 mx-10">
-                        <span>{{ t('layer-reorder.loading') }} </span>
+                    <!-- else show loading spinner -->
+                    <div
+                        v-else
+                        class="flex items-center p-5 mx-8 h-44 default-focus-style"
+                        :content="t('layer-reorder.loading')"
+                        v-tippy="{
+                            placement: 'top-start',
+                            aria: 'describedby'
+                        }"
+                        :aria-label="t('layer-reorder.loading')"
+                        truncate-trigger
+                    >
+                        <div class="animate-spin spinner h-20 w-20 px-5"></div>
+                        <div class="flex-1 mx-10">
+                            <span>{{ t('layer-reorder.loading') }} </span>
+                        </div>
                     </div>
-                </div>
-            </template>
-        </draggable>
+                </template>
+            </draggable>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onBeforeUnmount, onMounted, ref, toRaw } from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, ref, toRaw, nextTick } from 'vue';
 
 import { GlobalEvents, LayerInstance } from '@/api';
 import type { InstanceAPI } from '@/api';
@@ -147,7 +158,8 @@ const layersModel = ref<Array<LayerModel>>([]);
 const buttonRefs = ref<Record<string, HTMLButtonElement | null>>({});
 const itemRefs = ref<Record<string, HTMLElement | null>>({});
 
-const list = ref<Element>();
+const el = ref<Element>();
+const tooltip = ref<Element>();
 
 /**
  * Snapshots positions when dragging starts. The array has same order as the layersModel.
@@ -364,7 +376,7 @@ const onMoveLayerButton = async (layerModel: LayerModel, direction: number): Pro
         const focusItem = itemRefs.value[layerModel.id];
         const focusItemEvent = new CustomEvent('switchFocusItem', { bubbles: true, detail: { focusItem } });
         const btn = buttonRefs.value[layerModel.id + '-' + directionStr];
-        list.value?.dispatchEvent(focusItemEvent);
+        (el.value as any).$el.dispatchEvent(focusItemEvent);
         btn?.focus();
     }, 0);
 };
@@ -382,7 +394,7 @@ const _isBoundary = (index: number): boolean => {
     return index < 0 || index > layersModel.value.length - 1;
 };
 
-onMounted(() => {
+onMounted(async () => {
     loadLayers();
 
     // watch for layer remove events (this is mainly used to react to sublayer removals)
@@ -408,13 +420,34 @@ onMounted(() => {
             loadLayers();
         })
     );
+
+    await nextTick();
+
+    (el.value as any).$el.addEventListener('blur', blurEvent);
+    (el.value as any).$el.addEventListener('keyup', keyupEvent);
 });
 
 onBeforeUnmount(() => {
     // unmount handlers and watchers
     handlers.value.forEach(handler => iApi.event.off(handler));
     watchers.value.forEach(unwatch => unwatch());
+    (el.value as any).$el.addEventListener('blur', blurEvent);
+    (el.value as any).$el.addEventListener('keyup', keyupEvent);
 });
+
+const blurEvent = () => {
+    (tooltip.value as any)._tippy.hide();
+};
+
+const keyupEvent = (e: Event) => {
+    const evt = e as KeyboardEvent;
+    if (evt.key === 'Tab' && e.target == (el.value as any).$el) {
+        console.log('AAAA');
+        (tooltip.value as any)._tippy.show();
+    } else {
+        (tooltip.value as any)._tippy.hide();
+    }
+};
 </script>
 
 <style lang="scss" scoped></style>
