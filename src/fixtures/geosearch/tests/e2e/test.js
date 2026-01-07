@@ -126,6 +126,10 @@ describe('Geosearch', () => {
             cy.get('.rv-geosearch-top-filters select :selected').eq(1).contains('Type');
         });
 
+        // .position has been removed from geosearch.
+        // if we ever resurect the tests, either keep this one nuked, or calculate the position
+        // from the .bbox property
+        /*
         it('filters to visible extent', () => {
             // zoom to a smaller extent
             cy.window()
@@ -150,5 +154,6 @@ describe('Geosearch', () => {
             });
             cy.get('.rv-geosearch-bottom-filters [type="checkbox"]').uncheck();
         });
+        */
     });
 });
