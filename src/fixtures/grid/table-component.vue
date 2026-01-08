@@ -169,7 +169,7 @@
                         <!-- toggle apply to map -->
                         <a
                             href="javascript:;"
-                            class="flex leading-snug items-center w-256"
+                            class="leading-snug w-256"
                             :class="{
                                 hover: filtersStatus !== 'disabled' ? 'none' : 'text-black',
                                 disabled: filtersStatus === 'disabled'
@@ -178,22 +178,21 @@
                             role="button"
                             :aria-label="t('grid.label.filters.apply')"
                         >
-                            <div class="md-icon-small inline items-start">
+                            <div class="md-icon-small flex flex-nowrap items-center gap-x-4">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24"
-                                    class="fill-current inline w-20 h-20 mr-2 text-gray-500"
+                                    class="fill-current w-20 h-20 mr-2 text-gray-500"
                                 >
                                     <path
                                         d="m 15.585999,21.223066 2.414,-2.414 v 1.811 A 3.616,3.616 0 0 0 21.2,15.309066 l 0.881,-0.881 a 4.82,4.82 0 0 1 -4.080001,7.4 v 1.811 z m -13.5859988,-9.224 a 10,10 0 1 1 19.9999998,0 c 0,0.172 0,0.346 -0.013,0.517 a 5.971,5.971 0 0 0 -2.014001,-1.184001 7.935,7.935 0 0 0 -4.973,-6.742999 v 0.41 a 2,2 0 0 1 -2,2 h -2 v 2 A 1,1 0 0 1 10,9.9990662 H 8.0000002 v 1.9999998 h 5.9999988 a 1,1 0 0 1 0.495,0.131 6,6 0 0 0 -0.184,9.6 10.009,10.009 0 0 1 -12.3109988,-9.731 z m 2,0 a 8,8 0 0 0 6.9999988,7.93 v -1.93 a 2,2 0 0 1 -1.9999988,-2 v -1 l -4.79,-4.79 a 8.07,8.07 0 0 0 -0.21,1.79 z m 9.1729988,5 a 4.827,4.827 0 0 1 4.827,-4.828 v -1.81 l 2.414,2.414 -2.414,2.413 v -1.809 a 3.623,3.623 0 0 0 -3.62,3.62 3.537,3.537 0 0 0 0.42,1.69 l -0.881,0.881 a 4.787,4.787 0 0 1 -0.746,-2.571 z"
                                     />
                                 </svg>
-                                {{ t('grid.label.filters.apply') }}
+                                <span class="grow">{{ t('grid.label.filters.apply') }}</span>
                                 <svg
                                     height="18"
                                     width="18"
                                     viewBox="0 0 24 24"
-                                    class="inline float-right"
                                     v-if="filtersStatus !== 'disabled' && config.state.applyToMap"
                                 >
                                     <g id="done">
@@ -205,29 +204,23 @@
                         <!-- toggle column filters -->
                         <a
                             href="javascript:;"
-                            class="flex leading-snug items-center w-256 hover:text-black"
+                            class="leading-snug w-256 hover:text-black"
                             @click="toggleShowFilters()"
                             role="button"
                             :aria-label="t('grid.label.filters.show')"
                         >
-                            <div class="md-icon-small inline items-start">
+                            <div class="md-icon-small flex flex-nowrap items-center gap-x-4">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24"
-                                    class="fill-current inline w-20 h-20 mr-2 text-gray-500"
+                                    class="fill-current w-20 h-20 mr-2 text-gray-500"
                                 >
                                     <path
                                         d="M 3,2L 20.9888,2L 21,2L 21,2.01122L 21,3.99999L 20.9207,3.99999L 14,10.9207L 14,22.909L 9.99999,18.909L 10,10.906L 3.09405,3.99999L 3,3.99999L 3,2 Z "
                                     />
                                 </svg>
-                                {{ t('grid.label.filters.show') }}
-                                <svg
-                                    height="18"
-                                    width="18"
-                                    viewBox="0 0 24 24"
-                                    class="inline float-right"
-                                    v-if="config.state.colFilter"
-                                >
+                                <span class="grow">{{ t('grid.label.filters.show') }}</span>
+                                <svg height="18" width="18" viewBox="0 0 24 24" v-if="config.state.colFilter">
                                     <g id="done">
                                         <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                                     </g>
@@ -237,7 +230,7 @@
                         <!-- toggle extent filter -->
                         <a
                             href="javascript:;"
-                            class="flex leading-snug items-center w-256"
+                            class="leading-snug w-256"
                             :class="{
                                 hover: filtersStatus !== 'disabled' ? 'none' : 'text-black',
                                 disabled: filtersStatus === 'disabled'
@@ -246,22 +239,21 @@
                             role="button"
                             :aria-label="t('grid.filters.label.extent')"
                         >
-                            <div class="md-icon-small inline items-start">
+                            <div class="md-icon-small flex flex-nowrap items-center gap-x-4">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24"
-                                    class="fill-current inline w-20 h-20 mr-2 text-gray-500"
+                                    class="fill-current w-20 h-20 mr-2 text-gray-500"
                                 >
                                     <path
                                         d="M 4 10 Z M 2 2 L 19.9888 2 L 20 2 L 20 2.0112 L 20 4 L 19.9207 4 L 13 10.9207 L 13 22.909 L 9 18.909 L 9 10.906 L 2.0941 4 L 2 4 L 2 2 Z M 24 13 L 21 14 L 18 13 L 15 14 V 22 L 18 21 l 3 1 l 3 -1 z M 21 21 l -3 -1 V 14 l 3 1.055 z"
                                     />
                                 </svg>
-                                {{ t('grid.filters.label.extent') }}
+                                <span class="grow">{{ t('grid.filters.label.extent') }}</span>
                                 <svg
                                     height="18"
                                     width="18"
                                     viewBox="0 0 24 24"
-                                    class="inline float-right"
                                     v-if="filtersStatus !== 'disabled' && config.state.filterByExtent"
                                 >
                                     <g id="done">
@@ -272,59 +264,63 @@
                         </a>
                         <a
                             href="javascript:;"
-                            class="flex leading-snug items-center w-256"
+                            class="leading-snug w-256"
                             :class="{ hover: 'text-black' }"
                             @click="togglePinned()"
                             role="button"
                             :aria-label="t('grid.label.pinColumns')"
                         >
-                            <svg
-                                v-if="pinned"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                class="fill-current inline w-20 h-20 mr-2 text-gray-500"
-                            >
-                                <path
-                                    d="M18,8H17V6A5,5 0 0,0 12,1A5,5 0 0,0 7,6V8H6A2,2 0 0,0 4,10V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V10A2,2 0 0,0 18,8M12,3A3,3 0 0,1 15,6V8H9V6A3,3 0 0,1 12,3Z"
-                                />
-                            </svg>
-                            <svg
-                                v-else-if="!pinned"
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                class="fill-current inline w-20 h-20 mr-2 text-gray-500"
-                            >
-                                <path
-                                    d="M18 1.5c2.9 0 5.25 2.35 5.25 5.25v3.75a.75.75 0 01-1.5 0V6.75a3.75 3.75 0 10-7.5 0v3a3 3 0 013 3v6.75a3 3 0 01-3 3H3.75a3 3 0 01-3-3v-6.75a3 3 0 013-3h9v-3c0-2.9 2.35-5.25 5.25-5.25z"
-                                />
-                            </svg>
-                            {{ t('grid.label.pinColumns') }}
-                            <svg height="18" width="18" viewBox="0 0 24 24" class="inline float-right" v-if="pinned">
-                                <g id="done">
-                                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
-                                </g>
-                            </svg>
+                            <div class="md-icon-small flex flex-nowrap items-center gap-x-4">
+                                <svg
+                                    v-if="pinned"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    class="fill-current w-20 h-20 mr-2 text-gray-500"
+                                >
+                                    <path
+                                        d="M18,8H17V6A5,5 0 0,0 12,1A5,5 0 0,0 7,6V8H6A2,2 0 0,0 4,10V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V10A2,2 0 0,0 18,8M12,3A3,3 0 0,1 15,6V8H9V6A3,3 0 0,1 12,3Z"
+                                    />
+                                </svg>
+                                <svg
+                                    v-else-if="!pinned"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    class="fill-current w-20 h-20 mr-2 text-gray-500"
+                                >
+                                    <path
+                                        d="M18 1.5c2.9 0 5.25 2.35 5.25 5.25v3.75a.75.75 0 01-1.5 0V6.75a3.75 3.75 0 10-7.5 0v3a3 3 0 013 3v6.75a3 3 0 01-3 3H3.75a3 3 0 01-3-3v-6.75a3 3 0 013-3h9v-3c0-2.9 2.35-5.25 5.25-5.25z"
+                                    />
+                                </svg>
+                                <span class="grow">{{ t('grid.label.pinColumns') }}</span>
+                                <svg height="18" width="18" viewBox="0 0 24 24" v-if="pinned">
+                                    <g id="done">
+                                        <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+                                    </g>
+                                </svg>
+                            </div>
                         </a>
                         <a
                             href="javascript:;"
-                            class="flex leading-snug items-center w-256"
+                            class="leading-snug w-256"
                             :class="{ hover: 'text-black' }"
                             @click="exportData()"
                             role="button"
                             :aria-label="t('grid.label.export')"
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                class="fill-current inline w-20 h-20 mr-2 text-gray-500"
-                            >
-                                <g>
-                                    <path
-                                        d="M6 2c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6H6zm7 7V3.5L18.5 9H13z"
-                                    ></path>
-                                </g>
-                            </svg>
-                            {{ t('grid.label.export') }}
+                            <div class="md-icon-small flex flex-nowrap items-center gap-x-4">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    class="fill-current w-20 h-20 mr-2 text-gray-500"
+                                >
+                                    <g>
+                                        <path
+                                            d="M6 2c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6H6zm7 7V3.5L18.5 9H13z"
+                                        ></path>
+                                    </g>
+                                </svg>
+                                <span class="grow">{{ t('grid.label.export') }}</span>
+                            </div>
                         </a>
                     </dropdown-menu>
                 </div>
