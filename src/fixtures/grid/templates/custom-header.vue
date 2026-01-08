@@ -81,11 +81,12 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import type { GridApi } from 'ag-grid-community';
 
 export interface GridCustomHeader {
     sort: number;
     sortable: boolean;
-    columnApi: any;
+    gridApi: any;
     params: any;
 }
 
@@ -97,24 +98,27 @@ const sort = ref<number>(0);
 const sortable = ref<boolean>(false);
 const canMoveLeft = ref<boolean>(false);
 const canMoveRight = ref<boolean>(false);
-const columnApi = ref<any>(null);
+const gridApi = ref<GridApi | null>(null);
 
 const onColumnReorder = () => {
-    const columns: any = columnApi.value.getAllDisplayedColumns();
+    const columns: any = gridApi.value?.getAllDisplayedColumns();
     const columnIdx: number = columns.indexOf(props.params.column);
-    canMoveLeft.value = columnIdx > 3 && !columns[columnIdx - 1].colDef.isStatic;
-    canMoveRight.value = columnIdx < columns.length - 1 && !columns[columnIdx + 1].colDef.isStatic;
+    const leftDef = columns[columnIdx - 1]?.colDef;
+    const rightDef = columns[columnIdx + 1]?.colDef;
+    canMoveLeft.value = columnIdx > 3 && !(leftDef?.headerComponentParams?.isStatic ?? leftDef?.isStatic);
+    canMoveRight.value =
+        columnIdx < columns.length - 1 && !(rightDef?.headerComponentParams?.isStatic ?? rightDef?.isStatic);
 };
 
 // Swap the position of a column with it's left neighbor. If the neighboring column is static,
 // or if there is no left neighbor, don't move it.
 const moveLeft = (): void => {
-    const columns: any = columnApi.value.getAllDisplayedColumns();
-    const allColumns: any = columnApi.value.getAllGridColumns();
+    const columns: any = gridApi.value?.getAllDisplayedColumns();
+    const allColumns: any = gridApi.value?.getAllGridColumns();
     const index: number = allColumns.indexOf(columns[columns.indexOf(props.params.column) - 1]);
 
     if (canMoveLeft.value) {
-        columnApi.value.moveColumn(props.params.column, index);
+        gridApi.value?.moveColumns([props.params.column], index);
         props.params.api.ensureColumnVisible(allColumns[index]);
 
         // Focus the "move left" button on the new column
@@ -133,12 +137,12 @@ const moveLeft = (): void => {
 // Swap the position of a column with it's right neighbor. If the neighboring column is static,
 // or if there is no right neighbor, don't move it.
 const moveRight = (): void => {
-    const columns: any = columnApi.value.getAllDisplayedColumns();
-    const allColumns: any = columnApi.value.getAllGridColumns();
+    const columns: any = gridApi.value?.getAllDisplayedColumns();
+    const allColumns: any = gridApi.value?.getAllGridColumns();
     const index: number = allColumns.indexOf(columns[columns.indexOf(props.params.column) + 1]);
 
     if (canMoveRight.value) {
-        columnApi.value.moveColumn(props.params.column, index);
+        gridApi.value?.moveColumns([props.params.column], index);
         props.params.api.ensureColumnVisible(allColumns[index]);
     }
 };
@@ -157,7 +161,7 @@ const onSortRequested = (event: any): void => {
 
 onMounted(() => {
     sortable.value = props.params.column.colDef.sortable;
-    columnApi.value = props.params.columnApi;
+    gridApi.value = props.params.api;
 
     if (props.params.sort === 'asc') {
         sort.value = 1;

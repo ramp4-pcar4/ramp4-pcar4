@@ -36,7 +36,7 @@
             )"
             :key="col.headerName"
             v-on:click="
-                columnApi?.setColumnVisible(col.field, col.hide);
+                gridApi?.setColumnVisible(col.field, col.hide);
                 col.hide = !col.hide;
                 $emit('refreshHeaders');
             "
@@ -65,7 +65,7 @@ const { t } = useI18n();
 
 defineProps({
     columnDefs: { type: Object as PropType<Array<any>>, required: true },
-    columnApi: { type: Object },
+    gridApi: { type: Object },
     systemCols: { type: Object as PropType<Set<string>> }
 });
 </script>
