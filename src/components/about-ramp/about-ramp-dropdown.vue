@@ -40,7 +40,7 @@
                             ></path>
                         </svg>
                     </button>
-                    <h4 class="pb-8 border-b border-gray-600 mb-10">
+                    <h4 class="pb-8 pt-1 border-b border-gray-600 mb-10">
                         {{ t('ramp.about') }}
                     </h4>
                     <div class="absolute right-5 top-5">
