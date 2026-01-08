@@ -38,6 +38,7 @@ import { useHelpStore } from './store';
 import HelpSection from './section.vue';
 import axios from 'redaxios';
 import { marked } from 'marked';
+import type { Tokens } from 'marked';
 import { useI18n } from 'vue-i18n';
 
 const iApi = inject('iApi') as InstanceAPI;
@@ -127,11 +128,12 @@ onBeforeMount(() => {
                 const loc = location.value.slice(-1) === '/' ? location.value : `${location.value}/`;
                 // make it easier to use images in markdown by prepending path to href if href is not an external source
                 // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
-                renderer.image = (href: string, title: string, text: string) => {
+                renderer.image = (imageToken: Tokens.Image) => {
+                    let href = imageToken.href;
                     if (href.indexOf('http') === -1) {
                         href = `${loc}images/` + href;
                     }
-                    return `<img src="${href}" alt="${text}">`;
+                    return `<img src="${href}" alt="${imageToken.text}">`;
                 };
                 axios.get(`${loc}${newLocale}.md`).then(r => {
                     // matches help sections from markdown file where each section begins with one hashbang and a space
