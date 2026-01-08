@@ -564,7 +564,7 @@
                 "layerControls": {
                     "$ref": "#/$defs/layerControls"
                 },
-                "layerDisabledControls": {
+                "disabledLayerControls": {
                     "$ref": "#/$defs/layerControls"
                 },
                 "coverIcon": {
