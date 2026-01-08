@@ -93,8 +93,9 @@
 
 import { useLayerStore } from '@/stores/layer';
 import { GeometryType, LayerType } from '@/geo/api';
+import { NotificationType } from '@/api';
 import { DetailsItemInstance, useDetailsStore, type DetailsFieldItem } from '../store';
-import { computed, inject, onBeforeMount, onBeforeUnmount, ref, resolveDynamicComponent, watch } from 'vue';
+import { computed, inject, nextTick, onBeforeMount, onBeforeUnmount, ref, resolveDynamicComponent, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import linkifyHtml from 'linkify-html';
 
@@ -247,15 +248,20 @@ const detailsTemplate = computed(() => {
     // If there is a custom template binding for this layer in the store, then
     // return its name.
     const templateVal = layer && detailProperties.value[layer.id] && detailProperties.value[layer.id].template;
-
     if (templateVal) {
         const customTemplateExists = typeof resolveDynamicComponent(templateVal) !== 'string';
-
         // If the custom template exists, render it. Otherwise, fall through and use the default template.
         if (customTemplateExists) {
             return templateVal;
         } else {
-            console.error(`Could not find custom details template named ${templateVal}. Was it registered correctly?`);
+            // nextTick is used here to ensure that the warning is displayed after any DOM updates. This prevents
+            // duplicate notifications. See https://github.com/ramp4-pcar4/ramp4-pcar4/issues/2737 for more information.
+            nextTick(() =>
+                iApi.notify.show(
+                    NotificationType.WARNING,
+                    iApi.$i18n.t('details.template.notFound', { layer: templateVal })
+                )
+            );
         }
     }
 

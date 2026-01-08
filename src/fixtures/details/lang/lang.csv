@@ -32,3 +32,4 @@ details.item.alert.defaultAltText,Image associated with {alias} field,1,Image as
 details.togglehilight.title,Toggle Highlight,1,Basculer vers l'élément principal,1
 details.item.open,Expand,1,Développer,1
 details.item.collapse,Collapse,1,Réduire,1
+details.template.notFound,Could not find custom details template named {layer}. It may not have been registered correctly.,1,Impossible de trouver le modèle de détails personnalisé nommé {layer}. Il n'a peut-être pas été enregistré correctement.,0
