@@ -1,5 +1,10 @@
 <template>
-    <appbar-button :onClickFunction="onClick" :tooltip="t('notifications.title')" class="notification-button" id="">
+    <appbar-button
+        :onClickFunction="onClick"
+        :tooltip="t('notifications.title')"
+        class="notification-button"
+        button-id=""
+    >
         <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Anotifications -->
         <svg class="fill-current w-24 h-24 mx-8 sm:mx-20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path
