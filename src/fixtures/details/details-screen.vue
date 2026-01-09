@@ -21,8 +21,13 @@
                 ></SymbologyList>
 
                 <!-- Main Details Panel -->
-                <div class="detailsContentSection overflow-y-auto h-full">
-                    <ResultList :uid="selectedLayer" :results="layerResults" v-if="!noResults"></ResultList>
+                <div class="detailsContentSection overflow-y-auto h-full" ref="detailsPanel">
+                    <ResultList
+                        :uid="selectedLayer"
+                        :results="layerResults"
+                        v-if="!noResults"
+                        @item-selected="detailsPanel?.scrollTo({ top: 0 })"
+                    ></ResultList>
                     <div :class="['text-center', { 'ml-42': layerResults.length > 1 }]" v-else>
                         {{
                             layerResults.length >= 1
@@ -57,6 +62,7 @@ const handlers = ref<Array<string>>([]);
 const watchers = ref<Array<() => void>>([]);
 const layerResults = ref<Array<IdentifyResult>>([]);
 const noResults = ref<boolean>(false);
+const detailsPanel = ref<HTMLElement | null>(null);
 
 /**
  * UID of the layer "selected" into the detail/list section. Empty string when panel is freshly opened.
