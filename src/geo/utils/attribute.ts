@@ -447,7 +447,7 @@ export class AttributeAPI extends APIScope {
             }
 
             // TODO do we also need to ensure fields required by other things are auto-included?
-            //      e.g. hovertip
+            //      e.g. maptip
             //           ref fields for class breaks or unique value renderers
             //           name field
             //      alternately, we don't, and insist config author properly defines their fields
@@ -478,7 +478,7 @@ export class AttributeAPI extends APIScope {
     /**
      * Util function to manage trickery. Non-Arcgis layer sources can have field names that are bad keys.
      * Our loader will have corrected them, but the ramp layer config may still be referencing the original names
-     * (e.g. nameField, tooltipField).
+     * (e.g. nameField, maptipField).
      * This function will attempt to return the valid field name for a given original field name.
      *
      * @param fields array of valid fields for the layer

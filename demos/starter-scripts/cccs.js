@@ -118,7 +118,7 @@ let config = {
                         opacity: 0.85,
                         visibility: true,
                         identify: true,
-                        hovertips: true
+                        maptips: true
                     },
                     id: 'DCS_tmax_ANN_rcp45_2081_en',
                     url: 'https://geo.weather.gc.ca/geomet-climate?SERVICE=WMS&VERSION=1.3.0',

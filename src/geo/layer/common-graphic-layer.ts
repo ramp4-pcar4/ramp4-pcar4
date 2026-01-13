@@ -12,9 +12,9 @@ export class CommonGraphicLayer extends MapLayer {
         this.dataFormat = DataFormat.ESRI_FEATURE;
         this.layerFormat = LayerFormat.GRAPHIC;
 
-        // Until we implement hovertip support on RAMP Graphics, turn off hovertips to stop
+        // Until we implement maptip support on RAMP Graphics, turn off maptips to stop
         // hittest errors in the console.
-        this.hovertips = false;
+        this.maptips = false;
     }
 
     protected _graphics: Array<Graphic> = [];

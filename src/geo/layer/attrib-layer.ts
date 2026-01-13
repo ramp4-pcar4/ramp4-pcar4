@@ -60,7 +60,11 @@ export class AttribLayer extends MapLayer {
         this.fieldList = '';
         this.canModifyLayer = true;
         this.filter = new Filter(rampConfig.permanentFilteredQuery || '', rampConfig.initialFilteredQuery || '');
-        this.hovertips = rampConfig.state?.hovertips ?? true;
+
+        if (rampConfig.state?.hovertips !== undefined) {
+            console.warn('hovertips layer configuration property is depreciated. Please adjust to use maptips instead');
+        }
+        this.maptips = rampConfig.state?.maptips ?? rampConfig.state?.hovertips ?? true;
         this.attribs = new AttribSource();
     }
 

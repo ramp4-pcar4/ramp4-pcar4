@@ -130,7 +130,7 @@ export class FileLayer extends AttribLayer {
         ];
 
         copyProp.forEach((p: string) => {
-            // @ts-expect-error TODO: explain why this is needed or remove
+            // @ts-expect-error typescript wont trust a random string index. It also whines that things might be undefined. but trust us bro, its alllll good
             esriConfig[p] = this.esriJson[p];
         });
 
@@ -186,15 +186,33 @@ export class FileLayer extends AttribLayer {
                 this.nameField
             );
 
+            // these checks are duplicated in maptipInitializer.  But because we make a fake payload for it here, any bad sources
+            // will be masked by the time it sees it. So double it up. Will all get deleted when we fully nuke the tooltip aliasing
+
+            if (this.origRampConfig.tooltipField) {
+                console.warn(
+                    'tooltipField layer configuration property is depreciated. Please adjust to use maptipField instead'
+                );
+            }
+
+            if (this.origRampConfig.tooltipArcade) {
+                console.warn(
+                    'tooltipArcade layer configuration property is depreciated. Please adjust to use maptipArcade instead'
+                );
+            }
+
             // and more trickery here. Just because we don't like to mess with the orig config.
-            // so clean up data, and pass a faked config to the tooltip initializer
-            const cleanedTooltip = this.origRampConfig.tooltipField
-                ? this.$iApi.geo.attributes.fieldValidator(this.fields, this.origRampConfig.tooltipField)
+            // so clean up data, and pass a faked config to the maptip initializer
+
+            const configMaptipVal = this.origRampConfig.maptipField || this.origRampConfig.tooltipField || '';
+
+            const cleanedMaptip = configMaptipVal
+                ? this.$iApi.geo.attributes.fieldValidator(this.fields, configMaptipVal)
                 : '';
 
-            await this.tooltipInitializer({
-                tooltipArcade: this.origRampConfig.tooltipArcade,
-                tooltipField: cleanedTooltip
+            await this.maptipInitializer({
+                maptipArcade: this.origRampConfig.maptipArcade || this.origRampConfig.tooltipArcade,
+                maptipField: cleanedMaptip
             } as RampLayerConfig);
 
             this.featureCount = this.esriLayer?.source.length || 0;

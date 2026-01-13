@@ -152,15 +152,51 @@ export class LayerInstance extends APIScope {
     }
 
     /**
-     * Field name that contains value considered the maptip of a feature. Not applicable for attribute-less layers.
-     * Ignored if tooltipArcade is set. nameValue is used if neither are set.
+     * DEPRECIATED #2595
+     * Use maptipField
      */
-    tooltipField: string;
+    get tooltipField(): string {
+        console.warn('tooltipField layer property is depreciated. Please adjust to use maptipField instead');
+        return this.maptipField;
+    }
+
+    /**
+     * DEPRECIATED #2595
+     * Use maptipField
+     */
+    set tooltipField(val: string) {
+        console.warn('tooltipField layer property is depreciated. Please adjust to use maptipField instead');
+        this.maptipField = val;
+    }
+
+    /**
+     * Field name that contains value considered the maptip of a feature. Not applicable for attribute-less layers.
+     * Ignored if maptipArcade is set. nameValue is used if neither are set.
+     */
+    maptipField: string;
+
+    /**
+     * DEPRECIATED #2595
+     * Use maptipArcade
+     */
+    get tooltipArcade(): string {
+        console.warn('tooltipArcade layer property is depreciated. Please adjust to use maptipArcade instead');
+        return this.maptipArcade;
+    }
+
+    /**
+     * DEPRECIATED #2595
+     * Use setMaptipArcade
+     */
+    async setTooltipArcade(formula: string): Promise<void> {
+        console.warn('setTooltipArcade layer method is depreciated. Please adjust to use setMaptipArcade instead');
+        return this.setMaptipArcade(formula);
+    }
 
     /**
      * Arcade formula to derive maptip of the feature. Empty string indicates no formula in use. Not applicable for attribute-less layers.
      */
-    get tooltipArcade(): string {
+    get maptipArcade(): string {
         return '';
     }
 
@@ -170,7 +206,7 @@ export class LayerInstance extends APIScope {
      * @param formula
      * @returns Promise that resolves when the arcade executor has been generated.
      */
-    async setTooltipArcade(formula: string): Promise<void> {
+    async setMaptipArcade(formula: string): Promise<void> {
         // instance interface does nothing.
     }
 
@@ -236,9 +272,27 @@ export class LayerInstance extends APIScope {
     identifyMode: LayerIdentifyMode;
 
     /**
-     * If the layer should show hovertips on the map
+     * DEPRECIATED #2595
+     * Use maptips
      */
-    hovertips: boolean;
+    get hovertips(): boolean {
+        console.warn('hovertips layer property is depreciated. Please adjust to use maptips instead');
+        return this.maptips;
+    }
+
+    /**
+     * DEPRECIATED #2595
+     * Use maptips
+     */
+    set hovertips(val: boolean) {
+        console.warn('hovertips layer property is depreciated. Please adjust to use maptips instead');
+        this.maptips = val;
+    }
+
+    /**
+     * If the layer should show maptips on the map
+     */
+    maptips: boolean;
 
     /**
      * The geometry type of the layer.
@@ -323,7 +377,7 @@ export class LayerInstance extends APIScope {
         this.fields = [];
         this.fieldList = '';
         this.nameField = '';
-        this.tooltipField = '';
+        this.maptipField = '';
         this.oidField = '';
         this.supportsSublayers = false;
         this.isSublayer = false;
@@ -333,7 +387,7 @@ export class LayerInstance extends APIScope {
         this.isSystem = false;
         this.userAdded = false;
         this.identify = false; // will be updated later based on config/supportsIdentify value
-        this.hovertips = false;
+        this.maptips = false;
         this.geomType = GeometryType.UNKNOWN;
         this.legend = [];
         this._sublayers = [];
@@ -587,13 +641,22 @@ export class LayerInstance extends APIScope {
     }
 
     /**
+     * DEPRECIATED #2595
+     * Use maptipValue
+     */
+    tooltipValue(attributes: Attributes): string {
+        console.warn('tooltipValue layer method is depreciated. Please adjust to use maptipValue instead');
+        return this.maptipValue(attributes);
+    }
+
+    /**
      * Given the attributes of a feature of this layer, returns the maptip of that feature.
      * Valid only for layers that support attributes.
      *
      * @param attributes attribute values
      * @returns the name
      */
-    tooltipValue(attributes: Attributes): string {
+    maptipValue(attributes: Attributes): string {
         return '';
     }
 

@@ -193,10 +193,10 @@ export class InstanceAPI {
 
                     // create the map
                     this.geo.map.createMap(activeConfig.map, mapViewElement as HTMLDivElement).then(() => {
-                        // Hide hovertip on map creation
-                        //@ts-expect-error TODO: explain why this is needed or remove
+                        // Hide maptip on map creation
+                        //@ts-expect-error  map view element will not recognize the tippy property
                         mapViewElement._tippy.hide(0);
-                        //@ts-expect-error TODO: explain why this is needed or remove
+                        //@ts-expect-error  map view element will not recognize the tippy property
                         maptipStore.setMaptipInstance(mapViewElement._tippy);
 
                         if (activeConfig.layers && activeConfig.layers.length > 0) {

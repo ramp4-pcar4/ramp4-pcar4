@@ -72,7 +72,7 @@ export class LayerSource extends APIScope {
             fields: [{ name: 'OBJECTID', type: 'oid' }].concat(
                 this.$iApi.geo.layer.files.extractGeoJsonFields(fileData)
             ),
-            configOptions: ['name', 'nameField', 'tooltipField', 'colour']
+            configOptions: ['name', 'nameField', 'maptipField', 'colour']
         };
     }
 
@@ -93,7 +93,7 @@ export class LayerSource extends APIScope {
             config,
             fields: [{ name: 'OBJECTID', type: 'oid' }].concat(this.$iApi.geo.layer.files.extractCsvFields(fileData)),
             latLonFields: this.$iApi.geo.layer.files.filterCsvLatLonFields(fileData),
-            configOptions: ['name', 'nameField', 'tooltipField', 'latField', 'longField', 'colour']
+            configOptions: ['name', 'nameField', 'maptipField', 'latField', 'longField', 'colour']
         };
     }
 
@@ -136,14 +136,14 @@ export class LayerSource extends APIScope {
             layerType: LayerType.FEATURE,
             name: response.data.name,
             nameField: response.data.displayField,
-            tooltipField: response.data.displayField,
+            maptipField: response.data.displayField,
             state: { opacity: 1, visibility: true }
         };
 
         return {
             config,
             fields: response.data.fields,
-            configOptions: ['name', 'nameField', 'tooltipField']
+            configOptions: ['name', 'nameField', 'maptipField']
         };
     }
 
