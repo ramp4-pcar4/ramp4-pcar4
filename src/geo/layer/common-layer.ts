@@ -72,12 +72,12 @@ export class CommonLayer extends LayerInstance {
     /**
      * Internally tracks any arcade formula for the maptip value.
      */
-    protected tooltipArcadeFormula: string;
+    protected maptipArcadeFormula: string;
 
     /**
      * The maptip arcade executor if a maptip formula is defined
      */
-    protected tooltipArcadeExecutor: __esri.ArcadeExecutor | undefined;
+    protected maptipArcadeExecutor: __esri.ArcadeExecutor | undefined;
 
     // ----------- LAYER CONSTRUCTION AND INITIALIZAION -----------
 
@@ -115,7 +115,7 @@ export class CommonLayer extends LayerInstance {
         this.mapLayer = true;
         this.identifyMode = LayerIdentifyMode.NONE;
         this.supportsFeatures = false; // default state. featurish layers should set to true when the load
-        this.hovertips = false;
+        this.maptips = false;
         this.supportsSublayers = false; // by default layers do not support sublayers
         this.isFile = false; // default state.
         this.layerState = LayerState.NEW;
@@ -126,7 +126,7 @@ export class CommonLayer extends LayerInstance {
         this.canReload = !!(this.url || this.origRampConfig.caching);
         this.loadPromDone = false;
         this.nameArcadeFormula = '';
-        this.tooltipArcadeFormula = '';
+        this.maptipArcadeFormula = '';
 
         this.layerTree = new TreeNode(0, this.uid, this.name, true); // is a layer with layer index 0 by default. subclasses will change this when they load
     }
@@ -583,7 +583,7 @@ export class CommonLayer extends LayerInstance {
                                 return { name: fd.name, type: arcardeType };
                             } else {
                                 console.error(`Encountered field type with no arcade support: ${fd.type} [${fd.name}]`);
-                                return arcardeType; // <-- will be undefined
+                                return undefined;
                             }
                         })
                         .filter(f => !!f)
@@ -666,59 +666,80 @@ export class CommonLayer extends LayerInstance {
         }
     }
 
-    get tooltipArcade(): string {
-        return this.tooltipArcadeFormula;
+    get maptipArcade(): string {
+        return this.maptipArcadeFormula;
     }
 
-    async setTooltipArcade(formula: string): Promise<void> {
+    async setMaptipArcade(formula: string): Promise<void> {
         if (this.supportsFeatures) {
             if (formula.trim() === '') {
-                this.tooltipArcadeFormula = '';
-                this.tooltipArcadeExecutor = undefined;
+                this.maptipArcadeFormula = '';
+                this.maptipArcadeExecutor = undefined;
             } else {
-                this.tooltipArcadeFormula = formula;
-                this.tooltipArcadeExecutor = await this.arcadeGenerator(formula);
+                this.maptipArcadeFormula = formula;
+                this.maptipArcadeExecutor = await this.arcadeGenerator(formula);
             }
         } else {
-            console.error("Attempted to set a tooltip arcade function on a layer that doesn't support it.");
+            console.error("Attempted to set a maptip arcade function on a layer that doesn't support it.");
         }
     }
 
     /**
-     * Handles initialization logic for feature tooltips.
+     * DEPRECIATED #2595
+     * Use maptipInitializer
+     */
+    async tooltipInitializer(config: RampLayerConfig | RampLayerMapImageSublayerConfig): Promise<void> {
+        console.warn('tooltipInitializer layer method is deprecated. Please adjust to use maptipInitializer instead');
+        return this.maptipInitializer(config);
+    }
+
+    /**
+     * Handles initialization logic for feature maptips.
      * Only valid for layers that support attributes.
      * Needs to be called after nameInitializer to ensure correct fallback defaults.
      * Typically called by internal processes.
      *
      * @param config a ramp layer configuration object. Can pass empty object if n/a.
      */
-    async tooltipInitializer(config: RampLayerConfig | RampLayerMapImageSublayerConfig): Promise<void> {
+    async maptipInitializer(config: RampLayerConfig | RampLayerMapImageSublayerConfig): Promise<void> {
         if (this.supportsFeatures) {
-            const trimArcade = (config?.tooltipArcade || '').trim();
-            if (trimArcade) {
-                // build executor, store formula
-                await this.setTooltipArcade(trimArcade);
+            if (config.tooltipField) {
+                console.warn(
+                    'tooltipField layer configuration property is deprecated. Please adjust to use maptipField instead'
+                );
             }
 
-            this.tooltipField = (config?.tooltipField || '').trim();
+            if (config.tooltipArcade) {
+                console.warn(
+                    'tooltipArcade layer configuration property is deprecated. Please adjust to use maptipArcade instead'
+                );
+            }
+
+            const trimArcade = (config?.maptipArcade || config?.tooltipArcade || '').trim();
+            if (trimArcade) {
+                // build executor, store formula
+                await this.setMaptipArcade(trimArcade);
+            }
+
+            this.maptipField = (config?.maptipField || config?.tooltipField || '').trim();
         } else {
-            console.error('Attempted to init a tooltip field on an unsupported layer.');
+            console.error('Attempted to init a maptip field on an unsupported layer.');
         }
     }
 
-    tooltipValue(attributes: Attributes): string {
+    maptipValue(attributes: Attributes): string {
         if (attributes) {
             // TODO decide if we return error strings (to make visually obvious)
             //      or return empty string + console errors
-            if (this.tooltipArcade) {
+            if (this.maptipArcade) {
                 const arcadePayload = {
                     $attr: attributes
                 };
 
-                return this.tooltipArcadeExecutor?.execute(arcadePayload) ?? 'Arcade Error';
+                return this.maptipArcadeExecutor?.execute(arcadePayload) ?? 'Arcade Error';
             } else {
-                return this.tooltipField
-                    ? (attributes[this.tooltipField] ?? this.nameValue(attributes))
+                return this.maptipField
+                    ? (attributes[this.maptipField] ?? this.nameValue(attributes))
                     : this.nameValue(attributes);
             }
         } else {

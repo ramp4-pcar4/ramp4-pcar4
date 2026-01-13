@@ -26,6 +26,8 @@ Below is a list of the various properties that can be specified for a layer conf
 - [latField](./layers/fancy-properties.md#latfield)
 - [layerType](./layers/required-properties.md#layertype)
 - [longField](./layers/fancy-properties.md#longfield)
+- [maptipArcade](./layers/fancy-properties.md#maptiparcade)
+- [maptipField](./layers/fancy-properties.md#maptipfield)
 - [maxLoadTime](./layers/basic-properties.md#maxloadtime)
 - [metadata](./layers/basic-properties.md#metadata)
 - [mouseTolerance](./layers/fancy-properties.md#mousetolerance)

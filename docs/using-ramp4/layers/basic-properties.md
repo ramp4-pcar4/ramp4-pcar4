@@ -140,7 +140,7 @@ Defines the desired state of the layer at load time.
 - `visibility`: Boolean. If missing, will attempt to find an initial setting from the server, otherwise defaults to `true`.
 - `opacity`: Decimal between 0 and 1. If missing, will default to full opacity.
 - `identify`: Boolean. Ignored by layers that do not support identify requests. If missing, will default to `true`.
-- `hovertips`: Boolean. Ignored by layers that do not support hover tips (usually raster-based layers). If missing, will default to `true`.
+- `maptips`: Boolean. Ignored by layers that do not support maptips (usually raster-based layers). If missing, will default to `true`.
 
 ```js
 {
@@ -148,7 +148,7 @@ Defines the desired state of the layer at load time.
         visibility: true,
         opacity: 0.8,
         identify: false,
-        hovertips: false
+        maptips: false
     }
 }
 ```

@@ -26,7 +26,7 @@ export class MapImageSublayer extends AttribLayer {
         this.dataFormat = DataFormat.ESRI_FEATURE;
         this.supportsFeatures = true;
 
-        this.hovertips = false;
+        this.maptips = false;
         this.url = this.parentLayer?.url;
         this.canReload = !!(this.url || this.origRampConfig.caching);
 

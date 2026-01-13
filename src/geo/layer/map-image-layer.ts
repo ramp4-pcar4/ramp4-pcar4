@@ -51,7 +51,7 @@ export class MapImageLayer extends MapLayer {
         this.layerType = LayerType.MAPIMAGE;
         this.layerFormat = LayerFormat.MAPIMAGE;
         this.isDynamic = false; // will get updated after layer load.
-        this.hovertips = false;
+        this.maptips = false;
         this.layerTree.layerIdx = -1;
         this.identifyMode = LayerIdentifyMode.GEOMETRIC;
     }
@@ -218,7 +218,7 @@ export class MapImageLayer extends MapLayer {
                             state: subC?.state ?? {
                                 opacity: this.opacity,
                                 visibility: this.visibility,
-                                hovertips: this.hovertips,
+                                maptips: this.maptips,
                                 identify: this.identify
                             },
                             extent: subC?.extent,

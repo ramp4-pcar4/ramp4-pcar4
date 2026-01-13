@@ -122,7 +122,7 @@ export class FeatureLayer extends AttribLayer {
                 // NOTE must be called after fields are defined.
                 //      .nameField will already contian any server-based definitions
                 await this.nameInitializer(this.origRampConfig, this.nameField);
-                await this.tooltipInitializer(this.origRampConfig);
+                await this.maptipInitializer(this.origRampConfig);
             }
         };
 
@@ -137,7 +137,7 @@ export class FeatureLayer extends AttribLayer {
         this.layerTree.layerIdx = featIdx;
 
         // Note that ESRI 4 seems to self-calculate a layer extent based on the geometry,
-        // so we no longer need to worry about generating one (graphicsUtils.graphicsExtent() is depreciated)
+        // so we no longer need to worry about generating one (graphicsUtils.graphicsExtent() is deprecated)
 
         loadPromises.push(pFC, serviceLoader());
 
