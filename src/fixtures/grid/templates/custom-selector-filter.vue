@@ -37,27 +37,25 @@ const fixed = ref<boolean>(props.params.stateManager.columns[props.params.column
 
 const selectionChanged = () => {
     selectedOption.value = selectedOption.value ? selectedOption.value : '';
+    const field = props.params.column.colDef.field;
+    if (selectedOption.value === '...' || !selectedOption.value) {
+        // Clear the selector filter.
+        props.params.api.setColumnFilterModel(field, null);
+        selectedOption.value = '';
+    } else {
+        // Filter by the selected option.
+        props.params.api.setColumnFilterModel(field, {
+            filterType: 'text',
+            type: 'contains',
+            filter: selectedOption.value
+        });
+    }
 
-    props.params.parentFilterInstance((instance: any) => {
-        if (selectedOption.value === '...') {
-            // Clear the selector filter.
-            instance.setModel(null);
-            selectedOption.value = '';
-        } else {
-            // Filter by the selected option.
-            instance.setModel({
-                filterType: 'text',
-                type: 'contains',
-                filter: selectedOption.value
-            });
-        }
+    // Save the new filter value in the state manager. Allows for quick recovery if the grid is
+    // closed and re-opened.
+    props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, selectedOption.value);
 
-        // Save the new filter value in the state manager. Allows for quick recovery if the grid is
-        // closed and re-opened.
-        props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, selectedOption.value);
-
-        props.params.api.onFilterChanged();
-    });
+    props.params.api.onFilterChanged();
 };
 
 // const onParentModelChanged = (parentModel: any) => {

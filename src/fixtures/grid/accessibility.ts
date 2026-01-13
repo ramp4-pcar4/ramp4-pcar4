@@ -1,4 +1,4 @@
-import type { ColumnApi, GridApi } from 'ag-grid-community';
+import type { GridApi } from 'ag-grid-community';
 
 const GRID_SELECTOR = '.ag-root';
 const HEADER_ROW_SELECTOR = '.ag-header-viewport .ag-header-row';
@@ -8,7 +8,6 @@ export class GridAccessibilityManager {
     agGrid: HTMLElement;
     headerRows: HTMLElement[];
     agGridApi: GridApi;
-    agColumnApi: ColumnApi;
     mousedown = false;
 
     /**
@@ -47,10 +46,9 @@ export class GridAccessibilityManager {
      * @param {GridApi} agGridApi The ag-grid grid api
      * @param {ColumnApi} agColumnApi The ag-grid column api
      */
-    constructor(element: HTMLElement, agGridApi: GridApi, agColumnApi: ColumnApi) {
+    constructor(element: HTMLElement, agGridApi: GridApi) {
         this.element = element;
         this.agGridApi = agGridApi;
-        this.agColumnApi = agColumnApi;
         this.agGrid = this.element.querySelector(GRID_SELECTOR) as HTMLElement;
         this.headerRows = Array.prototype.slice.call(
             this.element.querySelectorAll(HEADER_ROW_SELECTOR)
@@ -241,8 +239,7 @@ interface TabToNextHeaderParams {
     nextHeaderPosition: HeaderPosition | null;
     // The number of header rows present in the grid
     headerRowCount: number;
-    agApi: GridApi;
-    agColumnApi: ColumnApi;
+    api: GridApi;
 }
 
 interface HeaderPosition {
@@ -258,7 +255,7 @@ interface HeaderPosition {
  * @param {TabToNextHeaderParams} params The parameters passed by the ag grid callback, see above
  * @returns {HeaderPosition} The new header we want the grid to focus
  */
-export function tabToNextHeaderHandler(params: TabToNextHeaderParams): HeaderPosition | null {
+export function tabToNextHeaderHandler(params: TabToNextHeaderParams): HeaderPosition | boolean {
     const column = params.previousHeaderPosition!.column;
 
     const lastIndex = params.previousHeaderPosition!.headerRowIndex;
@@ -266,7 +263,7 @@ export function tabToNextHeaderHandler(params: TabToNextHeaderParams): HeaderPos
 
     if (headerRowIndex === -1) {
         // null cancels grid handling the keypress, this will move us out of the grid entirely
-        return null;
+        return false;
     } else if (headerRowIndex === params.headerRowCount) {
         // headerRowIndex of -1 means move to the first line of cells
         headerRowIndex = -1;
@@ -286,8 +283,7 @@ interface TabToNextCellParams {
     previousCellPosition: CellPosition;
     // The cell the grid would normally pick as the next cell for navigation.
     nextCellPosition: CellPosition | null;
-    agApi: GridApi;
-    agColumnApi: ColumnApi;
+    api: GridApi;
 }
 
 interface CellPosition {
@@ -306,11 +302,11 @@ interface CellPosition {
  * @param {TabToNextHeaderParams} params The parameters passed by the ag grid callback, see above
  * @returns {CellPosition} The new header we want the grid to focus
  */
-export function tabToNextCellHandler(params: TabToNextCellParams): CellPosition | null {
+export function tabToNextCellHandler(params: TabToNextCellParams): CellPosition | boolean {
     if (params.backwards) {
         // rowIndex of -1 means go to last header
         return { column: params.previousCellPosition.column, rowIndex: -1 };
     }
     // null cancels grid handling the keypress, this will move us out of the grid entirely
-    return null;
+    return false;
 }

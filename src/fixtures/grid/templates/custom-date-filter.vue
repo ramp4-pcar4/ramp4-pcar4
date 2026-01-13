@@ -68,30 +68,27 @@ const maxVal = ref<string>('');
 const fixed = ref<boolean>(props.params.stateManager.columns[props.params.column.colDef.field].filter.static);
 
 const minValChanged = () => {
-    props.params.parentFilterInstance((instance: any) => {
-        setFilterModel(instance);
-        // Save the new filter value in the state manager. Allows for quick recovery if the grid is
-        // closed and re-opened.
-        props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, minVal.value, 'min');
-    });
+    setFilterModel();
+    // Save the new filter value in the state manager. Allows for quick recovery if the grid is
+    // closed and re-opened.
+    props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, minVal.value, 'min');
 };
 
 const maxValChanged = () => {
-    props.params.parentFilterInstance((instance: any) => {
-        setFilterModel(instance);
-        // Save the new filter value in the state manager. Allows for quick recovery if the grid is
-        // closed and re-opened.
-        props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, maxVal.value, 'max');
-    });
+    setFilterModel();
+    // Save the new filter value in the state manager. Allows for quick recovery if the grid is
+    // closed and re-opened.
+    props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, maxVal.value, 'max');
 };
 
-const setFilterModel = (instance: any) => {
+const setFilterModel = () => {
+    const field = props.params.column.colDef.field;
     if (maxVal.value === '' && minVal.value === '') {
         // If neither value is set, clear the date filter.
-        instance.setModel(null);
+        props.params.api.setColumnFilterModel(field, null);
     } else if (maxVal.value !== '' && minVal.value !== '') {
         // If both values are set, display all items that occur between the two dates.
-        instance.setModel({
+        props.params.api.setColumnFilterModel(field, {
             filterType: 'date',
             type: 'inRange',
             dateFrom: minVal.value,
@@ -99,14 +96,14 @@ const setFilterModel = (instance: any) => {
         });
     } else if (minVal.value === '') {
         // If only the maximum value is set, display all dates that occur before it.
-        instance.setModel({
+        props.params.api.setColumnFilterModel(field, {
             filterType: 'date',
             type: 'lessThan',
             dateFrom: maxVal.value
         });
-    } else if (maxVal.value === '') {
+    } else {
         // If only the minimum value is set, display all dates that occur after it.
-        instance.setModel({
+        props.params.api.setColumnFilterModel(field, {
             filterType: 'date',
             type: 'greaterThan',
             dateFrom: minVal.value
@@ -114,21 +111,6 @@ const setFilterModel = (instance: any) => {
     }
     props.params.api.onFilterChanged();
 };
-
-// const onParentModelChanged = (parentModel: any) => {
-//     if (!parentModel || Object.keys(parentModel).length === 0) {
-//         minVal.value = '';
-//         maxVal.value = '';
-//     }
-// };
-// const setModel = () => {
-//     return {
-//         filterType: 'date',
-//         type: 'inRange',
-//         filter: minVal.value,
-//         filterTo: maxVal.value
-//     };
-// };
 
 onBeforeMount(() => {
     // Load previously stored values (if saved in table state manager)
