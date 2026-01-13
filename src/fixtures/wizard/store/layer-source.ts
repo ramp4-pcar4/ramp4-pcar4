@@ -110,7 +110,12 @@ export class LayerSource extends APIScope {
      * @param {string} serviceType type of layer
      * @returns {Promise<LayerInfo | undefined>} LayerInfo object
      */
-    async fetchServiceInfo(url: string, serviceType: string, nested: boolean): Promise<LayerInfo | undefined> {
+    async fetchServiceInfo(
+        url: string,
+        serviceType: string,
+        nested: boolean,
+        signal?: AbortSignal
+    ): Promise<LayerInfo | undefined> {
         switch (serviceType) {
             case LayerType.FEATURE:
                 return this.getFeatureInfo(url);
@@ -121,7 +126,7 @@ export class LayerSource extends APIScope {
             case LayerType.IMAGERY:
                 return this.getImageryInfo(url);
             case LayerType.WFS:
-                return this.getWfsInfo(url);
+                return this.getWfsInfo(url, signal);
             case LayerType.WMS:
                 return this.getWmsInfo(url, nested);
         }
@@ -264,7 +269,7 @@ export class LayerSource extends APIScope {
         };
     }
 
-    async getWfsInfo(url: string): Promise<LayerInfo> {
+    async getWfsInfo(url: string, signal?: AbortSignal): Promise<LayerInfo> {
         // get wfs data here then load as geojson layer so we can get fields
         const wrapper = new UrlWrapper(url);
         const { offset, limit } = wrapper.queryMap;
@@ -272,7 +277,10 @@ export class LayerSource extends APIScope {
             url,
             -1,
             parseInt(offset) || 0,
-            parseInt(limit) || 1000
+            parseInt(limit) || 1000,
+            undefined,
+            false,
+            signal
         );
 
         return this.getGeojsonInfo(url.match(/\/([^/]+)\/items/)?.[1] || 'Layer', wfsJson);
