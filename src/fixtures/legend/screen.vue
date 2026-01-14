@@ -54,7 +54,7 @@ const keyupEvent = (e: Event) => {
 };
 
 const applyFocusToItem = (focusItem: HTMLElement) => {
-    const focusItemEvent = new CustomEvent('refocusLegendItem', { detail: { focusItem } });
+    const focusItemEvent = new CustomEvent('switchFocusItem', { detail: { focusItem } });
     el.value?.dispatchEvent(focusItemEvent);
 };
 
