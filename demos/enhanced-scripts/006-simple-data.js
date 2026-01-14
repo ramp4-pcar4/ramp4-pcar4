@@ -45,7 +45,6 @@ const runPostTest = instance => {
         methods: {
             createSection(title, id) {
                 var val = this.identifyData.loaded ? this.identifyData.data[id] : 'Loading...';
-
                 return `
                 <div style="display: flex; flex-direction: column; padding-top: 5px;">
                     <span style="color: #a0aec0; font-weight: bold;">
@@ -66,7 +65,6 @@ const runPostTest = instance => {
                     '<img width="24" height="24" src="https://img.icons8.com/material-sharp/24/b0b0b0/star--v1.png" alt="star--v1"/>'.repeat(
                         5 - this.identifyData.data[n]
                     );
-
                 return `
                 <div style="display: flex; flex-direction: column; padding-top: 5px;">
                     <span style="color: #a0aec0; font-weight: bold;">
