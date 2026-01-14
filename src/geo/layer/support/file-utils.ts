@@ -605,7 +605,7 @@ export class FileUtils extends APIScope {
      * @returns {Promise} a promise resolving with geojson
      */
     async shapefileToGeoJson(shapeData: ArrayBuffer): Promise<any> {
-        const shp = await import('shpjs/dist/shp.min.js');
+        const shp = await import('shpjs');
         return shp.default(shapeData);
     }
 
