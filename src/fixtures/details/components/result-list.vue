@@ -168,6 +168,7 @@ const iApi = inject('iApi') as InstanceAPI;
 
 const detailsStore = useDetailsStore();
 const layerStore = useLayerStore();
+const emit = defineEmits(['item-selected']);
 const props = defineProps({
     uid: { type: String, required: true },
     results: { type: Object as PropType<Array<IdentifyResult>>, required: true }
@@ -441,6 +442,7 @@ const clickListItem = (idx: number) => {
         // need to update the highlight
         updateHighlight();
     }
+    emit('item-selected');
 };
 
 onMounted(() => {
