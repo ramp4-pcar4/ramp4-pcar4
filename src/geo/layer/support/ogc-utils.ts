@@ -26,6 +26,7 @@ export class OgcUtils extends APIScope {
      *                 features: []
      *             }] the resulting GeoJSON being populated as we receive layer information. Undefined for initial request.
      * @param {boolean} [xyInAttribs=false] true if point co-ords should be copied to attribute values
+     * @param {AbortSignal} [signal] abort signal to cancel the WFS data request
      * @returns {Promise<any>} a promise resolving with the layer GeoJSON
      * @memberof WFSServiceSource
      */
@@ -38,7 +39,8 @@ export class OgcUtils extends APIScope {
             type: 'FeatureCollection',
             features: []
         },
-        xyInAttribs = false
+        xyInAttribs = false,
+        signal?: AbortSignal
     ): Promise<any> {
         let newQueryMap: UrlQueryMap = {
             offset: offset.toString(),
@@ -50,6 +52,11 @@ export class OgcUtils extends APIScope {
         // Tricky to locate since it appears they now call it OGC API.
         // The actual documents tend to change and old links 404, but some of the links in that
         // repo should remain current.
+
+        // stop immediately if cancelled
+        if (signal?.aborted) {
+            throw new Error('WFS load cancelled');
+        }
 
         // it seems that some WFS services do not return the number of matched records with every request
         // so, we need to get that explicitly first
@@ -68,7 +75,7 @@ export class OgcUtils extends APIScope {
         // ^ as of ESRI 4, jsonp is not likely required. The choice between esri request and axios
         //   will ultimately boil down to if a proxy should be used or not.
         //   see https://github.com/ramp4-pcar4/ramp4-pcar4/discussions/773
-        const [error, response] = await to<WFSResponse>(axios.get(requestUrl));
+        const [error, response] = await to<WFSResponse>(axios.get(requestUrl, { signal } as any));
 
         if (!response) {
             console.error(`WFS data failed to load for ${url}`, error);
@@ -78,10 +85,14 @@ export class OgcUtils extends APIScope {
         const data = response.data;
 
         // save the total number of records and start downloading the data
+        // throw an error if numberMatched is missing
         if (totalCount === -1) {
+            if (typeof data.numberMatched !== 'number') {
+                throw new Error('WFS hits missing numberMatched');
+            }
             totalCount = response.data.numberMatched;
             // note we pass url and not requestUrl here, becuase requestUrl is currently a count request
-            return this.loadWfsData(url, totalCount, offset, limit, wfsData, xyInAttribs);
+            return this.loadWfsData(url, totalCount, offset, limit, wfsData, xyInAttribs, signal);
         }
 
         // update the received features array.
@@ -98,7 +109,8 @@ export class OgcUtils extends APIScope {
                 data.features.length + offset,
                 newLimit,
                 wfsData,
-                xyInAttribs
+                xyInAttribs,
+                signal
             );
         } else {
             // finally have downloaded the entire dataset.

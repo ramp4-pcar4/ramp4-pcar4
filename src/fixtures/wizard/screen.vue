@@ -301,6 +301,7 @@ defineProps({
 const layerSource = computed(() => wizardStore.layerSource);
 const step = computed(() => wizardStore.currStep);
 
+const abortController = ref<AbortController | null>(null);
 const colour = ref();
 const componentKey = ref(0);
 const disabled = ref(false);
@@ -520,8 +521,10 @@ const onUploadContinue = (event: any) => {
 const onSelectContinue = async (event: any) => {
     event?.preventDefault();
 
+    abortController.value = new AbortController();
     disabled.value = true;
     failureError.value = false;
+    finishStep.value = false;
     validation.value = true;
 
     wizardStore.goToStep(WizardStep.CONFIGURE);
@@ -536,7 +539,8 @@ const onSelectContinue = async (event: any) => {
             : ((await layerSource.value!.fetchServiceInfo(
                   url.value,
                   typeSelection.value,
-                  wizardStore.nested
+                  wizardStore.nested,
+                  abortController.value.signal
               )) as LayerInfo);
         if (isFileLayer() && fileData.value) {
             layerInfo.value.config.url = '';
@@ -839,6 +843,7 @@ const cancelFormatStep = () => {
 const cancelNameStep = () => {
     selectedValues.value = [];
     finishStep.value = false;
+    abortController.value?.abort();
     wizardStore.goToStep(1);
 };
 </script>
