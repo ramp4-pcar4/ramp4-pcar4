@@ -41,6 +41,7 @@ export class NotificationAPI extends APIScope {
      * @memberof NotificationAPI
      */
     show(type: NotificationType, message: string) {
+        // @ts-expect-error the id on the notification will get injected inside showNotification. proper solution is to make two types (one with and one without id), or change params of store.showNotification to be two value params for type and message
         this.notificationStore.showNotification({ type, message });
     }
 

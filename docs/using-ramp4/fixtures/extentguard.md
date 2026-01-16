@@ -15,7 +15,7 @@ Configuration should be placed in the `fixtures` object of the config file, keye
 
 The fixture will be active regardless of the Extent Set being used by the map.
 
-```
+```js
 {
   fixtures: {
     extentguard: {
@@ -29,7 +29,7 @@ The fixture will be active regardless of the Extent Set being used by the map.
 
 The fixture will only be active when the provided Extent Sets are being used. Typically this will align with specific basemap schemas. The Extent Set ids must match ids defined in the `map.extentSets` section of the config file.
 
-```
+```js
 {
   fixtures: {
     extentguard: {

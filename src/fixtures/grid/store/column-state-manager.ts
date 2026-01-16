@@ -1,3 +1,5 @@
+import type { TableColumnFilterOptions, TableColumnOptions } from './grid-state';
+
 /**
  * State manager for columns in datagrid.
  */
@@ -6,16 +8,16 @@ export default class ColumnStateManager {
     _field: string;
     _title: string;
     _visible: boolean;
-    _width: number;
-    _sort: string;
+    _width: number | undefined;
+    _sort: 'asc' | 'desc' | 'none';
     _searchable: boolean;
-    _filter: any;
+    _filter: TableColumnFilterOptions;
     _template: string;
 
-    constructor(columnConfig: any) {
+    constructor(columnConfig: TableColumnOptions) {
         this.columnConfig = columnConfig;
         this._field = columnConfig?.field;
-        this._title = columnConfig?.title;
+        this._title = columnConfig?.title || '';
         this._visible = columnConfig.visible ?? true;
         this._width = columnConfig?.width;
         this._sort = columnConfig.sort ?? 'none';
@@ -23,8 +25,8 @@ export default class ColumnStateManager {
         this._filter = {
             type: columnConfig?.filter?.type ?? 'string',
             value: columnConfig?.filter?.value ?? '',
-            min: columnConfig?.filter?.min ?? null,
-            max: columnConfig?.filter?.max ?? null,
+            min: columnConfig?.filter?.min ?? '',
+            max: columnConfig?.filter?.max ?? '',
             static: columnConfig?.filter?.static ?? false
         };
         this._template = columnConfig.template ?? '';

@@ -114,6 +114,13 @@ let config = {
                                     filter: {
                                         type: 'selector'
                                     }
+                                },
+                                {
+                                    field: 'OBJECTID',
+                                    filter: {
+                                        type: 'number',
+                                        max: 2
+                                    }
                                 }
                             ]
                         }

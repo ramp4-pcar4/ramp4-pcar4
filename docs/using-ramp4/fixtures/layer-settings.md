@@ -10,7 +10,7 @@ The settings fixture is a default fixture, meaning it will be automatically load
 ## Configuration
 Unlike most fixtures, the settings fixture is configured separately for each layer in the main configuration file. A very simple configuration file below shows that the legend configuration object should be placed within a layer object, directly under the `fixtures` property:
 
-```
+```js
 const config = {
     layers: [
         {
@@ -42,7 +42,7 @@ The settings configuration object supports the following two properties:
 By default, if no `settings` configuration object is provided within a layer configuration, all layer controls are enabled. There are two ways to disable layer controls:
 1. Add the `disabledControls` property to the object as an array with the names for each control (in parenthesis above). The following example demonstrates disabling the visibility and identify controls for the layer item `RAMP Layer`:
 
-```
+```js
     {
         id: 'RAMP Layer',
         layerType: 'esri-feature',
@@ -60,7 +60,7 @@ By default, if no `settings` configuration object is provided within a layer con
 
 1. Add the `controls` property to the object as an array and omit the names of the disabled layers. The next example configures `RAMP Layer`  in the same way as before:
 
-```
+```js
     {
         id: 'RAMP Layer',
         layerType: 'esri-feature',

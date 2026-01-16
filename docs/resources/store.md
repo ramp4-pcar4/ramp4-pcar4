@@ -24,7 +24,7 @@ For our core stores, each store folder has 3 files;
 
 A store file contains a `defineStore(...)` function with two arguments: a unique store id and a Setup function.
 
-```
+```js
 export const useNotificationStore = defineStore('notification', () => {
   // ... setup function
 })
@@ -38,7 +38,7 @@ A Setup function consists of `state` properties, as well as an optional set of `
 
 Below is a simple example of a Setup function for the `notification` store:
 
-```
+```js
 () => {
     // state
     const notificationStack = ref([]);
@@ -69,7 +69,7 @@ Note that any `state` property, `getter`, or `action` that will be accessed from
 
 To interface with a store within a component, `useFixtureNameStore()` is called within `setup()`:
 
-```
+```js
 import { useNotificationStore } from '@/stores/notification'
 
 const notificationStore = useNotificationStore();
@@ -77,7 +77,7 @@ const notificationStore = useNotificationStore();
 
 Then the store and its properties can be accessed anywhere in the component:
 
-```
+```js
 const number = computed(() => notificationStore.notificationNumber);
 const clearAll = () => notificationStore.clearAll();
 ```
@@ -86,7 +86,7 @@ const clearAll = () => notificationStore.clearAll();
 
 Using a store outside a component is nearly identical to using a store within a component, with the additional requirement of passing the `pinia` instance that was passed to the app to the `useFixtureNameStore()` function call.
 
-```
+```js
 const notificationStore = useNotificationStore(this.$vApp.$pinia);
 ```
 

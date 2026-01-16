@@ -26,7 +26,7 @@ The [Instantiation](introduction/instantiation.md) page provides examples of how
   - [Appbar](using-ramp4/fixtures/appbar.md#configuration)
   - [Details](using-ramp4/fixtures/details.md)
   - [Geosearch](using-ramp4/fixtures/geosearch.md#configuration)
-  - [Grid](using-ramp4/fixtures/grid.md#configuration)
+  - [Grid](using-ramp4/fixtures/grid.md#grid-configuration)
   - [Layer Settings](using-ramp4/fixtures/layer-settings.md#configuration)
   - [Legend](using-ramp4/fixtures/legend.md#configuration) (configuration snippets are embedded in functional descriptions)
   - [Draw Tools](using-ramp4/fixtures/draw-tools.md)

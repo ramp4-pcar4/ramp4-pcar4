@@ -22,10 +22,10 @@
 <script setup lang="ts">
 import { inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import { GlobalEvents } from '@/api/internal';
-import type { InstanceAPI, LayerInstance } from '@/api/internal';
+import type { InstanceAPI } from '@/api/internal';
 import { IdentifyResultFormat } from '@/geo/api';
 import { useI18n } from 'vue-i18n';
-import type { AttributeMapPair } from '../store';
+import * as GridUtils from '../grid-utils';
 
 const props = defineProps(['params']);
 const { t } = useI18n();
@@ -37,25 +37,16 @@ const el = ref<HTMLElement>();
  */
 const openDetails = async () => {
     const rowData = props.params.data;
-    const layerUid = rowData['rvUid'];
-    const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(layerUid)!;
+    const layerUid = rowData.rvUid as string;
+    const layer = iApi.geo.layer.getLayer(layerUid)!;
 
     // find OID for the row. need to account for any merge-grid attribute name mapping
-
-    const realOidField = layer.oidField;
-
-    const mapperPair: AttributeMapPair | undefined = props.params.layerCols[layer.id].find(
-        (attrPair: AttributeMapPair) => {
-            return attrPair.origAttr === realOidField;
-        }
-    );
-
-    const dataOidField = mapperPair?.mappedAttr || realOidField;
+    const oidField = GridUtils.findMappedOidField(props.params.layerCols, layer);
 
     // get the source graphic from the layer. Will skirt around any funny business
     // with the grid changing up data. Since grid is open, will utilize the grid's
     // local data source --> fast.
-    const sourceGraphic = await layer.getGraphic(rowData[dataOidField], {
+    const sourceGraphic = await layer.getGraphic(rowData[oidField], {
         getAttribs: true
     });
 

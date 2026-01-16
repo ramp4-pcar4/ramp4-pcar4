@@ -1,5 +1,5 @@
 import ColumnStateManager from '../store/column-state-manager';
-import type { ActionButtonDefinition, TableStateOptions } from './grid-state';
+import type { ActionButtonDefinition, FilterRange, TableStateOptions } from './grid-state';
 
 /**
  * Saves relevant enhancedTable states so that it can be reset on reload/reopen. A PanelStateManager is linked to a BaseLayer.
@@ -10,7 +10,7 @@ import type { ActionButtonDefinition, TableStateOptions } from './grid-state';
  *      - whether table maximized is in maximized or split view
  */
 export default class TableStateManager {
-    state: any;
+    state: TableStateOptions;
     _title: string;
     _showFilter: boolean;
     _filterByExtent: boolean;
@@ -45,7 +45,7 @@ export default class TableStateManager {
      */
     parsecolumns() {
         if (this.state.columns) {
-            this.state.columns.forEach((columnConfig: any) => {
+            this.state.columns.forEach(columnConfig => {
                 this._columns[columnConfig.field] = new ColumnStateManager(columnConfig);
             });
         }
@@ -54,43 +54,44 @@ export default class TableStateManager {
     /**
      * Returns the stored filter value for the given column field.
      *
-     * @param {*} colDefField
-     * @param {string} range
+     * @param {string} colDefField
+     * @param {FilterRange} range
      * @returns {string | number}
      * @memberof TableStateManager
      */
-    getColumnFilterValue(colDefField: any, range?: string): string | number {
+    getColumnFilterValue(colDefField: string, range?: FilterRange): string | number {
         const filter = this._columns[colDefField].filter;
         if (range === 'min') {
-            return filter.min;
+            return filter.min!;
         } else if (range === 'max') {
-            return filter.max;
+            return filter.max!;
         } else {
-            return filter.value;
+            return filter.value!;
         }
     }
 
     /**
      * Saves the current value of the filter for the given column field.
      *
-     * @param {*} colDefField
-     * @param {(string | number)} filterValue
-     * @param {string} range
+     * @param {string} colDefField
+     * @param {string | number} filterValue
+     * @param {FilterRange} range
      * @memberof TableStateManager
      */
-    setColumnFilterValue(colDefField: any, filterValue: string | number, range?: string) {
+    setColumnFilterValue(colDefField: string, filterValue: string | number, range?: FilterRange) {
         let newFilterValue = filterValue;
         if (filterValue && typeof filterValue === 'string') {
             const escRegex = /[(!"#$%&'+,.\\/:;<=>?@[\]^`{|}~)]/g;
             newFilterValue = filterValue.replace(escRegex, '\\$&');
         }
 
+        // min & maxes are used for both number and date fields.
         if (range === 'min') {
             this._columns[colDefField].filter.min = newFilterValue;
         } else if (range === 'max') {
             this._columns[colDefField].filter.max = newFilterValue;
         } else {
-            this._columns[colDefField].filter.value = newFilterValue;
+            this._columns[colDefField].filter.value = newFilterValue as string;
         }
 
         if (this._columns[colDefField].filter.value !== '') {
@@ -108,8 +109,8 @@ export default class TableStateManager {
     clearFilters() {
         Object.entries(this._columns).forEach(([, config]) => {
             if (!config.filter.static) {
-                config.filter.min = null;
-                config.filter.max = null;
+                config.filter.min = '';
+                config.filter.max = '';
                 config.filter.value = '';
             }
         });
@@ -118,12 +119,9 @@ export default class TableStateManager {
     }
 
     _checkFilters() {
+        // TODO should we be skipping static filters in this check?  clearFilters above seems to suggest we should
         this._filtered = Object.values(this._columns).some(config => {
-            return (
-                config.filter.value !== '' ||
-                (config.filter.min !== '' && config.filter.min !== null) ||
-                (config.filter.max !== '' && config.filter.max !== null)
-            );
+            return config.filter.value !== '' || config.filter.min !== '' || config.filter.max !== '';
         });
     }
 
