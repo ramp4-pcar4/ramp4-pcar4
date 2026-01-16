@@ -317,7 +317,7 @@ let config = {
                     state: {
                         opacity: 0.8,
                         visibility: true,
-                        hovertips: false
+                        maptips: false
                     },
                     fixtures: {
                         settings: {

@@ -843,8 +843,8 @@ export class EventAPI extends APIScope {
 
             case DefEH.MAP_GRAPHICHIT_CREATES_MAPTIP:
                 // show a maptip in default format when the mouse goes over a vector feature
-                zeHandler = (tooltipInfo: any) => {
-                    this.$iApi.geo.map.maptip.generateDefaultMaptip(tooltipInfo);
+                zeHandler = (maptipInfo: any) => {
+                    this.$iApi.geo.map.maptip.generateDefaultMaptip(maptipInfo);
                 };
                 this.$iApi.event.on(GlobalEvents.MAP_GRAPHICHIT, zeHandler, handlerName);
                 break;

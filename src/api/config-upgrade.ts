@@ -584,7 +584,7 @@ export function layerUpgrader(r2layer: any): any {
     }
 
     if (r2layer.tooltipField) {
-        r4layer.tooltipField = r2layer.tooltipField;
+        r4layer.maptipField = r2layer.tooltipField;
     }
     if (r2layer.tolerance) {
         r4layer.mouseTolerance = r2layer.tolerance;
@@ -746,7 +746,7 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
             opacity: r2layer.state.opacity ?? 1,
             visibility: r2layer.state.visibility ?? true,
             identify: r2layer.state.query ?? true,
-            hovertips: r2layer.state.hovertips ?? true
+            maptips: r2layer.state.hovertips ?? true
         };
         if (typeof r2layer.state.snapshot !== 'undefined') {
             console.warn(

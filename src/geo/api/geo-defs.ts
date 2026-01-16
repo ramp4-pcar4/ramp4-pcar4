@@ -676,7 +676,12 @@ export interface RampLayerStateConfig {
     visibility?: boolean;
     opacity?: number;
     identify?: boolean;
+    /**
+     * DEPRECATED #2595
+     * Use maptips
+     */
     hovertips?: boolean;
+    maptips?: boolean;
 }
 
 export interface RampLayerFieldInfoConfig {
@@ -719,8 +724,18 @@ export interface RampLayerMapImageSublayerConfig {
     // the following don't exist on the actual config object, but are needed by the layer class
     id: string;
     layerType: LayerType;
+    /**
+     * DEPRECATED #2595
+     * Use maptipField
+     */
     tooltipField?: string;
+    /**
+     * DEPRECATED #2595
+     * Use maptipArcade
+     */
     tooltipArcade?: string;
+    maptipField?: string;
+    maptipArcade?: string;
 }
 
 // i.e. a wms layer child
@@ -751,8 +766,18 @@ export interface RampLayerConfig {
     fieldMetadata?: RampLayerFieldMetadataConfig;
     nameField?: string;
     nameArcade?: string;
+    /**
+     * DEPRECATED #2595
+     * Use maptipField
+     */
     tooltipField?: string;
+    /**
+     * DEPRECATED #2595
+     * Use maptipArcade
+     */
     tooltipArcade?: string;
+    maptipField?: string;
+    maptipArcade?: string;
     featureInfoMimeType?: string; // used by WMS layer
     controls?: Array<LayerControl>;
     disabledControls?: Array<LayerControl>;

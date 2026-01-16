@@ -134,12 +134,12 @@
                             :options="fieldOptions()"
                         />
                         <wizard-input
-                            v-if="layerInfo?.configOptions.includes(`tooltipField`)"
+                            v-if="layerInfo?.configOptions.includes(`maptipField`)"
                             type="select"
-                            name="tooltipField"
-                            v-model="layerInfo.config.tooltipField"
-                            :label="t('wizard.configure.tooltipField.label')"
-                            :aria-label="t('wizard.configure.tooltipField.label')"
+                            name="maptipField"
+                            v-model="layerInfo.config.maptipField"
+                            :label="t('wizard.configure.maptipField.label')"
+                            :aria-label="t('wizard.configure.maptipField.label')"
                             :options="fieldOptions()"
                         />
                         <wizard-input

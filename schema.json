@@ -1276,12 +1276,22 @@
                 "tooltipField": {
                     "type": "string",
                     "default": "",
-                    "description": "The field to be used for tooltips. Ignored if tooltipArcade is defined. If not present, the viewer will use the feature name value."
+                    "description": "Deprecated. Use maptipField instead."
                 },
                 "tooltipArcade": {
                     "type": "string",
                     "default": "",
-                    "description": "An arcade formula to be used for tooltips. If not present, the viewer will use tooltipField."
+                    "description": "Deprecated. Use maptipArcade instead."
+                },
+                "maptipField": {
+                    "type": "string",
+                    "default": "",
+                    "description": "The field to be used for maptips. Ignored if maptipArcade is defined. If not present, the viewer will use the feature name value."
+                },
+                "maptipArcade": {
+                    "type": "string",
+                    "default": "",
+                    "description": "An arcade formula to be used for maptips. If not present, the viewer will use maptipField."
                 },
                 "url": {
                     "type": "string",
@@ -1414,12 +1424,22 @@
                 "tooltipField": {
                     "type": "string",
                     "default": "",
-                    "description": "The field to be used for tooltips. Ignored if tooltipArcade is defined. If not present, the viewer will use the feature name value."
+                    "description": "Deprecated. Use maptipField instead."
                 },
                 "tooltipArcade": {
                     "type": "string",
                     "default": "",
-                    "description": "An arcade formula to be used for tooltips. If not present, the viewer will use tooltipField."
+                    "description": "Deprecated. Use maptipArcade instead."
+                },
+                "maptipField": {
+                    "type": "string",
+                    "default": "",
+                    "description": "The field to be used for maptips. Ignored if maptipArcade is defined. If not present, the viewer will use the feature name value."
+                },
+                "maptipArcade": {
+                    "type": "string",
+                    "default": "",
+                    "description": "An arcade formula to be used for maptips. If not present, the viewer will use maptipField."
                 },
                 "url": {
                     "type": "string",
@@ -1649,12 +1669,22 @@
                 "tooltipField": {
                     "type": "string",
                     "default": "",
-                    "description": "The field to be used for tooltips. Ignored if tooltipArcade is defined. If not present, the viewer will use the feature name value."
+                    "description": "Deprecated. Use maptipField instead."
                 },
                 "tooltipArcade": {
                     "type": "string",
                     "default": "",
-                    "description": "An arcade formula to be used for tooltips. If not present, the viewer will use tooltipField."
+                    "description": "Deprecated. Use maptipArcade instead."
+                },
+                "maptipField": {
+                    "type": "string",
+                    "default": "",
+                    "description": "The field to be used for maptips. Ignored if maptipArcade is defined. If not present, the viewer will use the feature name value."
+                },
+                "maptipArcade": {
+                    "type": "string",
+                    "default": "",
+                    "description": "An arcade formula to be used for maptips. If not present, the viewer will use maptipField."
                 },
                 "url": {
                     "type": "string",
@@ -2044,7 +2074,12 @@
                 "hovertips": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Specifies whether or not to disable hovertips."
+                    "description": "Deprecated. Use maptips instead."
+                },
+                "maptips": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Specifies whether or not to show maptips. Only valid for layers with client side vector features."
                 }
             },
             "additionalProperties": false

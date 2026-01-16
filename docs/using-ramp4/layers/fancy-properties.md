@@ -236,6 +236,39 @@ Specifies the attribute field containing the longitude co-ordinate of the layer.
 }
 ```
 
+## maptipArcade
+
+*string*, only applies to layers that [have vector client data](./additional-layer-sections.md#layer-abilities).
+
+Specifies an Arcade formula to use as the `maptipValue` for a feature.
+
+- The value is displayed in the maptip when the mouse is over the feature.
+- This formula operates in the [RAMP Arcade Profile](./additional-layer-sections.md#arcade-formulas).
+- If missing, the value of `maptipField` will be used.
+
+```js
+{
+    maptipArcade: "'Mouse is over ' + $attr.name"
+}
+```
+
+## maptipField
+
+*string*, only applies to layers that [have vector client data](./additional-layer-sections.md#layer-abilities).
+
+Specifies an attribute field name to use as the `maptipValue` for a feature.
+
+- The value is displayed in the maptip when the mouse is over the feature.
+- Will be ignored if `maptipArcade` is set.
+- If missing, will use the `nameValue`
+- Field name is case sensitive.
+
+```js
+{
+    maptipField: "last_inspection"
+}
+```
+
 ## mouseTolerance
 
 *integer*, only applies to layers that [support identify requests](./additional-layer-sections.md#layer-abilities), with exceptions (see below)
@@ -357,36 +390,11 @@ Contains metadata for the sublayers of a layer that supports them. See the [subl
 
 ## tooltipArcade
 
-*string*, only applies to layers that [have vector client data](./additional-layer-sections.md#layer-abilities).
-
-Specifies an Arcade formula to use as the `tooltipValue` for a feature.
-
-- The value is displayed in the maptip when the mouse is over the feature.
-- This formula operates in the [RAMP Arcade Profile](./additional-layer-sections.md#arcade-formulas).
-- If missing, the value of `tooltipField` will be used.
-
-```js
-{
-    tooltipArcade: "'Mouse is over ' + $attr.name"
-}
-```
+Deprecated. Use [maptipArcade](#maptiparcade).
 
 ## tooltipField
 
-*string*, only applies to layers that [have vector client data](./additional-layer-sections.md#layer-abilities).
-
-Specifies an attribute field name to use as the `tooltipValue` for a feature.
-
-- The value is displayed in the maptip when the mouse is over the feature.
-- Will be ignored if `tooltipArcade` is set.
-- If missing, will use the `nameValue`
-- Field name is case sensitive.
-
-```js
-{
-    tooltipField: "last_inspection"
-}
-```
+Deprecated. Use [maptipField](#maptipfield).
 
 ## touchTolerance
 

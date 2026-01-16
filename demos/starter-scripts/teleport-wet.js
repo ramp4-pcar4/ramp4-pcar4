@@ -309,7 +309,7 @@ let config = {
                     state: {
                         opacity: 0.8,
                         visibility: true,
-                        hovertips: false
+                        maptips: false
                     },
                     mouseTolerance: 10,
                     customRenderer: {} // just to chill things out. real ramp will have all properties defaulted and filled in

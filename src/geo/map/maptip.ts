@@ -72,9 +72,9 @@ export class MaptipAPI extends APIScope {
             return;
         }
 
-        // remove this once we support hovers on RAMP graphics
-        if (!layerInstance.hovertips) {
-            // the hit layer doesn't support hovertips
+        // remove this once we support maptips on RAMP graphics
+        if (!layerInstance.maptips) {
+            // the hit layer doesn't support maptips
             return;
         }
 
@@ -102,7 +102,7 @@ export class MaptipAPI extends APIScope {
     /**
      * Generates and sets the "default" maptip.
      *
-     * @param info the tooltip info payload
+     * @param info the maptip info payload
      */
     generateDefaultMaptip(info: {
         layer: LayerInstance;
@@ -112,7 +112,7 @@ export class MaptipAPI extends APIScope {
         screenPoint: Point;
     }) {
         this.setContent(
-            `<div class="flex items-center space-x-5"><span>${info.icon}</span><span class="line-clamp-3">${info.layer.tooltipValue(
+            `<div class="flex items-center space-x-5"><span>${info.icon}</span><span class="line-clamp-3">${info.layer.maptipValue(
                 info.attributes
             )}</span></div>`
         );
@@ -131,7 +131,7 @@ export class MaptipAPI extends APIScope {
      * Get the `tippy` maptip instance
      * Documentation: https://kabbouchi.github.io/tippyjs-v4-docs/tippy-instance/
      *
-     * @returns {any} the `tippy` tooltip instance
+     * @returns {any} the `tippy` maptip instance
      */
     getInstance(): any {
         return this.maptipStore.maptipInstance;
