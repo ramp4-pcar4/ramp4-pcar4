@@ -140,8 +140,13 @@ export class FocusListManager {
         element.addEventListener('touchstart', function () {
             focusManager.onTouchstart();
         });
+        // Commenting out for now until focus behavior is revisited
+        // element.addEventListener('focusout', function (event: FocusEvent) {
+        //     focusManager.onFocusOut(event);
+        // });
 
         // Focuses a legend item after it's reload button is clicked. See issue 2605.
+        // Also handles refocusing list items after removal (e.g., notifications).
         element.addEventListener('refocusLegendItem', e => {
             const evt = e as CustomEvent;
             const focusItem = evt.detail.focusItem;
@@ -476,4 +481,18 @@ export class FocusListManager {
     onTouchstart() {
         this.isTapped = true;
     }
+
+    // /**
+    //  * Callback for the FOCUSOUT event listener on the focus list element.
+    //  */
+    // onFocusOut(event: FocusEvent) {
+    //     // only defocus if focus is leaving the list entirely
+    //     const next = event.relatedTarget as HTMLElement;
+    //     if (next && !this.element.contains(next)) {
+    //         // clear active item and aria state when focus exits the list
+    //         this.defocusItem(this.highlightedItem);
+    //         this.highlightedItem = this.element;
+    //         this.element.removeAttribute('aria-activedescendant');
+    //     }
+    // }
 }
