@@ -94,7 +94,7 @@ This can be done in three ways. Examples for how to use each method are shown be
 
 #### Method 1: Vue `render()` function
 
-```JS
+```js
 import { h, markRaw, resolveComponent } from 'vue';
 
 const screen = {
@@ -138,7 +138,7 @@ const screen = {
 
 #### Method 2: Vue component objects
 
-```JS
+```js
 const screen = {
     props: ['panel'],
     data() {
@@ -220,7 +220,7 @@ Before your panel is ready to use, you need to register it via the `register` me
 
 #### Method 1: `render()` function
 
-```JS
+```js
 const panelConfig = {
     id: 'myPanel',
     config: {
@@ -246,7 +246,7 @@ You need basically the same code as above, except the screen does not need to be
 
 #### Method 3: `.vue` file
 
-```JS
+```js
 // in a different JS/TS file
 
 // import component from .vue file
@@ -285,14 +285,14 @@ If you want the content of your custom panel to switch on a language change, you
 
 ### Method 1: String containing HTML
 
-```JS
+```js
 const englishContent = "<div> This is my English content </div>"
 const frenchContent = "<div> Ceci est mon contenu en français </div>"
 ```
 
 
 ### Method 2: Defining HTML object
-```JS
+```js
 const englishContent = document.createElement("div");
 const englishText = document.createTextNode("This is my English content");
 englishContent.appendChild(englishText);
@@ -307,7 +307,7 @@ Before your panel is ready for use, you need to register it via the `registerHTM
 
 Note that, for `i18nMap`, the keys of this object should be language strings, and the values should be objects of keys that map to strings of the respective language. The keys within the objects for each language are what should be used for the `alertName`, as well as any other content within the panel. Currently the only language strings supported are 'en' and 'fr'.
 
-```JS
+```js
 const htmlContent = {en: englishContent, fr: frenchContent};
 const panelId = 'panel1';
 const alertName = 'panelName';
@@ -346,7 +346,7 @@ The `className` will be applied as a CSS class when the container width is great
 
 Below is a configuration snippet that shows how to configure the legend to appear in your own `div` element:
 
-```JS
+```js
 fixtures: {
     legend: {
         root: {
@@ -385,7 +385,7 @@ Some other important things to note include:
 ## The Panel API
 
 The API can be accessed through the RAMP Instance API:
-```
+```js
 const panelAPI = myRAMPInstance.panel
 ```
 
@@ -415,13 +415,15 @@ The API provides the following methods:
 * `isRegistered(panelId: string | string[]): Promise<PanelInstance | PanelInstance[]>` - provides a promise that resolves to the `PanelInstance` object (if `panelId` is a string) or the array of `PanelInstance` objects (if `panelId` is an array) when panel(s) with the specified panel ID(s) have completed registration.
 * `allRegistered(): string[]` - provides a listing of all currently registered panel ids.
 * `registerHTML(htmlPanel: HTMLPanelInstance)` - Registers a new panel containing a screen of HTML content and returns the PanelInstance. Note: `htmlPanel.i18nMap` should be structured as follows:
-```
+
+```js
 {
     lang1: {key1: lang1-value1, key2: lang1-value2, ...}, 
     lang2: {key1: lang2-value1, key2: lang2-value2, ...},
     ...
 }
 ```
+
 * `updateHTML(panel: PanelInstance | string, html: { [key: string]: string | HTMLElement }, screenId?: string)` - Updates the content of a specific HTML-based screen of a panel, using HTML content 
 * `remove(value: string | PanelInstance): void` - removes the specified panel from the panel stack.
 * `get(value: string | PanelInstance): PanelInstance` - finds and returns the specified panel.

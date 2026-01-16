@@ -43,8 +43,8 @@ import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import type { InstanceAPI, LayerInstance } from '@/api/internal';
 import { useI18n } from 'vue-i18n';
 import { useLayerStore } from '@/stores/layer';
-import type { AttributeMapPair } from '../store';
 import { GeometryType, LayerType } from '@/geo/api';
+import * as GridUtils from '../grid-utils';
 
 const zoomStatus = ref<'zooming' | 'zoomed' | 'error' | 'none'>('none');
 const props = defineProps(['params']);
@@ -63,17 +63,15 @@ const zoomToFeature = () => {
         return;
     }
     zoomStatus.value = 'zooming';
-    const layer: LayerInstance | undefined = layerStore.getLayerByUid(props.params.data.rvUid);
+    const layer = layerStore.getLayerByUid(props.params.data.rvUid);
 
     if (layer === undefined || !layer.isLoaded) {
         updateZoomStatus('error');
         return;
     }
 
-    // similar to the sql lookup, the details panel must use the original OID field to perform zoomies
-    const oidPair = props.params.layerCols[layer.id].find((pair: AttributeMapPair) => pair.origAttr === layer.oidField);
-
-    const oid = props.params.data[oidPair ? (oidPair.mappedAttr ?? oidPair.origAttr) : layer.oidField];
+    const oidField = GridUtils.findMappedOidField(props.params.layerCols, layer);
+    const oid = props.params.data[oidField];
 
     const zoomUsingGraphic = () => {
         const opts = { getGeom: true };
@@ -99,6 +97,8 @@ const zoomToFeature = () => {
     };
 
     if (layer.layerType === LayerType.FEATURE && layer.geomType !== GeometryType.POINT) {
+        // see issue #1720 for the reasons behind this special "extent" logic
+
         layer
             .getGraphicExtent(oid)
             .then(e => {

@@ -84,6 +84,10 @@ export class InstanceAPI {
         scrollToInstance: boolean;
         suppressNumberLocalization: boolean;
         escapeHtml: (content: string) => string;
+
+        /**
+         * Return whether the string should be interpreted as plain text. Returns false if input is not string
+         */
         isPlainText: (content: any) => boolean;
     };
     startRequired: boolean = false;

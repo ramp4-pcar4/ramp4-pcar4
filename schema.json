@@ -2209,7 +2209,7 @@
                                     },
                                     "icon": {
                                         "type": "string",
-                                        "description": "Determines which icon to display for the button."
+                                        "description": "Determines which icon to display for the button. Content treated as HTML (e.g. emoji text, svg)"
                                     },
                                     "tooltip": {
                                         "type": "string",

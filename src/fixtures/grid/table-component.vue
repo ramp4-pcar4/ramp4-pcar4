@@ -60,7 +60,10 @@
 
             <div class="flex flex-1 grow-[1.4] items-center max-w-full">
                 <!-- show global search -->
-                <div class="search-bar flex flex-1 min-w-0 items-center pb-4 mr-8" v-show="config.state.search">
+                <div
+                    class="search-bar flex flex-1 min-w-0 items-center pb-4 mr-8"
+                    v-show="mergedGridConfig.state.search"
+                >
                     <!-- global search bar -->
                     <input
                         @input="updateQuickSearch()"
@@ -72,7 +75,7 @@
                             }
                         "
                         enterkeyhint="done"
-                        v-model="config.state.searchFilter"
+                        v-model="mergedGridConfig.state.searchFilter"
                         class="rv-global-search rv-input pr-32 min-w-0"
                         aria-invalid="false"
                         :aria-label="t('grid.filters.label.global')"
@@ -87,7 +90,7 @@
                             viewBox="0 0 24 24"
                             focusable="false"
                             class="fill-current w-24 h-24 flex-shrink-0"
-                            v-if="config.state.searchFilter.length < 3"
+                            v-if="mergedGridConfig.state.searchFilter.length < 3"
                         >
                             <g id="search_cache224">
                                 <path
@@ -197,7 +200,7 @@
                                     height="18"
                                     width="18"
                                     viewBox="0 0 24 24"
-                                    v-if="filtersStatus !== 'disabled' && config.state.applyToMap"
+                                    v-if="filtersStatus !== 'disabled' && mergedGridConfig.state.applyToMap"
                                 >
                                     <g id="done">
                                         <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
@@ -224,7 +227,7 @@
                                     />
                                 </svg>
                                 <span class="grow">{{ t('grid.label.filters.show') }}</span>
-                                <svg height="18" width="18" viewBox="0 0 24 24" v-if="config.state.colFilter">
+                                <svg height="18" width="18" viewBox="0 0 24 24" v-if="mergedGridConfig.state.colFilter">
                                     <g id="done">
                                         <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                                     </g>
@@ -258,7 +261,7 @@
                                     height="18"
                                     width="18"
                                     viewBox="0 0 24 24"
-                                    v-if="filtersStatus !== 'disabled' && config.state.filterByExtent"
+                                    v-if="filtersStatus !== 'disabled' && mergedGridConfig.state.filterByExtent"
                                 >
                                     <g id="done">
                                         <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
@@ -381,16 +384,20 @@ import {
 } from 'vue';
 
 import { GlobalEvents, InstanceAPI, LayerInstance, NotificationType, PanelInstance } from '@/api/internal';
-import { DefPromise, LayerState } from '@/geo/api';
+import { CoreFilter, DefPromise, FieldType, LayerState } from '@/geo/api';
 import type { Attributes, TabularAttributeSet } from '@/geo/api';
+import * as GridUtils from './grid-utils';
+import to from 'await-to-js';
 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-material.css';
 import { AgGridVue } from 'ag-grid-vue3';
-import { useGridStore, type AttributeMapPair } from './store';
+
+import { useGridStore } from './store';
+import type { ActionButtonDefinition, AttributeMapPair, GridConfig, TableStateOptions } from './store';
 import { usePanelStore } from '@/stores/panel';
 import { GridAccessibilityManager, tabToNextCellHandler, tabToNextHeaderHandler } from './accessibility';
-import type { ActionButtonDefinition, GridConfig } from './store';
+
 import ColumnDropdown from './column-dropdown.vue';
 import TableStateManager from './store/table-state-manager';
 import ColumnStateManager from './store/column-state-manager';
@@ -408,7 +415,6 @@ import DetailsButtonRendererV from './templates/details-button-renderer.vue';
 import ZoomButtonRendererV from './templates/zoom-button-renderer.vue';
 import CustomButtonRendererV from './templates/custom-button-renderer.vue';
 import CellRendererV from './templates/cell-renderer.vue';
-import { CoreFilter, FieldType } from '@/geo/api';
 
 // grid locales
 import { AG_GRID_LOCALE_EN, AG_GRID_LOCALE_FR } from '@ag-grid-community/locale';
@@ -417,15 +423,13 @@ import { debounce } from 'throttle-debounce';
 
 import type { ColDef, GridApi, RowNode } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry, provideGlobalGridOptions } from 'ag-grid-community';
+
 // register all community features
 ModuleRegistry.registerModules([AllCommunityModule]);
 // mark all grids as using legacy themes
 provideGlobalGridOptions({ theme: 'legacy' });
 
 import { useI18n } from 'vue-i18n';
-
-// to prevent lint complaining about regex expressions
-/* eslint no-useless-escape: 0 */
 
 export interface FilterParams {
     comparator?: (filterDate: any, entryDate: any) => void;
@@ -434,23 +438,9 @@ export interface FilterParams {
     textFormatter?: (s: string) => void;
 }
 
-export interface TableComponent {
-    config: GridConfig;
-    agGridOptions: any;
-    agGridApi: any;
-    columnDefs: any;
-    rowData: any;
-    frameworkComponents: any;
-    quicksearch: string;
-    filterInfo: {
-        firstRow: number;
-        lastRow: number;
-        visibleRows: number;
-    };
-    filterStatus: string;
-    filterByExtent: boolean;
-}
-
+/**
+ * column definition for typical columns of layer-sourced data
+ */
 export interface ColumnDefinition {
     field: string;
     headerName: string;
@@ -480,7 +470,9 @@ export interface ColumnDefinition {
     autoHeight?: boolean;
 }
 
-// column definition for specialized columns (index, symbols, etc.)
+/**
+ * column definition for specialized columns (index, symbols, action buttons)
+ */
 export interface SpecialColumnDefinition {
     field?: string;
     headerName?: string;
@@ -532,7 +524,11 @@ const props = defineProps({
     }
 });
 
-const config = ref<GridConfig>({
+/**
+ * The grid configuration (assembled from all layer sources).
+ * This tracks the grid in memory, preserves settings when other grids get opened.
+ */
+const mergedGridConfig = ref<GridConfig>({
     id: 'dummy',
     layerIds: [],
     state: new TableStateManager(),
@@ -558,28 +554,47 @@ const onCellKeyPress = GridAccessibilityManager.onCellKeyPress;
 const filterInfo = ref({ firstRow: 0, lastRow: 0, visibleRows: 0 });
 const filteredOids = ref<{ [uid: string]: Array<number> | undefined }>({});
 
-const layerCols = ref<{
-    [id: string]: Array<AttributeMapPair>;
-}>({});
+/**
+ * Maps layer ids to column mappings for that layer
+ */
+const layerCols = ref<Record<string, Array<AttributeMapPair>>>({});
+
+/**
+ * All the layer ids that can participate in this grid
+ */
 const origLayerIds = ref(gridStore.grids[props.gridId].layerIds);
+
+/**
+ * All layers that can participate in this grid, and exist in RAMP
+ */
 const gridLayers = computed(() => {
     if (gridStore.grids[props.gridId]) {
-        return gridStore.grids[props.gridId].layerIds
-            .map(id => iApi.geo.layer.getLayer(id) as LayerInstance)
-            .filter(layer => layer !== undefined);
+        return origLayerIds.value.map(id => iApi.geo.layer.getLayer(id)).filter(layer => layer !== undefined);
     } else return [];
 });
-const canClearFilters = computed(() => config.value.state.filtered || config.value.state.searchFilter);
 
+/**
+ * If there are any active filters (column or search box).
+ */
+const canClearFilters = computed(
+    () => mergedGridConfig.value.state.filtered || mergedGridConfig.value.state.searchFilter
+);
+
+/**
+ * Tracks names of the "system"-ish columns. Typically object id, and any measurement stuff like "shape_area" and "shape_length"
+ */
 const systemCols = ref<Set<string>>(new Set<string>());
 
 // manages fast incoming filter change events. Forces them to finish
 // in order to avoid race conditions
 const filterQueue = ref<Array<DefPromise<void>>>([]);
 
+/**
+ * The API for the AG-Grid
+ */
 const gridApi = computed(() => agGridApi.value!);
 
-const addAriaLabels = () => {
+const addAriaLabels = (): void => {
     const checkboxInputs = iApi.$vApp.$el.querySelectorAll(
         '.ag-input-field-input.ag-checkbox-input'
     ) as NodeListOf<Element>;
@@ -596,17 +611,18 @@ const addAriaLabels = () => {
  * Indicates at least one layer in this grid is loaded and visible.
  */
 const somethingVisible = computed(() =>
-    origLayerIds.value.some(layerId => {
-        const layer = iApi.geo.layer.getLayer(layerId);
-        return layer?.layerState === LayerState.LOADED && layer?.visibility;
-    })
+    gridLayers.value.some(layer => layer.layerState === LayerState.LOADED && layer.visibility)
 );
 
+/**
+ * Callback when the AG-Grid is ready
+ * @param params nugget of stuff from ag-grid
+ */
 const onGridReady = (params: any) => {
     agGridApi.value = params.api;
 
     // get grid title
-    let finalTitle = config.value.state.title;
+    let finalTitle = mergedGridConfig.value.state.title;
     if (!finalTitle) {
         const layer = iApi.geo.layer.getLayer(props.gridId);
         // fallback. layer name if layer exists & not a merge grid. otherwise grid id as final flail (will at least alert dev to add a title)
@@ -667,7 +683,7 @@ const onGridReady = (params: any) => {
         iApi.event.on(
             GlobalEvents.MAP_EXTENTCHANGE,
             debounce(100, () => {
-                if (config.value.state.filterByExtent) {
+                if (mergedGridConfig.value.state.filterByExtent) {
                     applyLayerFilters();
                 }
             })
@@ -684,7 +700,7 @@ const onGridReady = (params: any) => {
     applyLayerFilters();
 };
 
-const gridRendered = () => {
+const gridRendered = (): void => {
     // size grid columns
     gridApi.value.autoSizeAllColumns();
     gridAccessibilityManager.value = new GridAccessibilityManager(el.value!, agGridApi.value as GridApi);
@@ -692,44 +708,48 @@ const gridRendered = () => {
 };
 
 // Updates the global search value.
-const updateQuickSearch = () => {
-    gridApi.value.setGridOption('quickFilterText', config.value.state.searchFilter);
+const updateQuickSearch = (): void => {
+    gridApi.value.setGridOption('quickFilterText', mergedGridConfig.value.state.searchFilter);
 };
 
-const resetQuickSearch = () => {
-    config.value.state.searchFilter = '';
+const resetQuickSearch = (): void => {
+    mergedGridConfig.value.state.searchFilter = '';
     updateQuickSearch();
 };
 
-const clearSearchAndFilters = () => {
+const clearSearchAndFilters = (): void => {
     resetQuickSearch();
     clearFilters();
     applyLayerFilters();
 };
 
-const toggleFilterByExtent = () => {
-    config.value.state.filterByExtent = !config.value.state.filterByExtent;
+const toggleFilterByExtent = (): void => {
+    mergedGridConfig.value.state.filterByExtent = !mergedGridConfig.value.state.filterByExtent;
     applyLayerFilters();
 };
 
-// Toggles the floating (column) filters on and off.
+/**
+ * Toggles the floating (column) filters on and off.
+ */
 const toggleShowFilters = () => {
     const colDefs = gridApi.value.getColumnDefs();
-    config.value.state.colFilter = !config.value.state.colFilter;
+    mergedGridConfig.value.state.colFilter = !mergedGridConfig.value.state.colFilter;
 
     colDefs?.forEach((col: ColDef) => {
-        col.floatingFilter = config.value.state.colFilter;
+        col.floatingFilter = mergedGridConfig.value.state.colFilter;
     });
 
     // Update the column definitions with the new filter value.
     gridApi.value.setGridOption('columnDefs', colDefs);
 };
 
-// Updates the current status of the filter.
-const updateFilterInfo = () => {
+/**
+ * Updates the current status of the filter.
+ */
+const updateFilterInfo = (): void => {
     if (agGridApi.value && !isLoadingGrid.value) {
-        if (config.value.state.searchFilter !== '') updateQuickSearch();
-        if (config.value.state.applyToMap) {
+        if (mergedGridConfig.value.state.searchFilter !== '') updateQuickSearch();
+        if (mergedGridConfig.value.state.applyToMap) {
             applyFiltersToMap();
         }
         nextTick(() => {
@@ -744,25 +764,27 @@ const updateFilterInfo = () => {
     }
 };
 
-const updateRowInfo = () => {
+const updateRowInfo = (): void => {
     filterInfo.value.firstRow = gridApi.value.getFirstDisplayedRowIndex() + 1;
     filterInfo.value.lastRow = gridApi.value.getLastDisplayedRowIndex() + 1;
     filterInfo.value.visibleRows = gridApi.value.getDisplayedRowCount();
 };
 
-// Clear all table filters.
-const clearFilters = () => {
+/**
+ * Clear all table filters.
+ */
+const clearFilters = (): void => {
     // Replace the filter model with an empty model.
     gridApi.value.setFilterModel({});
 
     // Clear any saved filter state in the table state manager.
-    config.value.state.clearFilters();
+    mergedGridConfig.value.state.clearFilters();
 
     // Refresh the column filters to reset inputs.
     gridApi.value.refreshHeader();
 };
 
-const togglePinned = () => {
+const togglePinned = (): void => {
     pinned.value = !pinned.value;
     const pinSetting = pinned.value ? 'left' : null;
 
@@ -772,7 +794,7 @@ const togglePinned = () => {
     }
 };
 
-const exportData = () => {
+const exportData = (): void => {
     // Filter out the 'special columns'
     const columnsToExport = gridApi.value.getAllDisplayedColumns().filter(column => {
         const colDef = column.getColDef();
@@ -807,7 +829,7 @@ const exportData = () => {
     });
 };
 
-const setUpDateFilter = (colDef: ColumnDefinition, state: TableStateManager) => {
+const setUpDateFilter = (colDef: ColumnDefinition, state: TableStateManager): void => {
     colDef.floatingFilterComponent = 'dateFloatingFilter';
     colDef.filterParams.comparator = function (filterDate: any, entryDate: any) {
         const entry = new Date(entryDate);
@@ -842,7 +864,7 @@ const setUpDateFilter = (colDef: ColumnDefinition, state: TableStateManager) => 
     };
 };
 
-const setUpSelectorFilter = (colDef: ColumnDefinition, rowData: Attributes[], state: TableStateManager) => {
+const setUpSelectorFilter = (colDef: ColumnDefinition, rowData: Attributes[], state: TableStateManager): void => {
     colDef.floatingFilterComponent = 'selectorFloatingFilter';
     colDef.filterParams.inRangeInclusive = true;
     colDef.suppressFloatingFilterButton = true;
@@ -852,7 +874,7 @@ const setUpSelectorFilter = (colDef: ColumnDefinition, rowData: Attributes[], st
     };
 };
 
-const setUpNumberFilter = (colDef: ColumnDefinition, state: TableStateManager) => {
+const setUpNumberFilter = (colDef: ColumnDefinition, state: TableStateManager): void => {
     colDef.floatingFilterComponent = 'numberFloatingFilter';
     colDef.filterParams.inRangeInclusive = true;
     colDef.suppressFloatingFilterButton = true;
@@ -861,7 +883,7 @@ const setUpNumberFilter = (colDef: ColumnDefinition, state: TableStateManager) =
     };
 };
 
-const setUpTextFilter = (colDef: ColumnDefinition, state: TableStateManager) => {
+const setUpTextFilter = (colDef: ColumnDefinition, state: TableStateManager): void => {
     colDef.floatingFilterComponent = 'textFloatingFilter';
     colDef.suppressFloatingFilterButton = true;
     colDef.floatingFilterComponentParams = {
@@ -908,7 +930,7 @@ const setUpSpecialColumns = (
     col: ColumnDefinition,
     colDefs: Array<ColumnDefinition | SpecialColumnDefinition>,
     state: TableStateManager
-) => {
+): void => {
     // set up row number column
     if (col.field === 'rvRowIndex') {
         const indexDef: SpecialColumnDefinition = {
@@ -921,7 +943,7 @@ const setUpSpecialColumns = (
             suppressMovable: true,
             suppressHeaderMenuButton: true,
             suppressHeaderContextMenu: true,
-            floatingFilter: config.value.state.colFilter,
+            floatingFilter: mergedGridConfig.value.state.colFilter,
             pinned: 'left',
             maxWidth: 42,
             cellStyle: () => {
@@ -946,7 +968,7 @@ const setUpSpecialColumns = (
 
     // Set up the interactive column that contains the zoom and details button.
     if (col.field === 'rvInteractive') {
-        const buttonControls = config.value.state.controls;
+        const buttonControls = mergedGridConfig.value.state.controls;
 
         const detailsDef: SpecialColumnDefinition = {
             field: 'rvDetailsButton',
@@ -1048,7 +1070,7 @@ const setUpSpecialColumns = (
             maxWidth: 42,
             cellDataType: false,
             cellRenderer: (cell: any) => {
-                const layer: LayerInstance | undefined = iApi.geo.layer.getLayer(cell.data.rvUid);
+                const layer = iApi.geo.layer.getLayer(cell.data.rvUid);
                 if (layer === undefined) return;
                 const iconContainer = document.createElement('span');
                 const oid = cell.data[oidField.value];
@@ -1115,7 +1137,7 @@ const applyLayerFilters = async () => {
                 await layer
                     .getFilterOIDs(
                         [CoreFilter.GRID],
-                        config.value.state.filterByExtent ? iApi.geo.map.getExtent() : undefined
+                        mergedGridConfig.value.state.filterByExtent ? iApi.geo.map.getExtent() : undefined
                     )
                     .then(oids => {
                         filteredOids.value[layer.uid] = oids;
@@ -1142,7 +1164,7 @@ const applyLayerFilters = async () => {
 };
 
 const toggleFiltersToMap = () => {
-    config.value.state.applyToMap = !config.value.state.applyToMap;
+    mergedGridConfig.value.state.applyToMap = !mergedGridConfig.value.state.applyToMap;
     applyFiltersToMap();
 };
 
@@ -1150,7 +1172,7 @@ const applyFiltersToMap = () => {
     gridLayers.value
         .filter(layer => layer.mapLayer)
         .forEach(layer => {
-            if (!config.value.state.applyToMap) {
+            if (!mergedGridConfig.value.state.applyToMap) {
                 layer.setSqlFilter(CoreFilter.GRID, '');
             } else {
                 const mapFilterQuery = getFiltersQuery(layer.id);
@@ -1159,24 +1181,26 @@ const applyFiltersToMap = () => {
         });
 };
 
-// get filter SQL query string
-const getFiltersQuery = (id: string) => {
+/**
+ * Get filter SQL query string
+ */
+const getFiltersQuery = (layerId: string) => {
     const filterModel = gridApi.value.getFilterModel();
     const colStrs: (string | undefined)[] = [];
     Object.keys(filterModel || {}).forEach(col => {
         // check if filter is applied to an attribute of this layer
-        const attrs = getAttrPair(id, col);
+        const attrs = getAttrPair(layerId, col);
         if (attrs) {
             // create SQL string with original attribute name, because otherwise the the layer wouldn't recognize the attribute name in the filter
             // i.e a layer with 'LAT' mapped to 'LATITUDE' in the grid must query '___ IN LAT' instead of '___ IN LATITUDE'
-            colStrs.push(filterToSql(attrs.origAttr, filterModel?.[col]));
+            colStrs.push(filterToSql(attrs.origAttr, filterModel[col]));
         } else {
             // filter out layer when searching a column it doesn't have
             colStrs.push('1=2');
         }
     });
-    if (config.value.state.searchFilter && config.value.state.searchFilter.length > 0) {
-        const globalSearchVal = globalSearchToSql(id) || '1=2';
+    if (mergedGridConfig.value.state.searchFilter && mergedGridConfig.value.state.searchFilter.length > 0) {
+        const globalSearchVal = globalSearchToSql(layerId) || '1=2';
         if (globalSearchVal.length > 0) {
             // do not push an empty global search
             colStrs.push(`(${globalSearchVal})`);
@@ -1185,8 +1209,12 @@ const getFiltersQuery = (id: string) => {
     return colStrs.join(' AND ');
 };
 
-// converts columns filter to SQL
-const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
+/**
+ * converts columns filter to SQL
+ * @param col column name. this will be the attribute name in the filter
+ * @param colFilter this is the ag-grid filter model for the column https://www.ag-grid.com/javascript-data-grid/filter-api/
+ */
+const filterToSql = (col: string, colFilter: Record<string, any>): string | undefined => {
     switch (colFilter.filterType) {
         case 'number': {
             switch (colFilter.type) {
@@ -1256,9 +1284,9 @@ const filterToSql = (col: string, colFilter: { [key: string]: any }): any => {
 };
 
 // convert global search to SQL string filter of columns excluding unfiltered columns
-const globalSearchToSql = (id: string): string => {
+const globalSearchToSql = (layerId: string): string => {
     // TODO: support for global search on dates
-    const val = config.value.state.searchFilter.replace(/'/g, "''");
+    const val = mergedGridConfig.value.state.searchFilter.replace(/'/g, "''");
     // to implement quick filters, first need to split the search text on white space
     const searchVals = val.split(' ');
 
@@ -1271,7 +1299,7 @@ const globalSearchToSql = (id: string): string => {
         .filter(
             (column: any) =>
                 (column.colDef.filter === 'agTextColumnFilter' || column.colDef.filter === 'agNumberColumnFilter') &&
-                getAttrPair(id, column.getColId())
+                getAttrPair(layerId, column.getColId())
         );
 
     const filteredColumns: string[] = [];
@@ -1287,7 +1315,7 @@ const globalSearchToSql = (id: string): string => {
             let foundVal = false;
             for (const column of columns ?? []) {
                 const colId = column.getColId();
-                const origColId = getAttrPair(id, column.getColId())?.origAttr;
+                const origColId = getAttrPair(layerId, column.getColId())?.origAttr;
                 const colDef = column.getColDef();
 
                 // row data can be undefined when merging heterogenous layers
@@ -1392,15 +1420,21 @@ const hasMapLayers = computed<boolean>(() =>
     gridLayers.value.some(layer => layer.isLoaded && layer.supportsFeatures && layer.mapLayer)
 );
 
-const getAttrPair = (id: string, attr: string): AttributeMapPair | undefined => {
-    // given an attribute name, returns the attribute and, if it exists, the mapped attribute in a layer
-    return layerCols.value[id].find(layer => (layer.mappedAttr ?? layer.origAttr) === attr);
+/**
+ * Given a layer id and its attribute name,  attempts to find the mapped attribute pair for it
+ */
+const getAttrPair = (layerId: string, attr: string): AttributeMapPair | undefined => {
+    // limitation: cannot do swapsies-like mapping between real attributes and mapped attributes.
+    // eg. orig layer has fields xx and yy.  Can't map xx to yy and yy to zz.
+    //     would likely write xx to yy, then overwrite with yy (from source). then would duplicate yy (source) to zz.
+    return GridUtils.findAttributePair(layerCols.value, layerId, attr);
 };
 
-const setUpColumns = () => {
-    const fancyLayers: LayerInstance[] = gridLayers.value.filter(
-        layer => layer && layer.supportsFeatures && layer.isLoaded
-    ) as LayerInstance[];
+const setUpColumns = async (): Promise<void> => {
+    /**
+     * Layers our grid sources that exist, are loaded, and deal in Features
+     */
+    const fancyLayers = gridLayers.value.filter(layer => layer.supportsFeatures && layer.isLoaded);
 
     if (fancyLayers.length === 0) {
         // in the event of error'd layers, otherwise a blank datagrid will appear
@@ -1426,251 +1460,281 @@ const setUpColumns = () => {
         );
     });
 
-    Promise.all(fancyLayers.map(l => l.loadPromise())).then(() => {
-        const tableAttributePromises: Array<Promise<TabularAttributeSet>> = fancyLayers.map(fl => {
-            return markRaw(fl)
-                .getTabularAttributes()
-                .then(tabularAttrSet => {
-                    const gridConfig = config?.value?.state?.state;
+    // for safety. items in fancyLayers should already be loaded.
+    await Promise.all(fancyLayers.map(l => l.loadPromise()));
 
-                    // use selectedColumnNames to filter out unwanted columns, but only if the appropriate flag is set
-                    if (gridConfig?.columns && gridConfig.columnMetadata?.exclusiveColumns) {
-                        const selectedColumnNames = gridConfig.columns.map((column: { field: any }) => column.field);
-                        tabularAttrSet.columns = tabularAttrSet.columns.filter(column =>
-                            selectedColumnNames.includes(column.data)
-                        );
-                    }
+    // load/fetch all the attributes needed for the table. store those attribute load promises in an array.
+    const tableAttributePromises = fancyLayers.map(async fl => {
+        const tabularAttrSet = await markRaw(fl).getTabularAttributes();
 
-                    return tabularAttrSet;
+        const gridConfig = mergedGridConfig?.value?.state?.state as TableStateOptions | undefined;
+
+        // use selectedColumnNames to filter out unwanted columns, but only if the appropriate flag is set
+        if (gridConfig?.columns && gridConfig.columnMetadata?.exclusiveColumns) {
+            const selectedColumnNames = gridConfig.columns.map((column: { field: any }) => column.field);
+            tabularAttrSet.columns = tabularAttrSet.columns.filter(column => selectedColumnNames.includes(column.data));
+        }
+
+        return tabularAttrSet;
+    });
+
+    // wait for everything to load
+    const [tableError, tableAttributes] = await to(Promise.all(tableAttributePromises));
+
+    if (tableError) {
+        console.error(tableError);
+        isErrorGrid.value = true;
+        isLoadingGrid.value = false;
+        return;
+    }
+
+    // check if load was cancelled by checking the loadAborted state
+    if (fancyLayers.every(fl => fl.attribLoadAborted())) {
+        // if load was cancelled, don't load grid any further and return
+        isLoadingGrid.value = false;
+        return;
+    }
+
+    /**
+     * Holds the final table, consisting of all source layer "tables" merged together
+     */
+    const mergedTableAttrs: TabularAttributeSet = {
+        columns: [],
+        rows: [],
+        fields: [],
+        oidField: ''
+    };
+
+    // merge attributes into one table
+    tableAttributes.forEach((sourceTableAttribs, idx) => {
+        const attrMap: Array<AttributeMapPair> = [];
+        const layerId: string = fancyLayers[idx].id;
+
+        // scan the source layer's table's columns
+        sourceTableAttribs.columns.forEach(col => {
+            if (mergedGridConfig.value.fieldMap && mergedGridConfig.value.fieldMap[col.data]) {
+                // this source column maps to the grid. save the mapping
+                attrMap.push({
+                    origAttr: col.data,
+                    mappedAttr: mergedGridConfig.value.fieldMap[col.data]
                 });
+
+                // update the column metadata with the mapped value
+                col.data = mergedGridConfig.value.fieldMap[col.data];
+                col.title = col.data;
+            } else {
+                // mark as not mapped
+                attrMap.push({
+                    origAttr: col.data,
+                    mappedAttr: undefined
+                });
+            }
+
+            // if our final table definition doesn't have this column, and this column is participating,
+            // add it to the definition.
+            if (!mergedTableAttrs.columns.map(c => c.data).includes(col.data)) {
+                mergedTableAttrs.columns.push(col);
+            }
         });
 
-        Promise.all(tableAttributePromises)
-            .then((tableAttributes: Array<TabularAttributeSet>) => {
-                // check if load was cancelled by checking the loadAborted state
-                if (fancyLayers.every(fl => fl.attribLoadAborted())) {
-                    // if load was cancelled, don't load grid any further and return
-                    isLoadingGrid.value = false;
-                    return;
+        // add the rows from this layer to the final merge grid.
+        mergedTableAttrs.rows = mergedTableAttrs.rows.concat(
+            sourceTableAttribs.rows.map(row => {
+                // if there is field-mapping, shuttle the row value from the old field to the new field, then smite the old field
+                if (mergedGridConfig.value.fieldMap) {
+                    for (const [oldAttr, newAttr] of Object.entries(mergedGridConfig.value.fieldMap)) {
+                        if (row[oldAttr] !== undefined && row[newAttr] === undefined) {
+                            row[newAttr] = row[oldAttr];
+                            delete row[oldAttr];
+                        }
+                    }
                 }
-
-                const mergedTableAttrs: TabularAttributeSet = {
-                    columns: [],
-                    rows: [],
-                    fields: [],
-                    oidField: ''
-                };
-
-                // merge attributes into one table
-                tableAttributes.forEach((ta, idx) => {
-                    const attrMap: any = [];
-                    const id: string = fancyLayers[idx].id;
-
-                    ta.columns.forEach(col => {
-                        if (config.value.fieldMap && config.value.fieldMap[col.data]) {
-                            attrMap.push({
-                                origAttr: col.data,
-                                mappedAttr: config.value.fieldMap[col.data]
-                            });
-                            col.data = config.value.fieldMap[col.data];
-                            col.title = col.data;
-                        } else {
-                            attrMap.push({
-                                origAttr: col.data,
-                                mappedAttr: undefined
-                            });
-                        }
-
-                        if (!mergedTableAttrs.columns.map(c => c.data).includes(col.data)) {
-                            mergedTableAttrs.columns.push(col);
-                        }
-                    });
-
-                    mergedTableAttrs.rows = mergedTableAttrs.rows.concat(
-                        ta.rows.map(row => {
-                            if (config.value.fieldMap) {
-                                for (const [oldAttr, newAttr] of Object.entries(config.value.fieldMap)) {
-                                    if (row[oldAttr] !== undefined && row[newAttr] === undefined) {
-                                        row[newAttr] = row[oldAttr];
-                                        delete row[oldAttr];
-                                    }
-                                }
-                            }
-                            return row;
-                        })
-                    );
-                    for (let i = 0; i < mergedTableAttrs.rows.length; i++) {
-                        for (const [key] of Object.entries(mergedTableAttrs.rows[i])) {
-                            if (iApi.ui.isPlainText(mergedTableAttrs.rows[i][key])) {
-                                mergedTableAttrs.rows[i][key] = iApi.ui.escapeHtml(mergedTableAttrs.rows[i][key]);
-                            }
-                        }
-                    }
-
-                    mergedTableAttrs.fields = mergedTableAttrs.fields.concat(
-                        ta.fields.map(field => {
-                            // Add system columns to the set if they need to be hidden
-                            if (
-                                (!iApi.ui.exposeOids && field.type === 'oid') ||
-                                (!iApi.ui.exposeMeasurements &&
-                                    (field.name.toLowerCase() === 'shape_length' ||
-                                        field.name.toLowerCase() === 'shape_area'))
-                            ) {
-                                systemCols.value.add(field.name);
-                            }
-                            return {
-                                name:
-                                    config.value.fieldMap && config.value.fieldMap[field.name]
-                                        ? config.value.fieldMap[field.name]
-                                        : field.name,
-                                type: field.type,
-                                alias: field.alias ?? undefined,
-                                length: field.length ?? undefined
-                            };
-                        })
-                    );
-
-                    mergedTableAttrs.oidField =
-                        config.value.fieldMap && config.value.fieldMap[ta.oidField]
-                            ? config.value.fieldMap[ta.oidField]
-                            : ta.oidField;
-
-                    // tracking which columns correspond with which layer for applyToMap filtering
-                    layerCols.value[id] = attrMap;
-                });
-
-                // save field that contains oid for this layer
-                oidField.value = mergedTableAttrs.oidField;
-
-                // Iterate through table columns and set up column definitions and column filter stuff.
-                // Also adds the `rvSymbol` and `rvInteractive` columns to the table.
-                ['rvRowIndex', 'rvInteractive', 'rvSymbol', ...mergedTableAttrs.columns].forEach((column: any) => {
-                    if (config.value.state?.columns[column.data] === undefined) {
-                        config.value.state.columns[column.data] = new ColumnStateManager({
-                            field: column.data,
-                            title: column.title
-                        });
-                    }
-                    if ((!iApi.ui.exposeOids || !iApi.ui.exposeMeasurements) && systemCols.value.has(column.data)) {
-                        // hide system columns according to their flags
-                        config.value.state.columns[column.data].visible = false;
-                    }
-
-                    const colConfig = config.value.state?.columns[column.data];
-                    const isSelector = colConfig.filter.type === 'selector';
-                    const col: ColumnDefinition = {
-                        headerName: colConfig.title ?? column.title,
-                        headerComponent: 'agColumnHeader',
-                        headerComponentParams: {
-                            sort: colConfig.sort
-                        },
-                        field: column.data ?? column,
-                        sortable: true,
-                        lockPosition: true,
-                        filterParams: {},
-                        floatingFilter: config.value.state.colFilter && colConfig.searchable,
-                        hide: !colConfig?.visible,
-                        minWidth: colConfig.width,
-                        maxWidth: colConfig.width ?? 400,
-                        cellRenderer: (cell: any) => {
-                            return cell.value;
-                        },
-                        suppressHeaderKeyboardEvent: (params: any): boolean => {
-                            const keyboardEvent = params.event as KeyboardEvent;
-                            //suppresses enter on header cells and tab when the cell is not focused (focus is on an inner button)
-                            if (
-                                params.headerRowIndex === 0 &&
-                                (keyboardEvent.key === 'Enter' ||
-                                    (!(keyboardEvent.target as HTMLElement).classList.contains('ag-header-cell') &&
-                                        keyboardEvent.key === 'Tab'))
-                            ) {
-                                return true;
-                            }
-                            return false;
-                        }
-                    };
-
-                    // retrieve the field info for the column
-                    const fieldInfo = mergedTableAttrs.fields.find((field: any) => field.name === col.field);
-
-                    if (column === 'rvRowIndex' || column === 'rvSymbol' || column === 'rvInteractive') {
-                        setUpSpecialColumns(col, columnDefs.value, config.value.state);
-                    } else {
-                        // set up column filters according to their respective types
-                        if (NUM_TYPES.indexOf(fieldInfo!.type) > -1) {
-                            setUpNumberFilter(col, config.value.state);
-                            col.filter = 'agNumberColumnFilter';
-                            col.autoHeight = true;
-                            col.cellRenderer =
-                                colConfig.template === '' ? CellRendererV : iApi.component(colConfig.template);
-                            col.cellRendererParams = {
-                                type: 'number'
-                            };
-                        } else if (fieldInfo!.type === FieldType.DATE) {
-                            setUpDateFilter(col, config.value.state);
-                            col.filter = 'agDateColumnFilter';
-                            col.autoHeight = true;
-                            col.minWidth = 400;
-                            col.cellRenderer =
-                                colConfig.template === '' ? CellRendererV : iApi.component(colConfig.template);
-                            col.cellRendererParams = {
-                                type: 'date'
-                            };
-                        } else if (fieldInfo!.type === FieldType.STRING) {
-                            if (isSelector) {
-                                // set up a selector filter instead of a text filter if the `isSelector` flag is true.
-                                setUpSelectorFilter(col, mergedTableAttrs.rows, config.value.state);
-                            } else {
-                                setUpTextFilter(col, config.value.state);
-                            }
-                            col.filter = 'agTextColumnFilter';
-                            col.autoHeight = true;
-                            col.cellRenderer =
-                                colConfig.template === '' ? CellRendererV : iApi.component(colConfig.template);
-                            col.cellRendererParams = {
-                                type: 'string'
-                            };
-                        }
-
-                        columnDefs.value.push(col);
-                    }
-                });
-
-                // load layer data into the table.
-                rowData.value = markRaw(mergedTableAttrs.rows);
-                columnDefs.value = markRaw(columnDefs.value);
-
-                updateFilterInfo();
-
-                // the grid is now ready to be displayed
-                isLoadingGrid.value = false;
+                return row;
             })
-            .catch(e => {
-                console.error(e);
-                isErrorGrid.value = true;
-                isLoadingGrid.value = false;
-            });
+        );
+
+        // add source table fields to the merge grid fields.
+        // TODO wouldn't this make duplicate objects across multiple layer sources? is there some kind of cleanup later?
+        //      like we'd concact "name" from layer one, then concat "name" from layer two.
+        //      run a console log test if no obvious answer
+        mergedTableAttrs.fields = mergedTableAttrs.fields.concat(
+            sourceTableAttribs.fields.map(field => {
+                // Add system columns to the set if they need to be hidden
+                if (
+                    (!iApi.ui.exposeOids && field.type === 'oid') ||
+                    (!iApi.ui.exposeMeasurements &&
+                        (field.name.toLowerCase() === 'shape_length' || field.name.toLowerCase() === 'shape_area'))
+                ) {
+                    systemCols.value.add(field.name);
+                }
+                return {
+                    name:
+                        mergedGridConfig.value.fieldMap && mergedGridConfig.value.fieldMap[field.name]
+                            ? mergedGridConfig.value.fieldMap[field.name]
+                            : field.name,
+                    type: field.type,
+                    alias: field.alias ?? undefined,
+                    length: field.length ?? undefined
+                };
+            })
+        );
+
+        // derive OID field.
+        // NOTE this will update/rewrite with every source. maybe thats easiest, but also seems a bit fragile.
+        //      if last table is mapped bad, boom. I guess the whole thing depends on proper config.
+        mergedTableAttrs.oidField =
+            mergedGridConfig.value.fieldMap && mergedGridConfig.value.fieldMap[sourceTableAttribs.oidField]
+                ? mergedGridConfig.value.fieldMap[sourceTableAttribs.oidField]
+                : sourceTableAttribs.oidField;
+
+        // tracking which columns correspond with which layer for applyToMap filtering
+        layerCols.value[layerId] = attrMap;
     });
+
+    // save field that contains oid for this grid
+    oidField.value = mergedTableAttrs.oidField;
+
+    // scan the values of the rows. for text values, run the HTML escaper to avoid values being converted into dom nodes.
+    for (let i = 0; i < mergedTableAttrs.rows.length; i++) {
+        for (const [key] of Object.entries(mergedTableAttrs.rows[i])) {
+            if (iApi.ui.isPlainText(mergedTableAttrs.rows[i][key])) {
+                mergedTableAttrs.rows[i][key] = iApi.ui.escapeHtml(mergedTableAttrs.rows[i][key]);
+            }
+        }
+    }
+
+    // Iterate through table columns and set up column definitions and column filter stuff.
+    // Also adds the `rvSymbol` and `rvInteractive` columns to the table.
+    const specialCols = ['rvRowIndex', 'rvInteractive', 'rvSymbol'].map(scn => ({
+        data: scn,
+        title: '',
+        special: true
+    }));
+
+    // devnote: the special columns need to come first in the array we iterate over.
+    //          if not, the rvSymbol will lurk within regular columns.
+    // devnote: using "as any" on regular columns lets us sneak the "special" bool declaration onto the regular columns without actually adding it.
+    //          it will be undefined, thus falsey, thus doing what we want
+    specialCols.concat(mergedTableAttrs.columns as any).forEach(column => {
+        // ensure final grid has column state for this column
+        if (mergedGridConfig.value.state.columns[column.data] === undefined) {
+            mergedGridConfig.value.state.columns[column.data] = new ColumnStateManager({
+                field: column.data,
+                title: column.title
+            });
+        }
+
+        // hide system columns according to their flags
+        if ((!iApi.ui.exposeOids || !iApi.ui.exposeMeasurements) && systemCols.value.has(column.data)) {
+            mergedGridConfig.value.state.columns[column.data].visible = false;
+        }
+
+        const colConfig = mergedGridConfig.value.state.columns[column.data];
+        const isSelector = colConfig.filter.type === 'selector';
+
+        // create a column def for AG grid. this will be general, and then enhanced based on column specifics
+        const col: ColumnDefinition = {
+            headerName: colConfig.title ?? column.title,
+            headerComponent: 'agColumnHeader',
+            headerComponentParams: {
+                sort: colConfig.sort
+            },
+            field: column.data ?? column,
+            sortable: true,
+            lockPosition: true,
+            filterParams: {},
+            floatingFilter: mergedGridConfig.value.state.colFilter && colConfig.searchable,
+            hide: !colConfig.visible,
+            minWidth: colConfig.width,
+            maxWidth: colConfig.width ?? 400,
+            cellRenderer: (cell: any) => {
+                return cell.value;
+            },
+            suppressHeaderKeyboardEvent: (params: any): boolean => {
+                const keyboardEvent = params.event as KeyboardEvent;
+                //suppresses enter on header cells and tab when the cell is not focused (focus is on an inner button)
+                if (
+                    params.headerRowIndex === 0 &&
+                    (keyboardEvent.key === 'Enter' ||
+                        (!(keyboardEvent.target as HTMLElement).classList.contains('ag-header-cell') &&
+                            keyboardEvent.key === 'Tab'))
+                ) {
+                    return true;
+                }
+                return false;
+            }
+        };
+
+        // enhance the column based on what it is (special, or normal + datatype)
+        if (column.special) {
+            setUpSpecialColumns(col, columnDefs.value, mergedGridConfig.value.state);
+        } else {
+            // retrieve the field info for the column
+            // TODO would this have collisions for multiple fields? I suspect the first of many would get matched.
+            const fieldInfo = mergedTableAttrs.fields.find(field => field.name === col.field);
+
+            col.cellRenderer = colConfig.template === '' ? CellRendererV : iApi.component(colConfig.template);
+            col.autoHeight = true;
+
+            // set up column filters according to their respective types
+            if (NUM_TYPES.indexOf(fieldInfo!.type) > -1) {
+                setUpNumberFilter(col, mergedGridConfig.value.state);
+                col.filter = 'agNumberColumnFilter';
+                col.cellRendererParams = {
+                    type: 'number'
+                };
+            } else if (fieldInfo!.type === FieldType.DATE) {
+                setUpDateFilter(col, mergedGridConfig.value.state);
+                col.filter = 'agDateColumnFilter';
+                col.minWidth = 400;
+                col.cellRendererParams = {
+                    type: 'date'
+                };
+            } else if (fieldInfo!.type === FieldType.STRING) {
+                if (isSelector) {
+                    // set up a selector filter instead of a text filter if the `isSelector` flag is true.
+                    setUpSelectorFilter(col, mergedTableAttrs.rows, mergedGridConfig.value.state);
+                } else {
+                    setUpTextFilter(col, mergedGridConfig.value.state);
+                }
+                col.filter = 'agTextColumnFilter';
+                col.cellRendererParams = {
+                    type: 'string'
+                };
+            }
+
+            columnDefs.value.push(col);
+        }
+    });
+
+    // load layer data into the table.
+    rowData.value = markRaw(mergedTableAttrs.rows);
+    columnDefs.value = markRaw(columnDefs.value);
+
+    updateFilterInfo();
+
+    // the grid is now ready to be displayed
+    isLoadingGrid.value = false;
 };
 
-const keyupEvent = (e: Event) => {
+const keyupEvent = (e: Event): void => {
     const evt = e as KeyboardEvent;
     if (evt.key === 'Tab' && gridContainer.value?.matches(':focus')) {
         (gridContainer.value as any)._tippy.show();
     }
 };
 
-const blurEvent = () => {
+const blurEvent = (): void => {
     (gridContainer.value as any)._tippy.hide();
 };
 
-onMounted(() => {
+onMounted((): void => {
     gridContainer.value?.addEventListener('keyup', keyupEvent);
     gridContainer.value?.addEventListener('blur', blurEvent);
 });
 
-onBeforeMount(() => {
-    config.value = gridStore.grids[props.gridId];
+onBeforeMount((): void => {
+    mergedGridConfig.value = gridStore.grids[props.gridId];
 
     isLoadingGrid.value = true;
 

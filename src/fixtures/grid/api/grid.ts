@@ -1,13 +1,14 @@
 import { FixtureInstance } from '@/api';
-import { useGridStore, type MergeGridConfig } from '../store';
+import { useGridStore } from '../store';
+import type { GridConfig, MergeGridConfig, TableStateOptions } from '../store';
 import TableStateManager from '../store/table-state-manager';
 
 export class GridAPI extends FixtureInstance {
     private gridStore = useGridStore(this.$vApp.$pinia);
     /**
-     * Open the grid with the given id.
+     * Open the grid for a layer.
      *
-     * @param {string} id
+     * @param {string} id layer id that contains attribute data
      * @param {boolean} [open] force panel open or closed
      * @memberof GridAPI
      */
@@ -17,7 +18,7 @@ export class GridAPI extends FixtureInstance {
 
         // if no GridConfig exists for the given id, create it.
         if (!gridId) {
-            const layerGridConfigs: any = this.getLayerFixtureConfigs();
+            const layerGridConfigs = this.getLayerFixtureConfigs() as Record<string, TableStateOptions>;
 
             this.gridStore.addGrid({
                 id: id,
@@ -58,11 +59,11 @@ export class GridAPI extends FixtureInstance {
         this.handlePanelWidths(['grid']);
         this.handlePanelTeleports(['grid']);
 
-        const layerGridConfigs: any = this.getLayerFixtureConfigs();
+        const layerGridConfigs: any = this.getLayerFixtureConfigs() as Record<string, TableStateOptions>;
 
         // parse merge grid configs
         if (config && config.mergeGrids) {
-            config.mergeGrids.forEach((mergeGrid: any) => {
+            config.mergeGrids.forEach(mergeGrid => {
                 const layerIds: string[] = [];
 
                 // extract grid options
@@ -83,14 +84,17 @@ export class GridAPI extends FixtureInstance {
                     }
                 });
 
+                /**
+                 * Makes a lookup that maps source (real) fields to merge grid fields
+                 */
                 const mapping: { [source: string]: string } = {};
-                fieldMap?.forEach((map: any) => {
-                    map.sources.forEach((source: string) => {
-                        mapping[source] = map.field;
+                fieldMap?.forEach(fMap => {
+                    fMap.sources.forEach((source: string) => {
+                        mapping[source] = fMap.field;
                     });
                 });
 
-                const gridConfig = {
+                const gridConfig: GridConfig = {
                     id: gridId,
                     layerIds: layerIds,
                     state: new TableStateManager(options),

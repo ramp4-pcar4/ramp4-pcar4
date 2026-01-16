@@ -51,25 +51,23 @@
 import { onBeforeMount, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { usePanelStore } from '@/stores/panel';
-import type { ColumnDefinition, FilterParams } from '../table-component.vue';
-
-export interface GridCustomNumberFilter {
-    minVal: any;
-    maxVal: any;
-    colDef: ColumnDefinition;
-    params: FilterParams;
-}
+import type { RangeFilterValue } from '../store';
 
 const panelStore = usePanelStore();
 const { t } = useI18n();
+
+/**
+ * .stateManager: TableStateManager
+ * .column: Column (ag-grid) ??
+ * .api: GridApi (ag-grid)
+ */
 const props = defineProps(['params']);
 
-const minVal = ref<any>('');
-const maxVal = ref<any>('');
-const fixed = ref<boolean>(props.params.stateManager.columns[props.params.column.colDef.field].filter.static);
+const minVal = ref<RangeFilterValue>('');
+const maxVal = ref<RangeFilterValue>('');
+const fixed = ref<boolean>(!!props.params.stateManager.columns[props.params.column.colDef.field].filter.static);
 
 const minValChanged = () => {
-    minVal.value = minVal.value !== '' && !isNaN(minVal.value) ? minVal.value : null;
     setFilterModel();
 
     // Save the new filter value in the state manager. Allows for quick recovery if the grid is
@@ -77,8 +75,7 @@ const minValChanged = () => {
     props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, minVal.value, 'min');
 };
 
-const maxValChanged = () => {
-    maxVal.value = maxVal.value !== '' && !isNaN(maxVal.value) ? maxVal.value : null;
+const maxValChanged = (): void => {
     setFilterModel();
 
     // Save the new filter value in the state manager. Allows for quick recovery if the grid is
@@ -86,10 +83,21 @@ const maxValChanged = () => {
     props.params.stateManager.setColumnFilterValue(props.params.column.colDef.field, maxVal.value, 'max');
 };
 
-const setFilterModel = () => {
-    // If the value is not a number, or is null, set its value to the empty string.
-    if (isNaN(minVal.value) || minVal.value === null) minVal.value = '';
-    if (isNaN(maxVal.value) || maxVal.value === null) maxVal.value = '';
+const invalidNumber = (testValue: RangeFilterValue): boolean => {
+    // if data type is not a number, or its number but NaN value, return true
+    return typeof testValue !== 'number' || isNaN(testValue);
+};
+
+const setFilterModel = (): void => {
+    // If the value is not a valid number set its value to the empty string.
+
+    if (minVal.value !== '' && invalidNumber(minVal.value)) {
+        minVal.value = '';
+    }
+
+    if (maxVal.value !== '' && invalidNumber(maxVal.value)) {
+        maxVal.value = '';
+    }
 
     const field = props.params.column.colDef.field as string;
     if (maxVal.value === '' && minVal.value === '') {

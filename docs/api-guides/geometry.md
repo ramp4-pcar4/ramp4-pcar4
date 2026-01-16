@@ -8,7 +8,7 @@ This document uses the global `RAMP.geo.geom` object as the source of geometry c
 
 This is fairly in-line with ESRI's format. It supports WKID and WKT, and optional latestWKID parameters.
 
-```
+```js
 const g = RAMP.geo.geom;
 const lambertSR = new g.SpatialReference(3978);
 const fancySRwithLatest = new g.SpatialReference(102100, 3857);
@@ -20,7 +20,7 @@ const iAmFalse = lambertSR.isEqual(aziumthSR);
 
 Various co-ordinate inputs of the constructors.
 
-```
+```js
 const g = RAMP.geo.geom;
 const pt1 = new g.Point('myid', [-76.77, 44.42]);
 const pt2 = new g.Point('myid', {x: -76.77, y: 44.42});
@@ -31,7 +31,7 @@ const pt5 = new g.Point('myid', {x: '-76.77', y: 44.42});
 
 Various methods
 
-```
+```js
 const pt = new RAMP.geo.geom.Point('myid', [-76.77, 44.42]);
 pt.type; // 'Point'
 pt.id; // 'myid'
@@ -46,7 +46,7 @@ pt.x = -77.13; // point has updated.
 
 The optional constructor parameter for spatial references is available on all geometry. We will use `Point` to illustrate.
 
-```
+```js
 const g = RAMP.geo.geom;
 const lambertSR = new g.SpatialReference(3978);
 const lambertPt1 = new g.Point('myid', [1461066.3, -303263.6], lambertSR);
@@ -62,7 +62,7 @@ If the co-ordinate input is a well formed array of numbers (including that all p
 
 While our `Point` example may seem trivial, performance gains are to be had when dealing with geometries having high vertex counts.
 
-```
+```js
 const lambertPt = new RAMP.geo.geom.Point('myid', [1461066.3, -303263.6], 3978, true);
 ```
 
@@ -70,7 +70,7 @@ const lambertPt = new RAMP.geo.geom.Point('myid', [1461066.3, -303263.6], 3978, 
 
 Various co-ordinate inputs of the constructors.
 
-```
+```js
 const g = RAMP.geo.geom;
 const mptFromCoords = new g.MultiPoint('myid', [[-76.77, 44.42], [-68.69, 51.39]]);
 const mptFromMultiPt = new g.MultiPoint('myid', mptFromCoords);
@@ -80,7 +80,7 @@ const mptMixedPoints = new g.MultiPoint('myid', [pt, [-68.69, 51.39], {x: "-97.8
 
 Various methods
 
-```
+```js
 const mpt = new RAMP.geo.geom.MultiPoint('myid', [[-76.77, 44.42], [-68.69, 51.39]]);
 mpt.type;                // 'MultiPoint'
 mpt.id;                  // 'myid'
@@ -98,7 +98,7 @@ mpt.updateAt(pt, 0);     // multipoint innards are now [[-78.22, 44.42], [-68.69
 
 This has effectively the same interface as `MultiPoint`, so examples will be sparse. `LineString` enforces a minimum of two vertices.
 
-```
+```js
 const lineFromCoords = new RAMP.geo.geom.LineString('myid', [[-76.77, 44.42], [-68.69, 51.39]]);
 const lineFromLine = new RAMP.geo.geom.LineString('myid', lineFromCoords); // also accepts MultiPoint
 lineFromCoords.type; // 'LineString'
@@ -108,7 +108,7 @@ lineFromCoords.type; // 'LineString'
 
 This also has effectively the same interface as `MultiPoint`. `LinearRing` enforces that the last vertex must be identical to the first vertex. However, being both smart and kind, the constructor will inject a closing vertex if it is missing from the source. After closure, `LinearRing` expects a minimum of four vertices. For optimal drawing, the vertices should be in a clockwise order.
 
-```
+```js
 const ringIncomplete = new RAMP.geo.geom.LinearRing('myid', [[-76.77, 44.42], [-97.86, 55.74], [-68.69, 51.39]]);
 ringIncomplete.toArray(); // [[-76.77, 44.42], [-97.86, 55.74], [-68.69, 51.39], [-76.77, 44.42]]
 ringIncomplete.type;      // 'LinearRing'
@@ -118,7 +118,7 @@ ringIncomplete.type;      // 'LinearRing'
 
 Various co-ordinate inputs of the constructors.
 
-```
+```js
 const g = RAMP.geo.geom;
 const mlsFromCoords = new g.MultiLineString('myid', [[[-76.77, 44.42], [-80.95, 49.96], [-68.69, 51.39]], [[-97.86, 55.74], [-82.15, 49.34]]]);
 const mlsFromMultiLine = new g.MultiLineString('myid', mlsFromCoords); // also accepts LineString, MultiPoint
@@ -129,7 +129,7 @@ const mlsFromMixedLines = new g.MultiLineString('myid', [[[-76.77, "44.42"], {x:
 
 Various methods
 
-```
+```js
 const mls = new RAMP.geo.geom.MultiLineString('myid', [[[-76.77, 44.42], [-80.95, 49.96], [-68.69, 51.39]], [[-97.86, 55.74], [-82.15, 49.34]]]);
 mls.type;                // 'MultiLineString'
 mls.id;                  // 'myid'
@@ -148,7 +148,7 @@ mls.updateAt(ln, 1);     // multilinestring innards are now [[[-76.77, 44.42], [
 
 Various co-ordinate inputs of the constructors.
 
-```
+```js
 const g = RAMP.geo.geom;
 const polyFromCoords = new g.Polygon('myid', [[[-76.77, 44.42], [-80.95, 49.96], [-68.69, 51.39], [-76.77, 44.42]], [[-97.86, 55.74], [-82.15, 49.34], [-116.95, 51.30], [-97.86, 55.74]]]);
 const polyFromPoly = new g.Polygon('myid', polyFromCoords); // also accepts MultiLineString, LinearRing, LineString, MultiPoint
@@ -159,7 +159,7 @@ const polyFromMixedUnclosedRings = new g.Polygon('myid', [[[-116.95, 51.30], poi
 
 Various methods
 
-```
+```js
 const poly = new RAMP.geo.geom.Polygon('myid', [[[-76.77, 44.42], [-80.95, 49.96], [-68.69, 51.39]], [[-97.86, 55.74], [-82.15, 49.34], [-116.95, 51.30]]]);
 poly.type;                // 'Polygon'
 poly.id;                  // 'myid'
@@ -178,7 +178,7 @@ odds are more methods will be added to Polygon, including the `getAt()` and `upd
 
 Various co-ordinate inputs of the constructors.
 
-```
+```js
 const mpyFromCoords = new RAMP.geo.geom.MultiPolygon('myid', [[[[-76.77, 44.42], [-80.95, 49.96], [-68.69, 51.39], [-76.77, 44.42]]], [[[-97.86, 55.74], [-82.15, 49.34], [-116.95, 51.30], [-97.86, 55.74]]]]);
 const mpyFromMPoly = new RAMP.geo.geom.MultiPolygon('myid', mpyFromCoords); // also accepts Polygon, MultiLineString, LinearRing, LineString, MultiPoint
 // the examples are getting large, so omitted, but rest assured the constructor will accept an array of mixed formats that equate to Polygon-esque structures
@@ -186,7 +186,7 @@ const mpyFromMPoly = new RAMP.geo.geom.MultiPolygon('myid', mpyFromCoords); // a
 
 Various methods
 
-```
+```js
 const mpy = new RAMP.geo.geom.MultiPolygon('myid', [[[[-76.77, 44.42], [-80.95, 49.96], [-68.69, 51.39]]], [[[-97.86, 55.74], [-82.15, 49.34], [-116.95, 51.30]]]]);
 mpy.type;                // 'MultiPolygon'
 mpy.id;                  // 'myid'
