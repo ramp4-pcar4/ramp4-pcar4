@@ -40,6 +40,9 @@
 
                 <div class="w-full text-sm" v-truncate>
                     {{
+                        (!layer.visibility && filterInfo.visibleRows === 0
+                            ? `${t('grid.filters.label.hidden')} — `
+                            : '') +
                         t('grid.filters.label.info', {
                             range:
                                 filterInfo.visibleRows !== 0 ? `${filterInfo.firstRow} - ${filterInfo.lastRow}` : '0',
@@ -47,7 +50,7 @@
                         })
                     }}
 
-                    <span v-if="filterInfo.visibleRows !== rowData.length">{{
+                    <span v-if="filterInfo.visibleRows !== rowData.length && layer.visibility">{{
                         t('grid.filters.label.filtered', {
                             max: rowData.length
                         })
@@ -125,8 +128,9 @@
                     <!-- clear all filters -->
                     <button
                         type="button"
-                        class="grid-clearall p-4 h-40 text-gray-500 hover:text-black"
-                        @click="clearSearchAndFilters()"
+                        class="grid-clearall p-4 h-40"
+                        :class="canClearFilters ? 'text-gray-500 hover:text-black' : 'text-gray-300 cursor-default'"
+                        @click="canClearFilters && clearSearchAndFilters()"
                         :content="t('grid.clearAll')"
                         :aria-label="t('grid.clearAll')"
                         v-tippy="{
@@ -565,6 +569,7 @@ const gridLayers = computed(() => {
             .filter(layer => layer !== undefined);
     } else return [];
 });
+const canClearFilters = computed(() => config.value.state.filtered || config.value.state.searchFilter !== '');
 
 const systemCols = ref<Set<string>>(new Set<string>());
 
