@@ -6,7 +6,7 @@ grid.splash.loading,Loading data...,1,Chargement des données...,1
 grid.splash.building,Building table...,1,Création du tableau...,1
 grid.splash.cancel,Cancel,1,Annuler,1
 grid.search.clear,Clear search filter,1,Effacer le filtre de recherche,0
-grid.clearAll,Clear search and filters,1,Effacer la recherche et les filtres,1
+grid.clearAll,Clear search and grid-based filters,1,Effacer la recherche et les filtres de la grille,0
 grid.layer.loading,The layer is loading...,1,La couche est en cours de téléchargement...,1
 grid.label.pinColumns,Pin columns,1,Épingler les colonnes,1
 grid.label.export,Export,1,Exporter,1
@@ -31,6 +31,7 @@ grid.filters.date.max,Max Date,1,Date max,1
 grid.filters.date.min,Min Date,1,Date min,1
 grid.filters.label.info,{range} of {total} entries shown,1,{range} de {total} saisies affichées,1
 grid.filters.label.filtered,(filtered from {max} total entries),1,(filtré à partir d'un total de {max} saisies),1
+grid.filters.label.hidden,Layer hidden,1,Couche masquée,0
 grid.filters.label.extent,Filter by extent,1,Filtrer par étendue,1
 grid.cells.controls,Use arrow keys to navigate grid cells. Press Tab to proceed,1,Utilisez les flèches pour parcourir les cellules de la grille. Appuyez sur Tab pour continuer,0
 grid.cells.zoom,Zoom to feature,1,Zoom à l'élément,1

@@ -115,12 +115,15 @@ export default class TableStateManager {
         });
         this._filterByExtent = false;
         this._filtered = false;
-        this._searchFilter = '';
     }
 
     _checkFilters() {
         this._filtered = Object.values(this._columns).some(config => {
-            return config.filter.value !== '' || config.filter.min || config.filter.max;
+            return (
+                config.filter.value !== '' ||
+                (config.filter.min !== '' && config.filter.min !== null) ||
+                (config.filter.max !== '' && config.filter.max !== null)
+            );
         });
     }
 
