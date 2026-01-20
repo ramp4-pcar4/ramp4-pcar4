@@ -55,7 +55,7 @@ export class OgcUtils extends APIScope {
 
         // stop immediately if cancelled
         if (signal?.aborted) {
-            throw new Error('WFS load cancelled');
+            throw new DOMException('WFS load cancelled', 'AbortError');
         }
 
         // it seems that some WFS services do not return the number of matched records with every request
