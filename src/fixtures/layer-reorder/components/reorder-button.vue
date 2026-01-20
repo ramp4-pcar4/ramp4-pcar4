@@ -9,7 +9,6 @@
             ${direction === 'up' ? 'rotate-180' : ''}
             ${disabled ? 'text-gray-300 cursor-not-allowed' : 'text-gray-500 hover:text-black'}
         `"
-        v-focus-item
         v-tippy="{ content: t(`layer-reorder.move.${direction}`), placement: 'top-start', aria: 'describedby' }"
         :aria-disabled="disabled"
         :aria-label="t(`layer-reorder.move.${direction}`)"

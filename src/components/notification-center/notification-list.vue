@@ -69,7 +69,7 @@ const handleRemove = (index: number) => {
         const el = (itemRefs.value[nextComp.id] as any).$el ?? itemRefs.value[nextComp.id];
 
         if (el) {
-            const event = new CustomEvent('refocusLegendItem', { detail: { focusItem: el }, bubbles: true });
+            const event = new CustomEvent('switchFocusItem', { detail: { focusItem: el }, bubbles: true });
             el.dispatchEvent(event);
         }
     });
