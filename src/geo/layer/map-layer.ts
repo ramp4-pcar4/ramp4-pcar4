@@ -1,5 +1,14 @@
 import { CommonLayer, GlobalEvents, InstanceAPI } from '@/api/internal';
-import { DefPromise, DrawState, Extent, InitiationState, LayerState, ScaleSet, SpatialReference } from '@/geo/api';
+import {
+    DefPromise,
+    DrawState,
+    Extent,
+    InitiationState,
+    LayerState,
+    ScaleSet,
+    SpatialReference,
+    Point
+} from '@/geo/api';
 import type { DrawOrder, RampLayerConfig } from '@/geo/api';
 import { EsriWatch } from '@/geo/esri';
 import { markRaw } from 'vue';
@@ -368,6 +377,11 @@ export class MapLayer extends CommonLayer {
         }
 
         if (this.mapCheck()) {
+            if (this.extent.xmin === this.extent.xmax && this.extent.ymin === this.extent.ymax) {
+                const point = new Point('point', [this.extent.xmin, this.extent.ymin], this.extent.sr);
+                return this.$iApi.geo.map.zoomMapTo(point);
+            }
+
             return this.$iApi.geo.map.zoomMapTo(this.extent);
         } else {
             return Promise.resolve();
