@@ -121,7 +121,7 @@
         "vite": "^7.0.5",
         "vite-plugin-dts": "^4.4.0",
         "vite-plugin-mkcert": "^1.17.6",
-        "vitepress": "1.6.1",
+        "vitepress": "1.6.4",
         "vue-tsc": "^2.1.6",
         "yaml": "^2.6.0"
     }
