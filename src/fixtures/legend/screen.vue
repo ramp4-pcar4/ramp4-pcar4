@@ -29,6 +29,7 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { keyboardTooltipTest } from '@/utils/keyboard';
 
 import type { InstanceAPI, PanelInstance } from '@/api';
 import type { PropType } from 'vue';
@@ -47,8 +48,7 @@ const blurEvent = () => {
 };
 
 const keyupEvent = (e: Event) => {
-    const evt = e as KeyboardEvent;
-    if (evt.key === 'Tab' && el.value?.matches(':focus')) {
+    if (keyboardTooltipTest(e, el.value)) {
         (el.value as any)._tippy.show();
     }
 };
