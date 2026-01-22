@@ -119,7 +119,11 @@ const blurEvent = () => {
 
 const keyupEvent = (e: Event) => {
     const evt = e as KeyboardEvent;
-    if (evt.key === 'Tab' && el.value?.matches(':focus')) {
+    if (
+        ['Tab', 'Escape'].includes(evt.key) &&
+        el.value?.matches(':focus') &&
+        !el.value?.hasAttribute('aria-activedescendant')
+    ) {
         (el.value as any)._tippy.show();
     }
 };
