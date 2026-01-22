@@ -39,7 +39,7 @@ const runPreTest = (config, options, utils) => {
         colour: '#008CAA',
         nameField: 'name',
         nameArcade: ` 'Welcome to ' + $attr.name `,
-        tooltipArcade: `'I work at ' + $attr.name`
+        maptipArcade: `'I work at ' + $attr.name`
     };
 
     const latlonFL = {
