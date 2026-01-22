@@ -6,7 +6,7 @@ import { geo } from '@/main';
 import { i18n } from '@/lang';
 import screenfull from 'screenfull';
 
-import clonedeep from 'lodash.clonedeep';
+import { cloneDeep } from 'lodash-es';
 
 import App from '@/app.vue';
 
@@ -777,8 +777,8 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
         // There were attempts to use deepmerge library, but that did not clone nested arrays containing objects properly,
         // whereas the builtin structuredClone and JSON.parse(JSON.stringify()) can't handle serialization.
         // Hence, we are opting to use clonedeep until a better solution is found.
-        const initialState = clonedeep(store.$state);
-        store.$reset = () => store.$patch(clonedeep(initialState));
+        const initialState = cloneDeep(store.$state);
+        store.$reset = () => store.$patch(cloneDeep(initialState));
     });
     const thisi18n = i18n();
     const vueElement = createRampApp(App)
