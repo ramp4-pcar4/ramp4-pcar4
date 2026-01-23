@@ -79,7 +79,7 @@ let config = {
                             {
                                 id: 'CBMT',
                                 layerType: 'esri-tile',
-                                url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer'
+                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
                             }
                         ],
                         tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
@@ -93,7 +93,7 @@ let config = {
                             {
                                 id: 'SMR',
                                 layerType: 'esri-tile',
-                                url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/Simple/MapServer'
+                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer'
                             }
                         ],
                         tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
@@ -108,7 +108,7 @@ let config = {
                             {
                                 id: 'CBME_CBCE_HS_RO_3978',
                                 layerType: 'esri-tile',
-                                url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
+                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
                             }
                         ],
                         tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
@@ -123,7 +123,7 @@ let config = {
                             {
                                 id: 'CBMT_CBCT_GEOM_3978',
                                 layerType: 'esri-tile',
-                                url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
+                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                             }
                         ],
                         tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
@@ -356,7 +356,7 @@ let config = {
                         {
                             title: 'Reservoir Manicougan, Quebec, Canada',
                             thumbnail:
-                                'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268',
+                                'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268',
                             altText: 'Reservoir Manicougan, Quebec, Canada',
                             description:
                                 'Manicouagan Reservoir (also Lake Manicouagan) is an annular lake in central Quebec, Canada, covering an area of 1,942 km2 (750 sq mi). The structure was created 214 (±1) million years ago, in the Late Triassic, by the impact of a meteorite 5 km (3 mi) in diameter.',
@@ -373,7 +373,7 @@ let config = {
                         {
                             title: 'Gulf of St Lawrence',
                             thumbnail:
-                                'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/286/270',
+                                'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/286/270',
                             extent: {
                                 xmin: 2050000,
                                 xmax: 2240000,
@@ -497,7 +497,7 @@ let config = {
                             {
                                 id: 'CBMT',
                                 layerType: 'esri-tile',
-                                url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer'
+                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer'
                             }
                         ],
                         tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
@@ -511,7 +511,7 @@ let config = {
                             {
                                 id: 'SMR',
                                 layerType: 'esri-tile',
-                                url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/Simple/MapServer'
+                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/Simple/MapServer'
                             }
                         ],
                         tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
@@ -526,7 +526,7 @@ let config = {
                             {
                                 id: 'CBME_CBCE_HS_RO_3978',
                                 layerType: 'esri-tile',
-                                url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
+                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBME_CBCE_HS_RO_3978/MapServer'
                             }
                         ],
                         tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
@@ -541,7 +541,7 @@ let config = {
                             {
                                 id: 'CBMT_CBCT_GEOM_3978',
                                 layerType: 'esri-tile',
-                                url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
+                                url: 'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT_CBCT_GEOM_3978/MapServer'
                             }
                         ],
                         tileSchemaId: 'EXT_NRCAN_Lambert_3978#LOD_NRCAN_Lambert_3978'
@@ -774,7 +774,7 @@ let config = {
                         {
                             title: 'Reservoir Manicougan, Quebec, Canada',
                             thumbnail:
-                                'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268',
+                                'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/285/268',
                             altText: 'Reservoir Manicougan, Quebec, Canada',
                             description:
                                 'Manicouagan Reservoir (also Lake Manicouagan) is an annular lake in central Quebec, Canada, covering an area of 1,942 km2 (750 sq mi). The structure was created 214 (±1) million years ago, in the Late Triassic, by the impact of a meteorite 5 km (3 mi) in diameter.',
@@ -791,7 +791,7 @@ let config = {
                         {
                             title: 'Gulf of St Lawrence',
                             thumbnail:
-                                'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/286/270',
+                                'https://geoappext.nrcan.gc.ca/arcgis/rest/services/BaseMaps/CBMT3978/MapServer/tile/8/286/270',
                             extent: {
                                 xmin: 2050000,
                                 xmax: 2240000,
