@@ -90,6 +90,7 @@ import ZoomNavSection from './buttons/zoom-nav.vue';
 import DividerNav from './buttons/divider-nav.vue';
 import { InstanceAPI } from '@/api/internal';
 import DrawNavSection from '../draw/draw-nav-section.vue';
+import { keyboardTooltipTest } from '@/utils/keyboard';
 
 const rootResizeObserver = ref<ResizeObserver | undefined>(undefined);
 
@@ -118,8 +119,7 @@ const blurEvent = () => {
 };
 
 const keyupEvent = (e: Event) => {
-    const evt = e as KeyboardEvent;
-    if (evt.key === 'Tab' && el.value?.matches(':focus')) {
+    if (keyboardTooltipTest(e, el.value)) {
         (el.value as any)._tippy.show();
     }
 };

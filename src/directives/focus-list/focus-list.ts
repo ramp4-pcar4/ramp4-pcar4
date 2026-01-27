@@ -329,7 +329,8 @@ export class FocusListManager {
             case KEYS.EscapeIE:
             case KEYS.Escape:
                 // we only care about escape presses if the highlighted item isnt the list
-                if (this.highlightedItem !== this.element) {
+                // and if there is more than one list element
+                if (this.highlightedItem !== this.element && listOfItems.length > 1) {
                     event.preventDefault();
                     event.stopPropagation();
                     // defocus current item, move focus to the list
@@ -366,9 +367,9 @@ export class FocusListManager {
                         this.defocusItem(this.highlightedItem);
                     }
 
-                    // If the Shift key was clicked alongside Tab, prevent the default behavior
-                    // and return focus to the focus list
-                    if (event.shiftKey) {
+                    // If the Shift key was clicked alongside Tab with more than one list item,
+                    // prevent the default behavior and return focus to the focus list
+                    if (event.shiftKey && listOfItems.length > 1) {
                         event.preventDefault();
                         event.stopPropagation();
                         this.defocusItem(this.highlightedItem);
@@ -423,6 +424,17 @@ export class FocusListManager {
      * This is used to pull back the `focusedItem` id and the aria-activedescendant attribute when a list is focused
      */
     onFocus() {
+        // For lists with only one item, focus the item directly
+        if (this.highlightedItem === this.element) {
+            const items = this.element.querySelectorAll<HTMLElement>(`[${ITEM_ATTR}]`);
+            if (items.length === 1) {
+                this.defocusItem(this.highlightedItem);
+                this.highlightedItem = items[0];
+                this.focusItem(items[0]);
+                return;
+            }
+        }
+
         // If the highlighted item has a tooltip then show it
         // Don't show if the list was clicked, it will cause the tooltip to flicker
         if (this.highlightedItem && !this.isClicked) {

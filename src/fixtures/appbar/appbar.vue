@@ -120,6 +120,7 @@ import NotificationsAppbarButton from '@/components/notification-center/appbar-b
 import AboutRampDropdown from '@/components/about-ramp/about-ramp-dropdown.vue';
 import { usePanelStore } from '@/stores/panel';
 import { useAppbarStore } from './store';
+import { keyboardTooltipTest } from '@/utils/keyboard';
 import { useI18n } from 'vue-i18n';
 
 const panelStore = usePanelStore();
@@ -157,8 +158,7 @@ const blurEvent = () => {
 };
 
 const keyupEvent = (e: Event) => {
-    const evt = e as KeyboardEvent;
-    if (evt.key === 'Tab' && el.value?.matches(':focus')) {
+    if (keyboardTooltipTest(e, el.value)) {
         (el.value as any)._tippy.show();
     }
 };

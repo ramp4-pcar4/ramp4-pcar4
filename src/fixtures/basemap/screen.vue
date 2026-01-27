@@ -50,6 +50,7 @@ import type { RampBasemapConfig, RampMapConfig, RampTileSchemaConfig } from '@/g
 import type { PanelInstance } from '@/api';
 import { useI18n } from 'vue-i18n';
 import { useConfigStore } from '@/stores/config';
+import { keyboardTooltipTest } from '@/utils/keyboard';
 
 const { t } = useI18n();
 const configStore = useConfigStore();
@@ -63,8 +64,7 @@ const el = useTemplateRef('el');
 const tileSchemas = ref<Array<RampTileSchemaConfig>>([]);
 const basemaps = ref<Array<RampBasemapConfig>>([]);
 const keyupEvent = (e: Event) => {
-    const evt = e as KeyboardEvent;
-    if (evt.key === 'Tab' && el.value?.matches(':focus')) {
+    if (keyboardTooltipTest(e, el.value as HTMLElement)) {
         (el.value as any)._tippy.show();
     }
 };
