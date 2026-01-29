@@ -3,7 +3,7 @@
     "features": [
         {
             "type": "Feature",
-            "properties": { "name": "Right Eye" },
+            "properties": { "Temperature change trend since 1948 (°C)": "lllll" },
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [
@@ -21,7 +21,7 @@
         },
         {
             "type": "Feature",
-            "properties": { "name": "Left Eye" },
+            "properties": { "Temperature change trend since 1948 (°C)": "llll" },
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [
@@ -39,7 +39,7 @@
         },
         {
             "type": "Feature",
-            "properties": { "name": "Happy Mouth" },
+            "properties": { "Temperature change trend since 1948 (°C)": "2.31" },
             "geometry": {
                 "type": "Polygon",
                 "coordinates": [

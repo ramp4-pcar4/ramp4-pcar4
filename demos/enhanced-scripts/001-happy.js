@@ -10,7 +10,7 @@ const runPreTest = (config, options, utils) => {
         layerType: 'file-geojson',
         url: '../file-layers/geojson.json',
         colour: '#4ef542',
-        nameField: 'name'
+        nameField: 'Temperature change trend since 1948 (°C)'
     };
 
     utils.addLayerLegend(happy);
