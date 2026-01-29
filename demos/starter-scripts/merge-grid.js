@@ -58,12 +58,12 @@ let config = {
             },
             layers: [
                 {
-                    id: 'NPRI',
+                    id: 'JOSM',
                     layerType: 'esri-feature',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/NPRI_INRP/NPRI_INRP/MapServer/0',
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/OilsandsLambert/MapServer/0',
                     fixtures: {
                         grid: {
-                            title: 'NPRI Data'
+                            title: 'Oilsands Data'
                         }
                     }
                 },
@@ -84,9 +84,11 @@ let config = {
                     url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/SupportData/MapServer/1'
                 },
                 {
-                    id: 'Heroni',
+                    // this has its ojbectid field in lowercase. which makes it special for the test.
+                    // very difficult to find layers that dont use standard OBJECTID field name.
+                    id: 'EsriTurbine',
                     layerType: 'esri-feature',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/D01/456ce087-4711-442c-8445-30520f96e98e/MapServer/0'
+                    url: 'https://sampleserver6.arcgisonline.com/arcgis/rest/services/WindTurbines/MapServer/0'
                 },
                 {
                     id: 'CESI',
@@ -95,9 +97,9 @@ let config = {
                     sublayers: [{ index: 22 }, { index: 24 }, { index: 26 }]
                 },
                 {
-                    id: 'ReleaseDisposals',
+                    id: 'DartBird',
                     layerType: 'esri-feature',
-                    url: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/StoryRAMP/410b88da_0ed1_4749_903f_5e76c24e2e5f/MapServer/2'
+                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/BadDates/MapServer/0'
                 },
                 {
                     id: 'ErroredLayer',
@@ -119,7 +121,7 @@ let config = {
                 },
                 {
                     id: 'table',
-                    name: 'OilSands',
+                    name: 'OilSands Table',
                     layerType: 'data-esri-table',
                     url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/Oilsands/MapServer/5'
                 }
@@ -138,8 +140,8 @@ let config = {
                                         content: 'Represents a simple grid with a single layer.'
                                     },
                                     {
-                                        name: 'NPRI',
-                                        layerId: 'NPRI'
+                                        name: 'Oil Sands',
+                                        layerId: 'JOSM'
                                     }
                                 ]
                             },
@@ -192,8 +194,8 @@ let config = {
                                         name: 'Major Cities'
                                     },
                                     {
-                                        layerId: 'Heroni',
-                                        name: 'Heroni'
+                                        layerId: 'EsriTurbine',
+                                        name: 'ESRI Turbines'
                                     }
                                 ]
                             },
@@ -234,8 +236,8 @@ let config = {
                                         content: 'A merge grid where one layer has failed to load.'
                                     },
                                     {
-                                        name: 'Release Disposals',
-                                        layerId: 'ReleaseDisposals'
+                                        name: 'Smoking Bird',
+                                        layerId: 'DartBird'
                                     },
                                     {
                                         name: 'Errored Layer',
@@ -279,7 +281,7 @@ let config = {
                                     layerId: 'MajorCities'
                                 },
                                 {
-                                    layerId: 'Heroni'
+                                    layerId: 'EsriTurbine'
                                 }
                             ],
                             options: {
@@ -320,7 +322,7 @@ let config = {
                             gridId: 'ErrorMergeGrid',
                             layers: [
                                 {
-                                    layerId: 'ReleaseDisposals'
+                                    layerId: 'DartBird'
                                 },
                                 {
                                     layerId: 'ErroredLayer'

@@ -40,7 +40,7 @@
 
                 <div class="w-full text-sm" v-truncate>
                     {{
-                        (!layer.visibility && filterInfo.visibleRows === 0
+                        (!somethingVisible && filterInfo.visibleRows === 0
                             ? `${t('grid.filters.label.hidden')} — `
                             : '') +
                         t('grid.filters.label.info', {
@@ -50,7 +50,7 @@
                         })
                     }}
 
-                    <span v-if="filterInfo.visibleRows !== rowData.length && layer.visibility">{{
+                    <span v-if="filterInfo.visibleRows !== rowData.length && somethingVisible">{{
                         t('grid.filters.label.filtered', {
                             max: rowData.length
                         })
@@ -381,7 +381,7 @@ import {
 } from 'vue';
 
 import { GlobalEvents, InstanceAPI, LayerInstance, NotificationType, PanelInstance } from '@/api/internal';
-import { DefPromise } from '@/geo/api';
+import { DefPromise, LayerState } from '@/geo/api';
 import type { Attributes, TabularAttributeSet } from '@/geo/api';
 
 import 'ag-grid-community/styles/ag-grid.css';
@@ -557,7 +557,7 @@ const gridAccessibilityManager = ref<GridAccessibilityManager | undefined>(undef
 const onCellKeyPress = GridAccessibilityManager.onCellKeyPress;
 const filterInfo = ref({ firstRow: 0, lastRow: 0, visibleRows: 0 });
 const filteredOids = ref<{ [uid: string]: Array<number> | undefined }>({});
-const layer = iApi.geo.layer.getLayer(props.gridId) as LayerInstance;
+
 const layerCols = ref<{
     [id: string]: Array<AttributeMapPair>;
 }>({});
@@ -592,11 +592,28 @@ const addAriaLabels = () => {
     });
 };
 
+/**
+ * Indicates at least one layer in this grid is loaded and visible.
+ */
+const somethingVisible = computed(() =>
+    origLayerIds.value.some(layerId => {
+        const layer = iApi.geo.layer.getLayer(layerId);
+        return layer?.layerState === LayerState.LOADED && layer?.visibility;
+    })
+);
+
 const onGridReady = (params: any) => {
     agGridApi.value = params.api;
 
     // get grid title
-    gridTitle.value = config.value.state.title || layer?.name || props.gridId;
+    let finalTitle = config.value.state.title;
+    if (!finalTitle) {
+        const layer = iApi.geo.layer.getLayer(props.gridId);
+        // fallback. layer name if layer exists & not a merge grid. otherwise grid id as final flail (will at least alert dev to add a title)
+        finalTitle = layer?.name || props.gridId;
+    }
+
+    gridTitle.value = finalTitle;
 
     // initialize filter info + status
     updateFilterInfo();
