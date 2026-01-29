@@ -1,4 +1,4 @@
-transformers
+transformers<5
 protobuf
 sentencepiece
 torch
