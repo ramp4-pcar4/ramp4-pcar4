@@ -30,6 +30,8 @@ export class LayerItem extends LegendItem {
 
     handlers: Array<string> = [];
 
+    private symbolSql = ''; // symbol filter SQL used for visibility toggling
+
     /**
      * Creates a new single layer item.
      */
@@ -245,13 +247,28 @@ export class LayerItem extends LegendItem {
 
         // LayerItem additionally deals with symbology and layers
         if (this.layer && this.layer.layerExists) {
-            this.layer.visibility = this.visibility;
+            // Force a visibility update when the layer is currently hidden or for EcoGeo layers.
+            const isEcoGeo = this._layerId?.includes('EcoGeo');
+
+            // If layer supports features, apply the layer visibility filter
+            if (this.layer.supportsFeatures && this.layer.mapLayer && this.layer.visibility && !isEcoGeo) {
+                // Use SQL filtering to toggle visibility for feature layers instead of solely updating
+                // this.layer.visibility, which caused flickering/"double draw" when toggling visibility (issue 2815).
+                // Only apply the SQL filter if the layer has been made visible at least once
+                if (!this.visibility) {
+                    this.layer.setSqlFilter(CoreFilter.SYMBOL, '1=2');
+                } else {
+                    this.layer.setSqlFilter(CoreFilter.SYMBOL, this.symbolSql !== '1=2' ? this.symbolSql : '');
+                }
+            } else {
+                this.layer.visibility = this.visibility;
+            }
 
             // check child symbols for visibility
             const someVisible = this._symbologyStack.some((item: LegendSymbology) => item.lastVisbility);
 
             this._symbologyStack.forEach((item: LegendSymbology) => {
-                if (!someVisible) {
+                if (!someVisible && this.visibility) {
                     // if no symbols are visible and we toggled the parent layer on
                     // then set all the child symbols to visible
                     item.lastVisbility = true;
@@ -336,6 +353,8 @@ export class LayerItem extends LegendItem {
                 sql = filterGuts.join(' OR ');
             }
 
+            // save the symbol SQL
+            this.symbolSql = sql;
             this.layer.setSqlFilter(CoreFilter.SYMBOL, sql);
         }
     }
