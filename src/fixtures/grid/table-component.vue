@@ -598,7 +598,18 @@ const addAriaLabels = () => {
 const somethingVisible = computed(() =>
     origLayerIds.value.some(layerId => {
         const layer = iApi.geo.layer.getLayer(layerId);
-        return layer?.layerState === LayerState.LOADED && layer?.visibility;
+
+        if (!layer || layer.layerState !== LayerState.LOADED) {
+            return false;
+        }
+
+        if (layer.mapLayer) {
+            const layerFilter = layer.getSqlFilter(CoreFilter.SYMBOL);
+            // using 1=2 as a hide all features filter instead of relying on layer.visibility
+            if (layerFilter === '1=2') return false;
+        }
+
+        return layer.visibility;
     })
 );
 
