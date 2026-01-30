@@ -1,0 +1,1 @@
+import{bw as i,by as t,cc as h,ca as l,G as c}from"./main-CzbArNue.js";const o=s=>{let e=class extends s{initialize(){this.addHandles(h(()=>this.layer,"refresh",r=>{this.doRefresh(r.dataChanged).catch(a=>{l(a)||c.getLogger(this).error(a)})}),"RefreshableLayerView")}};return e=i([t("esri.views.layers.RefreshableLayerView")],e),e};export{o as i};
