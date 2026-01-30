@@ -6,14 +6,11 @@
 
         <button
             class="button bg-blue-700 hover:bg-blue-700 text-white font-bold py-8 px-16 m-2 disabled:bg-gray-200 disabled:cursor-default disabled:text-gray-400"
-            ref="submitButton"
+            :class="{ 'button--loading': animation && disabled }"
             type="button"
             :disabled="disabled"
             :animation="animation"
-            @click="
-                $emit('submit');
-                loadButton();
-            "
+            @click="$emit('submit')"
         >
             <span class="button-text">{{ t('wizard.step.continue') }}</span>
         </button>
@@ -21,12 +18,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const props = defineProps({
+defineProps({
     animation: {
         type: Boolean,
         default: false
@@ -36,18 +32,6 @@ const props = defineProps({
         default: true
     }
 });
-
-const submitButton = ref<HTMLButtonElement>();
-
-watch(toRef(props, 'disabled'), disabled => {
-    if (!disabled && submitButton.value!.classList.contains('button--loading')) {
-        submitButton.value!.classList.remove('button--loading');
-    }
-});
-
-const loadButton = () => {
-    if (props.animation) submitButton.value!.classList.toggle('button--loading');
-};
 </script>
 
 <style lang="scss" scoped>

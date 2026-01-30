@@ -86,9 +86,7 @@
                             :validation-messages="{
                                 required: t('wizard.format.type.error.required'),
                                 invalid: t('wizard.format.type.error.invalid'),
-                                failure: `${t('wizard.format.type.error.failure')}.${
-                                    IsCorsRequired ? ' ' + t('wizard.format.warn.cors') + '.' : ''
-                                }${' ' + t('wizard.format.warn.vpn') + '.'}`
+                                failure: failureMessage
                             }"
                             @keydown.stop
                             :aria-label="t('wizard.format.type.service')"
@@ -106,6 +104,9 @@
                 <!-- Configure layer wizard step -->
                 <stepper-item :title="t('wizard.configure.title')" @focusFirstElement="focusFirst">
                     <form name="configure" @submit="onConfigureContinue" ref="formElement">
+                        <div v-if="validation && (formatError || failureError)" class="text-red-900 text-xs">
+                            {{ formatError ? t('wizard.format.type.error.invalid') : failureMessage }}
+                        </div>
                         <wizard-input
                             v-if="layerInfo?.configOptions.includes(`name`)"
                             type="text"
@@ -235,6 +236,7 @@
                         <wizard-form-footer
                             @submit="onConfigureContinue"
                             @cancel="cancelNameStep"
+                            :animation="disabled"
                             :disabled="!finishStep"
                         />
                     </form>
@@ -437,6 +439,17 @@ const IsCorsRequired = computed(() => {
     }
 });
 
+// Constructs the validation failure message displayed to user
+const failureMessage = computed(() => {
+    const message = [t('wizard.format.type.error.failure')];
+    if (IsCorsRequired.value) {
+        message.push(t('wizard.format.warn.cors'));
+    }
+    message.push(t('wizard.format.warn.vpn'));
+
+    return message.join('. ') + '.';
+});
+
 onErrorCaptured(() => {
     if (step.value === WizardStep.FORMAT || step.value === WizardStep.CONFIGURE) {
         formatError.value = true;
@@ -523,6 +536,7 @@ const onSelectContinue = async (event: any) => {
 
     abortController.value = new AbortController();
     disabled.value = true;
+    formatError.value = false;
     failureError.value = false;
     finishStep.value = false;
     validation.value = true;
@@ -545,9 +559,13 @@ const onSelectContinue = async (event: any) => {
         if (isFileLayer() && fileData.value) {
             layerInfo.value.config.url = '';
         }
-    } catch {
+    } catch (err: any) {
+        if (err.name === 'AbortError') {
+            validation.value = false;
+        } else {
+            failureError.value = true;
+        }
         disabled.value = false;
-        failureError.value = true;
         return;
     }
 
