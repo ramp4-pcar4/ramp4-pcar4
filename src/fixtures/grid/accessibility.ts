@@ -68,10 +68,10 @@ export class GridAccessibilityManager {
             this.headerRows[0].querySelectorAll('.ag-header-cell')
         ) as HTMLElement[];
         headerCells.forEach((cell, index) => {
-            if (index < 1) {
+            const buttons = Array.prototype.slice.call(cell.querySelectorAll('button')) as HTMLElement[];
+            if (index < 1 || buttons.length === 0) {
                 return;
             }
-            const buttons = Array.prototype.slice.call(cell.querySelectorAll('button')) as HTMLElement[];
 
             cell.addEventListener('keydown', (event: KeyboardEvent) => {
                 this.cellKeydownHandler(event, cell, buttons);
@@ -99,10 +99,10 @@ export class GridAccessibilityManager {
             this.headerRows[0].querySelectorAll('.ag-header-cell')
         ) as HTMLElement[];
         headerCells.forEach((cell, index) => {
-            if (index < 1) {
+            const buttons = Array.prototype.slice.call(cell.querySelectorAll('button')) as HTMLElement[];
+            if (index < 1 || buttons.length === 0) {
                 return;
             }
-            const buttons = Array.prototype.slice.call(cell.querySelectorAll('button')) as HTMLElement[];
 
             cell.removeEventListener('keydown', (event: KeyboardEvent) => {
                 this.cellKeydownHandler(event, cell, buttons);
