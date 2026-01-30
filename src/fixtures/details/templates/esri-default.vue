@@ -7,7 +7,7 @@
         >
             <span class="inline font-bold">{{ val.alias }}</span>
             <span class="flex-auto"></span>
-            <span class="inline" v-html="formatValues(val.value, val.alias, val.type)"></span>
+            <span class="inline ml-8" v-html="formatValues(val.value, val.alias, val.type)"></span>
         </div>
     </div>
 </template>
