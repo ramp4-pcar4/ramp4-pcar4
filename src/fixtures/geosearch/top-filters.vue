@@ -2,7 +2,7 @@
     <div class="rv-geosearch-top-filters sm:flex items-center w-full ml-8 mb-14">
         <div class="w-fit inline-block sm:w-1/2 h-26 mb-8 sm:mb-0 pr-16 sm:pr-0">
             <select
-                class="border-b border-b-gray-600 w-full h-full py-0 cursor-pointer"
+                class="border-b border-b-gray-600 w-full h-full py-0 cursor-pointer pr-24 truncate"
                 :value="queryParams.province"
                 :aria-label="t('geosearch.filters.province')"
                 v-on:change="
@@ -10,19 +10,18 @@
                         province: ($event.target as HTMLSelectElement).value
                     })
                 "
-                v-truncate
             >
-                <option value="" disabled hidden v-truncate>
+                <option value="" disabled hidden>
                     {{ t('geosearch.filters.province') }}
                 </option>
-                <option v-for="province in provinces" v-bind:key="province.code" v-truncate>
+                <option v-for="province in provinces" v-bind:key="province.code">
                     {{ province.name }}
                 </option>
             </select>
         </div>
         <div class="sm:w-1/2 h-26 sm:mx-16 flex">
             <select
-                class="border-b border-b-gray-600 w-full h-full py-0 cursor-pointer max-w-150"
+                class="border-b border-b-gray-600 w-full h-full py-0 cursor-pointer max-w-150 pr-24 truncate"
                 :value="queryParams.type"
                 :aria-label="t('geosearch.filters.type')"
                 v-on:change="
@@ -30,7 +29,7 @@
                         type: ($event.target as HTMLSelectElement).value
                     })
                 "
-                v-truncate
+                truncate
             >
                 <option value="" disabled hidden>
                     {{ t('geosearch.filters.type') }}
