@@ -75,30 +75,12 @@ function onShow(instance: any) {
     // cancel showing the tooltip if the text isn't truncated
     // clientWidth is the visible width of the element, scrollWidth is the width of the content
     // clientHeight is the visible height of the element, scrollHeight is the height of the content
-    const el = instance.reference as HTMLElement;
-    if (!el) return false;
+    const isTruncated =
+        instance.reference.clientWidth < instance.reference.scrollWidth ||
+        instance.reference.clientHeight < instance.reference.scrollHeight;
 
-    // scrollWidth and clientWidth return rounded values so there is an edge case wehere
-    // they return the same value even when the text is truncated
-    // clone a copy of the element temporarily to measure accurate values
-    // if full text width is shorter than display width or element is 
-    // wrapping (multiple lines) then disable tooltip
-    const temp = el.cloneNode(true) as HTMLElement;
-    temp.style.position = 'fixed';
-    temp.style.overflow = 'visible';
-    temp.style.whiteSpace = 'nowrap';
-    temp.style.visibility = 'hidden';
-
-    el.parentElement?.appendChild(temp);
-
-    const fullWidth = temp.getBoundingClientRect().width;
-    const displayWidth = el.getBoundingClientRect().width;
-    const lineHeight = temp.getBoundingClientRect().height
-    const displayHeight = el.getBoundingClientRect().height
-
-    temp.remove();
-
-    if (fullWidth <= displayWidth || displayHeight > lineHeight) {
+    if (!isTruncated) {
+        // returning false tells tippy to cancel
         return false;
     }
 }
