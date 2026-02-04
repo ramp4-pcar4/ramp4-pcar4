@@ -149,7 +149,7 @@ __NTS search__: __National Topographic System (NTS)__ is a system used for provi
 
 ### Geosearch Filtering
 
-When searching for a location, a results panel will appear below the search box. This results panel contains two dropdown boxes that allow you to filter the search results by their __province__ and by their __type__ (lake, town, river, etc.). To the right of these two boxes is a __Clear Filters__ ![An icon representing the "Clear" function](datatable/clearFilters.png) button, which when clicked clears the selected filter options.
+When searching for a location, a results panel will appear below the search box. This results panel contains two dropdown boxes that allow you to filter the search results by their __province__ and by their __type__ (lake, town, river, etc.). To the right of these two boxes is a __Clear Filters__ ![An icon representing the Clear function](datatable/clearFilters.png) button, which when clicked clears the selected filter options.
 
 At the bottom of the results panel, there is a checkbox labeled __visible on map__. Checking this box will further filter the results to only show locations that are currently visible on the map. Moving the map around or zooming in/out with this box selected will automatically update the results to display locations that are on the map.
 
@@ -201,31 +201,31 @@ This control group is located at the top of the data table and has the following
 
 #### First row:
 
-- ![An icon representing the "Collapse" function](datatable/collapse.png) Collapse
+- ![An icon representing the Collapse function](datatable/collapse.png) Collapse
     - Condenses the table into a smaller panel so the map is viewable at the same time
-- ![An icon representing the "Expand" function](datatable/expand.png) Expand
+- ![An icon representing the Expand function](datatable/expand.png) Expand
     - Expands the table into a wider panel that fits the available area over the map
-- ![An icon representing the "Minimize" function](datatable/minimize.png) Minimize
+- ![An icon representing the Minimize function](datatable/minimize.png) Minimize
     - Hides the data grid from the map view, accessible to expand from the left-hand menu bar
-- ![An icon representing the "Close table" function](datatable/close.png) Close Table
+- ![An icon representing the Close Table function](datatable/close.png) Close Table
     - Closes the table
 - Global Search
     - Filter the table by making sure that the search term is a substring of the rows' data at one or more columns
 
 #### Second row:
 
-- ![An icon representing the "Apply filters" function](datatable/applyFilters.png) Apply Table Filters To Map
+- ![An icon representing the Apply Filters function](datatable/applyFilters.png) Apply Table Filters To Map
     - update the map to display only the data that is visible in the table
     - if the data in the table already matches the data displayed on the map, this button will be disabled
-- ![An icon representing the "Toggle column visibilities" function](datatable/toggleCols.png) Toggle Column Visibilities
+- ![An icon representing the Toggle Column Visibilities function](datatable/toggleCols.png) Toggle Column Visibilities
     - allows you to choose which columns you want to be visible on the table
-- ![An icon representing the "Show filters" function](datatable/showFilters.png) Show filters
+- ![An icon representing the Show Filters function](datatable/showFilters.png) Show filters
     - toggling this option off will hide all column filters
     - unable to change column filters while toggled off
     - column filters remain applied even when toggled off
-- ![An icon representing the "Extent filter" function](datatable/extentFilter.png) Extent filter
+- ![An icon representing the Extent Filter function](datatable/extentFilter.png) Extent filter
     - toggles filter by extent
-- ![An icon representing the "Clear search and filters" function](datatable/clearFilters.png) Clear Search and Filters
+- ![An icon representing the Clear Search and Filters function](datatable/clearFilters.png) Clear Search and Filters
     - clear any existing filters and searches that may be applied to the table
 
 ### Sorting and Reordering
