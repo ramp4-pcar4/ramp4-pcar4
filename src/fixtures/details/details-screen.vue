@@ -13,24 +13,24 @@
             <div class="relative h-full">
                 <!-- Layer Picker, symbology stacks -->
                 <SymbologyList
-                    :results="layerResults"
+                    :results="visibleLayerResults"
                     :detailsProperties="detailProperties"
                     :selected="selectedLayer"
                     @selection-changed="changeLayerSelection"
-                    v-if="layerResults.length > 1"
+                    v-if="visibleLayerResults.length > 1"
                 ></SymbologyList>
 
                 <!-- Main Details Panel -->
                 <div class="detailsContentSection overflow-y-auto h-full" ref="detailsPanel">
                     <ResultList
                         :uid="selectedLayer"
-                        :results="layerResults"
+                        :results="visibleLayerResults"
                         v-if="!noResults"
                         @item-selected="() => nextTick(() => detailsPanel?.scrollTo({ top: 0 }))"
                     ></ResultList>
-                    <div :class="['text-center', { 'ml-42': layerResults.length > 1 }]" v-else>
+                    <div :class="['text-center', { 'ml-42': visibleLayerResults.length > 1 }]" v-else>
                         {{
-                            layerResults.length >= 1
+                            visibleLayerResults.length >= 1
                                 ? t('details.layers.results.empty')
                                 : t('details.layers.results.empty.noLayers')
                         }}
@@ -53,6 +53,7 @@ import type { DetailsItemInstance } from './store';
 
 import { useI18n } from 'vue-i18n';
 import { useDetailsStore } from './store';
+import { CoreFilter, LayerState } from '@/geo/api';
 
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
@@ -61,6 +62,7 @@ const detailsStore = useDetailsStore();
 const handlers = ref<Array<string>>([]);
 const watchers = ref<Array<() => void>>([]);
 const layerResults = ref<Array<IdentifyResult>>([]);
+const visibleLayerResults = ref<Array<IdentifyResult>>([]);
 const noResults = ref<boolean>(false);
 const detailsPanel = ref<HTMLElement | null>(null);
 
@@ -143,6 +145,9 @@ const loadPayloadItems = (newPayload: Array<IdentifyResult>): void => {
  *    a hit becomes the active layer.
  */
 const autoOpen = (newPayload: Array<IdentifyResult>): void => {
+    // filter visible layer results once per identify request (not on visibility toggle).
+    computeVisibleResults(newPayload);
+
     // if the detail panel is already showing details of a specific layer,
     // wait on that layer to resolve first
     if (selectedLayer.value) {
@@ -270,6 +275,27 @@ const autoOpenAny = (newPayload: Array<IdentifyResult>, priorityStack?: Array<[n
 const openDoneThanks = (nothingFound: boolean) => {
     detailsStore.activeGreedy = 0;
     noResults.value = nothingFound;
+};
+
+/**
+ * Filters the identify results payload to only include layers
+ * that are visible on the map.
+ *
+ * A layer is visible if: the layer is loaded, the layer visibility
+ * flag is true, and the layer is not SQL-hidden via the symbol filter
+ */
+const computeVisibleResults = (payload: Array<IdentifyResult>) => {
+    visibleLayerResults.value = payload.filter(result => {
+        const layer = iApi.geo.layer.getLayer(result.layerId);
+
+        if (!layer || layer.layerState !== LayerState.LOADED || !layer.visibility) return false;
+
+        if (layer.mapLayer) {
+            const filter = layer.getSqlFilter(CoreFilter.SYMBOL);
+            if (filter === '1=2') return false;
+        }
+        return true;
+    });
 };
 
 /* Vue Lifecycle Functions */
