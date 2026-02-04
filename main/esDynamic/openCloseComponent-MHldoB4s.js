@@ -1,0 +1,1 @@
+import{w as e}from"./dom-Dtt_sM2V.js";function n(o){return o[o.openProp||"open"]}async function t(o){await o.updateComplete,n(o)?o.onBeforeOpen():o.onBeforeClose(),await o.updateComplete,o.transitionEl&&await e(o.transitionEl,o.transitionProp),n(o)?o.onOpen():o.onClose()}export{t};

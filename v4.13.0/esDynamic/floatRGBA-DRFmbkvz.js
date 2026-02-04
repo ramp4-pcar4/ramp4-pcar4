@@ -1,0 +1,1 @@
+import{af as f}from"./main-BFDurRCu.js";function a(o,e,n=0){const t=f(o,0,u);for(let r=0;r<4;r++)e[n+r]=Math.floor(256*p(t*c[r]))}function l(o,e=0){let n=0;for(let t=0;t<4;t++)n+=o[e+t]*i[t];return n}const c=[1,256,65536,16777216],i=[1/256,1/65536,1/16777216,1/4294967296],u=l(new Uint8ClampedArray([255,255,255,255]));function p(o){return o-Math.floor(o)}export{a as o};

@@ -1,0 +1,692 @@
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>HilightAPI | RAMP4 - v4.2.0</title><meta name="description" content="Documentation for RAMP4"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container">
+<div class="table-cell" id="tsd-search" data-base="..">
+<div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
+<div class="field">
+<div id="tsd-toolbar-links"></div></div>
+<ul class="results">
+<li class="state loading">Preparing search index...</li>
+<li class="state failure">The search index is not available</li></ul><a href="../index.html" class="title">RAMP4 - v4.2.0</a></div>
+<div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="7" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="11" width="14" height="2" fill="var(--color-text)"></rect></svg></a></div></div></header>
+<div class="container container-main">
+<div class="col-content">
+<div class="tsd-page-title">
+<ul class="tsd-breadcrumb">
+<li><a href="../index.html">RAMP4</a></li>
+<li><a href="../modules/fixtures_hilight_api_hilight.html">fixtures/hilight/api/hilight</a></li>
+<li><a href="fixtures_hilight_api_hilight.HilightAPI.html">HilightAPI</a></li></ul>
+<h1>Class HilightAPI</h1></div>
+<section class="tsd-panel tsd-comment">
+<div class="tsd-comment tsd-typography"><p>A base class for Fixture subclasses. It provides some utility functions to Fixtures and also gives access to <code>$iApi</code> and <code>$vApp</code> globals.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Export</h4>
+<h4>Implements</h4></div></section>
+<section class="tsd-panel tsd-hierarchy">
+<h4>Hierarchy</h4>
+<ul class="tsd-hierarchy">
+<li><a href="api_fixture.FixtureInstance.html" class="tsd-signature-type tsd-kind-class">FixtureInstance</a>
+<ul class="tsd-hierarchy">
+<li><span class="target">HilightAPI</span></li></ul></li></ul></section><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/fixtures/hilight/api/hilight.ts#L14">src/fixtures/hilight/api/hilight.ts:14</a></li></ul></aside>
+<section class="tsd-panel-group tsd-index-group">
+<section class="tsd-panel tsd-index-panel">
+<details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
+<h5 class="tsd-index-heading uppercase" role="button" aria-expanded="false" tabIndex=0><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1.5 5.50969L8 11.6609L14.5 5.50969L12.5466 3.66086L8 7.96494L3.45341 3.66086L1.5 5.50969Z" fill="var(--color-text)"></path></svg> Index</h5></summary>
+<div class="tsd-accordion-details">
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Constructors</h3>
+<div class="tsd-index-list"><a href="fixtures_hilight_api_hilight.HilightAPI.html#constructor" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-512"><rect fill="var(--color-icon-background)" stroke="#4D7FFF" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)"></path></g></svg><span>constructor</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Properties</h3>
+<div class="tsd-index-list"><a href="fixtures_hilight_api_hilight.HilightAPI.html#_iApi" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-1024"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)"></path></g></svg><span>$i<wbr/>Api</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#hilightMode" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>hilight<wbr/>Mode</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#id" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>id</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Accessors</h3>
+<div class="tsd-index-list"><a href="fixtures_hilight_api_hilight.HilightAPI.html#_element" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-262144"><rect fill="var(--color-icon-background)" stroke="#FF4D4D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M8.85 16L11.13 7.24H12.582L14.85 16H13.758L13.182 13.672H10.53L9.954 16H8.85ZM10.746 12.76H12.954L12.282 10.06C12.154 9.548 12.054 9.12 11.982 8.776C11.91 8.432 11.866 8.208 11.85 8.104C11.834 8.208 11.79 8.432 11.718 8.776C11.646 9.12 11.546 9.544 11.418 10.048L10.746 12.76Z" fill="var(--color-text)"></path></g></svg><span>$element</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#_vApp" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>$v<wbr/>App</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#config" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>config</span></a>
+</div></section>
+<section class="tsd-index-section">
+<h3 class="tsd-index-heading">Methods</h3>
+<div class="tsd-index-list"><a href="fixtures_hilight_api_hilight.HilightAPI.html#_parseConfig" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-2048"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)"></path></g></svg><span>_parse<wbr/>Config</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#addHilight" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>add<wbr/>Hilight</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#added" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>added?</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#constructGraphicKey" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>construct<wbr/>Graphic<wbr/>Key</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#deconstructGraphicKey" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>deconstruct<wbr/>Graphic<wbr/>Key</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#extend" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>extend</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#getGraphicsByKey" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Graphics<wbr/>By<wbr/>Key</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#getHilightLayer" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Hilight<wbr/>Layer</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#getLayerFixtureConfig" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Layer<wbr/>Fixture<wbr/>Config</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#getLayerFixtureConfigs" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Layer<wbr/>Fixture<wbr/>Configs</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#handlePanelTeleports" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>handle<wbr/>Panel<wbr/>Teleports</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#handlePanelWidths" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>handle<wbr/>Panel<wbr/>Widths</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#initHilightLayer" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>init<wbr/>Hilight<wbr/>Layer</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#initialized" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>initialized</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#mount" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>mount</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#reloadHilight" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>reload<wbr/>Hilight</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#remove" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>remove</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#removeHilight" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>remove<wbr/>Hilight</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#removed" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>removed?</span></a>
+<a href="fixtures_hilight_api_hilight.HilightAPI.html#updateBaseToInstance" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>update<wbr/>Base<wbr/>To<wbr/>Instance</span></a>
+</div></section></div></details></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Constructors</h2>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="constructor" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><g stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" id="icon-anchor"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></g></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="constructor.new_HilightAPI"><span class="tsd-kind-constructor-signature">new <wbr/>HilightAPI</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">id</span>, <span class="tsd-kind-parameter">iApi</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="fixtures_hilight_api_hilight.HilightAPI.html" class="tsd-signature-type tsd-kind-class">HilightAPI</a><a href="#constructor.new_HilightAPI" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Creates an instance of FixtureInstance.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">id</span>: <span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"></div></li>
+<li>
+<h5><span class="tsd-kind-parameter">iApi</span>: <a href="api_instance.InstanceAPI.html" class="tsd-signature-type tsd-kind-class">InstanceAPI</a></h5>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="fixtures_hilight_api_hilight.HilightAPI.html" class="tsd-signature-type tsd-kind-class">HilightAPI</a></h4>
+<div class="tsd-comment tsd-typography">
+<h4>Memberof</h4><p>FixtureInstance</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="api_fixture.FixtureInstance.html">FixtureInstance</a>.<a href="api_fixture.FixtureInstance.html#constructor">constructor</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/fixture.ts#L292">src/api/fixture.ts:292</a></li></ul></aside></li></ul></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Properties</h2>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="_iApi" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>$i<wbr/>Api</span><a href="#_iApi" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">$i<wbr/>Api</span><span class="tsd-signature-symbol">:</span> <a href="api_instance.InstanceAPI.html" class="tsd-signature-type tsd-kind-class">InstanceAPI</a></div>
+<div class="tsd-comment tsd-typography"><p>The instance of RampMap API scoped to a single Vue R4MP application.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Memberof</h4><p>APIScope</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="api_fixture.FixtureInstance.html">FixtureInstance</a>.<a href="api_fixture.FixtureInstance.html#_iApi">$iApi</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/common.ts#L17">src/api/common.ts:17</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member"><a id="hilightMode" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>hilight<wbr/>Mode</span><a href="#hilightMode" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">hilight<wbr/>Mode</span><span class="tsd-signature-symbol">:</span> <a href="fixtures_hilight_api_hilight_mode_base_hilight_mode.BaseHilightMode.html" class="tsd-signature-type tsd-kind-class">BaseHilightMode</a><span class="tsd-signature-symbol"> = ...</span></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/fixtures/hilight/api/hilight.ts#L15">src/fixtures/hilight/api/hilight.ts:15</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="id" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>id</span><a href="#id" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">id</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+<div class="tsd-comment tsd-typography"><p>ID of this fixture.</p>
+</div>
+<div class="tsd-comment tsd-typography">
+<h4>Memberof</h4><p>FixtureInstance</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="api_fixture.FixtureInstance.html">FixtureInstance</a>.<a href="api_fixture.FixtureInstance.html#id">id</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/fixture.ts#L283">src/api/fixture.ts:283</a></li></ul></aside></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Accessors</h2>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="_element" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>$element</span><a href="#_element" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature" id="_element._element-1"><span class="tsd-signature-symbol">get</span> $element<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">App</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Element</span><span class="tsd-signature-symbol">&gt;</span></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">App</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">Element</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from FixtureInstance.$element</p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/common.ts#L31">src/api/common.ts:31</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="_vApp" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>$v<wbr/>App</span><a href="#_vApp" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature" id="_vApp._vApp-1"><span class="tsd-signature-symbol">get</span> $vApp<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">ComponentPublicInstance</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type ">ComponentOptionsBase</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">&gt;</span></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The instance of Vue R4MP application controlled by this InstanceAPI.
+This is just a shorthand for <code>this.$iApi.$vApp</code>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">ComponentPublicInstance</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type ">ComponentOptionsBase</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography">
+<h4>Memberof</h4><p>APIScope</p>
+</div><aside class="tsd-sources">
+<p>Inherited from FixtureInstance.$vApp</p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/common.ts#L27">src/api/common.ts:27</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="config" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>config</span><a href="#config" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature" id="config.config-1"><span class="tsd-signature-symbol">get</span> config<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Returns the fixture config section (JSON) taken from the global config.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+<div class="tsd-comment tsd-typography">
+<h4>Memberof</h4><p>FixtureInstance</p>
+</div><aside class="tsd-sources">
+<p>Inherited from FixtureInstance.config</p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/fixture.ts#L383">src/api/fixture.ts:383</a></li></ul></aside></li></ul></section></section>
+<section class="tsd-panel-group tsd-member-group">
+<h2>Methods</h2>
+<section class="tsd-panel tsd-member"><a id="_parseConfig" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>_parse<wbr/>Config</span><a href="#_parseConfig" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="_parseConfig._parseConfig-1"><span class="tsd-kind-call-signature">_parse<wbr/>Config</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">hilightConfig</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_parseConfig._parseConfig-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">hilightConfig</span>: <a href="../interfaces/fixtures_hilight_api_hilight_defs.HilightConfig.html" class="tsd-signature-type tsd-kind-interface">HilightConfig</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/fixtures/hilight/api/hilight.ts#L22">src/fixtures/hilight/api/hilight.ts:22</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="addHilight" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>add<wbr/>Hilight</span><a href="#addHilight" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="addHilight.addHilight-1"><span class="tsd-kind-call-signature">add<wbr/>Hilight</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">graphics</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#addHilight.addHilight-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Add the given Graphics to the Hilighter</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">graphics</span>: <a href="geo_api_graphic_graphic.Graphic.html" class="tsd-signature-type tsd-kind-class">Graphic</a><span class="tsd-signature-symbol"> | </span><a href="geo_api_graphic_graphic.Graphic.html" class="tsd-signature-type tsd-kind-class">Graphic</a><span class="tsd-signature-symbol">[]</span></h5>
+<div class="tsd-comment tsd-typography"><p>Graphics to add</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/fixtures/hilight/api/hilight.ts#L82">src/fixtures/hilight/api/hilight.ts:82</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="added" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>added</span><a href="#added" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="added.added-1"><span class="tsd-kind-call-signature">added</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#added.added-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="api_fixture.FixtureInstance.html">FixtureInstance</a>.<a href="api_fixture.FixtureInstance.html#added">added</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/fixture.ts#L372">src/api/fixture.ts:372</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="constructGraphicKey" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>construct<wbr/>Graphic<wbr/>Key</span><a href="#constructGraphicKey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="constructGraphicKey.constructGraphicKey-1"><span class="tsd-kind-call-signature">construct<wbr/>Graphic<wbr/>Key</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">origin</span>, <span class="tsd-kind-parameter">uid</span>, <span class="tsd-kind-parameter">oid</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#constructGraphicKey.constructGraphicKey-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Return a well-formed graphic key</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">origin</span>: <span class="tsd-signature-type">string</span></h5></li>
+<li>
+<h5><span class="tsd-kind-parameter">uid</span>: <span class="tsd-signature-type">string</span></h5></li>
+<li>
+<h5><span class="tsd-kind-parameter">oid</span>: <span class="tsd-signature-type">number</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/fixtures/hilight/api/hilight.ts#L146">src/fixtures/hilight/api/hilight.ts:146</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="deconstructGraphicKey" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>deconstruct<wbr/>Graphic<wbr/>Key</span><a href="#deconstructGraphicKey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="deconstructGraphicKey.deconstructGraphicKey-1"><span class="tsd-kind-call-signature">deconstruct<wbr/>Graphic<wbr/>Key</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">key</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">oid</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">origin</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">uid</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><a href="#deconstructGraphicKey.deconstructGraphicKey-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Return a deconstructed graphic key.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>The graphic key to deconstruct</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">oid</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">origin</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">uid</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></h4>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5><span class="tsd-kind-property">oid</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5></li>
+<li class="tsd-parameter">
+<h5><span class="tsd-kind-property">origin</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5></li>
+<li class="tsd-parameter">
+<h5><span class="tsd-kind-property">uid</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5></li></ul>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/fixtures/hilight/api/hilight.ts#L155">src/fixtures/hilight/api/hilight.ts:155</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="extend" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>extend</span><a href="#extend" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="extend.extend-1"><span class="tsd-kind-call-signature">extend</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">vueComponent</span>, <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><a href="#extend.extend-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>A helper function to create a &quot;subclass&quot; of the base Vue constructor</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">vueComponent</span>: <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+<div class="tsd-comment tsd-typography"></div></li>
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">options</span>: <span class="tsd-signature-type ">ComponentOptions</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{}</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = {}</span></h5>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+<div class="tsd-comment tsd-typography">
+<h4>Memberof</h4><p>FixtureInstance</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="api_fixture.FixtureInstance.html">FixtureInstance</a>.<a href="api_fixture.FixtureInstance.html#extend">extend</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/fixture.ts#L318">src/api/fixture.ts:318</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="getGraphicsByKey" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>get<wbr/>Graphics<wbr/>By<wbr/>Key</span><a href="#getGraphicsByKey" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="getGraphicsByKey.getGraphicsByKey-1"><span class="tsd-kind-call-signature">get<wbr/>Graphics<wbr/>By<wbr/>Key</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">origin</span><span class="tsd-signature-symbol">?</span>, <span class="tsd-kind-parameter">uid</span><span class="tsd-signature-symbol">?</span>, <span class="tsd-kind-parameter">oid</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="geo_api_graphic_graphic.Graphic.html" class="tsd-signature-type tsd-kind-class">Graphic</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><a href="#getGraphicsByKey.getGraphicsByKey-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Return all Graphics that match the given origin/uid/oid</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">origin</span>: <span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>Graphic origin</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li>
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">uid</span>: <span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>Associated layer UID of the Graphic</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li>
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">oid</span>: <span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>Associated OID of the Graphic</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="geo_api_graphic_graphic.Graphic.html" class="tsd-signature-type tsd-kind-class">Graphic</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/fixtures/hilight/api/hilight.ts#L113">src/fixtures/hilight/api/hilight.ts:113</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="getHilightLayer" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>get<wbr/>Hilight<wbr/>Layer</span><a href="#getHilightLayer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="getHilightLayer.getHilightLayer-1"><span class="tsd-kind-call-signature">get<wbr/>Hilight<wbr/>Layer</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="geo_layer_common_graphic_layer.CommonGraphicLayer.html" class="tsd-signature-type tsd-kind-class">CommonGraphicLayer</a><span class="tsd-signature-symbol">&gt;</span><a href="#getHilightLayer.getHilightLayer-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Return the hilightLayer</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="geo_layer_common_graphic_layer.CommonGraphicLayer.html" class="tsd-signature-type tsd-kind-class">CommonGraphicLayer</a><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/fixtures/hilight/api/hilight.ts#L170">src/fixtures/hilight/api/hilight.ts:170</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="getLayerFixtureConfig" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>get<wbr/>Layer<wbr/>Fixture<wbr/>Config</span><a href="#getLayerFixtureConfig" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="getLayerFixtureConfig.getLayerFixtureConfig-1"><span class="tsd-kind-call-signature">get<wbr/>Layer<wbr/>Fixture<wbr/>Config</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">layerId</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><a href="#getLayerFixtureConfig.getLayerFixtureConfig-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Get this fixture&#39;s config from the layer config with the given layer id
+Will return <code>undefined</code> if layer config did not specify a config for this fixture</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">layerId</span>: <span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>The layer&#39;s id</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4><p>This fixture&#39;s config for the given layer</p>
+
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="api_fixture.FixtureInstance.html">FixtureInstance</a>.<a href="api_fixture.FixtureInstance.html#getLayerFixtureConfig">getLayerFixtureConfig</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/fixture.ts#L395">src/api/fixture.ts:395</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="getLayerFixtureConfigs" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>get<wbr/>Layer<wbr/>Fixture<wbr/>Configs</span><a href="#getLayerFixtureConfigs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="getLayerFixtureConfigs.getLayerFixtureConfigs-1"><span class="tsd-kind-call-signature">get<wbr/>Layer<wbr/>Fixture<wbr/>Configs</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span><br/><span>    </span>[<span class="tsd-kind-index-signature">layerId</span>: <span class="tsd-signature-type">string</span>]<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><a href="#getLayerFixtureConfigs.getLayerFixtureConfigs-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Combines this fixtures configs from layer configs into an indexed-dictionary</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span><br/><span>    </span>[<span class="tsd-kind-index-signature">layerId</span>: <span class="tsd-signature-type">string</span>]<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></h4><p>Dictionary where key is the layer id and the value is this fixture&#39;s config for that layer</p>
+
+<ul class="tsd-parameters">
+<li class="tsd-parameter-index-signature">
+<h5><span class="tsd-signature-symbol">[</span><span class="tsd-kind-parameter">layerId</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">any</span></h5></li></ul>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="api_fixture.FixtureInstance.html">FixtureInstance</a>.<a href="api_fixture.FixtureInstance.html#getLayerFixtureConfigs">getLayerFixtureConfigs</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/fixture.ts#L406">src/api/fixture.ts:406</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="handlePanelTeleports" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>handle<wbr/>Panel<wbr/>Teleports</span><a href="#handlePanelTeleports" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="handlePanelTeleports.handlePanelTeleports-1"><span class="tsd-kind-call-signature">handle<wbr/>Panel<wbr/>Teleports</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">panels</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#handlePanelTeleports.handlePanelTeleports-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>If the <code>panelTeleport</code> property is provided, handle specified panelTeleport for the given fixture.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">panels</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+<div class="tsd-comment tsd-typography"><p>list of panel names for the calling fixture</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="api_fixture.FixtureInstance.html">FixtureInstance</a>.<a href="api_fixture.FixtureInstance.html#handlePanelTeleports">handlePanelTeleports</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/fixture.ts#L478">src/api/fixture.ts:478</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="handlePanelWidths" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>handle<wbr/>Panel<wbr/>Widths</span><a href="#handlePanelWidths" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="handlePanelWidths.handlePanelWidths-1"><span class="tsd-kind-call-signature">handle<wbr/>Panel<wbr/>Widths</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">panels</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#handlePanelWidths.handlePanelWidths-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>If the <code>panelWidth</code> property is provided, handle default and specified panel widths for the given fixture.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">panels</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+<div class="tsd-comment tsd-typography"><p>list of panel names for the calling fixture</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="api_fixture.FixtureInstance.html">FixtureInstance</a>.<a href="api_fixture.FixtureInstance.html#handlePanelWidths">handlePanelWidths</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/fixture.ts#L438">src/api/fixture.ts:438</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="initHilightLayer" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>init<wbr/>Hilight<wbr/>Layer</span><a href="#initHilightLayer" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="initHilightLayer.initHilightLayer-1"><span class="tsd-kind-call-signature">init<wbr/>Hilight<wbr/>Layer</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#initHilightLayer.initHilightLayer-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Create the Hilight layer.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/fixtures/hilight/api/hilight.ts#L66">src/fixtures/hilight/api/hilight.ts:66</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="initialized" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>initialized</span><a href="#initialized" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="initialized.initialized-1"><span class="tsd-kind-call-signature">initialized</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#initialized.initialized-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Overrides <a href="api_fixture.FixtureInstance.html">FixtureInstance</a>.<a href="api_fixture.FixtureInstance.html#initialized">initialized</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/fixtures/hilight/api/hilight.ts#L17">src/fixtures/hilight/api/hilight.ts:17</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="mount" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>mount</span><a href="#mount" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="mount.mount-1"><span class="tsd-kind-call-signature">mount</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">component</span>, <span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">destroy</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">el</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">vNode</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span><a href="#mount.mount-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Helper with programatically creating a component in Vue 3 (replaces the deprecated Vue.extend)</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">component</span>: <span class="tsd-signature-type ">Component</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type ">ComputedOptions</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type ">MethodOptions</span><span class="tsd-signature-symbol">&gt;</span></h5>
+<div class="tsd-comment tsd-typography"></div></li>
+<li>
+<h5><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> = {}</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span><br/><span>    </span><span class="tsd-kind-property">destroy</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">el</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span><br/><span>    </span><span class="tsd-kind-property">vNode</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">; </span><br/><span class="tsd-signature-symbol">}</span></h4>
+<ul class="tsd-parameters">
+<li class="tsd-parameter">
+<h5><span class="tsd-kind-property">destroy</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span></h5>
+<ul class="tsd-parameters">
+<li class="tsd-parameter-signature">
+<ul class="tsd-signatures">
+<li class="tsd-signature" id="mount.mount-1.__type-2.destroy.__type-3.__type-4"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4></li></ul></li></ul></li>
+<li class="tsd-parameter">
+<h5><span class="tsd-kind-property">el</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></h5></li>
+<li class="tsd-parameter">
+<h5><span class="tsd-kind-property">v<wbr/>Node</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></h5></li></ul>
+<div class="tsd-comment tsd-typography">
+<h4>Memberof</h4><p>FixtureInstance</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="api_fixture.FixtureInstance.html">FixtureInstance</a>.<a href="api_fixture.FixtureInstance.html#mount">mount</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/fixture.ts#L350">src/api/fixture.ts:350</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="reloadHilight" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>reload<wbr/>Hilight</span><a href="#reloadHilight" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="reloadHilight.reloadHilight-1"><span class="tsd-kind-call-signature">reload<wbr/>Hilight</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">graphics</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#reloadHilight.reloadHilight-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">graphics</span>: <a href="geo_api_graphic_graphic.Graphic.html" class="tsd-signature-type tsd-kind-class">Graphic</a><span class="tsd-signature-symbol"> | </span><a href="geo_api_graphic_graphic.Graphic.html" class="tsd-signature-type tsd-kind-class">Graphic</a><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/fixtures/hilight/api/hilight.ts#L101">src/fixtures/hilight/api/hilight.ts:101</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="remove" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>remove</span><a href="#remove" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="remove.remove-1"><span class="tsd-kind-call-signature">remove</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="fixtures_hilight_api_hilight.HilightAPI.html" class="tsd-signature-type tsd-kind-class">HilightAPI</a><a href="#remove.remove-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Removes the specified fixture from R4MP instance.
+This is a proxy to <code>rInstance.fixture.remove(...)</code>.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <a href="fixtures_hilight_api_hilight.HilightAPI.html" class="tsd-signature-type tsd-kind-class">HilightAPI</a></h4>
+<div class="tsd-comment tsd-typography">
+<h4>Memberof</h4><p>FixtureInstance</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="api_fixture.FixtureInstance.html">FixtureInstance</a>.<a href="api_fixture.FixtureInstance.html#remove">remove</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/fixture.ts#L305">src/api/fixture.ts:305</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="removeHilight" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>remove<wbr/>Hilight</span><a href="#removeHilight" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="removeHilight.removeHilight-1"><span class="tsd-kind-call-signature">remove<wbr/>Hilight</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">graphics</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#removeHilight.removeHilight-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Remove the given Graphics from the Hilighter</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">graphics</span>: <a href="geo_api_graphic_graphic.Graphic.html" class="tsd-signature-type tsd-kind-class">Graphic</a><span class="tsd-signature-symbol"> | </span><a href="geo_api_graphic_graphic.Graphic.html" class="tsd-signature-type tsd-kind-class">Graphic</a><span class="tsd-signature-symbol">[]</span></h5>
+<div class="tsd-comment tsd-typography"><p>Graphics to remove</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/fixtures/hilight/api/hilight.ts#L92">src/fixtures/hilight/api/hilight.ts:92</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="removed" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>removed</span><a href="#removed" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="removed.removed-1"><span class="tsd-kind-call-signature">removed</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#removed.removed-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="api_fixture.FixtureInstance.html">FixtureInstance</a>.<a href="api_fixture.FixtureInstance.html#removed">removed</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/fixture.ts#L373">src/api/fixture.ts:373</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="updateBaseToInstance" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>update<wbr/>Base<wbr/>To<wbr/>Instance</span><a href="#updateBaseToInstance" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="updateBaseToInstance.updateBaseToInstance-1"><span class="tsd-kind-call-signature">update<wbr/>Base<wbr/>To<wbr/>Instance</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span>, <span class="tsd-kind-parameter">id</span>, <span class="tsd-kind-parameter">$iApi</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="api_fixture.FixtureInstance.html" class="tsd-signature-type tsd-kind-class">FixtureInstance</a><a href="#updateBaseToInstance.updateBaseToInstance-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Adds missing functions and properties to the object implementing FixtureBase interface.
+This is only needed for external fixtures as they can&#39;t inherit from FixtureInstance.</p>
+<p>TODO: If you know a better way to deep-mixin props/getters/functions from a class into another class instance, please tell me. I honestly don&#39;t know 🤷‍♂️.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type ">FixtureBase</span></h5>
+<div class="tsd-comment tsd-typography"></div></li>
+<li>
+<h5><span class="tsd-kind-parameter">id</span>: <span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"></div></li>
+<li>
+<h5><span class="tsd-kind-parameter">$iApi</span>: <a href="api_instance.InstanceAPI.html" class="tsd-signature-type tsd-kind-class">InstanceAPI</a></h5>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="api_fixture.FixtureInstance.html" class="tsd-signature-type tsd-kind-class">FixtureInstance</a></h4>
+<div class="tsd-comment tsd-typography">
+<h4>Static</h4>
+<h4>Memberof</h4><p>FixtureInstance</p>
+</div><aside class="tsd-sources">
+<p>Inherited from <a href="api_fixture.FixtureInstance.html">FixtureInstance</a>.<a href="api_fixture.FixtureInstance.html#updateBaseToInstance">updateBaseToInstance</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ramp4-pcar4/ramp4-pcar4/blob/0e957d9/src/api/fixture.ts#L249">src/api/fixture.ts:249</a></li></ul></aside></li></ul></section></section></div>
+<div class="col-sidebar">
+<div class="page-menu">
+<div class="tsd-navigation settings">
+<details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)" id="icon-chevronDown"></path></svg>Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility">
+<h4 class="uppercase">Member Visibility</h4><form>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li>
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></form></div>
+<div class="tsd-theme-toggle">
+<h4 class="uppercase">Theme</h4><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<details open class="tsd-index-accordion tsd-page-navigation"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg>On This Page</h3></summary>
+<div class="tsd-accordion-details">
+<ul>
+<li><a href="#constructor" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a></li>
+<li><a href="#_iApi" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>$i<wbr/>Api</span></a></li>
+<li><a href="#hilightMode" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>hilight<wbr/>Mode</span></a></li>
+<li><a href="#id" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>id</span></a></li>
+<li><a href="#_element" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>$element</span></a></li>
+<li><a href="#_vApp" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>$v<wbr/>App</span></a></li>
+<li><a href="#config" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-262144"></use></svg><span>config</span></a></li>
+<li><a href="#_parseConfig" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_parse<wbr/>Config</span></a></li>
+<li><a href="#addHilight" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>add<wbr/>Hilight</span></a></li>
+<li><a href="#added" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>added</span></a></li>
+<li><a href="#constructGraphicKey" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>construct<wbr/>Graphic<wbr/>Key</span></a></li>
+<li><a href="#deconstructGraphicKey" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>deconstruct<wbr/>Graphic<wbr/>Key</span></a></li>
+<li><a href="#extend" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>extend</span></a></li>
+<li><a href="#getGraphicsByKey" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Graphics<wbr/>By<wbr/>Key</span></a></li>
+<li><a href="#getHilightLayer" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Hilight<wbr/>Layer</span></a></li>
+<li><a href="#getLayerFixtureConfig" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Layer<wbr/>Fixture<wbr/>Config</span></a></li>
+<li><a href="#getLayerFixtureConfigs" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Layer<wbr/>Fixture<wbr/>Configs</span></a></li>
+<li><a href="#handlePanelTeleports" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>handle<wbr/>Panel<wbr/>Teleports</span></a></li>
+<li><a href="#handlePanelWidths" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>handle<wbr/>Panel<wbr/>Widths</span></a></li>
+<li><a href="#initHilightLayer" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>init<wbr/>Hilight<wbr/>Layer</span></a></li>
+<li><a href="#initialized" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>initialized</span></a></li>
+<li><a href="#mount" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>mount</span></a></li>
+<li><a href="#reloadHilight" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>reload<wbr/>Hilight</span></a></li>
+<li><a href="#remove" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>remove</span></a></li>
+<li><a href="#removeHilight" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>remove<wbr/>Hilight</span></a></li>
+<li><a href="#removed" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>removed</span></a></li>
+<li><a href="#updateBaseToInstance" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>update<wbr/>Base<wbr/>To<wbr/>Instance</span></a></li></ul></div></details></div>
+<div class="site-menu">
+<nav class="tsd-navigation"><a href="../index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>RAMP4 -<wbr/> v4.2.0</span></a>
+<ul class="tsd-small-nested-navigation">
+<li><a href="../modules/api_common.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>api/common</span></a></li>
+<li><a href="../modules/api_config_upgrade.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>api/config-<wbr/>upgrade</span></a></li>
+<li><a href="../modules/api_event.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>api/event</span></a></li>
+<li><a href="../modules/api_fixture.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>api/fixture</span></a></li>
+<li><a href="../modules/api_instance.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>api/instance</span></a></li>
+<li><a href="../modules/api_notifications.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>api/notifications</span></a></li>
+<li><a href="../modules/api_panel.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>api/panel</span></a></li>
+<li><a href="../modules/api_panel_instance.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>api/panel-<wbr/>instance</span></a></li>
+<li><a href="../modules/directives_focus_list_focus_container.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>directives/focus-<wbr/>list/focus-<wbr/>container</span></a></li>
+<li><a href="../modules/directives_focus_list_focus_item.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>directives/focus-<wbr/>list/focus-<wbr/>item</span></a></li>
+<li><a href="../modules/directives_focus_list_focus_list.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>directives/focus-<wbr/>list/focus-<wbr/>list</span></a></li>
+<li><a href="../modules/directives_truncate_truncate.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>directives/truncate/truncate</span></a></li>
+<li><a href="../modules/fixtures_appbar_api_appbar.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/appbar/api/appbar</span></a></li>
+<li><a href="../modules/fixtures_areas_of_interest_api_areas_of_interest.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/areas-<wbr/>of-<wbr/>interest/api/areas-<wbr/>of-<wbr/>interest</span></a></li>
+<li><a href="../modules/fixtures_details_api_details.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/details/api/details</span></a></li>
+<li><a href="../modules/fixtures_export_api_export.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/export/api/export</span></a></li>
+<li><a href="../modules/fixtures_geosearch_api_geosearch.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/geosearch/api/geosearch</span></a></li>
+<li><a href="../modules/fixtures_grid_api_grid.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/grid/api/grid</span></a></li>
+<li><a href="../modules/fixtures_help_api_help.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/help/api/help</span></a></li>
+<li>
+<details class="tsd-index-accordion" open data-key="fixtures/hilight/api/hilight"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg><a href="../modules/fixtures_hilight_api_hilight.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/hilight/api/hilight</span></a></summary>
+<div class="tsd-accordion-details">
+<ul class="tsd-nested-navigation">
+<li><a href="fixtures_hilight_api_hilight.HilightAPI.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-128"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-class)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)"></path></g></svg><span>HilightAPI</span></a></li></ul></div></details></li>
+<li><a href="../modules/fixtures_hilight_api_hilight_defs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/hilight/api/hilight-<wbr/>defs</span></a></li>
+<li><a href="../modules/fixtures_hilight_api_hilight_mode_base_hilight_mode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/hilight/api/hilight-<wbr/>mode/base-<wbr/>hilight-<wbr/>mode</span></a></li>
+<li><a href="../modules/fixtures_hilight_api_hilight_mode_fog_hilight_mode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/hilight/api/hilight-<wbr/>mode/fog-<wbr/>hilight-<wbr/>mode</span></a></li>
+<li><a href="../modules/fixtures_hilight_api_hilight_mode_glow_hilight_mode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/hilight/api/hilight-<wbr/>mode/glow-<wbr/>hilight-<wbr/>mode</span></a></li>
+<li><a href="../modules/fixtures_hilight_api_hilight_mode_lift_hilight_mode.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/hilight/api/hilight-<wbr/>mode/lift-<wbr/>hilight-<wbr/>mode</span></a></li>
+<li><a href="../modules/fixtures_layer_reorder_api_layer_reorder.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/layer-<wbr/>reorder/api/layer-<wbr/>reorder</span></a></li>
+<li><a href="../modules/fixtures_layer_reorder_definitions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/layer-<wbr/>reorder/definitions</span></a></li>
+<li><a href="../modules/fixtures_legend_api_legend.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/legend/api/legend</span></a></li>
+<li><a href="../modules/fixtures_mapnav_api_mapnav.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/mapnav/api/mapnav</span></a></li>
+<li><a href="../modules/fixtures_metadata_api_metadata.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/metadata/api/metadata</span></a></li>
+<li><a href="../modules/fixtures_northarrow_api_northarrow.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/northarrow/api/northarrow</span></a></li>
+<li><a href="../modules/fixtures_overviewmap_api_overviewmap.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/overviewmap/api/overviewmap</span></a></li>
+<li><a href="../modules/fixtures_scrollguard_api_scrollguard.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/scrollguard/api/scrollguard</span></a></li>
+<li><a href="../modules/fixtures_settings_api_settings.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/settings/api/settings</span></a></li>
+<li><a href="../modules/fixtures_settings_templates_icons.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/settings/templates/icons</span></a></li>
+<li><a href="../modules/fixtures_wizard_api_wizard.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>fixtures/wizard/api/wizard</span></a></li>
+<li><a href="../modules/geo_api_geo_common.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/geo-<wbr/>common</span></a></li>
+<li><a href="../modules/geo_api_geo_defs.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/geo-<wbr/>defs</span></a></li>
+<li><a href="../modules/geo_api_graphic_geometry_base_geometry.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/geometry/base-<wbr/>geometry</span></a></li>
+<li><a href="../modules/geo_api_graphic_geometry_extent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/geometry/extent</span></a></li>
+<li><a href="../modules/geo_api_graphic_geometry_geometry.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/geometry/geometry</span></a></li>
+<li><a href="../modules/geo_api_graphic_geometry_line_string.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/geometry/line-<wbr/>string</span></a></li>
+<li><a href="../modules/geo_api_graphic_geometry_linear_ring.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/geometry/linear-<wbr/>ring</span></a></li>
+<li><a href="../modules/geo_api_graphic_geometry_multi_line_string.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/geometry/multi-<wbr/>line-<wbr/>string</span></a></li>
+<li><a href="../modules/geo_api_graphic_geometry_multi_point.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/geometry/multi-<wbr/>point</span></a></li>
+<li><a href="../modules/geo_api_graphic_geometry_multi_polygon.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/geometry/multi-<wbr/>polygon</span></a></li>
+<li><a href="../modules/geo_api_graphic_geometry_point.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/geometry/point</span></a></li>
+<li><a href="../modules/geo_api_graphic_geometry_point_set.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/geometry/point-<wbr/>set</span></a></li>
+<li><a href="../modules/geo_api_graphic_geometry_polygon.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/geometry/polygon</span></a></li>
+<li><a href="../modules/geo_api_graphic_geometry_spatial_reference.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/geometry/spatial-<wbr/>reference</span></a></li>
+<li><a href="../modules/geo_api_graphic_graphic.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/graphic</span></a></li>
+<li><a href="../modules/geo_api_graphic_hover.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/hover</span></a></li>
+<li><a href="../modules/geo_api_graphic_style_base_style.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/style/base-<wbr/>style</span></a></li>
+<li><a href="../modules/geo_api_graphic_style_colour.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/style/colour</span></a></li>
+<li><a href="../modules/geo_api_graphic_style_line_style.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/style/line-<wbr/>style</span></a></li>
+<li><a href="../modules/geo_api_graphic_style_point_style.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/style/point-<wbr/>style</span></a></li>
+<li><a href="../modules/geo_api_graphic_style_polygon_style.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/graphic/style/polygon-<wbr/>style</span></a></li>
+<li><a href="../modules/geo_api_layer_filter.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/layer/filter</span></a></li>
+<li><a href="../modules/geo_api_layer_scale_set.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/layer/scale-<wbr/>set</span></a></li>
+<li><a href="../modules/geo_api_layer_tree_node.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/layer/tree-<wbr/>node</span></a></li>
+<li><a href="../modules/geo_api_map_extent_set.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/map/extent-<wbr/>set</span></a></li>
+<li><a href="../modules/geo_api_utils_projection.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/utils/projection</span></a></li>
+<li><a href="../modules/geo_api_utils_promise.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/utils/promise</span></a></li>
+<li><a href="../modules/geo_api_utils_shared_utils.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/api/utils/shared-<wbr/>utils</span></a></li>
+<li><a href="../modules/geo_geo.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/geo</span></a></li>
+<li><a href="../modules/geo_layer_attrib_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/attrib-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_layer_common_graphic_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/common-<wbr/>graphic-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_layer_common_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/common-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_layer_csv_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/csv-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_layer_feature_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/feature-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_layer_file_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/file-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_layer_file_utils.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/file-<wbr/>utils</span></a></li>
+<li><a href="../modules/geo_layer_geojson_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/geojson-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_layer_graphic_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/graphic-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_layer_imagery_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/imagery-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_layer_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/layer</span></a></li>
+<li><a href="../modules/geo_layer_layer_instance.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/layer-<wbr/>instance</span></a></li>
+<li><a href="../modules/geo_layer_map_image_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/map-<wbr/>image-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_layer_map_image_sublayer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/map-<wbr/>image-<wbr/>sublayer</span></a></li>
+<li><a href="../modules/geo_layer_ogc_utils.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/ogc-<wbr/>utils</span></a></li>
+<li><a href="../modules/geo_layer_osm_tile_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/osm-<wbr/>tile-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_layer_shapefile_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/shapefile-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_layer_tile_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/tile-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_layer_wfs_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/wfs-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_layer_wms_layer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/layer/wms-<wbr/>layer</span></a></li>
+<li><a href="../modules/geo_map_basemap.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/map/basemap</span></a></li>
+<li><a href="../modules/geo_map_caption.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/map/caption</span></a></li>
+<li><a href="../modules/geo_map_common_map.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/map/common-<wbr/>map</span></a></li>
+<li><a href="../modules/geo_map_maptip.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/map/maptip</span></a></li>
+<li><a href="../modules/geo_map_overview_map.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/map/overview-<wbr/>map</span></a></li>
+<li><a href="../modules/geo_map_ramp_map.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/map/ramp-<wbr/>map</span></a></li>
+<li><a href="../modules/geo_utils_attribute.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/utils/attribute</span></a></li>
+<li><a href="../modules/geo_utils_query.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/utils/query</span></a></li>
+<li><a href="../modules/geo_utils_renderer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/utils/renderer</span></a></li>
+<li><a href="../modules/geo_utils_symbology.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>geo/utils/symbology</span></a></li>
+<li><a href="../modules/main.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>main</span></a></li></ul></nav></div></div></div>
+<div class="tsd-generator">
+<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div>
+<div class="overlay"></div></body></html>

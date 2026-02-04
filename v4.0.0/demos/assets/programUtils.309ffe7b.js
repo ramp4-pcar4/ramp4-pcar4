@@ -1,0 +1,7 @@
+import{e as h}from"./main.efb50b2c.js";import{h as u}from"./ProgramTemplate.1056febf.js";class a{constructor(){this._outer=new Map}clear(){this._outer.clear()}get empty(){return this._outer.size===0}get(e,t){return this._outer.get(e)?.get(t)}set(e,t,o){const s=this._outer.get(e);s?s.set(t,o):this._outer.set(e,new Map([[t,o]]))}delete(e,t){const o=this._outer.get(e);o&&(o.delete(t),o.size===0&&this._outer.delete(e))}forEach(e){this._outer.forEach((t,o)=>e(t,o))}}class d{constructor(e){this._rctx=e,this._store=new a}dispose(){this._store.forEach(e=>e.forEach(t=>t.dispose())),this._store.clear()}acquire(e,t,o,s){const r=this._store.get(e,t);if(h(r))return r.ref(),r;const n=new u(this._rctx,e,t,o,s);return n.ref(),this._store.set(e,t,n),n}get test(){let e=0;return this._store.forEach(t=>t.forEach(o=>e+=o.hasGLName?2:1)),{cachedWebGLObjects:e}}}function l(i){const{options:e,value:t}=i;return typeof e[t]=="number"}function $(i){let e="";for(const t in i){const o=i[t];if(typeof o=="boolean")o&&(e+=`#define ${t}
+`);else if(typeof o=="number")e+=`#define ${t} ${o.toFixed()}
+`;else if(typeof o=="object")if(l(o)){const{value:s,options:r,namespace:n}=o,c=n?`${n}_`:"";for(const f in r)e+=`#define ${c}${f} ${r[f].toFixed()}
+`;e+=`#define ${t} ${c}${s}
+`}else{const s=o.options;let r=0;for(const n in s)e+=`#define ${s[n]} ${(r++).toFixed()}
+`;e+=`#define ${t} ${s[o.value]}
+`}}return e}export{$ as n,d as s};

@@ -1,0 +1,1 @@
+import{M as s,eA as a}from"./main-6gYsRPh_.js";function i(e){const t="metric";if(e==null)return t;const r=e.map,n=(r&&"portalItem"in r?r.portalItem?.portal:null)??s.getDefault();switch(n.user?.units??n.units){case t:return t;case"english":return"imperial"}return a(e.spatialReference)??t}export{i as e};

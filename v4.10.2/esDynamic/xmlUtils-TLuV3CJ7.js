@@ -1,0 +1,1 @@
+function l(e,c){if(e&&c){for(const o of e.children)if(o.localName in c){const n=c[o.localName];if(typeof n=="function"){const i=n(o);i&&l(o,i)}else l(o,n)}}}function*t(e,c){for(const o of e.children)if(o.localName in c){const n=c[o.localName];typeof n=="function"?yield n(o):yield*t(o,n)}}export{t as n,l as o};

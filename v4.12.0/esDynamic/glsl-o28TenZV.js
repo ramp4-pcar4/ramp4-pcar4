@@ -1,0 +1,1 @@
+function e(n,...o){let r="";for(let t=0;t<o.length;t++)r+=n[t]+o[t];return r+=n[n.length-1],r}function u(n,o,r=""){return n?o:r}(function(n){function o(t){return Math.round(t).toString()}function r(t){return t.toPrecision(8)}n.int=o,n.float=r})(e);export{e as n,u as t};

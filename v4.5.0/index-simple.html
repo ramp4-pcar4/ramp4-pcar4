@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <title>Basic RAMP Sample</title>
+
+        <!-- Load RAMP stylesheet -->
+        <link rel="stylesheet" href="./lib/ramp.css" />
+    </head>
+    <body style="margin: 0">
+        <!-- The page element that the RAMP instance will be created in -->
+        <div
+            id="ramp-instance"
+            style="height: 100vh; max-height: -webkit-fill-available"
+        ></div>
+
+        <!-- Load the compiled RAMP script-->
+        <script src="./lib/ramp.browser.iife.js"></script>
+
+        <!-- Create simple RAMP instance-->
+        <script>
+            const config = {
+                configs: {
+                    en: {
+                        map: {
+                            extentSets: [
+                                {
+                                    id: 'EXT_ESRI_World_AuxMerc_3857',
+                                    default: {
+                                        xmax: -5007771.626060756,
+                                        xmin: -16632697.354854,
+                                        ymax: 10015875.184845109,
+                                        ymin: 5022907.964742964,
+                                        spatialReference: {
+                                            wkid: 102100,
+                                            latestWkid: 3857
+                                        }
+                                    }
+                                }
+                            ],
+                            lodSets: [
+                                {
+                                    id: 'LOD_ESRI_World_AuxMerc_3857',
+                                    lods: RAMP.geo.defaultLODs(
+                                        RAMP.geo.defaultTileSchemas()[1]
+                                    )
+                                }
+                            ],
+                            tileSchemas: [
+                                {
+                                    id: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
+                                    name: 'Web Mercator Maps',
+                                    extentSetId: 'EXT_ESRI_World_AuxMerc_3857',
+                                    lodSetId: 'LOD_ESRI_World_AuxMerc_3857',
+                                    thumbnailTileUrls: [
+                                        '/tile/8/91/74',
+                                        '/tile/8/91/75'
+                                    ]
+                                }
+                            ],
+                            basemaps: [
+                                {
+                                    id: 'baseEsriWorld',
+                                    layers: [
+                                        {
+                                            id: 'World_Imagery',
+                                            layerType: 'esri-tile',
+                                            url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer'
+                                        }
+                                    ],
+                                    tileSchemaId:
+                                        'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
+                                }
+                            ],
+                            initialBasemapId: 'baseEsriWorld'
+                        }
+                    }
+                }
+            };
+            const options = {
+                loadDefaultFixtures: true,
+                loadDefaultEvents: true,
+                startRequired: false
+            };
+            const rInstance = RAMP.createInstance(
+                document.getElementById('ramp-instance'),
+                config,
+                options
+            );
+        </script>
+    </body>
+</html>

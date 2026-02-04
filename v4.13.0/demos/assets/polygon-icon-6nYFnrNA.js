@@ -1,0 +1,1 @@
+import{dr as e,ds as n,dt as s,du as t}from"./main-6eEsl9OJ.js";import"./preload-helper-B76NpbEU.js";const r={},l={xmlns:"http://www.w3.org/2000/svg",viewBox:"0 0 24 24"};function a(c,o){return s(),n("svg",l,o[0]||(o[0]=[t("path",{d:"M0 0h24v24H0z",fill:"none"},null,-1),t("path",{d:"M3 6l6-3 6 3 6-3v12l-6 3-6-3-6 3z"},null,-1)]))}const _=e(r,[["render",a]]);export{_ as default};

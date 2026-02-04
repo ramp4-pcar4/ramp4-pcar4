@@ -1,0 +1,1 @@
+import{e7 as l,e8 as s,e9 as a,ea as t}from"./main-6gYsRPh_.js";const e={},o={xmlns:"http://www.w3.org/2000/svg",viewBox:"0 0 24 24"};function r(u,n){return a(),s("svg",o,n[0]||(n[0]=[t("path",{d:"M0 0h24v24H0z",fill:"none"},null,-1),t("path",{d:"M3 6l6-3 6 3 6-3v12l-6 3-6-3-6 3z"},null,-1)]))}const p=l(e,[["render",r]]);export{p as default};

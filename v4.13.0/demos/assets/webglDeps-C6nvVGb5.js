@@ -1,0 +1,7 @@
+import{E as F,o as v}from"./VertexArrayObject-BJ1W8QdY.js";import{R as P,s as w}from"./FramebufferObject-DNgF0P1h.js";import{a as c}from"./ProgramTemplate-QrVgIzo1.js";import{e as C,b as R}from"./ProgramTemplate-QrVgIzo1.js";import"./main-6eEsl9OJ.js";import{t as p}from"./NestedMap-BwbkO4RU.js";import{S as q}from"./Texture-Cg6gEanA.js";import"./enums-UBzvFP7O.js";import"./memoryEstimations-5hBnZCeh.js";import"./preload-helper-B76NpbEU.js";import"./getDataTypeBytes-D2DiHx_d.js";class _{constructor(e){this._rctx=e,this._store=new p}dispose(){this._store.forAll(e=>e.dispose()),this._store.clear()}acquire(e,t,o,n){const r=this._store.get(e,t);if(r!=null)return r.ref(),r;const s=new c(this._rctx,e,t,o,n);return s.ref(),this._store.set(e,t,s),s}get test(){}}function m(i){const{options:e,value:t}=i;return typeof e[t]=="number"}function g(i){let e="";for(const t in i){const o=i[t];if(typeof o=="boolean")o&&(e+=`#define ${t}
+`);else if(typeof o=="number")e+=`#define ${t} ${o.toFixed()}
+`;else if(typeof o=="object")if(m(o)){const{value:n,options:r,namespace:s}=o,f=s?`${s}_`:"";for(const a in r)e+=`#define ${f}${a} ${r[a].toFixed()}
+`;e+=`#define ${t} ${f}${n}
+`}else{const n=o.options;let r=0;for(const s in n)e+=`#define ${n[s]} ${(r++).toFixed()}
+`;e+=`#define ${t} ${n[o.value]}
+`}}return e}export{F as BufferObject,P as FramebufferObject,c as Program,_ as ProgramCache,w as Renderbuffer,C as ShaderCompiler,q as Texture,v as VertexArrayObject,R as createProgram,g as glslifyDefineMap};

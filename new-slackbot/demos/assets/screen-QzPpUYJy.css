@@ -1,0 +1,24 @@
+.xml-content {
+  font-size: 14px;
+}
+.metadata-view a {
+  color: blue;
+}
+.metadata-view h1 {
+  font-size: 1.5em;
+  margin: 0.1em 0px;
+  font-weight: bold;
+}
+.metadata-view h2 {
+  font-size: 1.2em;
+  margin: 0.1em 0px;
+  font-weight: bold;
+}
+.metadata-view h3 {
+  font-size: 1em;
+  margin: 0.1em 0px;
+  font-weight: bold;
+}
+.metadata-view p {
+  margin: 0.2em 0px;
+}

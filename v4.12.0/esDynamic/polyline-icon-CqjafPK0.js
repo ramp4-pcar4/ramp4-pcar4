@@ -1,0 +1,1 @@
+import{c_ as o,c$ as r,d0 as n,d1 as l}from"./main-DnzmeE4U.js";const s={},e={xmlns:"http://www.w3.org/2000/svg",viewBox:"0 0 24 24"};function a(d,t){return l(),r("svg",e,t[0]||(t[0]=[n("path",{d:"M0 0h24v24H0z",fill:"none"},null,-1),n("path",{d:"M5 17l3-3 4 4 8-8","stroke-width":"2",fill:"none",stroke:"currentColor"},null,-1)]))}const c=o(s,[["render",a]]);export{c as default};

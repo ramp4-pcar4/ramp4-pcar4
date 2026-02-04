@@ -1,0 +1,45 @@
+.badge[data-v-8627eab6] {
+  background-color: #576870;
+  bottom: -5px;
+  right: -5px;
+  font-size: 8px;
+}.symbStack {
+  flex: 0 0 32px;
+}
+.detailsButtonSelected {
+  border-left: 3px solid #576870;
+  padding-left: 4px !important;
+}
+.symbologyStackButton {
+  transition: background 0.3s;
+}
+.symbologyStackButton:hover {
+  background: #eee;
+}
+.symbologyLayerName {
+  flex: 1 1 auto;
+  text-align: left;
+}
+.symbologyStackButton:focus {
+  outline: 2px solid black;
+  z-index: 1;
+}.symbology-list {
+  /** fun magic to get the bar to take up the entire height */
+  height: auto;
+  top: 0px;
+  bottom: -8px;
+  border-right: 1px solid #eee;
+  box-shadow: -1px 0px 5px rgba(0, 0, 0, 0.5);
+  margin: -8px;
+  margin-bottom: 0px;
+  transition: all 0.3s cubic-bezier(0.35, 0, 0.25, 1);
+}
+.symbology-list-expanded {
+  width: 70% !important;
+  overflow-y: auto !important;
+}.layerName[data-v-4df2db6a] {
+  border-bottom: 1px solid #eee;
+}.detailsContentSection[data-v-4aff5458] {
+  padding-right: 8px;
+  margin-right: -8px;
+}

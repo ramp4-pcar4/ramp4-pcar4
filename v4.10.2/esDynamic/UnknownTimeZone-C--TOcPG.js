@@ -1,0 +1,1 @@
+import{a6 as e,a7 as o}from"./main-kpG51UWM.js";class t{}function a(n){return n instanceof o?n===t.instance:n?.toString().toLowerCase()==="unknown"}function r(n){return a(n)?t.instance:n}t.instance=new e("Etc/UTC");export{r as i,a as r,t};

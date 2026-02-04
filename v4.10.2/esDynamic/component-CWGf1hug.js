@@ -1,0 +1,1 @@
+function e(n){return n==="l"?"m":"s"}async function o(n){await(a(n)?n.componentOnReady():new Promise(t=>requestAnimationFrame(()=>t())))}function a(n){return typeof n.componentOnReady=="function"}export{o as c,e as g};

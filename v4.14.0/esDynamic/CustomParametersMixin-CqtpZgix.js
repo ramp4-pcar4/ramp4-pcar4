@@ -1,0 +1,1 @@
+import{_ as t,X as a,Y as i}from"./main-CSjwO60s.js";const n=r=>{const o=r;let e=class extends o{constructor(){super(...arguments),this.customParameters=null}};return t([a({type:Object,json:{write:{overridePolicy:s=>({enabled:!!(s&&Object.keys(s).length>0)})}}})],e.prototype,"customParameters",void 0),e=t([i("esri.layers.mixins.CustomParametersMixin")],e),e};export{n as s};

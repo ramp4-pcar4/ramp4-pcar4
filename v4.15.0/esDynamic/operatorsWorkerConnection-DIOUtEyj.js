@@ -1,0 +1,1 @@
+import{p}from"./workers-C0TuyKAf.js";let e,o,a=!1;function i(){return e??=p("arcadeGeometryOperatorsWorker").then(r=>{o=r,a=!0,e=void 0})}async function n(r,t){return a?o.apply("invokeGeometryOp",[r,t]):(await i(),n(r,t))}export{n as a};

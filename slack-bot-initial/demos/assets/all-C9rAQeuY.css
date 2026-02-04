@@ -1,0 +1,28 @@
+.tag {
+    display: inline-block;
+    border-radius: 3px;
+    padding: 0.2em 0.5em 0.3em;
+    margin: 0.25em 0.1em;
+    background: #888888;
+    color: #000000;
+}
+.layer {
+    background: #41b883;
+}
+.legend {
+    background: #b8b641;
+}
+.misc {
+    background: #ee7d20;
+}
+body {
+    background-color: black;
+    color: aliceblue;
+}
+a {
+    color: deepskyblue;
+}
+li,
+p {
+    font-size: 1.1rem;
+}

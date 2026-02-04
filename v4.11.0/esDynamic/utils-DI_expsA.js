@@ -1,0 +1,1 @@
+import{aW as s,aX as m}from"./main-I34c1W55.js";function p(r){return{geometryType:s(r[0]),geometries:r.map(t=>t.toJSON())}}function f(r,t,o){const n=m(t);return r.map(a=>{const e=n.fromJSON(a);return e.spatialReference=o,e})}export{f as o,p as r};

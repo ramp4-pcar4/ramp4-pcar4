@@ -1,0 +1,1 @@
+const s="__esri_stream_id__",r="__esri_timestamp__",a="__esri_track_part__",i="__esri_time_received__",t="__esri_track_line__";var _;(function(e){e[e.TrackLine=0]="TrackLine",e[e.LatestObservation=1]="LatestObservation",e[e.PreviousObservation=2]="PreviousObservation"})(_||(_={}));export{s as _,r as e,i,a as r,_ as s,t};

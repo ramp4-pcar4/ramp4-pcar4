@@ -1,0 +1,1 @@
+import{N as r}from"./ProjectionTransformation-Dhp-B94n.js";import{fromGeometry as m,fromGeometryToGXGeometry as n}from"./jsonConverter-D_i7eMgJ.js";const f=new r;function s(t,o){const e=m(t);return f.execute(e.getGeometry(),n(o),e.getSpatialReference())}export{s as execute};

@@ -1,0 +1,32 @@
+.sg[data-v-f9a0a92d] {
+  transition: opacity ease-in-out;
+  background-color: rgba(0, 0, 0, 0.45);
+  text-align: center;
+  position: absolute;
+  padding: 0px;
+  margin: 0px;
+  border-width: 0px;
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  transition-duration: 0.8s;
+  opacity: 0;
+  pointer-events: none !important;
+  z-index: 100;
+}
+.sg.sg-active[data-v-f9a0a92d] {
+  opacity: 1;
+  transition-duration: 0.3s;
+}
+.sg.sg-scrolling[data-v-f9a0a92d] {
+  transition-duration: 0.3s;
+}
+.sg .sg-label[data-v-f9a0a92d] {
+  font-size: 1.5em;
+  color: white;
+  position: relative;
+  margin: 0;
+  top: 50% !important;
+  transform: translateY(-50%);
+}
