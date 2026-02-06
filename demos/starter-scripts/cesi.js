@@ -459,48 +459,7 @@ let config = {
                         }
                     }
                 },
-                {
-                    id: 'Conserved_Areas',
-                    name: 'Conserved areas',
-                    layerType: 'esri-map-image',
-                    url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
-                    metadata: {
-                        url: 'https://indicators-map.ec.gc.ca/metadata/en/Protected%20Areas.xml'
-                    },
-                    catalogueUrl: 'https://open.canada.ca/data/en/dataset/2888ff57-a21c-448c-a4fa-570c4cabd956',
-                    state: {
-                        visibility: false,
-                        opacity: 1
-                    },
-                    sublayers: [
-                        {
-                            index: 32,
-                            state: {
-                                visibility: false,
-                                opacity: 1
-                            },
-                            nameField: 'E_PA_Name',
-                            fixtures: {
-                                grid: {
-                                    columns: [
-                                        { field: 'E_PA_Name' },
-                                        { field: 'E_PA_Bio_Name' },
-                                        { field: 'E_Province' },
-                                        { field: 'E_PA_Type' },
-                                        { field: 'PA_Area_ha' },
-                                        { field: 'Protected_Date' },
-                                        { field: 'E_Management' },
-                                        { field: 'E_PA_Zone_Desc' },
-                                        { field: 'E_URL' },
-                                        { field: 'Report_Year' },
-                                        { field: 'E_DetailPageURL' }
-                                    ]
-                                }
-                            }
-                        }
-                    ],
-                    singleEntryCollapse: true
-                },
+
                 {
                     id: 'Water_Quality',
                     nameField: 'Name',
@@ -556,14 +515,14 @@ let config = {
                     url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/CESI/MapServer',
                     state: {
                         query: false,
-                        visibility: true,
+                        visibility: false,
                         opacity: 1
                     },
                     sublayers: [
                         {
                             index: 33,
                             state: {
-                                visibility: true,
+                                visibility: false,
                                 opacity: 1
                             }
                         },
@@ -581,13 +540,6 @@ let config = {
                         }
                     ],
                     disabledControls: ['identify', 'data']
-                },
-                {
-                    id: 'AAFC',
-                    name: 'AAFC Land Use',
-                    layerType: 'esri-imagery',
-                    url: 'https://agriculture.canada.ca/atlas/rest/services/servicesimage/utilisation_des_terres_30m_2020/ImageServer',
-                    catalogueUrl: 'https://open.canada.ca/data/en/dataset/fa84a70f-03ad-4946-b0f8-a3b481dd5248'
                 }
             ],
             fixtures: {
@@ -609,10 +561,7 @@ let config = {
                                     }
                                 ]
                             },
-                            {
-                                name: 'Agriculture and Agri-Food Canada',
-                                layerId: 'AAFC'
-                            },
+
                             {
                                 name: 'Water quantity at monitoring stations',
                                 layerId: 'Water_Quantity'
@@ -620,11 +569,6 @@ let config = {
                             {
                                 name: 'Water quality at monitoring sites',
                                 layerId: 'Water_Quality'
-                            },
-                            {
-                                name: 'Conserved areas',
-                                layerId: 'Conserved_Areas',
-                                sublayerIndex: 32
                             },
                             {
                                 name: 'Releases of lead to water by facility',
