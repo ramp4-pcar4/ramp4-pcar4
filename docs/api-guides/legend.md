@@ -22,7 +22,7 @@ Provides the following methods:
 
 Note that all of the methods above return direct reference(s) to legend item(s) in the store. Therefore, directly manipulating properties of the returned item(s) will result in changes to the UI. Here is an example of this:
 
-```JS
+```js
 const myItem = legendApi.getItem('abcdefg');
 myItem.name = 'I have renamed my item!'; // this line will cause the name to update in the UI.
 ```

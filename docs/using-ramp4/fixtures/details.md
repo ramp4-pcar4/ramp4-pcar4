@@ -28,6 +28,7 @@ fixtures: {
     }
 }
 ```
+
 ### Layer Settings
 
 Since content can vary per layer, each layer config can provide details configurations under its own fixture configuration object.
@@ -67,7 +68,8 @@ It is possible to change the icon for the zoom button in the default ESRI detail
 Note that if the grid fixture is added, the zoom icon will be modified there as well.
 
 Example usage which sets the zoom icon to the magnifying glass:
-```
+
+```js
 {
     configs: {
         en: {

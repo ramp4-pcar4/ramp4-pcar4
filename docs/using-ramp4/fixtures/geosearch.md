@@ -82,7 +82,7 @@ The service can be defined in the `fsaBoundaries` config object.
 
 An example of a configured Geosearch panel is below
 
-```
+```js
 geosearch: {
     settings: {
         categories: ['CITY', 'TOWN', 'VILG', 'ADDR'],

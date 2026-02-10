@@ -70,21 +70,23 @@ Represented by two date input fields. The date filter works in the same fashion 
     - If only the maximum is entered, the table displays all dates *earlier than or on* the maximum date.
     - If both the minimum and maximum are entered, the table displays all dates _in between or on_ the dates.
 
-## Configuration
+## Grid Configuration
 
 Like other fixtures, the grid has multiple options that can be adjusted through the configuration file. Since the grid settings are layer specific, the configuration resides in the fixtures property of layer config objects.
 - `title: string`, renders a custom title above the grid.
-- `columns: Object[]`, an array that specifies how the columns of the grid are defined. Its configuration is defined under [column configuration](#column-configuration).
-- `columnMetadata: Object`, an object specifying options for the columns displayed on the grid
+- `columns`, specifies how individual columns are defined. See the [Column configuration](#column-configuration) section.
+- `columnMetadata `, defines options for the grid columns. See the [Column Metadata configuration](#column-metadata-configuration) section.
+- `controls`, defines the button controls in grid rows. See the [Custom Button configuration](#custom-button-configuration) section.
 - `search: boolean`, shows/hides the [global search bar](#global-search).
-- `searchFilter: string`, provides an initial filter in the global search bar
-- `showFilter: boolean`, shows/hides the [column filters](#show-hide-column-filters) on grid load
-- `applyToMap: boolean`, enables/disables the [Apply to Map filter](#apply-filters-to-map) by default
-- `filterByExtent: boolean`, enables/disables the [Extent filter](#toggle-extent-filter) by default
+- `searchFilter: string`, provides an initial filter in the global search bar.
+- `showFilter: boolean`, shows/hides the [column filters](#show-hide-column-filters) on grid load.
+- `applyToMap: boolean`, enables/disables the [Apply to Map filter](#apply-filters-to-map) by default.
+- `filterByExtent: boolean`, enables/disables the [Extent filter](#toggle-extent-filter) by default.
+
 
 An example of a layer with a configured grid is below
 
-```
+```js
 const config = {
     layers: [
         {
@@ -101,7 +103,7 @@ const config = {
 }
 ```
 
-### Column Configuration
+## Column Configuration
 
 Every column in the datagrid can be configured separately.
 - `field: string`, a unique column identifier that aligns with attribute field name
@@ -120,7 +122,7 @@ Every column in the datagrid can be configured separately.
 
 An example of a datatable with a single configured column is below
 
-```
+```js
 const config = {
     layers: [
         {
@@ -146,14 +148,14 @@ const config = {
 }
 ```
 
-### columnMetadata Configuration
+## Column Metadata Configuration
 
-The columnMetadata object for a grid has the following properties:
-- `exclusiveColumns: boolean`, this specifies whether to only make availible the columns specified in the grid when true, and to make all columns availible when false. By default, this is set to false.
+The `columnMetadata` object for a grid has the following properties:
+- `exclusiveColumns: boolean`, when true, only layer fields defined in the `columns` array will be availible as columns in the grid. Otherwise, all layer fields are available as columns. By default, this is set to false.
 
 An example of a datatable with the exclusiveColumns flag set
 
-```
+```js
 const config = {
     layers: [
         {
@@ -182,13 +184,15 @@ const config = {
 }
 ```
 
-### Zoom Button Configuration
+## Zoom Button Configuration
+
 It is possible to change the icon for the zoom button in the data grid using the system variable `zoomIcon`. There are two built-in icons: `globe` and `magnify`. If you would like to customize the icon, the variable may be set to any emoji or SVG. Providing this value with a URL will not fetch the remote image.
 
 Note that if the details fixture is added, the zoom icon will be modified there as well.
 
 Example usage which sets the zoom icon to the magnifying glass:
-```
+
+```js
 {
     configs: {
         en: {
@@ -196,3 +200,105 @@ Example usage which sets the zoom icon to the magnifying glass:
         }
     }
 }
+```
+
+## Custom Button Configuration
+
+The grid's row-level buttons can be customized via the `controls` array. By default the buttons will be the classic "Zoom To" and "Show Details" actions. These can be explicitly notated in the array using strings `"zoom"` and/or `"details"`.
+
+Author-defined buttons can also be added by adding objects with the following structure to the `controls` array.
+
+- `actionEvent: string`, the name of the event to raise when the button is clicked.
+- `icon: string`, the icon of the button. Treated as HTML. So could be an Emoji, could be SVG or image tags.
+- `tooltip: string`, tooltip for the button. This is also what screen readers will see.
+- `displayOn: string`, determines which layer format this button should appear for. Options are `'geo'` for map layers, `'data'` for data layers, or `'all'` for both. Defaults to all.
+
+The host page should add an [event handler](../../api-guides/events.md#reacting-to-an-event) on the RAMP Instance for the `actionEvent`. The event will have a payload of an object with the following properties.
+
+- `data: Object`, a key-value attribute object for the row.
+- `layer: LayerInstance`, the layer the row belongs to.
+- `uid: string`, the UID of the layer.
+- `oid: number`, the Object ID of the row.
+
+An example of a datatable with a custom chart button, the classic detail button, and no zoom-to button.
+
+```js
+const config = {
+    layers: [
+        {
+            ... layer configurations
+            fixtures: {
+                grid: {
+                    controls: [
+                        {
+                            actionEvent: 'custom/showChart',
+                            icon: '📊',
+                            tooltip: 'View Chart'
+                        },
+                        'details'
+                    ]
+                }
+            }
+        }
+    ]
+}
+```
+
+## Merge Grid Configuration
+
+A merge grid allows multiple layer sources to feed into a single grid. Opening a grid for any constituent layer will open the merge grid. Columns with the same field name will be combined, and mappings can be defined to combine fields of differing names across layers into a single column in the merge grid.
+
+Since merge grids are defined at the instance level, their configuration lives in the `grid` fixture config (as opposed to within a layer config's dedicated grid fixture config). The fixture config has a property `mergeGrids`, which is an array of merge grid definition objects. The objects have the following properties.
+
+- `gridId: string`, a unique identifier for the merge grid.
+- `layers: object[]`, an array of objects defining the layers participating in the grid. They have the following properties:
+  - `layerId: string`, the layer id of the layer.
+  - `sublayers: integer[]`, optional array of sublayer indexes if the layerId refers to a Map Image Layer.
+- `options: object`, a standard grid options configuration object for the merge grid. See the [grid config section](#grid-configuration).
+- `fieldMap: object[]`,  an optional array of objects defining mappings between field names in a source layer and a column in the merge grid. They have the following properties:
+  - `field: string`, the target field in the merge grid.
+  - `sources: string[]`, the field names in any of the source layers that should map to the target field.
+
+```js
+const config = {
+    fixtures: {
+        grid: {
+            mergeGrids: [
+                {
+                    gridId: 'gridABC',
+                    layers: [
+                        { layerId: 'sourceFeatureLayer' },
+                        {
+                            layerId: 'sourceMIL',
+                            sublayers: [6, 7]
+                        },
+                        { layerId: 'sourceGeoJson' }
+                    ],
+                    options: {
+                        title: 'A Grid taking columns as is'
+                    }
+                },
+                {
+                    gridId: 'gridDEF',
+                    layers: [
+                        { layerId: 'restaurantsOne' },
+                        { layerId: 'restaurantsTwo' }
+                    ],
+                    options: {
+                        title: 'A Grid combining different columns',
+                        columns: [
+                            { field: 'Location' }
+                        ]
+                    },
+                    fieldMap: [
+                        {
+                            field: 'Location',
+                            sources: ['Address', 'whereitsat']
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+};
+```

@@ -20,15 +20,13 @@
 
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
-import type { ColumnDefinition, FilterParams } from '../table-component.vue';
 
-export interface GridCustomSelectorFilter {
-    selectedOption: string;
-    colDef: ColumnDefinition;
-    options: any;
-    params: FilterParams;
-}
-
+/**
+ * .stateManager: TableStateManager
+ * .column: Column (ag-grid) ??
+ * .api: GridApi (ag-grid)
+ * .rowData: all row values in the table??? an array indexed rowData[row][column]
+ */
 const props = defineProps(['params']);
 
 const selectedOption = ref<string>('');
@@ -58,29 +56,16 @@ const selectionChanged = () => {
     props.params.api.onFilterChanged();
 };
 
-// const onParentModelChanged = (parentModel: any) => {
-//     if (!parentModel || Object.keys(parentModel).length === 0) {
-//         selectedOption.value = '';
-//     }
-// };
-
-// const setModel = () => {
-//     return {
-//         filterType: 'text',
-//         type: 'contains',
-//         filter: selectedOption.value
-//     };
-// };
-
 onBeforeMount(() => {
     // Load previously stored value (if saved in table state manager)
     selectedOption.value = props.params.stateManager.getColumnFilterValue(props.params.column.colDef.field);
 
-    let rowData = props.params.rowData;
+    const rowData = props.params.rowData;
 
     // obtain row data and filter out duplicates for selector list
-    rowData = rowData.map((row: any) => row[props.params.column.colId]);
-    options.value = rowData.filter((item: any, idx: any) => rowData.indexOf(item) === idx);
+
+    const uniqueRowValues = new Set<string>(rowData.map((row: any) => row[props.params.column.colId]));
+    options.value = Array.from(uniqueRowValues);
 
     // add the '...' option to allow clearing the selector
     options.value.unshift('...');

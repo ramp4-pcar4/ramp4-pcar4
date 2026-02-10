@@ -2,7 +2,7 @@
 
 The main configuration file in RAMP to use is determined by the current language of the app. Each language is restricted to being linked to a single config and is in the format of key-value pairings where the key is the language code with its associated formatted config object as the value.
 
-```
+```js
 registeredConfigs = {
     en: enConfig,
     fr: frConfig,
@@ -30,7 +30,7 @@ If the user chooses to pass a single config like above, RAMP will take that conf
 
 For example, if `i18n.messages` contains **en**, **fr** and **es**, then the registered configs by the end of the instance constructor will look like this:
 
-```
+```js
 registeredConfigs = {
     'en': enConfig,
     'fr': enConfig,
@@ -49,7 +49,7 @@ RAMP.createInstance(document.getElementById('app'), {
 
 If the user chooses to pass in more than one config file, each user specified language will be linked to its unique config, while any remaining languages in `i18n.messages` will default to the first config passed in the parameter. The registered configs will look like this at the end of the instance constructor:
 
-```
+```js
 registeredConfigs = {
     'en': enConfig,
     'fr': frConfig,
@@ -149,11 +149,11 @@ this.$iApi.panel.register({
 
 `i18n` options use the following type:
 
-```
+```js
 type I18nComponentOptions = {
-    messages?: VueI18n.LocaleMessages;  // https://kazupon.github.io/vue-i18n/guide/messages.html#structure
+    messages?: VueI18n.LocaleMessages;          // https://kazupon.github.io/vue-i18n/guide/messages.html#structure
     dateTimeFormats?: VueI18n.DateTimeFormats;  // https://kazupon.github.io/vue-i18n/guide/datetime.html#datetime-localization
-    numberFormats?: VueI18n.NumberFormats;  // https://kazupon.github.io/vue-i18n/guide/number.html#custom-formatting
+    numberFormats?: VueI18n.NumberFormats;      // https://kazupon.github.io/vue-i18n/guide/number.html#custom-formatting
     sharedMessages?: VueI18n.LocaleMessages;
 };
 ```

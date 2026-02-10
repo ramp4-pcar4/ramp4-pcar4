@@ -32,7 +32,7 @@ A legend item is a generic class that represents entries in the legend. A legend
 Toggling the visibility of a legend item will toggle the visibility of all its child items. These controls can be disabled for a specific legend item through its object in the legend portion of the configuration file. There are two ways of doing this:
 1. Add the `disabledControls` property to the object as an array with the names for each control (in parentheses above). The following example demonstrates disabling the expand toggle for a legend item called `Visible Set`:
 
-    ```
+    ```js
     {
         name: 'Visible Set',
         disabledControls: ['expandButton'],
@@ -41,7 +41,7 @@ Toggling the visibility of a legend item will toggle the visibility of all its c
     ```
 2. Add the `controls` property to the object as an array, and omit the names for each disabled control. The next code block provides the same configuration as the previous example:
 
-    ```
+    ```js
     {
         name: 'Visible Set',
         controls: ['visibilityButton'],
@@ -70,7 +70,7 @@ In addition to these controls, opening the settings panel provides extra options
 Like legend item controls, these controls can be disabled for a specific layer through its object in the legend portion of the configuration file. Again, there are two ways to do this:
 1. Add the `disabledLayerControls` property to the object as an array with the names for each control (in parenthesis above). The following example demonstrates disabling the boundary zoom and opacity controls for a legend item called `CleanAir`:
 
-    ```
+    ```js
     {
         layerId: 'CleanAir',
         name: 'Clean Air',
@@ -79,7 +79,7 @@ Like legend item controls, these controls can be disabled for a specific layer t
     ```
 2. Add the `layerControls` property to the object as an array, and omit the names for each disabled control. The next example configures `CleanAir` with only the remove control enabled:
 
-    ```
+    ```js
     {
         layerId: 'CleanAir',
         name: 'Clean Air in Set',
@@ -97,7 +97,7 @@ A section item is a legend item that is not bound to a layer. Section items can 
 
 The legend, like most other fixtures, can be configured directly through the main configuration file under the `fixtures` object. A very simple configuration file below shows where the legend configuration object should be placed:
 
-```
+```js
 const config = {
     layers: { ... },
     fixtures: {
@@ -117,7 +117,7 @@ The following properties exist on the legend configuration object:
     - `maxLines: number`, which determines the max number of lines a legend item can take up. Beyond this number, text will truncate and show a tooltip on hover. Defaults to `3`. Only allows integers `1`-`6` as values. Only applies if the legend property `multilineItems.enabled` is true.
 - `root: Object`, a tree-structured object that represents the layout for the legend. Top-level items can be added to the legend as a child of this object as such:
 
-```
+```js
 const config = {
     layers: { ... },
     fixtures: {
@@ -162,7 +162,7 @@ A layer item is an instance of a legend item. A single layer item directly corre
 - `disabledLayerControls:`: keeps track of list of disabled layer item controls
 
 The following is an example of a layer item in the configuration file:
-```
+```js
  {
     layerId: 'WasteLocations',
     name: 'Waste Locations Layer',
@@ -182,8 +182,7 @@ The following is an example of a layer item in the configuration file:
         {
             image: 'https://cdn.pixabay.com/photo/2013/08/06/19/13/plane-170272_960_720.jpg',
             text: 'Airports',
-            sqlQuery:
-                "Sector = 'Airports and Services to Airports'"
+            sqlQuery: "Sector = 'Airports and Services to Airports'"
         },
         {
             image: 'https://cdn.pixabay.com/photo/2013/11/24/11/10/lab-217043_960_720.jpg',
@@ -193,20 +192,17 @@ The following is an example of a layer item in the configuration file:
         {
             image: 'https://cdn.pixabay.com/photo/2018/08/24/23/33/oil-rig-3629119__340.jpg',
             text: 'Oil and Gas',
-            sqlQuery:
-                "Sector = 'Oil and Gas (Conventional and Non-Conventional)'"
+            sqlQuery: "Sector = 'Oil and Gas (Conventional and Non-Conventional)'"
         },
         {
             image: 'https://cdn.pixabay.com/photo/2016/11/21/15/42/disposal-1846033__340.jpg',
             text: 'Waste',
-            sqlQuery:
-                "Sector = 'Waste Treatment and Disposal'"
+            sqlQuery: "Sector = 'Waste Treatment and Disposal'"
         },
         {
             image: 'https://cdn.pixabay.com/photo/2018/03/23/22/11/knowledge-3255140__340.jpg',
             text: 'Other',
-            sqlQuery:
-                "Sector = 'All Other Sectors'"
+            sqlQuery: "Sector = 'All Other Sectors'"
         }
     ]
 }
@@ -219,7 +215,8 @@ A section item is an instance of a legend item. A section item does not correspo
 Note that when a section item has a defined `content` property, its visibility and expand control buttons must be explicitly enabled, unlike other legend items that have those buttons enabled by default.
 
 The following is an example of a section item containing two layer items in the configuration file:
-```
+
+```js
 {
     name: 'Layer Group',
     infoType: 'text',

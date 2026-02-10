@@ -27,16 +27,15 @@
 import { onBeforeMount, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { usePanelStore } from '@/stores/panel';
-import type { ColumnDefinition, FilterParams } from '../table-component.vue';
-
-export interface GridCustomTextFilter {
-    filterValue: string;
-    colDef: ColumnDefinition;
-    params: FilterParams;
-}
 
 const panelStore = usePanelStore();
 const { t } = useI18n();
+
+/**
+ * .stateManager: TableStateManager
+ * .column: Column (ag-grid) ??
+ * .api: GridApi (ag-grid)
+ */
 const props = defineProps(['params']);
 
 const filterValue = ref<string>('');

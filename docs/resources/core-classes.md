@@ -16,7 +16,7 @@ These are the classes that define a subcomponent of the Instance API. E.g. `Even
 
 Subcomponents are accessed in the following manner.
 
-```
+```js
 iApi.event.emit(stuff);
 ```
 
@@ -28,7 +28,7 @@ These are classes that define instances of API subcomponents that can be created
 
 An example of Subcomponent Instances using Panel subcomponent:
 
-```
+```js
 var myPanel = iApi.panel.get('panelId');
 myPanel.pin(true);
 ```
@@ -49,7 +49,7 @@ The main fixture class should have the name `FixturenameFixture` and extend the 
 
 An example using the Grid fixture.
 
-```
+```js
 class GridAPI extends FixtureInstance {
 
     // a method that the Grid fixture exposes as an API,
