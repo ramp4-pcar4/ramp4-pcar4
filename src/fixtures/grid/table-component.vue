@@ -360,6 +360,7 @@
                 @cell-key-press="onCellKeyPress"
                 :doesExternalFilterPass="doesExternalFilterPass"
                 :isExternalFilterPresent="isExternalFilterPresent"
+                :tabIndex="-1"
             />
         </div>
     </div>
@@ -592,6 +593,13 @@ const addAriaLabels = () => {
     });
 };
 
+const disableViewportTab = () => {
+    const viewports = el.value?.querySelectorAll<HTMLElement>('[data-ref$="Viewport"]');
+    viewports?.forEach((el: HTMLElement) => {
+        el.setAttribute('tabindex', '-1');
+    });
+};
+
 /**
  * Indicates at least one layer in this grid is loaded and visible.
  */
@@ -625,6 +633,7 @@ const onGridReady = (params: any) => {
 
     // Initial load
     addAriaLabels();
+    disableViewportTab();
 
     gridApi.value.addEventListener('rowDataUpdated', addAriaLabels);
 
@@ -689,6 +698,7 @@ const gridRendered = () => {
     gridApi.value.autoSizeAllColumns();
     gridAccessibilityManager.value = new GridAccessibilityManager(el.value!, agGridApi.value as GridApi);
     addAriaLabels();
+    disableViewportTab();
 };
 
 // Updates the global search value.
