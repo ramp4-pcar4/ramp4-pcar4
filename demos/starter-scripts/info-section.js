@@ -61,11 +61,6 @@ let config = {
                             state: {
                                 opacity: 1,
                                 visibility: true
-                            },
-                            fixtures: {
-                                legend: {
-                                    toggleSymbology: false
-                                }
                             }
                         },
                         {
@@ -73,11 +68,6 @@ let config = {
                             state: {
                                 opacity: 1,
                                 visibility: true
-                            },
-                            fixtures: {
-                                legend: {
-                                    toggleSymbology: false
-                                }
                             }
                         }
                     ],

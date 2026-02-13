@@ -771,93 +771,92 @@ function layerCommonPropertiesUpgrader(r2layer: any) {
     // deal with fields mayhem
     fieldsSausageGrinder(r2layer, r4layer);
 
-    if (typeof r2layer.toggleSymbology !== 'undefined' || r2layer.table) {
-        r4layer.fixtures = {};
-        if (typeof r2layer.toggleSymbology !== 'undefined') {
-            r4layer.fixtures.legend = {
-                toggleSymbology: r2layer.toggleSymbology
-            };
-        }
-        if (r2layer.table) {
-            r4layer.fixtures.grid = {};
-            if (r2layer.table.title) {
-                r4layer.fixtures.grid.title = r2layer.table.title;
-            }
-            if (r2layer.table.description) {
-                console.warn(
-                    `description property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
-                );
-            }
-            if (typeof r2layer.table.maximize !== 'undefined') {
-                console.warn(
-                    `maximize property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
-                );
-            }
-            if (r2layer.table.search) {
-                if (r2layer.table.search.enabled) {
-                    r4layer.fixtures.grid.search = r2layer.table.search.enabled;
-                }
-                if (r2layer.table.search.value) {
-                    r4layer.fixtures.grid.searchFilter = r2layer.table.search.value;
-                }
-            }
+    if (typeof r2layer.toggleSymbology !== 'undefined') {
+        console.warn(`toggleSymbology property provided in layer ${r2layer.id} cannot be mapped and will be skipped.`);
+    }
 
-            if (typeof r2layer.table.lazyFilter !== 'undefined') {
-                console.warn(
-                    `lazyFilter property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
-                );
+    if (r2layer.table) {
+        r4layer.fixtures = {
+            grid: {}
+        };
+
+        if (r2layer.table.title) {
+            r4layer.fixtures.grid.title = r2layer.table.title;
+        }
+        if (r2layer.table.description) {
+            console.warn(
+                `description property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
+            );
+        }
+        if (typeof r2layer.table.maximize !== 'undefined') {
+            console.warn(
+                `maximize property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
+            );
+        }
+        if (r2layer.table.search) {
+            if (r2layer.table.search.enabled) {
+                r4layer.fixtures.grid.search = r2layer.table.search.enabled;
             }
-            if (typeof r2layer.table.applyMap !== 'undefined') {
-                r4layer.fixtures.grid.applyMap = r2layer.table.applyMap;
+            if (r2layer.table.search.value) {
+                r4layer.fixtures.grid.searchFilter = r2layer.table.search.value;
             }
-            if (typeof r2layer.table.showFilter !== 'undefined') {
-                r4layer.fixtures.grid.showFilter = r2layer.table.showFilter;
-            }
-            if (typeof r2layer.table.filterByExtent !== 'undefined') {
-                r4layer.fixtures.grid.filterByExtent = r2layer.table.filterByExtent;
-            }
-            if (typeof r2layer.table.searchStrictMatch !== 'undefined') {
-                console.warn(
-                    `searchStrictMatch property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
-                );
-            }
-            if (typeof r2layer.table.printEnabled !== 'undefined') {
-                console.warn(
-                    `printEnabled property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
-                );
-            }
-            if (r2layer.table.columns) {
-                r4layer.fixtures.grid.columns = [];
-                r2layer.table.columns.forEach((r2tableColumn: any) => {
-                    const r4tableColumn: any = {
-                        field: r2tableColumn.data
-                    };
-                    if (r2tableColumn.title) {
-                        r4tableColumn.title = r2tableColumn.title;
-                    }
-                    if (r2tableColumn.description) {
-                        console.warn(
-                            `description property provided in column property in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
-                        );
-                    }
-                    if (typeof r2tableColumn.visible !== 'undefined') {
-                        r4tableColumn.visible = r2tableColumn.visible;
-                    }
-                    if (r2tableColumn.width) {
-                        r4tableColumn.width = r2tableColumn.width;
-                    }
-                    if (r2tableColumn.sort) {
-                        r4tableColumn.sort = r2tableColumn.sort;
-                    }
-                    if (typeof r2tableColumn.searchable !== 'undefined') {
-                        r4tableColumn.searchable = r2tableColumn.searchable;
-                    }
-                    if (r2tableColumn.filter) {
-                        r4tableColumn.filter = r2tableColumn.filter;
-                    }
-                    r4layer.fixtures.grid.columns.push(r4tableColumn);
-                });
-            }
+        }
+
+        if (typeof r2layer.table.lazyFilter !== 'undefined') {
+            console.warn(
+                `lazyFilter property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
+            );
+        }
+        if (typeof r2layer.table.applyMap !== 'undefined') {
+            r4layer.fixtures.grid.applyMap = r2layer.table.applyMap;
+        }
+        if (typeof r2layer.table.showFilter !== 'undefined') {
+            r4layer.fixtures.grid.showFilter = r2layer.table.showFilter;
+        }
+        if (typeof r2layer.table.filterByExtent !== 'undefined') {
+            r4layer.fixtures.grid.filterByExtent = r2layer.table.filterByExtent;
+        }
+        if (typeof r2layer.table.searchStrictMatch !== 'undefined') {
+            console.warn(
+                `searchStrictMatch property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
+            );
+        }
+        if (typeof r2layer.table.printEnabled !== 'undefined') {
+            console.warn(
+                `printEnabled property provided in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
+            );
+        }
+        if (r2layer.table.columns) {
+            r4layer.fixtures.grid.columns = [];
+            r2layer.table.columns.forEach((r2tableColumn: any) => {
+                const r4tableColumn: any = {
+                    field: r2tableColumn.data
+                };
+                if (r2tableColumn.title) {
+                    r4tableColumn.title = r2tableColumn.title;
+                }
+                if (r2tableColumn.description) {
+                    console.warn(
+                        `description property provided in column property in table property in layer ${r2layer.id} cannot be mapped and will be skipped.`
+                    );
+                }
+                if (typeof r2tableColumn.visible !== 'undefined') {
+                    r4tableColumn.visible = r2tableColumn.visible;
+                }
+                if (r2tableColumn.width) {
+                    r4tableColumn.width = r2tableColumn.width;
+                }
+                if (r2tableColumn.sort) {
+                    r4tableColumn.sort = r2tableColumn.sort;
+                }
+                if (typeof r2tableColumn.searchable !== 'undefined') {
+                    r4tableColumn.searchable = r2tableColumn.searchable;
+                }
+                if (r2tableColumn.filter) {
+                    r4tableColumn.filter = r2tableColumn.filter;
+                }
+                r4layer.fixtures.grid.columns.push(r4tableColumn);
+            });
         }
     }
     return r4layer;

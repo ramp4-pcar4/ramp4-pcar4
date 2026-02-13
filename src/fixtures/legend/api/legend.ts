@@ -43,11 +43,10 @@ export class LegendAPI extends FixtureInstance {
         this.handlePanelTeleports(['legend']);
 
         // get all layer fixture configs to read layer-specific legend properties
-        const layerLegendConfigs: { [layerId: string]: any } = this.getLayerFixtureConfigs();
+        // Note: there are currently no layer-specific settings for legend blocks.
+        // const layerLegendConfigs: { [layerId: string]: any } = this.getLayerFixtureConfigs();
 
         legendConfig.root.children.forEach(legendItem => {
-            // pass the layer legend fixture config
-            legendItem.layerLegendConfigs = layerLegendConfigs;
             this.addItem(legendItem);
         });
 
@@ -89,11 +88,6 @@ export class LegendAPI extends FixtureInstance {
         // construct children
         if (children) {
             children.forEach((childConf: any) => {
-                // pass the layer fixture config to child items
-                if (itemConf.layerLegendConfigs !== undefined) {
-                    childConf.layerLegendConfigs = itemConf.layerLegendConfigs;
-                }
-
                 // ts ignoring below because returned item is "LegendItem", but accepted type is "LayerItem | SectionItem"
                 // which is the same thing! (╯°□°）╯︵ ┻━┻
                 item!.children.push(this.createItem(childConf, item));

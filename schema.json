@@ -1957,14 +1957,7 @@
                 },
                 "legend": {
                     "type": "object",
-                    "description": "Layer-specific legend configuration",
-                    "properties": {
-                        "toggleSymbology": {
-                            "type": "boolean",
-                            "default": true,
-                            "description": "Allows individual symbols to have visibility toggled on/off."
-                        }
-                    }
+                    "description": "Layer-specific legend configuration. Currently no settings available"
                 },
                 "settings": {
                     "type": "object",
