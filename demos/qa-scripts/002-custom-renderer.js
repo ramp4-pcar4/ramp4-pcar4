@@ -283,11 +283,6 @@ const runPreTest = (config, options, utils) => {
                 }
             ]
         },
-        fixtures: {
-            legend: {
-                toggleSymbology: false
-            }
-        },
         state: {
             opacity: 1,
             visibility: false

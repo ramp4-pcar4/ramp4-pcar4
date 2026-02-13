@@ -501,11 +501,6 @@ let config = {
                             }
                         ]
                     },
-                    fixtures: {
-                        legend: {
-                            toggleSymbology: false
-                        }
-                    },
                     state: {
                         opacity: 1,
                         visibility: false
