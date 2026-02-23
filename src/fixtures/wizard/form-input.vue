@@ -55,6 +55,7 @@
             <div class="relative mb-0.5" data-type="select">
                 <div v-if="multiple">
                     <div ref="treeWrapper">
+                        <!-- Find treeselect prop info in the vue3-treeselect repo. File treeselectMixin.js , props section (~ line 72)-->
                         <Treeselect
                             v-model="selected"
                             :multiple="true"
@@ -67,6 +68,7 @@
                             :disableFuzzyMatching="true"
                             :searchable="searchable"
                             :childrenIgnoreDisabled="true"
+                            :value-consists-of="'LEAF_PRIORITY'"
                             :placeholder="t('wizard.configure.sublayers.select')"
                             :noResultsText="t('wizard.configure.sublayers.results')"
                             :clearAllText="t('wizard.configure.sublayers.clearAll')"
@@ -177,6 +179,14 @@
 </template>
 
 <script setup lang="ts">
+// This template handles the input controls for the wizard.
+// - url textbox
+// - file loader
+// - tree select
+// - list select
+// - checkboxes
+// - normie text
+
 import type { InstanceAPI } from '@/api';
 import { inject, onBeforeUnmount, onMounted, reactive, ref, useTemplateRef, watch } from 'vue';
 import type { PropType } from 'vue';
@@ -261,6 +271,9 @@ const props = defineProps({
         type: Number,
         default: 0
     },
+    /**
+     * The kind of input we want. file | url | select | checkbox | text
+     */
     type: {
         type: String,
         default: 'text'
@@ -292,6 +305,10 @@ const valid = ref(false);
 const urlError = ref(false);
 const nameError = ref(false);
 const sublayersError = ref(false);
+
+/**
+ * Items selected in the tree-picker
+ */
 const selected = ref([...props.selectedValues]);
 const valueLabel = ref('value-label');
 const optionLabel = ref('option-label');
@@ -360,8 +377,12 @@ const handleNameInput = (event: Event) => {
     nameError.value = false;
 };
 
+/**
+ * Triggers when a selection in the tree picker changes
+ */
 const handleSelection = () => {
     // small delay so the selected model can update
+
     emit('select', props.sublayerOptions(selected.value));
     sublayersError.value = selected.value && selected.value.length === 0;
 };
