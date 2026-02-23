@@ -413,7 +413,7 @@ export class LayerItem extends LegendItem {
                 this.handlers.push(
                     this.$iApi.event.on(
                         GlobalEvents.LAYER_DRAWSTATECHANGE,
-                        (payload: { layer: LayerInstance; state: string }) => {
+                        (payload: { layer: LayerInstance; state: DrawState }) => {
                             if (this.layer.uid === payload.layer.uid) {
                                 if (payload.layer.drawState === DrawState.REFRESH) {
                                     // if layer is redrawing, turn on the indicator right away

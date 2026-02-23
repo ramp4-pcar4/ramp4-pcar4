@@ -21,6 +21,7 @@ import {
     Filter,
     GeometryType,
     Graphic,
+    LayerFormat,
     LayerType,
     NoGeometry
 } from '@/geo/api';
@@ -401,20 +402,25 @@ export class AttribLayer extends MapLayer {
             filterKey
         });
 
-        // updating the filter on the layer can smash the server if multiple changes occur at once.
-        // this will delay applying changes if more changes arrive shortly after this one.
-        const debounceKey = `${this.uid}-${filterKey}-${whereClause}`;
-        this._lastFilterUpdate = debounceKey;
+        if (this.layerFormat === LayerFormat.MAPIMAGE) {
+            // map image layers need to be immediate due to flicker problems
+            this.applySqlFilter();
+        } else {
+            // updating the filter on the layer can smash the server if multiple changes occur at once.
+            // this will delay applying changes if more changes arrive shortly after this one.
+            const debounceKey = `${this.uid}-${filterKey}-${whereClause}`;
+            this._lastFilterUpdate = debounceKey;
 
-        const refreshCheck = () => {
-            if (this._lastFilterUpdate === debounceKey) {
-                // no other filter changes have happened in the delay window.
-                // apply the filter to the layer
-                this.applySqlFilter();
-            }
-        };
+            const refreshCheck = () => {
+                if (this._lastFilterUpdate === debounceKey) {
+                    // no other filter changes have happened in the delay window.
+                    // apply the filter to the layer
+                    this.applySqlFilter();
+                }
+            };
 
-        setTimeout(refreshCheck, 80);
+            setTimeout(refreshCheck, 80);
+        }
     }
 
     applySqlFilter(exclusions: Array<string> = []): void {

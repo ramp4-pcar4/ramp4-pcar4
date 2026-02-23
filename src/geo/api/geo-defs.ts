@@ -545,6 +545,7 @@ export const enum CoreFilter {
     EXTENT = 'extent', // captures a filter based on an extent. leveraged by the grid to only show rows visible on screen
     INITIAL = 'initial', // used to track an initial filter provided by the layer config
     API = 'api', // this would be a default api key. e.g. if someone just does an API filter set with no key parameter, it would use this.
+    MIL_FLICKER_ERASER = 'mileraser', // used by MILs to force a blank redraw prior to going invisible, to avoid a flicker when becoming visible again.
     PERMANENT = 'permanent' // a filter that is always on and will influence server calls (i.e. prevent data from being downloaded). can only be set via layer config
 }
 

@@ -1,6 +1,7 @@
 import {
     GlobalEvents,
     InstanceAPI,
+    LayerInstance,
     MapImageSublayer,
     MapLayer,
     NotificationType,
@@ -54,6 +55,94 @@ export class MapImageLayer extends MapLayer {
         this.maptips = false;
         this.layerTree.layerIdx = -1;
         this.identifyMode = LayerIdentifyMode.GEOMETRIC;
+    }
+
+    /**
+     * We delay the visibility change of the esri layer when going invisible to avoid flicker.
+     * This tracks what our intended viz state is, i.e. what they layer is pretending to be.
+     * See issue #2815 for all kinds of details on the flicker
+     */
+    private actualViz: boolean = false;
+
+    get visibility(): boolean {
+        // use the tracker value. The actual ESRI layer could still be visible, waiting for
+        // the anti-flicker redraw to finish
+        return this.actualViz;
+    }
+
+    set visibility(newVisibility: boolean) {
+        if (!this.layerExists) {
+            this.noLayerErr();
+            return;
+        }
+
+        if (!newVisibility) {
+            // MIL parent is going invisible. apply an eraser filter first so that the
+            // "last draw" is nothing.
+            applyFlickerFilter(this, '1=2');
+        }
+
+        // update our tracker for what we are claiming about the layer viz
+        this.actualViz = newVisibility;
+
+        // DEV NOTE: as is, the visibility changed event will not fire until the esri layer gets changed in the code block below,
+        // which could be later than usual in the "layer off" case. The redraw event is fairly snappy but could be lousy on a slow server.
+        // If this becomes a problem, we can add an IF to the event emitter in MapLayer to not fire it off if the layer is MIL type
+        // (but still need to do it for Sublayer type).  Then we can raise an event here when actualViz gets set.
+        // Would need to add some extra logic to make sure actualViz and value are different; shouldn't raise event if they are the same.
+
+        if (newVisibility && !this.esriLayer!.visible) {
+            // flick on the actual esri layer
+            this.esriLayer!.visible = true;
+        } else if (!newVisibility && this.esriLayer!.visible) {
+            // the ramp layer is now invisible but our esri layer is still visible.
+            // we want the esri layer to turn off visibility once it has mitigated the flicker scenario.
+            // if we don't, it will issue server hits every time the extent changes,
+
+            let layerViewRedrawListener = '';
+
+            // just for saftey, incase something goes funny with the layer redraw watcher.
+            // if we didn't do this, and something went squirrely, then you could have a layer
+            // go invisible when a user zooms/pans the layer.
+            const timeouter = setTimeout(() => {
+                // kill the listener on the layer view redraw
+                this.$iApi.event.off(layerViewRedrawListener);
+
+                // are we still fake invisible?
+                if (!this.actualViz) {
+                    // turn off layer viz
+                    this.esriLayer!.visible = false;
+                    applyFlickerFilter(this, '');
+                }
+            }, 1600);
+
+            // wait for the layer's redraw to finish, then turn off visibility.
+            layerViewRedrawListener = this.$iApi.event.on(
+                GlobalEvents.LAYER_DRAWSTATECHANGE,
+                (payload: { layer: LayerInstance; state: DrawState }) => {
+                    // is it our layer?
+                    // is the event change indicating drawing finished?
+                    if (payload.layer.id === this.id && payload.state === DrawState.UP_TO_DATE) {
+                        // kill the setTimeout and this event listener
+                        clearTimeout(timeouter);
+                        this.$iApi.event.off(layerViewRedrawListener);
+
+                        // are we still fake invisible?
+                        if (!this.actualViz) {
+                            // turn off layer viz
+                            this.esriLayer!.visible = false;
+                            applyFlickerFilter(this, '');
+                        }
+                    }
+                }
+            );
+        }
+
+        if (newVisibility) {
+            // we are turning viz. clear the flicker filter so the layer actually draws.
+            // usually it will be gone already. this covers really fast toggles.
+            applyFlickerFilter(this, '');
+        }
     }
 
     protected async onInitiate(): Promise<void> {
@@ -515,3 +604,14 @@ export class MapImageLayer extends MapLayer {
         });
     }
 }
+
+/**
+ * Worker to apply a flicker filter to all sublayers
+ */
+const applyFlickerFilter = (layer: MapImageLayer, filter: string): void => {
+    layer.sublayers.forEach(sl => {
+        if (sl.layerExists && sl.canModifyLayer) {
+            sl.setSqlFilter(CoreFilter.MIL_FLICKER_ERASER, filter);
+        }
+    });
+};
