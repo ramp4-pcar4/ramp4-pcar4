@@ -3,6 +3,7 @@ import { Basemap, CommonMapAPI, GraphicLayer, InstanceAPI } from '@/api/internal
 import { Graphic, LayerType, PolygonStyle } from '@/geo/api';
 import type { Extent, RampMapConfig } from '@/geo/api';
 import { EsriAPI, EsriWatch } from '@/geo/esri';
+import type { EsriExtent, EsriScreenPoint, EsriViewDragEvent } from '@/geo/esri';
 
 import { useConfigStore } from '@/stores/config';
 import { useOverviewmapStore } from '@/fixtures/overviewmap/store';
@@ -261,22 +262,23 @@ export class OverviewMapAPI extends CommonMapAPI {
      *
      * @private
      */
-    private startExtent: __esri.Extent | null = null;
+    private startExtent: EsriExtent | null = null;
 
     /**
      * Moves graphic and zooms main map if extent graphic is dragged
      *
-     * @param {__esri.ViewDragEvent} esriDrag
+     * @param {EsriViewDragEvent} esriDrag
      * @private
      */
-    private async mapDrag(esriDrag: __esri.ViewDragEvent) {
+    private async mapDrag(esriDrag: EsriViewDragEvent) {
+        //@ts-expect-error .native is either PointerEvent or MouseEvent. Complaint is that MouseEvent has no .pointerType. Which appears true according to MDN. But when we do a mouse click, it has the prop. It might be that using a mouse generates a pointer event, not a mouse event.
         if (esriDrag.native.pointerType === 'mouse') {
             if (esriDrag.action === 'start') {
                 // check if drag hits graphic, if so set start extent
                 if (await this.cursorHitTest(esriDrag)) {
                     this.startExtent = markRaw(
                         this.overviewGraphicLayer.getEsriGraphic('overview-graphic')!.geometry!
-                    ) as __esri.Extent;
+                    ) as EsriExtent;
                 }
             } else if (this.startExtent) {
                 // determine delta in map coords from drag origin to current drag point and update extent graphic
@@ -322,12 +324,12 @@ export class OverviewMapAPI extends CommonMapAPI {
     }
 
     /**
-     * Checks if mouse event intersects with extent graphic
+     * Checks if mouse event or screen point intersects with extent graphic
      *
-     * @param {MouseEvent} e
+     * @param {MouseEvent | EsriScreenPoint} e
      * @returns {Promise<boolean>}
      */
-    async cursorHitTest(e: MouseEvent | __esri.MapViewScreenPoint): Promise<boolean> {
+    async cursorHitTest(e: MouseEvent | EsriScreenPoint): Promise<boolean> {
         const hitTestResult = await this.esriView!.hitTest(e);
         return hitTestResult.results.length > 0;
     }

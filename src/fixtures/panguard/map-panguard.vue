@@ -8,6 +8,7 @@
 import { inject, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { GlobalEvents, InstanceAPI } from '@/api';
 import { useI18n } from 'vue-i18n';
+import type { EsriViewPointerEventCommon } from '@/geo/esri';
 
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
@@ -51,6 +52,15 @@ const setup = () => {
     // keep track of how many concurrent pointers are on the screen and their initial positions. This is a javascript map, not a map-map
     const pointers = new Map();
 
+    const touchOffHandler = (e: EsriViewPointerEventCommon): void => {
+        if (e.pointerType === 'touch') {
+            // small delay as to not offend panguard when more than one finger lifts or leaves the map
+            window.setTimeout(() => {
+                pointers.delete(e.pointerId);
+            }, 200);
+        }
+    };
+
     // prevent possible issues with esri event registration if this fixture runs before the map has built itself
     iApi.geo.map.viewPromise.then(() => {
         esriHandlers.push(
@@ -60,15 +70,9 @@ const setup = () => {
             })
         );
 
-        esriHandlers.push(
-            iApi.geo.map.esriView!.on(['pointer-up', 'pointer-leave'], e => {
-                if (e.pointerType !== 'touch') return;
-                // small delay as to not offend panguard when lifting more than one finger
-                window.setTimeout(() => {
-                    pointers.delete(e.pointerId);
-                }, 200);
-            })
-        );
+        // Note: ESRI v5 shrieks if we try to double-listen using .on(['pointer-up', 'pointer-leave'], fn())
+        esriHandlers.push(iApi.geo.map.esriView!.on('pointer-leave', touchOffHandler));
+        esriHandlers.push(iApi.geo.map.esriView!.on('pointer-up', touchOffHandler));
 
         esriHandlers.push(
             iApi.geo.map.esriView!.on('pointer-move', e => {

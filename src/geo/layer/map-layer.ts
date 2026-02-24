@@ -11,6 +11,7 @@ import {
 } from '@/geo/api';
 import type { DrawOrder, RampLayerConfig } from '@/geo/api';
 import { EsriWatch } from '@/geo/esri';
+import type { EsriLayerLayerviewCreateEvent, EsriResourceHandle } from '@/geo/esri';
 import { markRaw } from 'vue';
 
 /**
@@ -29,7 +30,7 @@ export class MapLayer extends CommonLayer {
 
     protected viewDefProm: DefPromise<void>; // a deferred promise that resolves when a layer view has been created on the map. helps bridge the view handler with the layer load handler
 
-    esriWatches: Array<__esri.WatchHandle>;
+    esriWatches: Array<EsriResourceHandle>;
 
     // ----------- LAYER CONSTRUCTION AND INITIALIZAION -----------
 
@@ -147,7 +148,7 @@ export class MapLayer extends CommonLayer {
             )
         );
 
-        this.esriLayer.on('layerview-create', (e: __esri.LayerLayerviewCreateEvent) => {
+        this.esriLayer.on('layerview-create', (e: EsriLayerLayerviewCreateEvent) => {
             this.esriView = markRaw(e.layerView);
             this.esriWatches.push(
                 EsriWatch(

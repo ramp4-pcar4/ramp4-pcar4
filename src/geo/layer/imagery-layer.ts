@@ -1,7 +1,7 @@
 import { InstanceAPI, MapLayer } from '@/api/internal';
 import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
-import type { EsriImageryLayer } from '@/geo/esri';
+import type { EsriImageryLayer, EsriImageryLayerProperties } from '@/geo/esri';
 import { EsriAPI } from '@/geo/esri';
 import { markRaw } from 'vue';
 
@@ -30,8 +30,8 @@ export class ImageryLayer extends MapLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.ImageryLayerProperties {
-        const esriConfig: __esri.ImageryLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): EsriImageryLayerProperties {
+        const esriConfig: EsriImageryLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         return esriConfig;
     }
