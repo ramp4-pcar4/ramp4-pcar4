@@ -38,6 +38,8 @@ import type {
     TabularAttributeSet
 } from '@/geo/api';
 
+import type { EsriFeatureLayerProperties } from '@/geo/esri';
+
 import { toRaw } from 'vue';
 
 /**
@@ -565,7 +567,7 @@ export class AttribLayer extends MapLayer {
      * @param rampConfig {RampLayerConfig} Ramp layer configuration object.
      * @param rampConfig {Object} ESRI Feature Layer configuration object
      */
-    protected configDrawOrder(rampConfig: RampLayerConfig, esriConfig: __esri.FeatureLayerProperties): void {
+    protected configDrawOrder(rampConfig: RampLayerConfig, esriConfig: EsriFeatureLayerProperties): void {
         if (Array.isArray(rampConfig.drawOrder) && rampConfig.drawOrder.length > 0) {
             // Note esri currently only supports one field, but coding to support multiple when they
             //      enhance the api to handle that.

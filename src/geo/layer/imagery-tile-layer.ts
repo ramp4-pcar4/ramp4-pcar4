@@ -1,7 +1,7 @@
 import { CommonTileLayer, InstanceAPI } from '@/api/internal';
 import { LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
-import type { EsriImageryTileLayer } from '@/geo/esri';
+import type { EsriImageryTileLayer, EsriImageryTileLayerProperties } from '@/geo/esri';
 import { EsriAPI } from '@/geo/esri';
 import { markRaw } from 'vue';
 
@@ -30,8 +30,8 @@ export class ImageryTileLayer extends CommonTileLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.ImageryTileLayerProperties {
-        const esriConfig: __esri.ImageryTileLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): EsriImageryTileLayerProperties {
+        const esriConfig: EsriImageryTileLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         return esriConfig;
     }

@@ -20,7 +20,7 @@ import type {
 } from '@/geo/api';
 
 import { EsriAPI, EsriRequest } from '@/geo/esri';
-import type { EsriWMSLayer, EsriWMSSublayer } from '@/geo/esri';
+import type { EsriCollection, EsriWMSLayer, EsriWMSLayerProperties, EsriWMSSublayer } from '@/geo/esri';
 
 import { markRaw, reactive } from 'vue';
 
@@ -58,10 +58,10 @@ export class WmsLayer extends MapLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.WMSLayerProperties {
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): EsriWMSLayerProperties {
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
-        const esriConfig: __esri.WMSLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
+        const esriConfig: EsriWMSLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         const lEntries = <Array<RampLayerWmsSublayerConfig>>rampLayerConfig.sublayers;
         this.sublayerNames = lEntries.map(sublayer => sublayer.id || 'error_no_wms_id');
@@ -110,7 +110,7 @@ export class WmsLayer extends MapLayer {
         this.layerTree.name = this.name;
 
         // Set visibility of sublayers based on presence in the config
-        const crawlSublayers = (sublayers: __esri.Collection<EsriWMSSublayer>): boolean => {
+        const crawlSublayers = (sublayers: EsriCollection<EsriWMSSublayer>): boolean => {
             let anySlVis = false;
             sublayers.forEach(sl => {
                 const visible = this.sublayerNames.indexOf(sl.name) > -1;

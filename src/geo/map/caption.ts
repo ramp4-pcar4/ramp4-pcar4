@@ -1,6 +1,7 @@
 import { APIScope, InstanceAPI } from '@/api/internal';
 import { useMapCaptionStore } from '@/stores/map-caption';
 import type { Attribution, MapCaptionConfig, Point, ScaleBar, ScaleHelper } from '@/geo/api';
+import type { EsriLayer } from '@/geo/esri';
 
 export class MapCaptionAPI extends APIScope {
     // Default point formatters
@@ -169,9 +170,9 @@ export class MapCaptionAPI extends APIScope {
             // Create load promises that resolve when the baseLayer loads or after a timeout
             const esriBMs = this.$iApi.geo.map.esriMap.basemap;
             if (esriBMs) {
-                const baseLayerLoadPromises: Array<Promise<__esri.Layer | null>> = esriBMs.baseLayers
-                    .map((bl: __esri.Layer) => {
-                        return new Promise<__esri.Layer | null>(resolve => {
+                const baseLayerLoadPromises: Array<Promise<EsriLayer | null>> = esriBMs.baseLayers
+                    .map((bl: EsriLayer) => {
+                        return new Promise<EsriLayer | null>(resolve => {
                             // Keep count of layer.load checks done so far
                             let elapsedIntervals: number = 0;
                             // The maximum number of layer.load checks we will do

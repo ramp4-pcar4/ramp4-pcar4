@@ -4,7 +4,7 @@ import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 import type { LegendSymbology, RampLayerConfig } from '@/geo/api';
 
 import { EsriAPI } from '@/geo/esri';
-import type { EsriOpenStreetMapLayer } from '@/geo/esri';
+import type { EsriOpenStreetMapLayer, EsriOpenStreetMapLayerProperties } from '@/geo/esri';
 import { markRaw } from 'vue';
 
 /**
@@ -33,8 +33,8 @@ export class OsmTileLayer extends MapLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.OpenStreetMapLayerProperties {
-        const esriConfig: __esri.OpenStreetMapLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): EsriOpenStreetMapLayerProperties {
+        const esriConfig: EsriOpenStreetMapLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         // TODO remove .url from object? should be empty string coming in.
 
