@@ -34,6 +34,7 @@ const numberFormats = {
 };
 
 export function i18n(): I18n<LocaleMessages<VueMessageType>, IntlDateTimeFormats, IntlNumberFormats, string, false> {
+    // get the language of the page from the root `html` node
     let validLang = document.documentElement!.getAttribute('lang') || lang;
 
     if (!supportedLangs.includes(validLang)) {
@@ -45,7 +46,6 @@ export function i18n(): I18n<LocaleMessages<VueMessageType>, IntlDateTimeFormats
     // @ts-expect-error TODO: explain why this is needed or remove
     return createI18n({
         legacy: false,
-        // get the language of the page from the root `html` node
         locale: validLang,
         fallbackLocale: lang,
         globalInjection: true,

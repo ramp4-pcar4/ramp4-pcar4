@@ -13,6 +13,7 @@ import type {
 } from '@/geo/api';
 import { DataFormat, GeometryType, Graphic, NoGeometry } from '@/geo/api';
 import { EsriGeometryFromJson, EsriRequest } from '@/geo/esri';
+import type { EsriCollection, EsriGraphic, EsriRequestOptions, EsriRequestResponse } from '@/geo/esri';
 import to from 'await-to-js';
 import deepmerge from 'deepmerge';
 import { toRaw } from 'vue';
@@ -24,7 +25,7 @@ export interface AttributeLoaderDetails {
     supportsLimit?: boolean; // indicates if server will return information about what the maximum number of attributes will be downloaded in a single request
     attribs?: string; // comma delimited list of attributes to download. '*' for all
     serviceUrl?: string; // feature layer endpoint on an arcgis server
-    sourceGraphics?: __esri.Collection<__esri.Graphic>; // set of graphics from non-ArcGIS server source
+    sourceGraphics?: EsriCollection<EsriGraphic>; // set of graphics from non-ArcGIS server source
     sourceDataJson?: CompactJson; // payload of raw attributes from a data layer source
     maxId?: number; // current maximum OID we have downloaded. i.e. keeps track of where we are over multiple batches of downloads
     batchSize: number; // calculated maximum amount of attributes that can be downloaded in a single request
@@ -92,7 +93,7 @@ export class AttributeAPI extends APIScope {
         const permFilter = details.permanentFilter ? ` AND ${details.permanentFilter}` : '';
 
         // make a web call that downloads a chonk of attributes.
-        const params: __esri.RequestOptions = {
+        const params: EsriRequestOptions = {
             query: {
                 where: `${details.oidField}>${details.maxId}${permFilter}`,
                 outFields: details.attribs,
@@ -102,7 +103,7 @@ export class AttributeAPI extends APIScope {
             }
         };
 
-        const [err, serviceResult] = await to<__esri.RequestResponse>(
+        const [err, serviceResult] = await to<EsriRequestResponse<any>>(
             EsriRequest(details.serviceUrl + '/query', params)
         );
         if (!serviceResult) {
@@ -285,7 +286,7 @@ export class AttributeAPI extends APIScope {
     }
 
     async loadSingleFeature(details: GetGraphicServiceDetails): Promise<Graphic> {
-        const params: __esri.RequestOptions = {
+        const params: EsriRequestOptions = {
             query: {
                 f: 'json',
                 objectIds: details.oid,
@@ -294,18 +295,21 @@ export class AttributeAPI extends APIScope {
             }
         };
         if (typeof details.maxOffset !== 'undefined') {
+            //@ts-expect-error TS not wise enough to know query is defined, and wont recognize maxAllowableOffset despite query being typed as Record<string,any>
             params.query.maxAllowableOffset = details.maxOffset;
         }
         if (typeof details.mapSR !== 'undefined') {
+            //@ts-expect-error TS not wise enough to know query is defined, and wont recognize outSR despite query being typed as Record<string,any>
             params.query.outSR = details.mapSR;
         }
 
         // set geometry precision if value is a non-negative integer
         if (typeof details.geometryPrecision !== 'undefined' && details.geometryPrecision >= 0) {
+            //@ts-expect-error TS not wise enough to know query is defined, and wont recognize geometryPrecision despite query being typed as Record<string,any>
             params.query.geometryPrecision = details.geometryPrecision;
         }
 
-        const [err, serviceResult] = await to<__esri.RequestResponse>(
+        const [err, serviceResult] = await to<EsriRequestResponse<any>>(
             EsriRequest(details.serviceUrl + '/query', params)
         );
         if (!serviceResult) {

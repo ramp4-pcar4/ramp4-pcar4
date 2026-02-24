@@ -2,6 +2,7 @@ import { applyConverter } from '@terraformer/spatial';
 import { BaseGeometry, Extent, GeometryType, Polygon, SpatialReference } from '@/geo/api';
 import type { EpsgLookup, SrDef } from '@/geo/api';
 import { EsriRequest } from '@/geo/esri';
+import type { EsriRequestOptions } from '@/geo/esri';
 import { geo } from '@/main';
 
 // since ProjectionService is now a class instead a stateless service, it appears that the proj4 library is maintaining it's state
@@ -70,7 +71,7 @@ export class ProjectionAPI {
 
         return new Promise((resolve, reject) => {
             const epsgUrl: string = `https://epsg.io/${matcher[1]}.proj4`;
-            const params: __esri.RequestOptions = {
+            const params: EsriRequestOptions = {
                 responseType: 'text'
             };
             const restReq = EsriRequest(epsgUrl, params); // TODO since this is outside of esri api, consider using the vue web request lib here

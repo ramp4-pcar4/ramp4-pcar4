@@ -2,7 +2,7 @@ import { CommonTileLayer, InstanceAPI } from '@/api/internal';
 import { LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { EsriAPI } from '@/geo/esri';
-import type { EsriTileLayer } from '@/geo/esri';
+import type { EsriTileLayer, EsriTileLayerProperties } from '@/geo/esri';
 import { markRaw } from 'vue';
 
 /**
@@ -29,8 +29,8 @@ export class TileLayer extends CommonTileLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.TileLayerProperties {
-        const esriConfig: __esri.TileLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): EsriTileLayerProperties {
+        const esriConfig: EsriTileLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         return esriConfig;
     }

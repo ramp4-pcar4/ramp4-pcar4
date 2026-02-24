@@ -31,7 +31,7 @@ import type {
 } from '@/geo/api';
 
 import { EsriAPI, EsriWatch } from '@/geo/esri';
-import type { EsriMapImageLayer } from '@/geo/esri';
+import type { EsriMapImageLayer, EsriMapImageLayerProperties, EsriSublayer } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
 
 // Formerly known as DynamicLayer
@@ -157,10 +157,10 @@ export class MapImageLayer extends MapLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.MapImageLayerProperties {
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): EsriMapImageLayerProperties {
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
-        const esriConfig: __esri.MapImageLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
+        const esriConfig: EsriMapImageLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         // if we have a definition at load, apply it here to avoid cancellation errors on
 
@@ -238,7 +238,7 @@ export class MapImageLayer extends MapLayer {
 
         this.extent = this.extent ?? Extent.fromESRI(this.esriLayer!.fullExtent!, this.id + '_extent');
 
-        const findSublayer = (targetIndex: number): __esri.Sublayer => {
+        const findSublayer = (targetIndex: number): EsriSublayer => {
             const finder = this.esriLayer?.allSublayers.find(s => {
                 return s.id === targetIndex;
             });
@@ -268,7 +268,7 @@ export class MapImageLayer extends MapLayer {
         // it will generate MIL Sublayer objects for all leafs under the sublayer
         // we also generate a tree structure of our layer that is in a format
         // that makes the client happy
-        const processSublayer = (subLayer: __esri.Sublayer, parentTreeNode: TreeNode): void => {
+        const processSublayer = (subLayer: EsriSublayer, parentTreeNode: TreeNode): void => {
             const sid: number = subLayer.id;
             const subC = subConfigs[sid];
 
@@ -283,7 +283,7 @@ export class MapImageLayer extends MapLayer {
                 // process the kids in the group.
                 subLayer.sublayers
                     .reverse() // need .reverse as MIL group objects in ESRI layer store their sublayers in reverse order
-                    .forEach((subSubLayer: __esri.Sublayer) => {
+                    .forEach(subSubLayer => {
                         processSublayer(subSubLayer, treeGroup);
                     });
             } else {

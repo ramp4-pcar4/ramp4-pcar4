@@ -7,7 +7,7 @@
 import { toRaw, markRaw } from 'vue';
 import { APIScope, Basemap, InstanceAPI, NotificationType } from '@/api/internal';
 import { EsriAPI, EsriWatch } from '@/geo/esri';
-import type { EsriMap } from '@/geo/esri';
+import type { EsriGoToOptions2D, EsriMap, EsriMapProperties, EsriMapView } from '@/geo/esri';
 import { BaseGeometry, DefPromise, Extent, ExtentSet, GeometryType, SpatialReference } from '@/geo/api';
 import type { RampLabelsConfig, RampMapConfig, ZoomEasing } from '@/geo/api';
 
@@ -46,7 +46,7 @@ export class CommonMapAPI extends APIScope {
     /**
      * The internal esri map view. Changes from outside of RAMP may break the instance. Use caution.
      */
-    esriView: __esri.MapView | undefined;
+    esriView: EsriMapView | undefined;
 
     /**
      * Internal deferred managing the view promise
@@ -186,7 +186,7 @@ export class CommonMapAPI extends APIScope {
             this.labelsDefault.visible = config.labelsDefault.visible;
         }
 
-        const esriConfig: __esri.MapProperties = {};
+        const esriConfig: EsriMapProperties = {};
 
         // note we can no longer do this here, due to basemap recovery.
         // doing it here will cause the view promise to block until the basemap fails.
@@ -426,7 +426,7 @@ export class CommonMapAPI extends APIScope {
             if (g.type === GeometryType.POINT) {
                 zoomP.scale = scale || this.pointZoomScale;
             }
-            const opts: __esri.GoToOptions2D = { animate, duration, easing };
+            const opts: EsriGoToOptions2D = { animate, duration, easing };
 
             return this.viewPromise.then(() => {
                 return this.esriView!.goTo(zoomP, opts);

@@ -32,6 +32,8 @@ import type {
     TabularAttributeSet
 } from '@/geo/api';
 
+import type { EsriLayer, EsriLayerView, EsriSublayer } from '@/geo/esri';
+
 /**
  * A base class for Layer subclasses. It provides some utility functions to Layer and also gives access to `$iApi` and `$vApp` globals.
  * Mostly it exposes stub methods; this is because layer subclasses can be wildly different, so we don't
@@ -308,17 +310,17 @@ export class LayerInstance extends APIScope {
     /**
      *  The internal ESRI API layer
      */
-    esriLayer: __esri.Layer | undefined;
+    esriLayer: EsriLayer | undefined;
 
     /**
      *  The internal ESRI API sublayer. Valid only by sublayers
      */
-    esriSubLayer: __esri.Sublayer | undefined;
+    esriSubLayer: EsriSublayer | undefined;
 
     /**
      * The internal ESRI API layer view
      */
-    esriView: __esri.LayerView | undefined;
+    esriView: EsriLayerView | undefined;
 
     /**
      * The extent of the layer on the map

@@ -29,7 +29,10 @@ import type {
     EsriSimpleFillSymbol,
     EsriSimpleLineSymbol,
     EsriSimpleMarkerSymbol,
-    EsriSymbol
+    EsriSymbol,
+    EsriViewClickEvent,
+    EsriViewDoubleClickEvent,
+    EsriViewPointerMoveEvent
 } from '@/geo/esri';
 import { EsriGraphic } from '@/geo/esri';
 
@@ -60,15 +63,13 @@ export class GeometryAPI {
      * @param {String | Number} [id] optional id for the map point geometry on the result
      * @returns {MapClick} a generic bundle of data matching a subset of the incoming esri data
      */
-    esriMapClickToRamp(
-        esriMapClick: __esri.ViewClickEvent | __esri.ViewDoubleClickEvent,
-        id?: number | string
-    ): MapClick {
+    esriMapClickToRamp(esriMapClick: EsriViewClickEvent | EsriViewDoubleClickEvent, id?: number | string): MapClick {
         return {
             mapPoint: Point.fromESRI(esriMapClick.mapPoint, id),
             screenX: esriMapClick.x,
             screenY: esriMapClick.y,
             button: esriMapClick.button,
+            //@ts-expect-error .native is either PointerEvent or MouseEvent. Complaint is that MouseEvent has no .pointerType. Which appears true according to MDN. But when we do a mouse click, it has the prop. It might be that using a mouse generates a pointer event, not a mouse event.
             input: esriMapClick.native.pointerType,
             clickTime: esriMapClick.timestamp
         };
@@ -80,7 +81,7 @@ export class GeometryAPI {
      * @param {ViewPointerMoveEvent} esriMapMove an event param from an esri 2D map click or double-click event
      * @returns {MapMove} a generic bundle of data matching a subset of the incoming esri data
      */
-    esriMapMouseToRamp(esriMapMove: __esri.ViewPointerMoveEvent): MapMove {
+    esriMapMouseToRamp(esriMapMove: EsriViewPointerMoveEvent): MapMove {
         return {
             screenX: esriMapMove.x,
             screenY: esriMapMove.y,
@@ -215,7 +216,7 @@ export class GeometryAPI {
      * @returns {EsriGraphic} an ESRI Graphic
      */
     graphicRampToEsri(rampGraphic: Graphic): EsriGraphic {
-        // would be nice to use __esri.GraphicProperties as the type, but since we
+        // would be nice to use EsriGraphicProperties as the type, but since we
         // need to tack on an id, that would anger the interface.
         const gConf: any = {
             attributes: {},

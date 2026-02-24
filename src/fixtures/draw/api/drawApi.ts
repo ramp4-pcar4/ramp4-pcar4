@@ -1,5 +1,6 @@
 import { FixtureInstance, InstanceAPI } from '@/api';
 import { useDrawStore } from '../store';
+import type { ActiveToolList } from '../store';
 import { DRAW_GRAPHICS_LAYER_ID } from '../draw.vue';
 
 const DEFAULT_DRAW_TYPES: DrawTypeConfig[] = [
@@ -18,7 +19,7 @@ export interface DrawTypeConfig {
 
 export interface DrawFixtureConfig {
     types?: DrawTypeConfig[];
-    defaultTool?: string;
+    defaultTool?: ActiveToolList;
 }
 
 export class DrawAPI extends FixtureInstance {
