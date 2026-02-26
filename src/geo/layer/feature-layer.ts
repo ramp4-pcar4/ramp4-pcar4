@@ -11,15 +11,17 @@ import {
     LayerType
 } from '@/geo/api';
 import type {
+    BaseGeometry,
     IdentifyParameters,
     LoadLayerMetadataOptions,
     Point,
     QueryFeaturesParams,
     RampLayerConfig
 } from '@/geo/api';
-import { EsriAPI } from '@/geo/esri';
+import { EsriAPI, EsriWatch } from '@/geo/esri';
 import type { EsriFeatureLayer } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
+import to from 'await-to-js';
 
 /**
  * A layer class which implements an ESRI Feature Layer.
@@ -250,42 +252,103 @@ export class FeatureLayer extends AttribLayer {
         }
     }
 
-    /**
-     * Gets the extent where the provided object id is on the map.
-     * Can only be used on feature layers. Not applicable to point geometry.
-     *
-     * @param objectId the object id to query
-     * @returns {Promise} resolves with the extent where the object id is present, rejects if geometry type is invalid or esri layer does not exist
-     */
-    getGraphicExtent(objectId: number): Promise<Extent> {
-        return new Promise((resolve, reject) => {
-            if (!this.layerExists) {
-                this.noLayerErr();
-                reject();
-            } else if (!['multipoint', 'polyline', 'polygon'].includes(this.esriLayer!.geometryType!)) {
-                console.error(`Attempted to query extent for invalid geometry type ${this.esriLayer!.geometryType}.`);
-                reject();
-                // TODO: should the query be re run if the basemap changes, or do we leave it up to user to do the projecting themselves?
+    async getGraphicExtent(objectId: number): Promise<Extent | undefined> {
+        let xtent: Extent | undefined = undefined;
+
+        if (!this.layerExists) {
+            this.noLayerErr();
+        } else if (this.geomType === GeometryType.POINT) {
+            // be helpful to devs. they made a mistake calling this.
+            console.error(`Attempted to query extent for invalid geometry type ${this.geomType}.`);
+        } else {
+            // TODO: should the cache be invalidated if the basemap changes, or do we leave it up to user to do the projecting themselves?
+            const eCache = this.attribs.quickCache.getExtent(objectId);
+            if (eCache) {
+                xtent = eCache;
             } else {
-                const eCache = this.attribs.quickCache.getExtent(objectId);
-                if (eCache) {
-                    resolve(eCache);
-                } else {
+                const [err, result] = await to(
                     this.esriLayer!.queryExtent({
                         objectIds: [objectId],
                         outSpatialReference: this.$iApi.geo.map.getSR().toESRI()
                     })
-                        .then(result => {
-                            const rampExtent = Extent.fromESRI(result.extent);
-                            this.attribs.quickCache.setExtent(objectId, rampExtent);
-                            resolve(rampExtent);
-                        })
-                        .catch(() => {
-                            console.error(`Extent querying failed for ${objectId}.`);
-                            reject();
-                        });
+                );
+
+                if (!err) {
+                    // convert to ramp, save in the cache
+                    xtent = Extent.fromESRI(result.extent);
+                    this.attribs.quickCache.setExtent(objectId, xtent);
                 }
             }
-        });
+        }
+
+        return xtent;
+    }
+
+    async getLocalGeometry(objectId: number): Promise<BaseGeometry | undefined> {
+        // need to wait for the view to exist, and to finish downloading any updates
+        await this.viewPromise();
+        if (this.esriView!.updating) {
+            await new Promise<void>(resolve => {
+                const watcher = EsriWatch(
+                    () => this.esriView!.updating,
+                    newValue => {
+                        if (!newValue) {
+                            // done updating
+                            watcher.remove();
+                            resolve();
+                        }
+                    }
+                );
+            });
+        }
+
+        // run a query against the layer view to steal the local geometry
+        const query = await EsriAPI.Query();
+        query.objectIds = [objectId];
+        query.returnGeometry = true;
+
+        const localResult = await this.esriView!.queryFeatures(query);
+        if (localResult.features.length) {
+            const localFeat = localResult.features[0];
+            return this.$iApi.geo.geom.geomEsriToRamp(localFeat.geometry!);
+        } else {
+            // was not in the local layer.
+            return undefined;
+        }
+    }
+
+    async zoomToFeature(objectId: number): Promise<boolean> {
+        let efficientGeom: BaseGeometry | undefined = undefined;
+
+        if (this.geomType !== GeometryType.POINT) {
+            // hunt for faster-than-server-geometry in order:
+
+            // do we have a cached geom at any scale? (this will be good enough for zooming)
+            efficientGeom = this.attribs.quickCache.getAnyScaleGeom(objectId);
+
+            if (!efficientGeom) {
+                // is there a geom in the local feature layer?
+                efficientGeom = await this.getLocalGeometry(objectId);
+
+                if (efficientGeom) {
+                    // since we went to the effort of finding it, cache it. Don't do this for MULTIPOINT
+                    if (this.geomType !== GeometryType.MULTIPOINT) {
+                        this.attribs.quickCache.setGeom(objectId, efficientGeom, this.$iApi.geo.map.getScale());
+                    }
+                } else {
+                    // try to invoke geometry extent getter magic
+                    // see issue #1720 for the reasons behind this
+                    efficientGeom = await this.getGraphicExtent(objectId);
+                }
+            }
+        }
+
+        if (efficientGeom && !efficientGeom.invalid()) {
+            await this.$iApi.geo.map.zoomMapTo(efficientGeom);
+            return true;
+        } else {
+            // no sneaky shortcuts. do the standard routine
+            return await super.zoomToFeature(objectId);
+        }
     }
 }

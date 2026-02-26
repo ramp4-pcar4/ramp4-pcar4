@@ -482,7 +482,7 @@ export class PanelAPI extends APIScope {
         }
 
         // NOTE: we store `pinned` in the store as a reference to a panel instance object
-        //@ts-expect-error TODO: explain why this is needed or remove
+
         this.panelStore.pinned = pin ? panel : undefined;
 
         return panel;
@@ -496,7 +496,6 @@ export class PanelAPI extends APIScope {
      * @memberof PanelAPI
      */
     get pinned(): PanelInstance | undefined {
-        //@ts-expect-error TODO: explain why this is needed or remove
         return this.panelStore.pinned || undefined;
     }
 

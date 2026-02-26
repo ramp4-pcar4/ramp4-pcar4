@@ -504,16 +504,9 @@ export class CommonLayer extends LayerInstance {
         return Promise.resolve(undefined);
     }
 
-    /**
-     * Gets the extent where the provided object id is on the map.
-     * Can only be used on feature layers with multipoint, polyline, polygon geometry.
-     *
-     * @param objectId the object id to query
-     * @returns {Promise} resolves with the extent where the object id is present
-     */
-    getGraphicExtent(objectId: number): Promise<Extent> {
+    getGraphicExtent(objectId: number): Promise<Extent | undefined> {
         this.stubError();
-        return Promise.resolve(Extent.fromParams('fake', 0, 0, 0, 0));
+        return Promise.resolve(undefined);
     }
 
     applySqlFilter(exclusions: Array<string> = []): void {

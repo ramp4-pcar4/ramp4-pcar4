@@ -22,6 +22,7 @@ import {
 import type {
     Attributes,
     AttributeSet,
+    BaseGeometry,
     DrawOrder,
     FieldDefinition,
     GetGraphicParams,
@@ -730,15 +731,16 @@ export class LayerInstance extends APIScope {
     }
 
     /**
-     * Gets information on a graphic in the most efficient way possible. Options object properties:
+     * Gets information on a graphic in the most efficient way possible. Options object properties (each defaults to false):
      * - getGeom ; a boolean to indicate if the result should include graphic geometry
      * - getAttribs ; a boolean to indicate if the result should include graphic attributes
      * - getStyle ; a boolean to indicate if the result should graphical styling information
+     * - forZoom ; a boolean to indicate if the geometry is for zooming. Only used for Point / Multipoint geometries.
      *
      * All option properties are optional and default to false
      *
      * @param {Integer} objectId the object id of the graphic to find
-     * @param {Object} options options object for the request, see above
+     * @param {GetGraphicParams} options options object for the request, see above
      * @returns {Promise} resolves with a Graphic containing the requested information
      */
     getGraphic(objectId: number, options: GetGraphicParams): Promise<Graphic> {
@@ -797,14 +799,36 @@ export class LayerInstance extends APIScope {
     }
 
     /**
-     * Gets the extent where the provided object id is on the map.
-     * Can only be used on feature layers. Not applicable to point geometry.
+     * Gets the extent of the geometry for a given object id.
+     * Only valid for feature layers. Not applicable to point geometry.
      *
-     * @param objectId the object id to query
-     * @returns {Promise} resolves with the extent where the object id is present
+     * @param objectId the object id of the feature in question
+     * @returns {Promise} resolves with the extent of the desired feature's geometry. Undefined for invalid requests
      */
-    getGraphicExtent(objectId: number): Promise<Extent> {
-        return Promise.resolve(Extent.fromParams('fake', 0, 0, 0, 0));
+    getGraphicExtent(objectId: number): Promise<Extent | undefined> {
+        return Promise.resolve(undefined);
+    }
+
+    /**
+     * Attempts to find the local (client side) geometry for a given object id.
+     * Only valid for feature layers.
+     *
+     * @param objectId the object id of the feature in question
+     * @returns {Promise} resolves with the geometry of the desired feature. Undefined if the feature is not local or request is invalid.
+     */
+    getLocalGeometry(objectId: number): Promise<BaseGeometry | undefined> {
+        return Promise.resolve(undefined);
+    }
+
+    /**
+     * Will zoom the map to the geometry for a given object id.
+     * Only valid for layers that support features
+     *
+     * @param objectId the object id of the feature in question
+     * @returns {Promise} resolves with a boolean when the zoom finishes. The value indicates if the zoom was successful
+     */
+    zoomToFeature(objectId: number): Promise<boolean> {
+        return Promise.resolve(false);
     }
 
     /**

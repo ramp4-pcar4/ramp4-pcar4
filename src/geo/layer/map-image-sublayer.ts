@@ -331,4 +331,27 @@ export class MapImageSublayer extends AttribLayer {
         // at this point, no config fun, so defer to service
         return undefined;
     }
+
+    async zoomToFeature(objectId: number): Promise<boolean> {
+        // just a check incase its Raster type sublayer. should never happen in reality (there are no OIDs)
+        if (this.supportsFeatures) {
+            // MIL children can't use the extent grabber magic like a feature layer can. But we can check
+            // if there are any caches at ANY scale level. That will be good enough for a zoom.
+            // The super.zoomToFeature will use getGraphic, which only considers the current scale level.
+            // While points only have one scale cache, this will use that so might as well keep code simple
+            // and test all geom types here.
+
+            const efficientGeom = this.attribs.quickCache.getAnyScaleGeom(objectId);
+
+            if (efficientGeom && !efficientGeom.invalid()) {
+                await this.$iApi.geo.map.zoomMapTo(efficientGeom);
+                return true;
+            } else {
+                // no sneaky shortcuts. do the standard routine
+                return await super.zoomToFeature(objectId);
+            }
+        } else {
+            return false;
+        }
+    }
 }

@@ -663,8 +663,30 @@ Request an individual graphic. This can include the geometry, the attributes, an
 ```js
 var opts = { getGeom: true, getAttribs: true, getStyle: true };
 var objectId = 61;
-var result = await myLayer.getGraphic(objectId, opts);
-console.log(g.attributes, g.geometry, g.style);
+var graphic = await myLayer.getGraphic(objectId, opts);
+console.log(graphic.attributes, graphic.geometry, graphic.style);
+```
+
+Request the extent of a graphic's geometry. Returns `undefined` if the operation could not complete. This is only valid for Feature Layers, and not valid for Point geometry types. The function uses a caching strategy so multiple requests for the same data will be server friendly.
+
+```js
+var objectId = 61;
+var extent = await myLayer.getGraphicExtent(objectId);
+```
+
+Request a graphic's geometry from the client layer. Returns `undefined` if the geometry is not on the client, or the layer does not support the request. This is only valid for Feature Layers. This can be leveraged to avoid a server trip to get the geometry. The geometry will be simplified according to the current map scale.
+
+```js
+var objectId = 61;
+var geometry = await myLayer.getLocalGeometry(objectId);
+```
+
+Zoom to a feature, utilizing the most efficient approach possible. Resolves with a promise once the zoom completes. The promise contains a boolean indicating if the zoom was successful.
+
+```js
+var objectId = 61;
+var success = await myLayer.zoomToFeature(objectId);
+console.log('Zooming done. Success status: ' + success);
 ```
 
 Request the icon symbol for a specific feature. The icon corresponds to the legend representation of how the layer renderer would display this feature. The icon is encoded as an SVG string.

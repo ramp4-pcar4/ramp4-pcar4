@@ -92,7 +92,6 @@
 // has support for the different supported formats, and applying vue templates
 
 import { useLayerStore } from '@/stores/layer';
-import { GeometryType, LayerType } from '@/geo/api';
 import { NotificationType } from '@/api';
 import { DetailsItemInstance, useDetailsStore, type DetailsFieldItem } from '../store';
 import { computed, inject, nextTick, onBeforeMount, onBeforeUnmount, ref, resolveDynamicComponent, watch } from 'vue';
@@ -342,39 +341,15 @@ const zoomToFeature = () => {
     }
 
     const oid = props.data.data[layer.oidField];
-    const zoomUsingGraphic = () => {
-        const opts = { getGeom: true };
-        layer
-            .getGraphic(oid, opts)
-            .then(g => {
-                if (g.geometry.invalid()) {
-                    console.error(`Could not find graphic for objectid ${oid}`);
-                    updateZoomStatus('error');
-                } else {
-                    iApi.geo.map.zoomMapTo(g.geometry);
-                    updateZoomStatus('zoomed');
-                    iApi.updateAlert(iApi.$i18n.t('details.item.alert.zoom'));
-                }
-            })
-            .catch(() => {
-                updateZoomStatus('error');
-            });
-    };
 
-    if (layer.layerType === LayerType.FEATURE && layer.geomType !== GeometryType.POINT) {
-        layer
-            .getGraphicExtent(oid)
-            .then(e => {
-                iApi.geo.map.zoomMapTo(e);
-                updateZoomStatus('zoomed');
-                iApi.updateAlert(iApi.$i18n.t('details.item.alert.zoom'));
-            })
-            .catch(() => {
-                zoomUsingGraphic();
-            });
-    } else {
-        zoomUsingGraphic();
-    }
+    layer.zoomToFeature(oid).then(greatSuccess => {
+        if (greatSuccess) {
+            updateZoomStatus('zoomed');
+            iApi.updateAlert(iApi.$i18n.t('details.item.alert.zoom'));
+        } else {
+            updateZoomStatus('error');
+        }
+    });
 };
 
 onBeforeMount(() => {

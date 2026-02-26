@@ -444,9 +444,25 @@ export interface ArcGisServerMetadata {
 }
 
 export interface GetGraphicParams {
+    /**
+     * Include geometry for the graphic
+     */
     getGeom?: boolean;
+    /**
+     * Include attributes for the graphic
+     */
     getAttribs?: boolean;
+
+    /**
+     * Include geometry styling for the graphic
+     */
     getStyle?: boolean;
+
+    /**
+     * Indicates the geometry is wanted for zooming. Will attempt to ensure a higher precision is used.
+     * Only valid with getGeom flag. Only valid for Point/Multipoint geometries.
+     */
+    forZoom?: boolean;
 }
 
 export interface GetGraphicServiceDetails {

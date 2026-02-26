@@ -888,33 +888,98 @@ export class QuickCache {
         }
     }
 
+    /**
+     * Get the cached attributes of a feature
+     *
+     * @param key the OID of the feature
+     * @returns the cached attributes of the feature, if it exists
+     */
     getAttribs(key: number): Attributes {
         return this.attribs[key];
     }
 
+    /**
+     * Cache the attributes of a feature
+     *
+     * @param key the OID of the feature
+     * @param atts the attributes of the feature
+     */
     setAttribs(key: number, atts: Attributes): void {
         this.attribs[key] = atts;
     }
 
-    getGeom(key: number, scale: number | undefined = undefined): BaseGeometry {
+    /**
+     * Get a cached geometry of a feature
+     *
+     * @param key the OID of the feature
+     * @param scale the map scale the geometry is valid at. Ignored / not required for Point/Multipoint geometry.
+     * @returns the cached geometry of the feature, if it exists
+     */
+    getGeom(key: number, scale: number | undefined = undefined): BaseGeometry | undefined {
         // polygon and line layers have to also cache their geometry by scale level, as the
         // geometry can be simplified at smaller scales
         return this.getGeomStore(scale)[key];
     }
 
+    /**
+     * Cache the geometry of a feature
+     *
+     * @param key the OID of the feature
+     * @param geom the geometry of the feature
+     * @param scale the map scale the geometry was drawn at. Ignored / not required for Point/Multipoint geometry.
+     */
     setGeom(key: number, geom: BaseGeometry, scale: number | undefined = undefined): void {
         const store = this.getGeomStore(scale);
         store[key] = geom;
     }
 
-    getExtent(key: number): Extent {
+    /**
+     * Get a cached extent of a feature
+     *
+     * @param key the OID of the feature
+     * @returns the cached extent of the feature, if it exists
+     */
+    getExtent(key: number): Extent | undefined {
         return this.extents[key];
     }
 
+    /**
+     * Cache the extent of a feature
+     *
+     * @param key the OID of the feature
+     * @param extent the extent of the feature
+     */
     setExtent(key: number, extent: Extent) {
         this.extents[key] = extent;
     }
 
+    /**
+     * Will attempt to find a cached geometry for a key across any scale
+     */
+    getAnyScaleGeom(key: number): BaseGeometry | undefined {
+        // polygon and line layers have to also cache their geometry by scale level, as the
+        // geometry can be simplified at smaller scales
+        if (this.isPoint) {
+            return this.getGeom(key);
+        } else {
+            // iterate each scale cache
+            let winner: BaseGeometry | undefined = undefined;
+            Object.values(this.geoms).some(scaleCache => {
+                const test = scaleCache[key];
+                if (test) {
+                    winner = test;
+                }
+                // kick out of the .some() when we find a winner
+                return test;
+            });
+
+            return winner;
+        }
+    }
+
+    /**
+     * Removed all cached data
+     */
     clearAll(): void {
         this.attribs = {};
         this.geoms = {};

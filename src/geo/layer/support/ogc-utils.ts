@@ -159,11 +159,11 @@ export class OgcUtils extends APIScope {
      * @param {string} wmsEndpoint a URL pointing to a WMS server (it must not include a query string)
      * @return {Promise} a promise resolving with a metadata object (as specified above)
      */
-    parseCapabilities(wmsEndpoint: string): Promise<any> {
-        // TODO needs robust testing once something is using it
-
-        // this executes a get capabilities and returns the XML
-        const getCapabilities = (): any => {
+    async parseCapabilities(wmsEndpoint: string): Promise<any> {
+        /**
+         * this executes a get capabilities and returns the XML
+         */
+        const getCapabilities = async (): Promise<any> => {
             let url = wmsEndpoint;
             // version and format parameters are both optional
             if (wmsEndpoint.indexOf('?') === -1) {
@@ -180,9 +180,11 @@ export class OgcUtils extends APIScope {
                     url += '&request=GetCapabilities';
                 }
             }
-            return EsriRequest(url, {
+
+            const result = await EsriRequest(url, {
                 responseType: 'xml'
-            }).then(result => result.data);
+            });
+            return result.data;
         };
 
         // this promise attempts two tries at get capabilities
@@ -200,10 +202,13 @@ export class OgcUtils extends APIScope {
         //      am not finding a nice generic type, and not worth the
         //      effort to keep searching.
 
-        // find all <Layer> nodes under the given XML node
-        // pick title, name and queryable nodes/attributes
-        // also have a list of all styles and the current style
-        // recursively called on all child <Layer> nodes
+        /**
+         * Find all <Layer> nodes under the given XML node.
+         * Pick title, name, queryable nodes/attributes. Also have a list of all styles and the current style.
+         * Recursively called on all child <Layer> nodes.
+         * @param xmlNode node we're crawling
+         * @returns nugget of information
+         */
         const getLayers = (xmlNode: any): any => {
             let layers: any = xmlNode.Layer;
             // Check if the current layer has any child layers.
@@ -268,29 +273,31 @@ export class OgcUtils extends APIScope {
             return formats;
         };
 
-        return import('fast-xml-parser').then(({ XMLParser }) => {
-            return gcPromise.then((xmlNode: any): any => {
-                // Not sure if this check is still needed here.
-                if (!xmlNode) {
-                    return [];
-                }
-                const xmlData: string = new XMLSerializer().serializeToString(xmlNode);
-                const options: object = {
-                    ignoreAttributes: false // check for tag attributes
-                };
-                const jsonObj: any = new XMLParser(options).parse(xmlData);
-                // We get an XML with a <ServiceExceptionReport> tag back when something goes wrong with the request.
-                // Might be able to get rid of this now that we are appending missing parameters to the URL.
-                if ('ServiceExceptionReport' in jsonObj) {
-                    console.error(jsonObj.ServiceExceptionReport.ServiceException);
-                    return [];
-                }
-                const capability: any = jsonObj.WMS_Capabilities.Capability;
-                return {
-                    layers: getLayers(capability),
-                    queryTypes: getQueryTypes(capability.Request.GetFeatureInfo)
-                };
-            });
-        });
+        const { XMLParser } = await import('fast-xml-parser');
+
+        const xmlNode: any = await gcPromise;
+
+        // Not sure if this check is still needed here.
+        if (!xmlNode) {
+            return [];
+        }
+
+        const xmlData: string = new XMLSerializer().serializeToString(xmlNode);
+        const options: object = {
+            ignoreAttributes: false // check for tag attributes
+        };
+        const jsonObj: any = new XMLParser(options).parse(xmlData);
+
+        // We get an XML with a <ServiceExceptionReport> tag back when something goes wrong with the request.
+        // Might be able to get rid of this now that we are appending missing parameters to the URL.
+        if ('ServiceExceptionReport' in jsonObj) {
+            console.error(jsonObj.ServiceExceptionReport.ServiceException);
+            return [];
+        }
+        const capability: any = jsonObj.WMS_Capabilities.Capability;
+        return {
+            layers: getLayers(capability),
+            queryTypes: getQueryTypes(capability.Request.GetFeatureInfo)
+        };
     }
 }

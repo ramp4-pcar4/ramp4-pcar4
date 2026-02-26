@@ -43,7 +43,6 @@ import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import type { InstanceAPI, LayerInstance } from '@/api/internal';
 import { useI18n } from 'vue-i18n';
 import { useLayerStore } from '@/stores/layer';
-import { GeometryType, LayerType } from '@/geo/api';
 import * as GridUtils from '../grid-utils';
 
 const zoomStatus = ref<'zooming' | 'zoomed' | 'error' | 'none'>('none');
@@ -73,49 +72,18 @@ const zoomToFeature = () => {
     const oidField = GridUtils.findMappedOidField(props.params.layerCols, layer);
     const oid = props.params.data[oidField];
 
-    const zoomUsingGraphic = () => {
-        const opts = { getGeom: true };
-        layer
-            .getGraphic(oid, opts)
-            .then(g => {
-                if (g.geometry.invalid()) {
-                    console.error(`Could not find graphic for objectid ${oid}`);
-                    updateZoomStatus('error');
-                } else {
-                    iApi.geo.map.zoomMapTo(g.geometry);
-                    updateZoomStatus('zoomed');
-                    iApi.updateAlert(iApi.$i18n.t('grid.cells.alert.zoom'));
+    layer.zoomToFeature(oid).then(greatSuccess => {
+        if (greatSuccess) {
+            updateZoomStatus('zoomed');
+            iApi.updateAlert(iApi.$i18n.t('grid.cells.alert.zoom'));
 
-                    if (props.params.isTeleport) {
-                        iApi.scrollToInstance();
-                    }
-                }
-            })
-            .catch(() => {
-                updateZoomStatus('error');
-            });
-    };
-
-    if (layer.layerType === LayerType.FEATURE && layer.geomType !== GeometryType.POINT) {
-        // see issue #1720 for the reasons behind this special "extent" logic
-
-        layer
-            .getGraphicExtent(oid)
-            .then(e => {
-                iApi.geo.map.zoomMapTo(e);
-                updateZoomStatus('zoomed');
-                iApi.updateAlert(iApi.$i18n.t('grid.cells.alert.zoom'));
-
-                if (props.params.isTeleport) {
-                    iApi.scrollToInstance();
-                }
-            })
-            .catch(() => {
-                zoomUsingGraphic();
-            });
-    } else {
-        zoomUsingGraphic();
-    }
+            if (props.params.isTeleport) {
+                iApi.scrollToInstance();
+            }
+        } else {
+            updateZoomStatus('error');
+        }
+    });
 };
 
 const updateZoomStatus = (value: 'zooming' | 'zoomed' | 'error' | 'none') => {

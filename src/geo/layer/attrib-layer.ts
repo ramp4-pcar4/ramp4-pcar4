@@ -38,8 +38,6 @@ import type {
     TabularAttributeSet
 } from '@/geo/api';
 
-import { EsriAPI, EsriWatch } from '@/geo/esri';
-
 import { toRaw } from 'vue';
 
 /**
@@ -292,35 +290,20 @@ export class AttribLayer extends MapLayer {
             // attempt to get geometry from fastest source.
             if (gCache) {
                 resultGeom = gCache;
-            } else if (this.layerType === LayerType.FEATURE) {
-                // need to wait for the view to exist, and to finish downloading any updates
-                await this.viewPromise();
-                if (this.esriView!.updating) {
-                    await new Promise<void>(resolve => {
-                        const watcher = EsriWatch(
-                            () => this.esriView!.updating,
-                            newValue => {
-                                if (!newValue) {
-                                    // done updating
-                                    watcher.remove();
-                                    resolve();
-                                }
-                            }
-                        );
-                    });
-                }
+            } else if (this.layerType === LayerType.FEATURE && !(this.attribs.quickCache.isPoint && options.forZoom)) {
+                // attempt to find geometry on the client layer.
+                // for point-based layers, this can be too inaccurate when the geometry is for a zoom request
+                // (hence the fancy IF statement above)
 
-                // run a query against the layer view to steal the local geometry
-                const query = await EsriAPI.Query();
-                query.objectIds = [objectId];
-                query.returnGeometry = true;
+                const localGeom = await this.getLocalGeometry(objectId);
 
-                const localResult = await (this.esriView as __esri.FeatureLayerView)!.queryFeatures(query);
-                if (localResult.features.length) {
-                    const localFeat = localResult.features[0];
-                    const localGeom = this.$iApi.geo.geom.geomEsriToRamp(localFeat.geometry!);
+                if (localGeom) {
+                    if (!this.attribs.quickCache.isPoint) {
+                        // don't cache point based stuff. point caches are not scale-dependent, so this can pollute the cache
+                        // with a low-accuracy point.
+                        this.attribs.quickCache.setGeom(objectId, localGeom, scale);
+                    }
 
-                    this.attribs.quickCache.setGeom(objectId, localGeom, scale);
                     resultGeom = localGeom;
                 } else {
                     // was not found locally
@@ -378,6 +361,16 @@ export class AttribLayer extends MapLayer {
         }
 
         return resGraphic;
+    }
+
+    async zoomToFeature(objectId: number): Promise<boolean> {
+        const graphic = await this.getGraphic(objectId, { getGeom: true, forZoom: true });
+        if (graphic.geometry.invalid()) {
+            return false;
+        } else {
+            await this.$iApi.geo.map.zoomMapTo(graphic.geometry);
+            return true;
+        }
     }
 
     async getIcon(objectId: number): Promise<string> {
