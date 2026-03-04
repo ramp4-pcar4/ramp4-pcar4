@@ -1,0 +1,1 @@
+import{h as r,j as s}from"./SketchViewModel-CAd2-9EP.js";import{n as e}from"./PointSnappingHint-Ca8XFVZ5.js";class n extends r{constructor(t){super({...t,constraint:new s(t.targetPoint)})}get hints(){return[new e(this.targetPoint,this.isDraped,this.domain)]}}export{n as r};

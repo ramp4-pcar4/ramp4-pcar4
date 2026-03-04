@@ -1,0 +1,1 @@
+import{s as r}from"./OptimizedFeature-itUd-4V5.js";const o={getObjectId:t=>t.objectId,getAttributes:t=>t.attributes,getAttribute:(t,e)=>t.attributes[e],cloneWithGeometry:(t,e)=>new r(e,t.attributes,null,t.objectId),getGeometry:t=>t.geometry,getCentroid:(t,e)=>t.ensureCentroid(e)};export{o as e};

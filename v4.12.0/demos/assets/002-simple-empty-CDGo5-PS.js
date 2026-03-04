@@ -1,0 +1,1 @@
+const n=(e,t)=>(e.configs.en.fixtures.legend.root.children.push({infoType:"text",content:"I start with no layers"}),e.configs.fr.fixtures.legend.root.children.push({infoType:"text",content:"Je commence sans couches"}),{config:e,options:t}),s=()=>{};export{s as runPostTest,n as runPreTest};

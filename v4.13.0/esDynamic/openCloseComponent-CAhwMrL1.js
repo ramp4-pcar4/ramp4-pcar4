@@ -1,0 +1,1 @@
+import{w as r}from"./dom-PjyVZjPa.js";function n(o){return o[o.openProp||"open"]}function t(o){requestAnimationFrame(()=>{o.transitionEl&&r(o.transitionEl,o.transitionProp,()=>{n(o)?o.onBeforeOpen():o.onBeforeClose()},()=>{n(o)?o.onOpen():o.onClose()})})}export{t as o};
