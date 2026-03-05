@@ -5,7 +5,7 @@
             type="button"
             :aria-label="t('basemap.select')"
             @click="selectBasemap(basemap)"
-            v-focus-item
+            v-focus-item="'show-truncate'"
         >
             <!-- thumbnail -->
             <div>
@@ -133,6 +133,8 @@ const keyupEvent = (e: Event) => {
         (basemapInfo.value as any)._tippy.show();
     }
 };
+const mouseEnterEvent = () => (basemapInfo.value as any)?._tippy?.show();
+const mouseLeaveEvent = () => (basemapInfo.value as any)?._tippy?.hide();
 
 const blurEvent = () => {
     infoTooltipToggle.value = false;
@@ -152,19 +154,19 @@ const mobileTouchEvent = (e: Event) => {
 };
 
 onMounted(() => {
-    basemapInfo.value?.addEventListener('mouseenter', () => (basemapInfo.value as any)._tippy.show());
-    basemapInfo.value?.addEventListener('mouseleave', () => (basemapInfo.value as any)._tippy.hide());
+    basemapInfo.value?.addEventListener('mouseenter', mouseEnterEvent);
+    basemapInfo.value?.addEventListener('mouseleave', mouseLeaveEvent);
     basemapInfo.value?.addEventListener('click', mobileTouchEvent);
     basemapInfo.value?.addEventListener('keyup', keyupEvent);
     basemapInfo.value?.addEventListener('blur', blurEvent);
 });
 
 onBeforeUnmount(() => {
-    basemapInfo.value?.removeEventListener('mouseenter', () => (basemapInfo.value as any)._tippy.show());
-    basemapInfo.value?.removeEventListener('mouseleave', () => (basemapInfo.value as any)._tippy.hide());
+    basemapInfo.value?.removeEventListener('mouseenter', mouseEnterEvent);
+    basemapInfo.value?.removeEventListener('mouseleave', mouseLeaveEvent);
     basemapInfo.value?.removeEventListener('click', mobileTouchEvent);
-    basemapInfo.value?.removeEventListener('focus', () => keyupEvent);
-    basemapInfo.value?.removeEventListener('blur', () => blurEvent);
+    basemapInfo.value?.removeEventListener('keyup', keyupEvent);
+    basemapInfo.value?.removeEventListener('blur', blurEvent);
 });
 </script>
 

@@ -49,7 +49,8 @@
             </div>
         </header>
 
-        <div v-if="content" class="p-8 flex-grow overflow-y-auto" ref="contentEl">
+        <!-- Default to non-tabbable; script promotes to tabindex=0 only for standalone scroll regions. -->
+        <div v-if="content" class="p-8 flex-grow overflow-y-auto" ref="contentEl" tabindex="-1">
             <slot name="content" v-if="$slots.content"></slot>
             <div v-else-if="screenContent" v-html="screenContent.innerHTML"></div>
         </div>
@@ -68,6 +69,7 @@ import type { PanelDirection } from '@/stores/panel';
 import { usePanelStore } from '@/stores/panel';
 import { useI18n } from 'vue-i18n';
 import { useAppbarStore } from '@/fixtures/appbar/store';
+import { keyboardTooltipTest } from '@/utils/keyboard';
 
 const { t } = useI18n();
 const panelStore = usePanelStore();
@@ -76,6 +78,8 @@ const iApi = inject('iApi') as InstanceAPI;
 const el = useTemplateRef('el');
 const contentEl = useTemplateRef('contentEl');
 const contentResizeObserver = ref<ResizeObserver | null>();
+const contentMutationObserver = ref<MutationObserver | null>();
+const contentTabIndexObserver = ref<MutationObserver | null>();
 defineExpose({ el });
 
 const props = defineProps({
@@ -106,9 +110,55 @@ const props = defineProps({
 const temporary = computed((): Array<string> | undefined => (iApi.fixture.get('appbar') ? appbarStore.temporary : []));
 const mobileView = computed(() => panelStore.mobileView);
 const reorderable = computed(() => panelStore.reorderable);
+// Managed focus descendants own keyboard traversal; wrapper should not become a competing tab stop.
+const MANAGED_FOCUS_SELECTOR = '[focus-list], [focus-container]';
+const isScrollable = (element: HTMLElement) => element.scrollHeight > element.clientHeight;
+const getManagedFocusTarget = (element: HTMLElement) => element.querySelector<HTMLElement>(MANAGED_FOCUS_SELECTOR);
+const getExpectedContentTabIndex = () => {
+    if (!contentEl.value) {
+        return '-1';
+    }
 
-const isScrollable = (element: HTMLElement) => {
-    return element.scrollHeight > element.clientHeight;
+    const hasManagedFocusChildren = !!getManagedFocusTarget(contentEl.value);
+    // Focus wrapper only for pure scroll containers; defer to managed focus systems otherwise.
+    return isScrollable(contentEl.value) && !hasManagedFocusChildren ? '0' : '-1';
+};
+const syncContentTabIndex = () => {
+    if (!contentEl.value) {
+        return;
+    }
+
+    const expectedTabIndex = getExpectedContentTabIndex();
+    // Self-heal tabindex if external code mutates it.
+    if (contentEl.value.getAttribute('tabindex') !== expectedTabIndex) {
+        contentEl.value.setAttribute('tabindex', expectedTabIndex);
+    }
+};
+const contentFocusEvent = (e: FocusEvent) => {
+    if (e.target !== contentEl.value || !contentEl.value) {
+        return;
+    }
+
+    const focusTarget = getManagedFocusTarget(contentEl.value);
+    if (!focusTarget) {
+        return;
+    }
+
+    // Avoid trapping backward traversal if focus is leaving descendants.
+    const previous = e.relatedTarget as HTMLElement | null;
+    if (previous && contentEl.value.contains(previous)) {
+        return;
+    }
+
+    focusTarget.focus();
+};
+const blurEvent = () => {
+    (el.value as any)?._tippy?.hide();
+};
+const keyupEvent = (e: Event) => {
+    if (keyboardTooltipTest(e, el.value as HTMLElement)) {
+        (el.value as any)?._tippy?.show();
+    }
 };
 
 const checkMode = () => !mobileView.value && !props.panel.teleport;
@@ -126,37 +176,39 @@ const screenContent = computed(() => {
 });
 
 onMounted(() => {
-    el.value?.addEventListener('blur', () => {
-        (el.value as any)?._tippy?.hide();
-    });
+    el.value?.addEventListener('blur', blurEvent);
+    el.value?.addEventListener('keyup', keyupEvent);
 
-    el.value?.addEventListener('keyup', (e: KeyboardEvent) => {
-        if (e.key === 'Tab' && el.value?.matches(':focus')) {
-            (el.value as any)._tippy.show();
-        }
-    });
-
-    contentResizeObserver.value = new ResizeObserver(() => {
-        if (isScrollable(contentEl.value!)) {
-            contentEl.value?.setAttribute('tabIndex', '0');
-        } else {
-            contentEl.value?.removeAttribute('tabIndex');
-        }
-    });
-    contentResizeObserver.value.observe(contentEl.value!);
+    if (contentEl.value) {
+        contentEl.value.addEventListener('focus', contentFocusEvent);
+        // Keep rule in sync when layout/overflow changes (e.g., panel resize, async content growth).
+        contentResizeObserver.value = new ResizeObserver(syncContentTabIndex);
+        contentResizeObserver.value.observe(contentEl.value);
+        // Keep rule in sync when focus-managed descendants are mounted/unmounted.
+        contentMutationObserver.value = new MutationObserver(syncContentTabIndex);
+        contentMutationObserver.value.observe(contentEl.value, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['focus-list', 'focus-container']
+        });
+        // Guard against outside tabindex mutations on the wrapper itself.
+        contentTabIndexObserver.value = new MutationObserver(syncContentTabIndex);
+        contentTabIndexObserver.value.observe(contentEl.value, {
+            attributes: true,
+            attributeFilter: ['tabindex']
+        });
+        syncContentTabIndex();
+    }
 });
 
 onBeforeUnmount(() => {
-    el.value?.removeEventListener('blur', () => {
-        (el.value as any)._tippy.hide();
-    });
-
-    el.value?.removeEventListener('keyup', (e: KeyboardEvent) => {
-        if (e.key === 'Tab' && el.value?.matches(':focus')) {
-            (el.value as any)._tippy.show();
-        }
-    });
-    contentResizeObserver.value!.disconnect();
+    el.value?.removeEventListener('blur', blurEvent);
+    el.value?.removeEventListener('keyup', keyupEvent);
+    contentEl.value?.removeEventListener('focus', contentFocusEvent);
+    contentResizeObserver.value?.disconnect();
+    contentMutationObserver.value?.disconnect();
+    contentTabIndexObserver.value?.disconnect();
 });
 </script>
 
