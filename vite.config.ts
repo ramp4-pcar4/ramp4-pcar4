@@ -24,9 +24,6 @@ const baseConfig = {
         VitePluginVersion(),
         mkcert()
     ],
-    define: {
-        'process.env': process.env
-    },
     base: './',
     resolve: {
         alias: {
