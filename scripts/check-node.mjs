@@ -205,7 +205,7 @@ function buildHintLines({ pkgJson, nvmrcVersion, recommendedVersion }) {
 
     if (pkgJson && pkgJson.volta) {
         const target = recommendedVersion || nvmrcVersion;
-        const version = target ? target.trim() : '22.12.0';
+        const version = target ? target.trim() : '24.14.0';
         hints.push(`Hint: Volta detected. Run: volta install node@${version} && volta pin node@${version}`);
     }
 

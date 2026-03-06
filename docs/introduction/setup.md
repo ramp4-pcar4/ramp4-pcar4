@@ -25,10 +25,10 @@ To enable demo previews on your forked repository, update the following settings
 
 ## Project Setup
 
-Use [**Node v22.12.0**](https://nodejs.org/en/blog/release/v22.12.0) for local development and **all production builds**. This version is officially supported and required for production build environments.
+Use [**Node v24.14.0**](https://nodejs.org/en/blog/release/v24.14.0) for local development and **all production builds**. This version is officially supported and required for production build environments.
 
-Developers may use **any Node v22.x.x** version for local work if preferred, though results may vary.
-Versions **below 22** or **23 and above** are **not tested** and **not recommended**.
+Developers may use **any Node v24.x.x** version for local work if preferred, though results may vary.
+Versions **below 22** or **25 and above** are **not tested** and **not recommended**.
 
 See `node-compat.yml` in the repo root for versions we consider production or likely supported. As we test newer Node releases, we’ll expand those ranges.
 
@@ -37,8 +37,8 @@ See `node-compat.yml` in the repo root for versions we consider production or li
 - Install nvs: https://github.com/jasongin/nvs#readme (`winget install jasongin.nvs`).
 - In a new terminal:
   ```powershell
-  nvs add 22.12.0
-  nvs link 22.12.0
+  nvs add 24.14.0
+  nvs link 24.14.0
   ```
 - Open a fresh terminal so your PATH is updated.
 
