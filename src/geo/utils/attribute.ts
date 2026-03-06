@@ -52,6 +52,7 @@ const arcadeTypeMapper: Map<string, EsriArcadeVarType> = new Map([
     ['long', 'number'],
     ['oid', 'number'],
     ['string', 'text'],
+    ['global-id', 'text'],
     ['geometry', 'geometry'],
     ['date', 'date']
 ]);
