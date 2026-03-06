@@ -14,7 +14,6 @@
                 <!-- Layer Picker, symbology stacks -->
                 <SymbologyList
                     :results="layerResults"
-                    :detailsProperties="detailProperties"
                     :selected="selectedLayer"
                     @selection-changed="changeLayerSelection"
                     v-if="layerResults.length > 1"
@@ -49,7 +48,6 @@ import ResultList from './components/result-list.vue';
 
 import type { PropType } from 'vue';
 import type { IdentifyResult, InstanceAPI, PanelInstance } from '@/api';
-import type { DetailsItemInstance } from './store';
 
 import { useI18n } from 'vue-i18n';
 import { useDetailsStore } from './store';
@@ -74,7 +72,6 @@ const selectedLayer = ref<string>('');
  */
 const activeGreedy = computed<number>(() => detailsStore.activeGreedy);
 const payload = computed<IdentifyResult[]>(() => detailsStore.payload);
-const detailProperties = computed<{ [id: string]: DetailsItemInstance }>(() => detailsStore.properties);
 
 defineProps({
     panel: {
