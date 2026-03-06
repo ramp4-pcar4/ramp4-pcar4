@@ -6,10 +6,9 @@ import axios from 'redaxios';
 import type { CrsMeta } from 'flatgeobuf';
 
 import { EsriAPI } from '@/geo/esri';
+import type { EsriFeatureLayerProperties, EsriFieldProperties } from '@/geo/esri';
 import { Colour, FieldType, LayerType, SpatialReference } from '@/geo/api';
-import type { RampLayerConfig } from '@/geo/api';
-
-import type { CsvOptions, FieldDefinition, GeoJsonField, GeoJsonOptions } from '@/geo/api';
+import type { CsvOptions, FieldDefinition, GeoJsonField, GeoJsonOptions, RampLayerConfig } from '@/geo/api';
 
 /**
  * Maps GeoJSON geometry types to a set of default renders defined in GlobalStorage.DefaultRenders
@@ -96,7 +95,7 @@ function assignIds(geoJson: any): void {
  * @param {Object} geoJson           layer data in geoJson format
  * @param {Object} layerDefinition   layer definition of feature layer not yet created
  */
-function cleanUpFields(geoJson: any, configPackage: __esri.FeatureLayerProperties) {
+function cleanUpFields(geoJson: any, configPackage: EsriFeatureLayerProperties) {
     const badField = (name: string) => {
         // basic for now. check for spaces.
         return name.indexOf(' ') > -1;
@@ -366,11 +365,11 @@ export class FileUtils extends APIScope {
      * @param options {GeoJsonOptions} any options for the transformation
      * @returns {Object} feature layer constructor object
      */
-    async geoJsonToEsriJson(geoJson: any, options: GeoJsonOptions): Promise<__esri.FeatureLayerProperties> {
+    async geoJsonToEsriJson(geoJson: any, options: GeoJsonOptions): Promise<EsriFeatureLayerProperties> {
         let targetSR: any;
         let srcProj = '';
         let layerId: string;
-        const configPackage: __esri.FeatureLayerProperties = {
+        const configPackage: EsriFeatureLayerProperties = {
             objectIdField: 'OBJECTID',
             fields: [
                 {
@@ -452,7 +451,7 @@ export class FileUtils extends APIScope {
             configPackage.fields = this.$iApi.geo.attributes.orderFields(
                 configPackage.fields as Array<FieldDefinition>,
                 options.fieldMetadata?.fieldInfo
-            ) as __esri.FieldProperties[];
+            ) as EsriFieldProperties[];
         }
 
         // clean the fields. in particular, CSV files can be loaded with spaces in

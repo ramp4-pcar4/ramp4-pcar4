@@ -31,7 +31,7 @@ import type {
 } from '@/geo/api';
 
 import { EsriAPI, EsriWatch } from '@/geo/esri';
-import type { EsriFeatureLayer, EsriGraphic, EsriLOD } from '@/geo/esri';
+import type { EsriExtent, EsriFeatureLayer, EsriGraphic, EsriLOD, EsriUserSettings } from '@/geo/esri';
 
 import { useLayerStore } from '@/stores/layer';
 import { MapCaptionAPI } from './caption';
@@ -190,7 +190,7 @@ export class MapAPI extends CommonMapAPI {
             type: 'extent',
             handler: EsriWatch(
                 () => this.esriView!.extent,
-                (newval: __esri.Extent) => {
+                (newval: EsriExtent) => {
                     // NOTE: yes, double events. rationale is a block of code dealing with filters will not
                     //       want to have two event handlers (one on filter, one on extent change) and synch
                     //       between them. They can subscribe to the filter event and get all the info they need.
@@ -1117,13 +1117,13 @@ export class MapAPI extends CommonMapAPI {
      * Create a screenshot of the current view.
      *
      * Possible ESRI takeScreenshot() options:
-     * https://developers.arcgis.com/javascript/latest/api-reference/esri-views-MapView.html#takeScreenshot
+     * https://developers.arcgis.com/javascript/latest/references/core/views/MapView/#takeScreenshot
      * Will default to quality = 1 and format = 'png'.
      *
-     * @param {__esri.MapViewTakeScreenshotOptions} options ESRI takeScreenshot() options
+     * @param {EsriUserSettings} options ESRI takeScreenshot() options
      * @returns {Promise<Screenshot>} a promise that resolves with a Screenshot
      */
-    async takeScreenshot(options: __esri.MapViewTakeScreenshotOptions): Promise<Screenshot> {
+    async takeScreenshot(options: Partial<EsriUserSettings>): Promise<Screenshot> {
         if (this.esriView) {
             if (!options.quality) {
                 options.quality = 1;

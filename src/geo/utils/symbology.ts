@@ -12,7 +12,16 @@ import { LineStyleType } from '@/geo/api';
 import type { Attributes, FieldDefinition, LegendSymbology } from '@/geo/api';
 
 import { EsriAPI, EsriRequest } from '@/geo/esri';
-import type { EsriClassBreaksRenderer, EsriRenderer, EsriSimpleRenderer, EsriUniqueValueRenderer } from '@/geo/esri';
+import type {
+    EsriClassBreaksRenderer,
+    EsriColour,
+    EsriRenderer,
+    EsriRequestOptions,
+    EsriRequestResponse,
+    EsriSimpleRenderer,
+    EsriSymbol,
+    EsriUniqueValueRenderer
+} from '@/geo/esri';
 
 import svgjs from 'svg.js';
 import to from 'await-to-js';
@@ -59,7 +68,7 @@ export class SymbologyAPI extends APIScope {
      * @param {Object} renderer an enhanced renderer (see function enhanceRenderer)
      * @return {Object} an ESRI Symbol object in server format
      */
-    getGraphicSymbol(attributes: object, renderer: BaseRenderer): __esri.Symbol {
+    getGraphicSymbol(attributes: object, renderer: BaseRenderer): EsriSymbol {
         return renderer.getGraphicSymbol(attributes);
     }
 
@@ -629,7 +638,7 @@ export class SymbologyAPI extends APIScope {
          * @param  {Object} c ESRI Colour object
          * @return {Object} colour and opacity in SVG format
          */
-        function parseEsriColour(c: __esri.Color): object {
+        function parseEsriColour(c: EsriColour): object {
             if (c) {
                 return {
                     colour: `rgb(${c.r},${c.g},${c.b})`,
@@ -770,12 +779,12 @@ export class SymbologyAPI extends APIScope {
         }
 
         // standard json request with error checking
-        const reqParams: __esri.RequestOptions = {
+        const reqParams: EsriRequestOptions = {
             query: { f: 'json' }
         };
 
         const fakeData = { layers: [] };
-        const [err, serviceResult] = await to<__esri.RequestResponse>(EsriRequest(`${layerUrl}/legend`, reqParams));
+        const [err, serviceResult] = await to<EsriRequestResponse<any>>(EsriRequest(`${layerUrl}/legend`, reqParams));
 
         // Not a catastrophic error, return empty data on error
         if (!serviceResult) {

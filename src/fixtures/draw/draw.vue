@@ -21,7 +21,7 @@ export const DRAW_GRAPHICS_LAYER_ID = 'RampDrawGraphicsLayer';
 import { inject, onMounted, onUnmounted, watch, reactive, useTemplateRef } from 'vue';
 import { useDrawStore } from './store';
 import { InstanceAPI } from '@/api/internal';
-import '@arcgis/map-components/components/arcgis-sketch';
+
 import { LayerType } from '@/geo/api';
 import { useI18n } from 'vue-i18n';
 import {
@@ -32,6 +32,14 @@ import {
     EsriSimpleFillSymbol,
     EsriSimpleLineSymbol,
     EsriSimpleMarkerSymbol
+} from '@/geo/esri';
+import type {
+    EsriGraphicHit,
+    EsriGraphicsLayer,
+    EsriSketchCreateEvent,
+    EsriSketchUpdateEvent,
+    EsriSymbol,
+    EsriViewClickEvent
 } from '@/geo/esri';
 import { GlobalEvents } from '@/api';
 
@@ -59,15 +67,15 @@ const buildLocaleRecord = (messageKey: string): Record<string, string> => {
 let sketch: HTMLArcgisSketchElement | null = null;
 const sketchEl = useTemplateRef<HTMLArcgisSketchElement>('sketchEl');
 let sketchHandler: { remove: () => void } | null = null;
-let graphicsLayer: __esri.GraphicsLayer | null = null;
+let graphicsLayer: EsriGraphicsLayer | null = null;
 
 // Variables for selected and highlighted graphics
-let selectedGraphic: __esri.Graphic | null = null;
-let highlightGraphic: __esri.Graphic | null = null;
+let selectedGraphic: EsriGraphic | null = null;
+let highlightGraphic: EsriGraphic | null = null;
 
 // Multi-point mode state variables
 let multiPointMode = false;
-let multiPointGraphic: __esri.Graphic | null = null;
+let multiPointGraphic: EsriGraphic | null = null;
 
 type Vertex = [number, number]; // [x, y] coordinates
 let multiPointVertices: Vertex[] = [];
@@ -151,14 +159,14 @@ async function handleKeyboardShortcuts() {
  * and adds the highlight graphic to the graphics layer.
  * @param graphic The graphic to highlight.
  */
-const highlightSelectedGraphic = (graphic?: __esri.Graphic | undefined) => {
+const highlightSelectedGraphic = (graphic?: EsriGraphic | undefined) => {
     if (highlightGraphic) {
         graphicsLayer?.remove(highlightGraphic);
         highlightGraphic = null;
     }
     if (!graphic) return;
 
-    let highlightSymbol: __esri.Symbol;
+    let highlightSymbol: EsriSymbol;
     switch (graphic.geometry?.type) {
         case 'point':
         case 'multipoint':
@@ -188,7 +196,6 @@ const highlightSelectedGraphic = (graphic?: __esri.Graphic | undefined) => {
     }
     highlightGraphic = new EsriGraphic({
         geometry: graphic.geometry,
-        // @ts-expect-error esri type mismatch
         symbol: highlightSymbol
     });
     graphicsLayer?.add(highlightGraphic);
@@ -234,7 +241,7 @@ const selectCenteredGraphic = async () => {
         height: 20
     };
     const response = await view.hitTest(searchArea);
-    const hits = response.results.filter((result): result is __esri.GraphicHit => {
+    const hits = response.results.filter((result): result is EsriGraphicHit => {
         if (!('graphic' in result) || result.graphic.layer !== graphicsLayer) return false;
         return !!result.graphic.attributes?.id;
     });
@@ -581,14 +588,14 @@ const handleGraphicKeyboardEdit = (e: KeyboardEvent) => {
         }
     } else if (geometry.type === 'polyline') {
         if (!isResizing && !isRotating) {
-            const polyline = geometry as __esri.Polyline;
+            const polyline = geometry as EsriPolyline;
             const newPaths = polyline.paths.map(path => path.map(([x, y]) => [x + mapDx, y + mapDy]));
             newGeometry = new EsriPolyline({
                 paths: newPaths,
                 spatialReference: geometry.spatialReference
             });
         } else if (isResizing) {
-            const polyline = geometry as __esri.Polyline;
+            const polyline = geometry as EsriPolyline;
             const scaleFactor = e.key === 'ArrowUp' || e.key === 'ArrowRight' ? 1.05 : 0.95;
             const newPaths = polyline.paths.map(path =>
                 path.map(([x, y]) => [center.x + (x - center.x) * scaleFactor, center.y + (y - center.y) * scaleFactor])
@@ -598,7 +605,7 @@ const handleGraphicKeyboardEdit = (e: KeyboardEvent) => {
                 spatialReference: geometry.spatialReference
             });
         } else if (isRotating) {
-            const polyline = geometry as __esri.Polyline;
+            const polyline = geometry as EsriPolyline;
             const angle = e.key === 'ArrowLeft' ? -0.05 : e.key === 'ArrowRight' ? 0.05 : 0;
             if (angle !== 0) {
                 const cos = Math.cos(angle);
@@ -622,14 +629,14 @@ const handleGraphicKeyboardEdit = (e: KeyboardEvent) => {
         }
     } else if (geometry.type === 'polygon') {
         if (!isResizing && !isRotating) {
-            const polygon = geometry as __esri.Polygon;
+            const polygon = geometry as EsriPolygon;
             const newRings = polygon.rings.map(ring => ring.map(([x, y]) => [x + mapDx, y + mapDy]));
             newGeometry = new EsriPolygon({
                 rings: newRings,
                 spatialReference: geometry.spatialReference
             });
         } else if (isResizing) {
-            const polygon = geometry as __esri.Polygon;
+            const polygon = geometry as EsriPolygon;
             const scaleFactor = e.key === 'ArrowUp' || e.key === 'ArrowRight' ? 1.05 : 0.95;
             const newRings = polygon.rings.map(ring =>
                 ring.map(([x, y]) => [center.x + (x - center.x) * scaleFactor, center.y + (y - center.y) * scaleFactor])
@@ -639,7 +646,7 @@ const handleGraphicKeyboardEdit = (e: KeyboardEvent) => {
                 spatialReference: geometry.spatialReference
             });
         } else if (isRotating) {
-            const polygon = geometry as __esri.Polygon;
+            const polygon = geometry as EsriPolygon;
             const angle = e.key === 'ArrowLeft' ? -0.05 : e.key === 'ArrowRight' ? 0.05 : 0;
             if (angle !== 0) {
                 const cos = Math.cos(angle);
@@ -682,11 +689,11 @@ const handleGraphicKeyboardEdit = (e: KeyboardEvent) => {
  * Delegates to the Sketch widget if a graphic is clicked; otherwise clears selection.
  * @param event The view click event.
  */
-const handleViewClick = async (event: __esri.ViewClickEvent) => {
+const handleViewClick = async (event: EsriViewClickEvent) => {
     const view = iApi.geo.map.esriView!;
     const response = await view.hitTest(event);
     const hit = response.results.find(
-        (result): result is __esri.GraphicHit =>
+        (result): result is EsriGraphicHit =>
             'graphic' in result && result.graphic.layer === graphicsLayer && !!result.graphic.attributes?.id
     );
 
@@ -787,9 +794,12 @@ const cleanupDrawTools = () => {
 };
 
 // Extract the existing sketch event handlers for reuse
-const handleSketchCreateEvent = (event: __esri.SketchCreateEvent) => {
+const handleSketchCreateEvent = (event: EsriSketchCreateEvent) => {
     if (event.state === 'complete') {
         const graphic = event.graphic;
+        if (!graphic) {
+            return;
+        }
         const id = `graphic-${Date.now()}`;
         graphic.attributes = graphic.attributes || {};
         graphic.attributes.id = id;
@@ -807,7 +817,7 @@ const handleSketchCreateEvent = (event: __esri.SketchCreateEvent) => {
     }
 };
 
-const handleSketchUpdateEvent = (event: __esri.SketchUpdateEvent) => {
+const handleSketchUpdateEvent = (event: EsriSketchUpdateEvent) => {
     const graphic = event.graphics[0];
     if (!graphic) return;
 

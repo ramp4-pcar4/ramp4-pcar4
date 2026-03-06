@@ -15,6 +15,14 @@ const runPreTest = (config, options, utils) => {
 
     utils.addLayerLegend(happy);
 
+    // blue highlights on French (for fun!)
+    config.configs.fr.fixtures.hilight = {
+        mode: 'glow',
+        options: {
+            colour: '#00bfff'
+        }
+    };
+
     return { config, options };
 };
 

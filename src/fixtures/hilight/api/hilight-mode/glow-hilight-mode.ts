@@ -24,7 +24,8 @@ export class GlowHilightMode extends LiftHilightMode {
 
     private hilightSetup(config: any) {
         this.$iApi.geo.map.viewPromise.then(() => {
-            this.$iApi.geo.map.esriView!.highlightOptions = config.options;
+            // by not providing a .name prop on the options, it will get assigned to "default", which is what we want
+            this.$iApi.geo.map.esriView!.highlights = [config.options];
         });
     }
 
