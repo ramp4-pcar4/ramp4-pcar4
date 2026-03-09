@@ -119,9 +119,12 @@ export default class TableStateManager {
     }
 
     _checkFilters() {
-        // TODO should we be skipping static filters in this check?  clearFilters above seems to suggest we should
+        // examine every filter. if we find an active one that is not static, set the filtered flag
         this._filtered = Object.values(this._columns).some(config => {
-            return config.filter.value !== '' || config.filter.min !== '' || config.filter.max !== '';
+            return (
+                !config.filter.static &&
+                (config.filter.value !== '' || config.filter.min !== '' || config.filter.max !== '')
+            );
         });
     }
 
