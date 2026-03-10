@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import type { InstanceAPI } from '@/api';
-import { throttle } from 'throttle-debounce';
+import { throttle } from 'es-toolkit/function';
 import { inject } from 'vue';
 import { useI18n } from 'vue-i18n';
 import DividerNav from './divider-nav.vue';
@@ -26,8 +26,8 @@ import DividerNav from './divider-nav.vue';
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 
-const zoomIn = throttle(400, true, () => iApi.geo.map.zoomIn());
-const zoomOut = throttle(400, true, () => iApi.geo.map.zoomOut());
+const zoomIn = throttle(() => iApi.geo.map.zoomIn(), 400, { edges: ['leading'] });
+const zoomOut = throttle(() => iApi.geo.map.zoomOut(), 400, { edges: ['leading'] });
 </script>
 
 <style lang="scss" scoped></style>
