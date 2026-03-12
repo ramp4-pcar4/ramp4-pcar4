@@ -18,7 +18,8 @@
         "dev": "node scripts/check-node.mjs && vite",
         "dev-http": "vite --https=false",
         "launch": "vite --no-open",
-        "build": "node scripts/check-node.mjs && rm -rf dist && run-p -c -s build:* && npm run ts:copy",
+        "clean": "node scripts/clean-dist.mjs",
+        "build": "node scripts/check-node.mjs && npm run clean && run-p -c -s build:* && npm run ts:copy",
         "build:npm": "vite build --mode npm",
         "build:esDynamic": "vite build --mode esDynamic",
         "build:inline": "vite build --mode inline",
@@ -28,7 +29,7 @@
         "ts:copy": "npx --yes cpx \"src/*.d.ts\" \"dist/bundler/src\"",
         "ts-docs:generate": "npx typedoc --skipErrorChecking",
         "lint": "eslint src/ --fix",
-        "lint:check": "eslint src/ --format json > results.json",
+        "lint:check": "eslint src/ --format json --output-file results.json",
         "format": "prettier --write src/",
         "format:check": "prettier . -c",
         "vite-docs:generate": "npx vitepress build docs"
