@@ -1,0 +1,1 @@
+import{aA as i}from"./main-I34c1W55.js";import{J as r,H as c}from"./projection-CWCxBqta.js";import{n as m}from"./projectBuffer-CQkJZMtV.js";function p(e,a,s,t){if(r(e.spatialReference,s)){o[0]=e.x,o[1]=e.y;const f=e.z;return o[2]=f??t??0,m(o,e.spatialReference,0,a,s,0)}const n=c(e,s);return!!n&&(a[0]=n?.x,a[1]=n?.y,a[2]=n?.z??t??0,!0)}const o=i();export{p as c};

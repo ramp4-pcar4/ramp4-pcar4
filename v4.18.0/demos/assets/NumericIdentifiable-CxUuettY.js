@@ -1,0 +1,1 @@
+import{a6 as a,fa as o}from"./main-BGlWJBv6.js";let c=0;const l=t=>{const r=t;let e=class extends r{constructor(...s){super(...s),Object.defineProperty(this,"uid",{writable:!1,configurable:!1,value:c++})}};return e=a([o("esri.core.NumericIdentifiable")],e),e};export{l as s};

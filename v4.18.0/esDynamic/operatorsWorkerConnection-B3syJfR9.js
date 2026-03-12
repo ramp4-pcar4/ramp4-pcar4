@@ -1,0 +1,1 @@
+import{hL as i}from"./main-De_li5Sb.js";let e,o,a=!1;function p(){return e??=i("arcadeGeometryOperatorsWorker").then(r=>{o=r,a=!0,e=void 0})}async function n(r,t){return a?o.apply("invokeGeometryOp",[r,t]):(await p(),n(r,t))}export{n as a};

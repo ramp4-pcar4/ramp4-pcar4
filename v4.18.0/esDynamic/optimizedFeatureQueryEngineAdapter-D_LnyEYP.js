@@ -1,0 +1,1 @@
+import{o as r}from"./featureConversionUtils-BNAl9fsA.js";const o={getObjectId:t=>t.objectId,getAttributes:t=>t.attributes,getAttribute:(t,e)=>t.attributes[e],cloneWithGeometry:(t,e,b)=>new r(e,t.attributes,null,t.objectId),getGeometry:t=>t.geometry,getCentroid:(t,e)=>t.ensureCentroid(e)};export{o as e};

@@ -1,0 +1,1 @@
+import"./main-D-JRDlVF.js";import{execute as m}from"./operatorIntersection-DfJpOf6s.js";import{fromGeometry as a,toGeometry as f,fromGeometryToGXGeometry as c}from"./jsonConverter-Dx7dtH-H.js";function n(t,r){const e=a(t),o=e.getSpatialReference();return f(m(e.getGeometry(),c(r),o),o)}export{n as execute};

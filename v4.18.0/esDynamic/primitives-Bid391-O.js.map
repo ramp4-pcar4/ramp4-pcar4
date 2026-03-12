@@ -1,0 +1,1 @@
+{"version":3,"file":"primitives-Bid391-O.js","sources":["../../node_modules/@arcgis/core/symbols/support/primitives.js"],"sourcesContent":["/* COPYRIGHT Esri - https://js.arcgis.com/5.0.10/LICENSE.txt */\nconst e=\"circle\",c=\"sphere\";export{e as defaultIconPrimitive,c as defaultObjectPrimitive};\n"],"names":[],"mappings":"AACK,MAAC,IAAE,UAAS,IAAE;","x_google_ignoreList":[0]}

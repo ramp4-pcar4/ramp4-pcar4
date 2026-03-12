@@ -1,0 +1,1 @@
+import{av as e,aw as r,ax as n,ay as i}from"./main-De_li5Sb.js";const u=e(class extends r{constructor(){super(...arguments),this.key=n}render(t,s){return this.key=t,s}update(t,[s,a]){return s!==this.key&&(i(t),this.key=s),a}});export{u as i};

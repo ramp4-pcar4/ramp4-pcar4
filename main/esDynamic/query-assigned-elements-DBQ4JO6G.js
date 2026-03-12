@@ -1,0 +1,1 @@
+const i=(t,o,e)=>(e.configurable=!0,e.enumerable=!0,Reflect.decorate&&typeof o!="object"&&Object.defineProperty(t,o,e),e);function u(t){return(o,e)=>{const{slot:n,selector:r}=t??{},s="slot"+(n?`[name=${n}]`:":not([name])");return i(o,e,{get(){const l=this.renderRoot?.querySelector(s),c=l?.assignedElements(t)??[];return r===void 0?c:c.filter(a=>a.matches(r))}})}}export{u as o};

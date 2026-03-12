@@ -1,0 +1,1 @@
+import{e0 as e,ap as h,gM as p,gN as s}from"./main-NLFM_hnK.js";import{L as f}from"./densifyCurvedGeometry-5cYYxhC_.js";import{t as u}from"./densificationConstants-BY1qtH-k.js";function x(t,i,n,o){const{height:r,width:m}=o??c(t),a=Math.min(m/i,r/n)*u();return f(t,{maxDeviation:a})}function c(t){const i=e(h(),t);return{width:s(i),height:p(i)}}export{x as n};

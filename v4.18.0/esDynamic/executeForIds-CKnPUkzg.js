@@ -1,0 +1,1 @@
+import{f}from"./utils-DZA1dWsV.js";import{p as s}from"./query-BMRMloiu.js";import{eV as m}from"./main-De_li5Sb.js";async function u(r,t,n,o){const a=f(r),i=await s(a,m.from(t),n,o);return i.objectIds??c(i.uniqueIds)??[]}function e(r){return!Array.isArray(r[0])}function c(r){if(r)return e(r)?r:r.map(t=>JSON.stringify(t))}export{u as i};

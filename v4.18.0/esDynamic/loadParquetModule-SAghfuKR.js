@@ -1,0 +1,1 @@
+import{gB as n}from"./main-De_li5Sb.js";let t=null;async function r(){return t||(t=o()),t}async function o(){const a=await import("./bundle-DTWPfSiP.js");return await a.default({module_or_path:n("esri/libs/parquet/pkg/bundle_bg.wasm")}),a}export{r as s};

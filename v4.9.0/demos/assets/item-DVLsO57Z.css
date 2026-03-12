@@ -1,0 +1,94 @@
+.disabled[data-v-51f9882b] {
+    cursor: default;
+    --tw-text-opacity: 1;
+    color: rgb(156 163 175 / var(--tw-text-opacity))
+}:hover > .symbol-0[data-v-09193b9e] {
+  transform: rotate(-10deg);
+  transform-origin: bottom center;
+}
+:hover > .symbol-2[data-v-09193b9e] {
+  transform: rotate(10deg);
+  transform-origin: bottom center;
+}
+.ramp-styles.animation-enabled .symbol-0[data-v-09193b9e] {
+  transition-duration: 0.2s;
+}
+.ramp-styles.animation-enabled .symbol-2[data-v-09193b9e] {
+  transition-duration: 0.2s;
+}.legend-group[data-v-304c294b] {
+  transition: max-height 0.7s ease-in;
+}
+.expand-toggle[data-v-304c294b] {
+  transition: transform 0.3s cubic-bezier(0.35, 0, 0.25, 1);
+}
+.rotate-180[data-v-304c294b] {
+  transform: rotate(-180deg);
+}
+@media (hover) {
+.loaded-item.singlelined[data-v-304c294b] {
+    min-height: 39px;
+}
+.loaded-item.singlelined .options[data-v-304c294b] {
+    display: none;
+}
+.loaded-item.multilined[data-v-304c294b] {
+    min-height: 39px;
+}
+.loaded-item.multilined .options[data-v-304c294b] {
+    display: block;
+}
+.loaded-item:hover .options[data-v-304c294b] {
+    display: block;
+}
+}
+.loaded-item:focus-within .options[data-v-304c294b] {
+  display: block;
+}
+.non-loaded-item[data-v-304c294b] {
+  padding-left: 5px;
+  padding-top: 5px;
+  padding-bottom: 10px;
+  padding-right: 0px;
+  vertical-align: middle;
+}
+.disabled[data-v-304c294b] {
+  cursor: default;
+  --tw-text-opacity: 1;
+  color: rgb(156 163 175 / var(--tw-text-opacity));
+}
+.line-clamp-1[data-v-304c294b] {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+.line-clamp-2[data-v-304c294b] {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.line-clamp-3[data-v-304c294b] {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+.line-clamp-4[data-v-304c294b] {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+}
+.line-clamp-5[data-v-304c294b] {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+}
+.line-clamp-6[data-v-304c294b] {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+}

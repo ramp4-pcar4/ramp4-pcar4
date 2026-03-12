@@ -1,0 +1,1 @@
+import{dC as s,dD as m}from"./main-De_li5Sb.js";function p(r){return{geometryType:m(r[0]),geometries:r.map(t=>t.toJSON())}}function c(r,t,o){const n=s(t);return r.map(a=>{const e=n.fromJSON(a);return e.spatialReference=o,e})}export{p as o,c as r};

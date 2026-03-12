@@ -1,0 +1,1 @@
+import{cA as s,bQ as l,aV as t,a6 as o,a7 as a,aa as c}from"./main-BGlWJBv6.js";let e=class extends s(l){constructor(r){super(r),this.accentColor=new t([255,127,0]),this.textColor=new t([255,255,255])}};o([a({type:t,nonNullable:!0})],e.prototype,"accentColor",void 0),o([a({type:t,nonNullable:!0})],e.prototype,"textColor",void 0),e=o([c("esri.views.Theme")],e);const p=e;export{p};

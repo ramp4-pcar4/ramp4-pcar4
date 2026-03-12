@@ -1,0 +1,1 @@
+import{a6 as s,a7 as o,aa as c}from"./main-BGlWJBv6.js";const i=r=>{const a=r;let e=class extends a{constructor(){super(...arguments),this.customParameters=null}};return s([o({type:Object,json:{write:{overridePolicy:t=>({enabled:!!(t&&Object.keys(t).length>0)})}}})],e.prototype,"customParameters",void 0),e=s([c("esri.layers.mixins.CustomParametersMixin")],e),e};export{i as s};

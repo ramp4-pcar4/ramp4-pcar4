@@ -1,0 +1,1 @@
+import{ar as n}from"./main-De_li5Sb.js";function e(){return n("curve-densification-coarse-segments")}function i(){return n("curve-densification-max-segments")}function t(){return n("curve-densification-min-segments")}function r(){return n("curve-densification-pixel-deviation")}export{i as e,t as i,e as n,r as t};

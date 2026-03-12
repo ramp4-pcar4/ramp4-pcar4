@@ -1,0 +1,1 @@
+import{az as r}from"./main-BePf1vWu.js";const n=()=>r((s,e)=>{const o=new Set;return e.onDisconnected(()=>{o.forEach(c=>c.cancel())}),{add:c=>{[c].flat().forEach(a=>o.add(a))},resources:o}});export{n as u};

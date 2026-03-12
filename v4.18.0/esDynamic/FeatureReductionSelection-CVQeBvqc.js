@@ -1,0 +1,1 @@
+import{a1 as o,a7 as r,a8 as a,ab as n}from"./main-De_li5Sb.js";var t;let e=t=class extends o{constructor(s){super(s),this.type="selection"}clone(){return new t}};r([a({type:["selection"],readOnly:!0,json:{write:!0}})],e.prototype,"type",void 0),e=t=r([n("esri.layers.support.FeatureReductionSelection")],e);export{e as p};

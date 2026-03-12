@@ -1,0 +1,1 @@
+const s=(e,o,r)=>{const n={id:"Happy",name:"Happy Tester",layerType:"file-geojson",url:"../file-layers/geojson.json",colour:"#4ef542",nameField:"name"};return r.addLayerLegend(n),e.configs.fr.fixtures.hilight={mode:"glow",options:{colour:"#00bfff"}},{config:e,options:o}},t=()=>{};export{t as runPostTest,s as runPreTest};

@@ -1,0 +1,1 @@
+import{s as o,n as c,b as l,aw as r}from"./main-BGlWJBv6.js";const d={validationContainer:"validation-container"},v=()=>{},$=({scale:i,status:t,id:n,icon:e,message:s,ref:a})=>l`<div class=${o(d.validationContainer)} ${c(a||v)}><calcite-input-message aria-live=polite .icon=${e} id=${n??r} .scale=${i} .status=${t}>${s}</calcite-input-message></div>`;export{$ as V};

@@ -1,0 +1,1 @@
+import{f as m}from"./utils-D-9D8rBi.js";import{p as s}from"./query-D8I9CdME.js";import{eX as u}from"./main-BGlWJBv6.js";async function d(r,n,i,o){const f=m(r),t=await s(f,u.from(n),i,o);return t.objectIds??e(t.uniqueIds)??[]}function a(r){return!Array.isArray(r[0])}function e(r){if(r)return a(r)?r:r.map(n=>JSON.stringify(n))}export{d as i};

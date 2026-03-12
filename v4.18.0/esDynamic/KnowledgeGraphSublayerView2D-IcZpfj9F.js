@@ -1,0 +1,1 @@
+import{a7 as e,ab as a}from"./main-De_li5Sb.js";import{B as r,p as t}from"./FeatureLikeLayerView-qoixepRl.js";class l extends r{constructor(){super(...arguments),this.layer=null}}let s=class extends t(l){};s=e([a("esri.views.2d.layers.KnowledgeGraphSublayerView2D")],s);const o=s;export{o as default};

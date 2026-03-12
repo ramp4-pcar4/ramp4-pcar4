@@ -1,0 +1,1 @@
+import{hH as t,T as i,bM as a}from"./main-De_li5Sb.js";function s(r){if(!r)return[];let n=t(r)?[r]:i.isCollection(r)?r.toArray():Array.isArray(r)?r:[];return n=n?.filter(a),(n?.length??0)===0?[]:n}function o(r){return!!(r&&typeof r=="object"&&"pixelRanges"in r&&r.pixelRanges)}function l(r){return Array.isArray(r.pixelRanges)&&r.pixelRanges.length===0}export{s as i,o as n,l as o};

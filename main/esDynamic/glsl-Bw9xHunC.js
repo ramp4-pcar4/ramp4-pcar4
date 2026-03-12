@@ -1,0 +1,1 @@
+const o=(t,...e)=>{let n="";for(let i=0;i<e.length;i++)n+=t[i]+e[i];return n+=t[t.length-1],n};function r(t,e,n=""){return t?e:n}o.int=t=>t.toFixed(),o.uint=t=>`${Math.max(0,t).toFixed()}u`,o.hexuint=t=>`0x${Math.round(Math.max(0,t)).toString(16)}u`,o.float=t=>t.toPrecision(8);export{r as n,o as t};

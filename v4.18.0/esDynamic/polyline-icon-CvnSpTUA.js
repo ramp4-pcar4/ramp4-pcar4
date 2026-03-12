@@ -1,0 +1,1 @@
+import{hz as o,hA as r,hB as l,hC as n}from"./main-De_li5Sb.js";const s={},e={xmlns:"http://www.w3.org/2000/svg",viewBox:"0 0 24 24"};function a(i,t){return l(),r("svg",e,t[0]||(t[0]=[n("path",{d:"M0 0h24v24H0z",fill:"none"},null,-1),n("path",{d:"M5 17l3-3 4 4 8-8","stroke-width":"2",fill:"none",stroke:"currentColor"},null,-1)]))}const h=o(s,[["render",a]]);export{h as default};

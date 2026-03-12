@@ -1,0 +1,1 @@
+import{s as o,n as c,b as l,ax as r}from"./main-De_li5Sb.js";const d={validationContainer:"validation-container"},$=()=>{},v=({scale:a,status:i,id:s,icon:t,message:e,ref:n})=>l`<div class=${o(d.validationContainer)} ${c(n||$)}><calcite-input-message aria-live=polite .icon=${t} id=${s??r} .scale=${a} .status=${i}>${e}</calcite-input-message></div>`;export{v as V};

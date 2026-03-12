@@ -1,0 +1,1 @@
+import{bH as l,bI as u}from"./main-De_li5Sb.js";function i(a,r){return a===r||a!=null&&r!=null&&l(a.spatialReference,r.spatialReference)&&a.x===r.x&&a.y===r.y&&a.z===r.z&&a.m===r.m}function s(a,r,t){return a===r||a!=null&&r!=null&&l(a.spatialReference,r.spatialReference)&&u(a.x,r.x,t)&&u(a.y,r.y,t)&&u(a.z??0,r.z??0,t)&&u(a.m??0,r.m??0,t)}export{i as a,s as u};

@@ -1,0 +1,1 @@
+function f(r){const o={};for(const n in r){if(n==="declaredClass")continue;const t=r[n];if(t!=null&&typeof t!="function")if(Array.isArray(t)){o[n]=[];for(let e=0;e<t.length;e++)o[n][e]=f(t[e])}else typeof t=="object"?t.toJSON&&(o[n]=JSON.stringify(t)):o[n]=t}return o}export{f as t};
