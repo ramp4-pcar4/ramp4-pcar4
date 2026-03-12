@@ -19,7 +19,7 @@ import type {
     RampLayerConfig
 } from '@/geo/api';
 import { EsriAPI, EsriWatch } from '@/geo/esri';
-import type { EsriFeatureLayer } from '@/geo/esri';
+import type { EsriFeatureLayer, EsriFeatureLayerProperties, EsriFeatureLayerView } from '@/geo/esri';
 import { markRaw, reactive } from 'vue';
 import to from 'await-to-js';
 
@@ -28,7 +28,7 @@ import to from 'await-to-js';
  */
 export class FeatureLayer extends AttribLayer {
     declare esriLayer: EsriFeatureLayer | undefined;
-    declare esriView: __esri.FeatureLayerView | undefined;
+    declare esriView: EsriFeatureLayerView | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {
         super(rampConfig, $iApi);
@@ -55,8 +55,8 @@ export class FeatureLayer extends AttribLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.FeatureLayerProperties {
-        const esriConfig: __esri.FeatureLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): EsriFeatureLayerProperties {
+        const esriConfig: EsriFeatureLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         // add any extra properties for attrib-based layers here
         // if we have a definition at load, apply it here to avoid cancellation errors on
@@ -273,7 +273,7 @@ export class FeatureLayer extends AttribLayer {
                     })
                 );
 
-                if (!err) {
+                if (!err && result.extent) {
                     // convert to ramp, save in the cache
                     xtent = Extent.fromESRI(result.extent);
                     this.attribs.quickCache.setExtent(objectId, xtent);

@@ -1,9 +1,9 @@
 import { APIScope, FileLayer, InstanceAPI } from '@/api/internal';
 import { BaseGeometry, Extent, GeometryType, Graphic, NoGeometry, Point, SpatialReference } from '@/geo/api';
-
 import type { QueryFeaturesArcServerParams, QueryFeaturesParams } from '@/geo/api';
 
 import { EsriAPI } from '@/geo/esri';
+import type { EsriGeometry } from '@/geo/esri';
 
 // this exists here instead of our main definitions file because it uses `FileLayer` type.
 // the layer inherits from APIScope, causing circular references in the public folder
@@ -126,7 +126,7 @@ export class QueryAPI extends APIScope {
         isFileLayer: boolean,
         mapScale?: number,
         sourceSR?: SpatialReference
-    ): Promise<__esri.Geometry> {
+    ): Promise<EsriGeometry> {
         if (
             !isFileLayer &&
             geometry.type === GeometryType.EXTENT &&

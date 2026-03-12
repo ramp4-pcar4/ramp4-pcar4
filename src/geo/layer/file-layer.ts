@@ -30,7 +30,7 @@ import type {
 } from '@/geo/api';
 
 import { EsriAPI } from '@/geo/esri';
-import type { EsriFeatureLayer, EsriField } from '@/geo/esri';
+import type { EsriFeatureLayer, EsriFeatureLayerProperties, EsriFeatureLayerView, EsriField } from '@/geo/esri';
 
 import { markRaw, reactive, toRaw } from 'vue';
 
@@ -39,9 +39,9 @@ import { markRaw, reactive, toRaw } from 'vue';
  */
 export class FileLayer extends AttribLayer {
     declare esriLayer: EsriFeatureLayer | undefined;
-    declare esriView: __esri.FeatureLayerView | undefined;
+    declare esriView: EsriFeatureLayerView | undefined;
 
-    protected esriJson: __esri.FeatureLayerProperties | undefined; // used as temp var to get around typescript parameter grousing. will be undefined after initLayer()
+    protected esriJson: EsriFeatureLayerProperties | undefined; // used as temp var to get around typescript parameter grousing. will be undefined after initLayer()
 
     // temporarily stores GeoJSON. acts as a nice way for subclasses to parse their random sources to GeoJSON, drop it here,
     // and have the generic initiation code in this file just grab it.
@@ -114,8 +114,8 @@ export class FileLayer extends AttribLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.FeatureLayerProperties {
-        const esriConfig: __esri.FeatureLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): EsriFeatureLayerProperties {
+        const esriConfig: EsriFeatureLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         const oidField = 'OBJECTID';
 

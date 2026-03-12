@@ -27,7 +27,9 @@ import type {
     RampLayerMapImageSublayerConfig,
     TabularAttributeSet
 } from '@/geo/api';
+
 import { EsriAPI } from '@/geo/esri';
+import type { EsriArcadeExecutor, EsriProfile } from '@/geo/esri';
 import to from 'await-to-js';
 
 const enum TimerType {
@@ -67,7 +69,7 @@ export class CommonLayer extends LayerInstance {
     /**
      * The name arcade executor if a name formula is defined
      */
-    protected nameArcadeExecutor: __esri.ArcadeExecutor | undefined;
+    protected nameArcadeExecutor: EsriArcadeExecutor | undefined;
 
     /**
      * Internally tracks any arcade formula for the maptip value.
@@ -77,7 +79,7 @@ export class CommonLayer extends LayerInstance {
     /**
      * The maptip arcade executor if a maptip formula is defined
      */
-    protected maptipArcadeExecutor: __esri.ArcadeExecutor | undefined;
+    protected maptipArcadeExecutor: EsriArcadeExecutor | undefined;
 
     // ----------- LAYER CONSTRUCTION AND INITIALIZAION -----------
 
@@ -563,8 +565,8 @@ export class CommonLayer extends LayerInstance {
      * @param formula an arcade formula
      * @returns resolves with an arcade executor object
      */
-    private async arcadeGenerator(formula: string): Promise<__esri.ArcadeExecutor> {
-        const arcadeProfile: __esri.Profile = {
+    private async arcadeGenerator(formula: string): Promise<EsriArcadeExecutor> {
+        const arcadeProfile: EsriProfile = {
             variables: [
                 {
                     name: '$attr',
@@ -650,7 +652,7 @@ export class CommonLayer extends LayerInstance {
                     $attr: attributes
                 };
 
-                return this.nameArcadeExecutor?.execute(arcadePayload) ?? 'Arcade Error';
+                return (this.nameArcadeExecutor?.execute(arcadePayload) as string) ?? 'Arcade Error';
             } else {
                 return this.nameField ? (attributes[this.nameField] ?? 'Name Field Error') : '';
             }
@@ -729,7 +731,7 @@ export class CommonLayer extends LayerInstance {
                     $attr: attributes
                 };
 
-                return this.maptipArcadeExecutor?.execute(arcadePayload) ?? 'Arcade Error';
+                return (this.maptipArcadeExecutor?.execute(arcadePayload) as string) ?? 'Arcade Error';
             } else {
                 return this.maptipField
                     ? (attributes[this.maptipField] ?? this.nameValue(attributes))

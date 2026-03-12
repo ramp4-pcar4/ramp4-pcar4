@@ -38,7 +38,7 @@ import {
     SpatialReference
 } from '@/geo/api';
 import { EsriAPI, EsriRequest } from '@/geo/esri';
-import type { EsriField } from '@/geo/esri';
+import type { EsriField, EsriRequestOptions, EsriRequestResponse } from '@/geo/esri';
 import { useLayerStore } from '@/stores/layer';
 import to from 'await-to-js';
 
@@ -405,7 +405,7 @@ export class LayerAPI extends APIScope {
         }
 
         // extract info for this service
-        const [err, serviceResult] = await to<__esri.RequestResponse>(EsriRequest(url, { query: { f: 'json' } }));
+        const [err, serviceResult] = await to<EsriRequestResponse<any>>(EsriRequest(url, { query: { f: 'json' } }));
         if (!serviceResult) {
             // case where service request was unsuccessful
             console.error(`Service metadata load error: ${url}`, err);
@@ -546,7 +546,7 @@ export class LayerAPI extends APIScope {
         //      function to wait on the loadLayerMetadata promise, then check this.supportsFeatures
 
         // extract info for this service
-        const restParam: __esri.RequestOptions = {
+        const restParam: EsriRequestOptions = {
             query: {
                 f: 'json',
                 where: permanentFilter || '1=1', // apparently the 1=1 is required to make the count call work on entire dataset
@@ -555,7 +555,7 @@ export class LayerAPI extends APIScope {
             }
         };
 
-        const [err, serviceResult] = await to<__esri.RequestResponse>(EsriRequest(`${serviceUrl}/query`, restParam));
+        const [err, serviceResult] = await to<EsriRequestResponse<any>>(EsriRequest(`${serviceUrl}/query`, restParam));
 
         // Throw console warnings, don't crash the app
         if (!serviceResult) {

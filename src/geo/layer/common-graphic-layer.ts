@@ -1,5 +1,5 @@
 import { InstanceAPI, MapLayer } from '@/api/internal';
-import type { EsriGraphicsLayer, EsriGraphic } from '@/geo/esri';
+import type { EsriGraphic, EsriGraphicsLayer, EsriGraphicsLayerView } from '@/geo/esri';
 import { DataFormat, Graphic, LayerFormat } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 
@@ -19,7 +19,7 @@ export class CommonGraphicLayer extends MapLayer {
 
     protected _graphics: Array<Graphic> = [];
     declare esriLayer: EsriGraphicsLayer | undefined;
-    declare esriView: __esri.GraphicsLayerView | undefined;
+    declare esriView: EsriGraphicsLayerView | undefined;
 
     /**
      * Take a layer config from the RAMP application and derives a configuration for an ESRI layer

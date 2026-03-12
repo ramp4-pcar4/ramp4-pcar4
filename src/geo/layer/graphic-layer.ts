@@ -2,6 +2,7 @@ import { CommonGraphicLayer, InstanceAPI } from '@/api/internal';
 import { DrawState, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import { EsriAPI } from '@/geo/esri';
+import type { EsriGraphicsLayerProperties } from '@/geo/esri';
 import { markRaw } from 'vue';
 
 // NOTE this class is fairly meh, but gives a vanilla implementation of the common graphic layer base.
@@ -28,10 +29,10 @@ export class GraphicLayer extends CommonGraphicLayer {
      * @param rampLayerConfig snippet from RAMP for this layer
      * @returns configuration object for the ESRI layer representing this layer
      */
-    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): __esri.GraphicsLayerProperties {
+    protected makeEsriLayerConfig(rampLayerConfig: RampLayerConfig): EsriGraphicsLayerProperties {
         // NOTE: it would be nice to put esri.LayerProperties as the return type, but since we are cheating with refreshInterval it wont work
         //       we can make our own interface if it needs to happen (or can extent the esri one)
-        const esriConfig: __esri.GraphicsLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
+        const esriConfig: EsriGraphicsLayerProperties = super.makeEsriLayerConfig(rampLayerConfig);
 
         return esriConfig;
     }
