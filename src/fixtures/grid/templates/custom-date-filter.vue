@@ -1,7 +1,7 @@
 <template>
     <div class="h-full flex items-center justify-center w-full">
         <input
-            class="m-0 py-1 w-1/2 rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
+            class="m-0 w-1/2 rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
             :class="{
                 'cursor-not-allowed': fixed
             }"
@@ -24,7 +24,7 @@
         <span class="w-12" />
 
         <input
-            class="m-0 py-1 w-1/2 rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
+            class="m-0 w-1/2 rv-input bg-white text-black-75 h-24 py-16 px-8 border-2 rounded"
             :class="{
                 'cursor-not-allowed': fixed
             }"
@@ -81,32 +81,28 @@ const maxValChanged = () => {
 
 const setFilterModel = () => {
     const field = props.params.column.colDef.field;
+
     if (maxVal.value === '' && minVal.value === '') {
         // If neither value is set, clear the date filter.
         props.params.api.setColumnFilterModel(field, null);
-    } else if (maxVal.value !== '' && minVal.value !== '') {
-        // If both values are set, display all items that occur between the two dates.
-        props.params.api.setColumnFilterModel(field, {
-            filterType: 'date',
-            type: 'inRange',
-            dateFrom: minVal.value,
-            dateTo: maxVal.value
-        });
-    } else if (minVal.value === '') {
-        // If only the maximum value is set, display all dates that occur before it.
-        props.params.api.setColumnFilterModel(field, {
-            filterType: 'date',
-            type: 'lessThan',
-            dateFrom: maxVal.value
-        });
     } else {
-        // If only the minimum value is set, display all dates that occur after it.
-        props.params.api.setColumnFilterModel(field, {
+        // a 'lessThan' or 'greaterThan' filter refuses to be inclusive, so always use 'inRange'
+
+        const filterNugget: any = {
             filterType: 'date',
-            type: 'greaterThan',
-            dateFrom: minVal.value
-        });
+            type: 'inRange'
+        };
+        if (minVal.value !== '') {
+            filterNugget.dateFrom = minVal.value;
+        }
+
+        if (maxVal.value !== '') {
+            filterNugget.dateTo = maxVal.value;
+        }
+
+        props.params.api.setColumnFilterModel(field, filterNugget);
     }
+
     props.params.api.onFilterChanged();
 };
 

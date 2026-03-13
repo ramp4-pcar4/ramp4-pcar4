@@ -842,6 +842,10 @@ const exportData = (): void => {
 const setUpDateFilter = (colDef: ColumnDefinition, state: TableStateManager): void => {
     colDef.floatingFilterComponent = 'dateFloatingFilter';
     colDef.filterParams.comparator = function (filterDate: any, entryDate: any) {
+        if (!filterDate) {
+            return 0;
+        }
+
         const entry = new Date(entryDate);
 
         // We need to specifically compare the UTC year, month, and date because
