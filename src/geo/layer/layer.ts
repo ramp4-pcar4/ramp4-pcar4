@@ -462,7 +462,13 @@ export class LayerAPI extends APIScope {
             if (Array.isArray(sData.fields)) {
                 // parse fields to our format
                 const esriFields: Array<EsriField> = await Promise.all(
-                    sData.fields.map((f: any) => EsriAPI.FieldFromJson(f))
+                    sData.fields.map((f: any) => {
+                        // change global-id to string so it will show in the grid.
+                        if (f.type === 'esriFieldTypeGlobalID') {
+                            f.type = 'esriFieldTypeString';
+                        }
+                        return EsriAPI.FieldFromJson(f);
+                    })
                 );
                 md.fields = esriFields.map(f => {
                     return {
