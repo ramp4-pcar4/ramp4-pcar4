@@ -33,7 +33,7 @@ import {
 } from '@/geo/api';
 import { useConfigStore } from '@/stores/config';
 import flag from './flag.json';
-import { debounce } from 'throttle-debounce';
+import { debounce } from 'es-toolkit/function';
 import { POLE_MARKER_LAYER_ID } from '.'; // imports from index.ts
 
 const configStore = useConfigStore();
@@ -75,7 +75,7 @@ onMounted(() => {
         updateNortharrow(iApi.geo.map.getExtent());
     }
 
-    handlers.push(iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, debounce(300, updateNortharrow)));
+    handlers.push(iApi.event.on(GlobalEvents.MAP_EXTENTCHANGE, debounce(updateNortharrow, 300)));
 });
 
 onBeforeUnmount(() => {

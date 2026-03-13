@@ -39,7 +39,7 @@ import type { PropType } from 'vue';
 import type { InstanceAPI, PanelInstance } from '@/api';
 import type { ExportAPI } from './api/export';
 
-import { debounce } from 'throttle-debounce';
+import { debounce } from 'es-toolkit/function';
 
 import ExportSettings from './settings-button.vue';
 import { useExportStore } from './store';
@@ -87,7 +87,7 @@ const hasCustomRenderer = computed(() => {
     return !!fixture.value?.customRendererFunc;
 });
 
-const make = debounce(300, () => {
+const make = debounce(() => {
     if (!fixture.value || !el.value) {
         return;
     }
@@ -95,7 +95,7 @@ const make = debounce(300, () => {
     const canvasElement = el.value!.querySelector('.export-canvas') as HTMLCanvasElement;
 
     fixture.value.make(canvasElement, el.value!.clientWidth);
-});
+}, 300);
 
 onBeforeMount(() => {
     (props.panel as any).exportMake = make;

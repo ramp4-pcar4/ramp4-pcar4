@@ -14,7 +14,7 @@ import { useAppbarStore } from '@/fixtures/appbar/store';
 import { useGridStore } from '@/fixtures/grid/store';
 import { DataFormat, LayerState } from '@/geo/api';
 import type { BasemapChange, IdentifyResultFormat, MapClick, MapMove, ScreenPoint } from '@/geo/api';
-import { debounce, throttle } from 'throttle-debounce';
+import { debounce, throttle } from 'es-toolkit/function';
 import { useMapCaptionStore } from '@/stores/map-caption';
 import { useConfigStore } from '@/stores/config';
 import { useDetailsStore } from '@/fixtures/details/store';
@@ -836,7 +836,7 @@ export class EventAPI extends APIScope {
                 };
                 this.$iApi.event.on(
                     GlobalEvents.MAP_EXTENTCHANGE,
-                    throttle(50, true, () => zeHandler()), // Smaller throttle because extent change is intervalled
+                    throttle(() => zeHandler(), 50, { edges: ['leading'] }), // Smaller throttle because extent change is intervalled
                     handlerName
                 );
                 break;
@@ -864,7 +864,7 @@ export class EventAPI extends APIScope {
                 // update the caption coordinates when the crosshairs pan over the map
                 this.$iApi.event.on(
                     GlobalEvents.MAP_KEYDOWN,
-                    throttle(50, () => {
+                    throttle(() => {
                         // check if coords are disabled
                         // if they are, then do not update
                         const mapCaptionStore = useMapCaptionStore(this.$vApp.$pinia);
@@ -877,7 +877,7 @@ export class EventAPI extends APIScope {
                                 formattedString: fs
                             };
                         });
-                    }),
+                    }, 50),
                     handlerName
                 );
                 break;
@@ -902,7 +902,7 @@ export class EventAPI extends APIScope {
                 // update the co-ordinate caption when the mouse moves over the map
                 this.$iApi.event.on(
                     GlobalEvents.MAP_MOUSEMOVE,
-                    throttle(50, (mapMove: MapMove) => {
+                    throttle((mapMove: MapMove) => {
                         // check if coords are disabled
                         // if it is, then do not update it
                         const mapCaptionStore = useMapCaptionStore(this.$vApp.$pinia);
@@ -918,7 +918,7 @@ export class EventAPI extends APIScope {
                                     formattedString: fs
                                 };
                             });
-                    }),
+                    }, 50),
                     handlerName
                 );
                 break;
@@ -933,7 +933,7 @@ export class EventAPI extends APIScope {
                 };
                 this.$iApi.event.on(
                     GlobalEvents.MAP_MOUSEMOVE,
-                    throttle(50, (mapMove: MapMove) => zeHandler(mapMove)),
+                    throttle((mapMove: MapMove) => zeHandler(mapMove), 50),
                     handlerName
                 );
 
@@ -950,7 +950,7 @@ export class EventAPI extends APIScope {
 
                 this.$iApi.event.on(
                     GlobalEvents.MAP_MOUSEDOWN,
-                    throttle(50, mapMove => {
+                    throttle(mapMove => {
                         const downPoint = {
                             screenX: mapMove.offsetX,
                             screenY: mapMove.offsetY,
@@ -958,7 +958,7 @@ export class EventAPI extends APIScope {
                             moveTime: 0
                         };
                         zeHandler(downPoint);
-                    }),
+                    }, 50),
                     handlerName
                 );
 
@@ -976,7 +976,7 @@ export class EventAPI extends APIScope {
                 // update the map scale caption when the window is resized
                 this.$iApi.event.on(
                     GlobalEvents.MAP_RESIZED,
-                    debounce(100, () => this.$iApi.geo.map.caption.updateScale()),
+                    debounce(() => this.$iApi.geo.map.caption.updateScale(), 100),
                     handlerName
                 );
                 break;
@@ -985,7 +985,7 @@ export class EventAPI extends APIScope {
                 // update the map scale caption when the map scale changes
                 this.$iApi.event.on(
                     GlobalEvents.MAP_SCALECHANGE,
-                    debounce(300, () => this.$iApi.geo.map.caption.updateScale()),
+                    debounce(() => this.$iApi.geo.map.caption.updateScale(), 300),
                     handlerName
                 );
                 break;

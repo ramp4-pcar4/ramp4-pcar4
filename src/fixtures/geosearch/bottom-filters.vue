@@ -19,7 +19,7 @@ import { GlobalEvents } from '@/api/internal';
 import type { InstanceAPI } from '@/api/internal';
 import type { Extent } from '@/geo/api';
 import { useGeosearchStore } from './store';
-import { debounce } from 'throttle-debounce';
+import { debounce } from 'es-toolkit/function';
 
 import { computed, inject, onBeforeUnmount, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -30,14 +30,14 @@ const geosearchStore = useGeosearchStore();
 
 const resultsVisible = computed<boolean>(() => geosearchStore.resultsVisible);
 
-const onMapExtentChange = debounce(300, (newExtent: Extent) => {
+const onMapExtentChange = debounce((newExtent: Extent) => {
     latLongExtent(newExtent).then((e: Extent) => {
         setMapExtent({
             extent: e,
             visible: resultsVisible.value
         });
     });
-});
+}, 300);
 
 const setMapExtent = (mapExtent: any) => {
     geosearchStore.setMapExtent(mapExtent);
