@@ -234,6 +234,37 @@ export class SymbologyAPI extends APIScope {
     }
 
     /**
+     * Generates a letter SVG (a single char in a box) in an active svg draw object. Used in placeholders and special symbols.
+     *
+     * @param {svgjs.Doc} svgDrawer an active svg draw object that has already been created and sized. Will be modified.
+     * @param  {String} letter what letter to use. If a longer string is supplied, will use first letter
+     * @param  {String} colour colour to use in the background
+     */
+    private generateLetterSvg(svgDrawer: svgjs.Doc, letter: string, colour = '#000'): void {
+        svgDrawer
+            .rect(this.CONTENT_IMAGE_SIZE, this.CONTENT_IMAGE_SIZE)
+            .center(this.CONTAINER_CENTER, this.CONTAINER_CENTER)
+            .fill(colour);
+
+        const firstLetter = letter[0].toUpperCase();
+
+        const textElement = svgDrawer
+            .text(firstLetter)
+            .size(23)
+            .fill('#fff')
+            .attr({
+                'font-weight': 'bold',
+                'font-family': 'Roboto'
+            })
+            .center(this.CONTAINER_CENTER, this.CONTAINER_CENTER);
+
+        textElement.tspan(firstLetter).addClass('grid-icons').attr({
+            dy: '29.900000000000002',
+            x: '7.6875'
+        });
+    }
+
+    /**
      * Generates a placeholder symbology graphic.
      * @function generatePlaceholderSymbology
      * @private
@@ -246,24 +277,7 @@ export class SymbologyAPI extends APIScope {
             .size(this.CONTAINER_SIZE, this.CONTAINER_SIZE)
             .viewbox(0, 0, this.CONTAINER_SIZE, this.CONTAINER_SIZE);
 
-        draw.rect(this.CONTENT_IMAGE_SIZE, this.CONTENT_IMAGE_SIZE)
-            .center(this.CONTAINER_CENTER, this.CONTAINER_CENTER)
-            .fill(colour);
-
-        const textElement = draw
-            .text(name[0].toUpperCase()) // take the first letter
-            .size(23)
-            .fill('#fff')
-            .attr({
-                'font-weight': 'bold',
-                'font-family': 'Roboto'
-            })
-            .center(this.CONTAINER_CENTER, this.CONTAINER_CENTER);
-
-        textElement.tspan(name[0].toUpperCase()).addClass('grid-icons').attr({
-            dy: '29.900000000000002',
-            x: '7.6875'
-        });
+        this.generateLetterSvg(draw, name, colour);
 
         return {
             name,
@@ -545,7 +559,8 @@ export class SymbologyAPI extends APIScope {
 
             text() {
                 // esriTS
-                console.error('no support for feature service legend of text symbols');
+                // for basic support, we are just drawing an 'A'.
+                _this.generateLetterSvg(draw, 'A', '#2e8b57');
             },
 
             'picture-fill'() {
@@ -611,7 +626,7 @@ export class SymbologyAPI extends APIScope {
         // jscs:enable requireSpacesInAnonymousFunctionExpression
 
         try {
-            // @ts-expect-error TODO: explain why this is needed or remove
+            // @ts-expect-error we are trusting our key alignment without making fancy types
             await Promise.resolve(symbolTypes[symbol.type]());
 
             // remove element from the page
