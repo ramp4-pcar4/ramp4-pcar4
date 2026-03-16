@@ -102,7 +102,7 @@ const el = ref<Element>();
 // A bit of a hack to tell if the draw fixture should be shown. On language change the fixture is removed and not re-added
 // Maybe its a bug in the fixture system?
 const isDrawFixtureLoaded = computed(() => {
-    return iApi.getConfig().fixtures.mapnav.items.some((fixture: string) => fixture === 'draw');
+    return iApi.getConfig().fixtures?.mapnav?.items?.some((fixture: string) => fixture === 'draw');
 });
 
 const windowHeight = ref(iApi.$rootEl?.clientHeight);
