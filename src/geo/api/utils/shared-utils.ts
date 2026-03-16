@@ -1,5 +1,5 @@
 import type { ArcGisServerUrl, UrlQueryMap, LayerControl } from '@/geo/api';
-import deepmerge from 'deepmerge';
+import { merge } from 'es-toolkit';
 
 export class SharedUtilsAPI {
     /**
@@ -193,7 +193,10 @@ export class UrlWrapper {
      * @memberof UrlWrapper
      */
     updateQuery(queryMapUpdate: UrlQueryMap): string {
-        const requestQueryMap: UrlQueryMap = <UrlQueryMap>deepmerge.all([{}, this.queryMap, queryMapUpdate]);
+        // make a copy of query map, then merge in any update params
+        const requestQueryMap: UrlQueryMap = merge({}, this.queryMap);
+        merge(requestQueryMap, queryMapUpdate);
+
         const requestUrl = `${this.base}${Object.entries(requestQueryMap)
             .filter(([, value]) => value !== undefined)
             .map(([key, value], index) => `${index === 0 ? '?' : ''}${key}=${value}`)

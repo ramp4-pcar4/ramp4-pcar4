@@ -6,7 +6,7 @@ import { geo } from '@/main';
 import { i18n } from '@/lang';
 import screenfull from 'screenfull';
 
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep } from 'es-toolkit/object';
 
 import App from '@/app.vue';
 
@@ -776,11 +776,9 @@ function createApp(element: HTMLElement, iApi: InstanceAPI) {
     const pinia = createPinia();
     // generic reset function to reset store state to initial state
     pinia.use(({ store }) => {
-        // We are currently using clonedeep to make a deep clone of the initial state, but this is not preferred
-        // because the lodash package is not particularly lightweight.
+        // We are currently using clonedeep to make a deep clone of the initial state.
         // There were attempts to use deepmerge library, but that did not clone nested arrays containing objects properly,
         // whereas the builtin structuredClone and JSON.parse(JSON.stringify()) can't handle serialization.
-        // Hence, we are opting to use clonedeep until a better solution is found.
         const initialState = cloneDeep(store.$state);
         store.$reset = () => store.$patch(cloneDeep(initialState));
     });

@@ -15,7 +15,7 @@ import { DataFormat, GeometryType, Graphic, NoGeometry } from '@/geo/api';
 import { EsriGeometryFromJson, EsriRequest } from '@/geo/esri';
 import type { EsriCollection, EsriGraphic, EsriRequestOptions, EsriRequestResponse } from '@/geo/esri';
 import to from 'await-to-js';
-import deepmerge from 'deepmerge';
+import { merge } from 'es-toolkit';
 import { toRaw } from 'vue';
 
 // NOTE has an esri type, which is bad, but this interface lives within the geo section so will permit it.
@@ -583,7 +583,7 @@ export class AttributeAPI extends APIScope {
         // if we add rv properties to the feature in the attribute set, we may see those fields showing up in details panes, API outputs, etc.
         // that said, copying means we double the size of attributes in memory.
         const rows = attSet.features.map(feature => {
-            const att = deepmerge({}, feature);
+            const att = merge({}, feature);
             att.rvInteractive = '';
             att.rvSymbol = layer.getIcon(feature[layer.oidField]); // this.renderer?.getGraphicIcon(feature);
             att.rvUid = layer.uid;

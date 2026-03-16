@@ -33,7 +33,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useGeosearchStore } from './store';
-import { debounce } from 'throttle-debounce';
+import { debounce } from 'es-toolkit/function';
 import { useI18n } from 'vue-i18n';
 import { usePanelStore } from '@/stores/panel';
 
@@ -52,9 +52,9 @@ const setSearchTerm = (value: string) => {
     geosearchStore.setSearchRegex(value);
 };
 
-const onSearchTermChange = debounce(500, (searchTerm: string) => {
+const onSearchTermChange = debounce((searchTerm: string) => {
     setSearchTerm(searchTerm);
-});
+}, 500);
 </script>
 
 <style lang="scss" scoped></style>

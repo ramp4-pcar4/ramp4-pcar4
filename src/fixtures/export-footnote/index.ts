@@ -1,5 +1,5 @@
 import { fabric } from 'fabric';
-import merge from 'deepmerge';
+import { merge } from 'es-toolkit';
 
 import { FixtureInstance } from '@/api/internal';
 import type { ExportAPI, ExportSubFixture } from '@/fixtures/export/api/export';

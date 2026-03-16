@@ -37,7 +37,7 @@ import { useLayerStore } from '@/stores/layer';
 import { MapCaptionAPI } from './caption';
 import { markRaw, toRaw } from 'vue';
 import { useConfigStore } from '@/stores/config';
-import { debounce, throttle } from 'throttle-debounce';
+import { debounce, throttle } from 'es-toolkit/function';
 import type { DrawAPI } from '@/fixtures/draw/api/drawApi';
 
 export class MapAPI extends CommonMapAPI {
@@ -256,12 +256,16 @@ export class MapAPI extends CommonMapAPI {
             type: 'pointer-move-start', // emulate mouse move start event using debounce
             handler: this.esriView.on(
                 'pointer-move',
-                debounce(100, true, esriMouseMove => {
-                    this.$iApi.event.emit(
-                        GlobalEvents.MAP_MOUSEMOVE_START,
-                        this.$iApi.geo.geom.esriMapMouseToRamp(esriMouseMove)
-                    );
-                })
+                debounce(
+                    esriMouseMove => {
+                        this.$iApi.event.emit(
+                            GlobalEvents.MAP_MOUSEMOVE_START,
+                            this.$iApi.geo.geom.esriMapMouseToRamp(esriMouseMove)
+                        );
+                    },
+                    100,
+                    { edges: ['leading'] }
+                )
             )
         });
 
@@ -269,12 +273,12 @@ export class MapAPI extends CommonMapAPI {
             type: 'pointer-move-end', // emulate mouse move end event using debounce
             handler: this.esriView.on(
                 'pointer-move',
-                debounce(100, esriMouseMove => {
+                debounce(esriMouseMove => {
                     this.$iApi.event.emit(
                         GlobalEvents.MAP_MOUSEMOVE_END,
                         this.$iApi.geo.geom.esriMapMouseToRamp(esriMouseMove)
                     );
-                })
+                }, 100)
             )
         });
 
@@ -1003,9 +1007,9 @@ export class MapAPI extends CommonMapAPI {
             this.noMapErr();
             return;
         }
-        return throttle(this.mapMouseThrottle, (esriMouseMove: any) => {
+        return throttle((esriMouseMove: any) => {
             this.$iApi.event.emit(GlobalEvents.MAP_MOUSEMOVE, this.$iApi.geo.geom.esriMapMouseToRamp(esriMouseMove));
-        });
+        }, this.mapMouseThrottle);
     }
 
     /**

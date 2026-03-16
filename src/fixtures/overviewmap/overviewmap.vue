@@ -52,7 +52,7 @@ import { computed, inject, onBeforeUnmount, onMounted, reactive, ref } from 'vue
 import type { BasemapChange, Extent, RampBasemapConfig } from '@/geo/api';
 import { GlobalEvents, InstanceAPI, OverviewMapAPI } from '@/api/internal';
 import { useOverviewmapStore } from './store';
-import { debounce } from 'throttle-debounce';
+import { debounce } from 'es-toolkit/function';
 import { useI18n } from 'vue-i18n';
 import { useConfigStore } from '@/stores/config';
 
@@ -91,11 +91,11 @@ onMounted(async () => {
     handlers.push(
         iApi.event.on(
             GlobalEvents.MAP_EXTENTCHANGE,
-            debounce(100, (newExtent: Extent) => {
+            debounce((newExtent: Extent) => {
                 updatePromise.then(() => {
                     overviewMap.updateOverview(newExtent);
                 });
-            })
+            }, 100)
         )
     );
 

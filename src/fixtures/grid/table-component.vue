@@ -420,7 +420,7 @@ import CellRendererV from './templates/cell-renderer.vue';
 // grid locales
 import { AG_GRID_LOCALE_EN, AG_GRID_LOCALE_FR } from '@ag-grid-community/locale';
 
-import { debounce } from 'throttle-debounce';
+import { debounce } from 'es-toolkit/function';
 
 import type { ColDef, GridApi, RowNode } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry, provideGlobalGridOptions } from 'ag-grid-community';
@@ -691,11 +691,11 @@ const onGridReady = (params: any) => {
     handlers.value.push(
         iApi.event.on(
             GlobalEvents.MAP_EXTENTCHANGE,
-            debounce(100, () => {
+            debounce(() => {
                 if (mergedGridConfig.value.state.filterByExtent) {
                     applyLayerFilters();
                 }
-            })
+            }, 100)
         )
     );
     handlers.value.push(
@@ -1800,10 +1800,10 @@ onBeforeMount((): void => {
         tabToNextCell: tabToNextCellHandler,
         // tab vertically instead of horizontally
         tabToNextHeader: tabToNextHeaderHandler,
-        onModelUpdated: debounce(300, () => {
+        onModelUpdated: debounce(() => {
             gridApi.value.autoSizeAllColumns();
             addAriaLabels();
-        })
+        }, 300)
     };
 
     setUpColumns();
