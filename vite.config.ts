@@ -56,9 +56,9 @@ function inlineConfig() {
                 fileName: (format: string) => `ramp.browser.${format}.js`,
                 formats: ['es', 'iife']
             },
-            rollupOptions: {
+            rolldownOptions: {
                 output: {
-                    inlineDynamicImports: true
+                    codeSplitting: false
                 }
             }
         }
@@ -76,7 +76,7 @@ function esDynamicConfig() {
                 formats: ['es']
             }
         },
-        esbuild: { legalComments: 'none' }
+        rolldown: { legalComments: 'none' }
     });
     config.plugins.push(ViteMinifyEsPlugin());
     return config;
@@ -93,7 +93,7 @@ function npmBundleConfig() {
                 fileName: 'ramp.bundle.es',
                 formats: ['es']
             },
-            rollupOptions: {
+            rolldownOptions: {
                 external: externalImports
             }
         }
@@ -103,7 +103,7 @@ function npmBundleConfig() {
 }
 
 function testBuildConfig() {
-    delete baseConfig.build.rollupOptions;
+    delete baseConfig.build.rolldownOptions;
     delete baseConfig.build.lib;
 
     const config = mergeConfig(baseConfig, {
@@ -111,7 +111,7 @@ function testBuildConfig() {
         root: 'demos',
         build: {
             outDir: `${distName}/demos`,
-            rollupOptions: {
+            rolldownOptions: {
                 input: {
                     main: '/index.html',
                     multi: '/index-multi.html',
