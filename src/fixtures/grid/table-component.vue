@@ -823,8 +823,9 @@ const exportData = (): void => {
         suppressQuotes: true,
         processCellCallback: cell => {
             const cellType = cell.column.getColDef().cellRendererParams;
-            if (!cell.value || (cellType && cellType.type === 'number')) return cell.value;
-            else if (cellType && cellType.type === 'date')
+            if (!cell.value || (cellType && cellType.type === 'number')) {
+                return cell.value;
+            } else if (cellType && cellType.type === 'date') {
                 return `"${new Date(cell.value).toLocaleDateString('en-CA', {
                     timeZone: 'UTC',
                     year: 'numeric',
@@ -834,7 +835,9 @@ const exportData = (): void => {
                     minute: '2-digit',
                     second: '2-digit'
                 })}"`;
-            else return `"${decodeEntities(cell.value).replace(/"/g, '""')}"`;
+            } else {
+                return `"${decodeEntities(cell.value).replace(/"/g, '""')}"`;
+            }
         }
     });
 };
@@ -1568,9 +1571,8 @@ const setUpColumns = async (): Promise<void> => {
         );
 
         // add source table fields to the merge grid fields.
-        // TODO wouldn't this make duplicate objects across multiple layer sources? is there some kind of cleanup later?
-        //      like we'd concact "name" from layer one, then concat "name" from layer two.
-        //      run a console log test if no obvious answer
+        // NOTE this will make duplicate "fields" objects across multiple layer sources.
+        //      these values are only used to derive the data type for columns. So it will do a first-match
         mergedTableAttrs.fields = mergedTableAttrs.fields.concat(
             sourceTableAttribs.fields.map(field => {
                 // Add system columns to the set if they need to be hidden
@@ -1684,27 +1686,26 @@ const setUpColumns = async (): Promise<void> => {
             setUpSpecialColumns(col, columnDefs.value, mergedGridConfig.value.state);
         } else {
             // retrieve the field info for the column
-            // TODO would this have collisions for multiple fields? I suspect the first of many would get matched.
-            const fieldInfo = mergedTableAttrs.fields.find(field => field.name === col.field);
+            const fieldInfo = mergedTableAttrs.fields.find(field => field.name === col.field)!;
 
             col.cellRenderer = colConfig.template === '' ? CellRendererV : iApi.component(colConfig.template);
             col.autoHeight = true;
 
             // set up column filters according to their respective types
-            if (NUM_TYPES.indexOf(fieldInfo!.type) > -1) {
+            if (NUM_TYPES.indexOf(fieldInfo.type) > -1) {
                 setUpNumberFilter(col, mergedGridConfig.value.state);
                 col.filter = 'agNumberColumnFilter';
                 col.cellRendererParams = {
                     type: 'number'
                 };
-            } else if (fieldInfo!.type === FieldType.DATE) {
+            } else if (fieldInfo.type === FieldType.DATE) {
                 setUpDateFilter(col, mergedGridConfig.value.state);
                 col.filter = 'agDateColumnFilter';
                 col.minWidth = 400;
                 col.cellRendererParams = {
                     type: 'date'
                 };
-            } else if (fieldInfo!.type === FieldType.STRING) {
+            } else if (fieldInfo.type === FieldType.STRING) {
                 if (isSelector) {
                     // set up a selector filter instead of a text filter if the `isSelector` flag is true.
                     setUpSelectorFilter(col, mergedTableAttrs.rows, mergedGridConfig.value.state);
