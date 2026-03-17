@@ -55,7 +55,7 @@
             <div class="relative mb-0.5" data-type="select">
                 <div v-if="multiple">
                     <div ref="treeWrapper">
-                        <treeselect
+                        <Treeselect
                             v-model="selected"
                             :multiple="true"
                             :options="options"
@@ -107,7 +107,7 @@
                                     {{ node.label }}
                                 </label>
                             </template>
-                        </treeselect>
+                        </Treeselect>
                     </div>
                     <div v-if="validation && sublayersError" class="text-red-900 text-xs">
                         {{ validationMessages?.required }}
@@ -181,7 +181,7 @@ import type { InstanceAPI } from '@/api';
 import { inject, onBeforeUnmount, onMounted, reactive, ref, useTemplateRef, watch } from 'vue';
 import type { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
-import Treeselect from '@ramp4-pcar4/vue3-treeselect';
+import { Treeselect } from '@ramp4-pcar4/vue3-treeselect';
 import '@ramp4-pcar4/vue3-treeselect/dist/vue3-treeselect.css';
 
 interface ValidationMsgs {
