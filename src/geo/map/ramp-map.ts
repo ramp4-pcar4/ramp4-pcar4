@@ -31,7 +31,7 @@ import type {
 } from '@/geo/api';
 
 import { EsriAPI, EsriWatch } from '@/geo/esri';
-import type { EsriExtent, EsriFeatureLayer, EsriGraphic, EsriLOD, EsriUserSettings } from '@/geo/esri';
+import type { EsriExtent, EsriFeatureLayer, EsriLOD, EsriUserSettings } from '@/geo/esri';
 
 import { useLayerStore } from '@/stores/layer';
 import { MapCaptionAPI } from './caption';
@@ -39,6 +39,7 @@ import { markRaw, toRaw } from 'vue';
 import { useConfigStore } from '@/stores/config';
 import { debounce, throttle } from 'es-toolkit/function';
 import type { DrawAPI } from '@/fixtures/draw/api/drawApi';
+import type { HilightAPI } from '@/fixtures/hilight/api/hilight';
 
 export class MapAPI extends CommonMapAPI {
     // API for managing the maptip
@@ -52,6 +53,12 @@ export class MapAPI extends CommonMapAPI {
      * @private
      */
     private mapMouseThrottle: number;
+
+    /**
+     * Id of the highlight layer, if exists. Saves us from looking it up via fixture API every mouse move.
+     * @private
+     */
+    private _hilighLightLayerId: string = '';
 
     /**
      * Map wide defaults for layer times. Layers can override.
@@ -1357,6 +1364,15 @@ export class MapAPI extends CommonMapAPI {
             return;
         }
 
+        // check if we need to setup highlight layer detection
+        if (!this._hilighLightLayerId) {
+            // if fixture exists, get layer id and set our prop
+            const hlFixture = this.$iApi.fixture.get('hilight') as HilightAPI;
+            if (hlFixture) {
+                this._hilighLightLayerId = hlFixture.hilightLayerName;
+            }
+        }
+
         // Get layers that are on the map and supports graphics.
         // We also need to take graphic layers, which dont currently "support features"
         // but they do actually have features lurking on the map, so need to consider those are
@@ -1384,7 +1400,7 @@ export class MapAPI extends CommonMapAPI {
         const hitResults = hitTest.results.filter(hr => hr.type === 'graphic');
 
         let hitLayer: LayerInstance | undefined;
-        let topGraphic: EsriGraphic | undefined;
+        let topOID: number | undefined;
 
         // help us avoid redundant fun
         const dupeSet = new Set<string>();
@@ -1407,10 +1423,31 @@ export class MapAPI extends CommonMapAPI {
                 // - cosmetic layer, sad times. it's blocking anything under it.
                 // - graphic layer, sad times. Until we implement issue #998
                 // - clusterer symbol, sad times. Unless we decide how and what kind of tip we should show
+                // - EXECEPTION! The highlight layer is a cosmetic graphic layer. But we will use science to find the graphic it's highlighting.
 
                 if (!(layerHunt.isCosmetic || layerHunt.layerType === LayerType.GRAPHIC || gHit.graphic.isAggregate)) {
+                    // top graphic was in standard layer
                     hitLayer = layerHunt;
-                    topGraphic = gHit.graphic;
+                    topOID = gHit.graphic.getObjectId() as number;
+                } else if (layerHunt.id === this._hilighLightLayerId && (gHit.graphic as any).id) {
+                    // top graphic was in highlight layer.
+                    // attempt to decode the graphic id.
+                    // note the ".id" has been stuck onto the esri graphic by the highlighter using trickery,
+                    // which is why we keep casting to ANY
+                    const hlFixture = this.$iApi.fixture.get('hilight') as HilightAPI;
+                    if (hlFixture) {
+                        const decodedMetadata = hlFixture.deconstructGraphicKey((gHit.graphic as any).id, true);
+                        if (decodedMetadata.oid && decodedMetadata.uid) {
+                            // find the source layer
+                            const layerHuntPartDeux = layers.find(l => l.uid === decodedMetadata.uid);
+
+                            if (layerHuntPartDeux && layerHuntPartDeux.supportsFeatures) {
+                                // hurrah, all the data has lined up. the highlight points to a valid layer, and that layer supports features.
+                                hitLayer = layerHuntPartDeux;
+                                topOID = decodedMetadata.oid;
+                            }
+                        }
+                    }
                 }
 
                 // stop looping regardless. we've found topmost and were able to make sense of it.
@@ -1424,12 +1461,13 @@ export class MapAPI extends CommonMapAPI {
             }
         });
 
-        if (hitLayer && topGraphic) {
+        if (hitLayer && topOID) {
             // make a fancy bundle
             return {
-                oid: topGraphic.getObjectId() as number,
+                oid: topOID,
                 layerId: hitLayer.id,
-                layerIdx: hitLayer.layerIdx
+                layerIdx: hitLayer.layerIdx,
+                layer: hitLayer
             };
         }
     }

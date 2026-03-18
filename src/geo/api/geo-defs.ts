@@ -1,3 +1,4 @@
+import type { LayerInstance } from '@/api';
 import type { BaseGeometry, Extent, Graphic, Point, SpatialReference } from '@/geo/api';
 import type { EsriFeatureReductionCluster, EsriRenderer } from '@/geo/esri';
 
@@ -538,6 +539,11 @@ export interface GraphicHitResult {
      * layer id of layer the graphic lives in
      */
     layerId: string;
+
+    /**
+     * The layer instance the graphic lives in, if available
+     */
+    layer?: LayerInstance;
 }
 
 export interface MaptipProperties {

@@ -137,14 +137,18 @@ export class HilightAPI extends FixtureInstance {
      * Return a deconstructed graphic key.
      *
      * @param key The graphic key to deconstruct
+     * @param [silent=false] Flag to stop console warns for bad keys (e.g. using this method as a test)
      */
-    deconstructGraphicKey(key: string): {
+    deconstructGraphicKey(
+        key: string,
+        silent: boolean = false
+    ): {
         origin: string;
         uid: string;
         oid: number;
     } {
         const ids = key.split('~');
-        if (ids.length !== 4) {
+        if (ids.length !== 4 && !silent) {
             console.warn('Malformed Hilight Graphic key provided:', key);
         }
         return { origin: ids[1], uid: ids[2], oid: parseInt(ids[3]) };
@@ -160,5 +164,12 @@ export class HilightAPI extends FixtureInstance {
             console.warn('API get layer request before highlight mode object exists');
             return undefined;
         }
+    }
+
+    /**
+     * Return the hilight Layer name
+     */
+    get hilightLayerName(): string {
+        return HILIGHT_LAYER_NAME;
     }
 }
