@@ -163,7 +163,7 @@
                             :aria-label="t('wizard.configure.longField.label')"
                             :options="latLonOptions('lon')"
                         />
-                        <!-- For map image layers -->
+                        <!-- For map image layers and WMS -->
                         <div v-if="layerInfo?.configOptions.includes(`sublayers`)">
                             <wizard-input
                                 type="checkbox"
@@ -324,6 +324,9 @@ const layerName = ref<string>('');
 
 const displayFormat = ref<string>('');
 
+/**
+ * Keys of items selected in the tree picker
+ */
 const selectedValues = ref<Array<string | number>>([]);
 
 // service layer formats
@@ -801,6 +804,9 @@ const populateFlatWMS = (layerInfo: any, previouslySelected: Set<string>): void 
     selectedValues.value = Array.from(new Set(selectedValues.value));
 };
 
+/**
+ * This gets called by form-input.vue whenever a selection in the tree picker changes
+ */
 const sublayerOptions = (layers: any[]) => {
     // set sublayer option properties based on whether its a map image or WMS layer
     return layers.map((layerIdx: any) => {

@@ -8,7 +8,7 @@ export interface LayerInfo {
     config: RampLayerConfig; // the layer's config
     configOptions: Array<string>; // the layer's config options that will be taken from user input in the UI
     fields?: Array<FieldDefinition>; // the fields for the layer
-    latLonFields?: { lat: Array<string>; lon: Array<string> }; // lat and lon are a list of field names that can be possible lat/lon fields
+    latLonFields?: { lat: Array<string>; lon: Array<string> }; // lat and lon are a list of field names that can be possible lat/lon fields. typically used for CSV files
     layers?: Array<SublayerInfo>; // a nested list of info for the parent layer, sublayer groups, and sublayers. Only defined for MIL/WMS
     layersRaw?: [];
 }
@@ -321,7 +321,7 @@ export class LayerSource extends APIScope {
         let modLayers: any = [];
         layers.forEach((layer: any) => {
             if (layer.name === null && layer.layers) {
-                modLayers = [...modLayers, ...layer.layers];
+                modLayers = modLayers.concat(layer.layers);
             } else {
                 modLayers.push(layer);
             }
