@@ -625,18 +625,25 @@ export class FileUtils extends APIScope {
             return new Promise(resolve => {
                 let headerDone = false;
                 let projection: CrsMeta | null = null; // fgb lib returns null, so we disrespect convention here
+                let geoJsonDecoded: any = undefined;
 
-                // Uint8Array variant of deserialize is synchronous
-                const geoJson = geojson.deserialize(new Uint8Array(fgbData), undefined, headerMeta => {
+                const asyncProcessor = geojson.deserialize(new Uint8Array(fgbData), undefined, headerMeta => {
                     projection = headerMeta.crs;
                     headerDone = true;
+                });
+
+                Array.fromAsync(asyncProcessor).then(featureList => {
+                    geoJsonDecoded = {
+                        type: 'FeatureCollection',
+                        features: featureList
+                    };
                 });
 
                 let kickTimer = 0;
 
                 // wait for file content and header to appear
                 const waitingFun = setInterval(() => {
-                    if (geoJson && headerDone) {
+                    if (geoJsonDecoded && headerDone) {
                         clearInterval(waitingFun);
 
                         // pick apart spatial reference.
@@ -659,10 +666,10 @@ export class FileUtils extends APIScope {
 
                         if (customProj) {
                             // we found something that appears valid and is not lat lon. Add CRS to geojson object
-                            geoJson.crs = customProj.toGeoJSON();
+                            geoJsonDecoded.crs = customProj.toGeoJSON();
                         } // else it's lat lon or ???, default to lat lon (do nothing)
 
-                        resolve(geoJson);
+                        resolve(geoJsonDecoded);
                     } else {
                         kickTimer += pollingSpeed;
                         if (kickTimer > maxLoadTime) {
