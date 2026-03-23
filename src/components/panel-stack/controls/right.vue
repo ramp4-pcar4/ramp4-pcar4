@@ -1,12 +1,14 @@
 <template>
     <div class="relative">
         <button
+            ref="buttonRef"
             type="button"
             class="p-8"
             :class="{
                 'text-gray-500 hover:text-black focus:text-black': active,
                 'text-gray-300': !active
             }"
+            @click="syncTooltipAfterKeyboardMove"
             :content="t('panels.controls.moveRight')"
             :aria-label="t('panels.controls.moveRight')"
             v-tippy="{
@@ -23,12 +25,16 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { usePanelMoveTooltip } from './use-panel-move-tooltip';
 
 const { t } = useI18n();
-defineProps({
+const props = defineProps({
     active: Boolean
 });
+const buttonRef = ref<HTMLButtonElement | null>(null);
+const { syncTooltipAfterKeyboardMove } = usePanelMoveTooltip(buttonRef, () => !!props.active);
 </script>
 
 <style lang="scss" scoped></style>

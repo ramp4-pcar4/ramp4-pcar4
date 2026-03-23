@@ -67,7 +67,7 @@
                             direction="up"
                             :layerId="element.id"
                             class="px-7"
-                            @click="onMoveLayerButton(element, 1)"
+                            @click="onMoveLayerButton(element, 1, $event)"
                         />
                         <reorder-button
                             :ref="el => (buttonRefs[element.id + '-down'] = (el as any)?.buttonRef || null)"
@@ -75,7 +75,7 @@
                             direction="down"
                             :layerId="element.id"
                             class="px-7"
-                            @click="onMoveLayerButton(element, -1)"
+                            @click="onMoveLayerButton(element, -1, $event)"
                         />
                     </div>
 
@@ -319,8 +319,9 @@ const onMoveLayerDragEnd = (evt: any): void => {
  * @param {LayerModel} layerModel layer that is being moved
  * @param {number} direction direction to move the layer (+1 is up and -1 is down)
  */
-const onMoveLayerButton = async (layerModel: LayerModel, direction: number): Promise<void> => {
+const onMoveLayerButton = (layerModel: LayerModel, direction: number, event: MouseEvent): void => {
     const layer = iApi.geo.layer.getLayer(layerModel.id);
+    const clickedButton = event.currentTarget as HTMLButtonElement | null;
 
     const currRelativeIdx = layersModel.value.indexOf(layerModel);
 
@@ -349,11 +350,20 @@ const onMoveLayerButton = async (layerModel: LayerModel, direction: number): Pro
     );
 
     const directionStr = direction === 1 ? 'up' : 'down';
+    const keyboardActivated = event.detail === 0;
 
     // Prevents a race condition between setting new focus and the button existing. Unfortunately nextTick doesn't work so we get a setTimeout...
     setTimeout(() => {
         const btn = buttonRefs.value[layerModel.id + '-' + directionStr];
-        btn?.focus();
+
+        if (keyboardActivated) {
+            btn?.focus();
+            return;
+        }
+
+        const pointerButton = btn ?? clickedButton;
+        pointerButton?.blur();
+        (pointerButton as any)?._tippy?.hide();
     }, 0);
 };
 
