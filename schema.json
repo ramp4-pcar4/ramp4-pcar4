@@ -1542,7 +1542,7 @@
                 "caching": {
                     "type": "boolean",
                     "description": "Indicates whether to preserve the layer's raw data after initiation.",
-                    "default": "false"
+                    "default": false
                 },
                 "identifyMode": {
                     "type": "string",
@@ -1637,7 +1637,7 @@
                 "caching": {
                     "type": "boolean",
                     "description": "Indicates whether to preserve the layer's raw data after initiation.",
-                    "default": "false"
+                    "default": false
                 }
             },
             "required": ["id", "layerType", "url"],
@@ -2892,12 +2892,12 @@
                             },
                             "pin": {
                                 "type": "boolean",
-                                "default": "false",
+                                "default": false,
                                 "description": "Whether to pin the panel as well (in addition to opening)."
                             }
                         },
                         "required": ["id"],
-                        "additionalProperties": "false"
+                        "additionalProperties": false
                     }
                 },
                 "reorderable": {
@@ -2906,7 +2906,7 @@
                     "default": true
                 }
             },
-            "additionalProperties": "false"
+            "additionalProperties": false
         },
         "layers": {
             "$ref": "#/$defs/layerList",

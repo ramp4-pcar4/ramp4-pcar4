@@ -283,11 +283,8 @@ export class CommonMapAPI extends APIScope {
         this.esriView.map = null;
         // TODO: explain why this is needed or remove
         this.esriView.container = null;
-        // @ts-expect-error TODO: explain why this is needed or remove
         this.esriView.spatialReference = null;
-        // @ts-expect-error TODO: explain why this is needed or remove
         this.esriView.extent = null;
-        // @ts-expect-error TODO: explain why this is needed or remove
         this.esriView.navigation = null;
         this.esriView.destroy();
         delete this.esriView;
