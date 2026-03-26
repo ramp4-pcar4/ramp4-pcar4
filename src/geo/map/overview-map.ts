@@ -60,6 +60,7 @@ export class OverviewMapAPI extends CommonMapAPI {
                 constraints: {
                     rotationEnabled: false
                 },
+                attributionVisible: false,
                 spatialReference: this._rampSR.toESRI(),
                 extent: this.$iApi.geo.map.getExtent().toESRI().expand(expandFactor) // use the expanded main map extent
             })
