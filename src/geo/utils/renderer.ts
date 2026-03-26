@@ -237,7 +237,7 @@ export class UniqueValueRenderer extends BaseRenderer {
     }
 }
 
-export class UniqueValueSymbolUnit extends BaseSymbolUnit {
+class UniqueValueSymbolUnit extends BaseSymbolUnit {
     matchValue: string;
 
     constructor(parent: BaseRenderer, value: string | number) {
@@ -300,7 +300,7 @@ export class ClassBreaksRenderer extends BaseRenderer {
     }
 }
 
-export class ClassBreaksSymbolUnit extends BaseSymbolUnit {
+class ClassBreaksSymbolUnit extends BaseSymbolUnit {
     /** min is exclusive, unless first class break */
     minValue: number;
 

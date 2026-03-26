@@ -13,7 +13,7 @@ import axios from 'redaxios';
 /**
  * Houses all the data for an active geosearch query
  */
-export class QueryPayload {
+class QueryPayload {
     /**
      * Collection of goodness
      */
