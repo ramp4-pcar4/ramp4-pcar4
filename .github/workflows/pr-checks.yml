@@ -18,7 +18,7 @@ jobs:
 
             - name: Try to restore node_modules folder from cache
               id: cache-node-modules
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                   path: ./node_modules
                   key: npm-${{ hashFiles('./package-lock.json') }}
