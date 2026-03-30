@@ -49,6 +49,13 @@ export const FocusContainer: Directive = {
  */
 class FocusContainerManager {
     element: HTMLElement;
+    isTabbingEnabled: boolean;
+    initialDisableTimeout: ReturnType<typeof setTimeout> | undefined;
+    mutationObserver: MutationObserver | undefined;
+    readonly keypressHandler: (event: KeyboardEvent) => void;
+    readonly clickHandler: () => void;
+    readonly focusOutHandler: (event: FocusEvent) => void;
+    readonly focusHandler: () => void;
 
     /**
      * Creates an instance of FocusContainerManager
@@ -58,21 +65,40 @@ class FocusContainerManager {
      */
     constructor(element: HTMLElement) {
         this.element = element;
+        this.isTabbingEnabled = false;
         this.element.toggleAttribute(CONTAINER_ATTR, true);
         this.element.tabIndex = 0;
-        setTimeout(() => this.disableTabbing(), 600); // elements of container need more time to render, otherwise they wont be detected
-        const focusManager = this;
-        this.element.addEventListener('keypress', function (event: KeyboardEvent) {
-            focusManager.onKeypress(event);
+        this.initialDisableTimeout = setTimeout(() => this.disableTabbing(), 600); // elements of container need more time to render, otherwise they wont be detected
+        this.keypressHandler = (event: KeyboardEvent) => {
+            this.onKeypress(event);
+        };
+        this.clickHandler = () => {
+            this.onClick();
+        };
+        this.focusOutHandler = (event: FocusEvent) => {
+            this.onFocusOut(event);
+        };
+        this.focusHandler = () => {
+            this.onFocus();
+        };
+
+        this.element.addEventListener('keypress', this.keypressHandler);
+        this.element.addEventListener('click', this.clickHandler);
+        this.element.addEventListener('focusout', this.focusOutHandler);
+        this.element.addEventListener('focus', this.focusHandler);
+
+        // Keep late-mounted or externally-retabbed descendants out of the tab order
+        // until the user explicitly activates the container.
+        this.mutationObserver = new MutationObserver(() => {
+            if (!this.isTabbingEnabled) {
+                this.disableTabbing();
+            }
         });
-        this.element.addEventListener('click', function () {
-            focusManager.onClick();
-        });
-        this.element.addEventListener('focusout', function (event: FocusEvent) {
-            focusManager.onFocusOut(event);
-        });
-        this.element.addEventListener('focus', function () {
-            focusManager.onFocus();
+        this.mutationObserver.observe(this.element, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['tabindex', LIST_ATTR, CONTAINER_ATTR, ICON_ATTR]
         });
     }
 
@@ -80,19 +106,14 @@ class FocusContainerManager {
      * Removes all of the event listeners on the container element.
      */
     removeEventListeners() {
-        const focusManager = this;
-        this.element.removeEventListener('keypress', function (event: KeyboardEvent) {
-            focusManager.onKeypress(event);
-        });
-        this.element.removeEventListener('click', function () {
-            focusManager.onClick();
-        });
-        this.element.removeEventListener('focusout', function (event: FocusEvent) {
-            focusManager.onFocusOut(event);
-        });
-        this.element.removeEventListener('focus', function () {
-            focusManager.onFocus();
-        });
+        if (this.initialDisableTimeout) {
+            clearTimeout(this.initialDisableTimeout);
+        }
+        this.mutationObserver?.disconnect();
+        this.element.removeEventListener('keypress', this.keypressHandler);
+        this.element.removeEventListener('click', this.clickHandler);
+        this.element.removeEventListener('focusout', this.focusOutHandler);
+        this.element.removeEventListener('focus', this.focusHandler);
     }
 
     /**
@@ -105,7 +126,7 @@ class FocusContainerManager {
             return;
         }
         if (event.key === KEYS.Enter || event.key === KEYS.Space) {
-            this.enableTabbing().focus();
+            this.enableTabbing()?.focus();
         }
     }
 
@@ -138,16 +159,21 @@ class FocusContainerManager {
      * Sets tabindex to -1 for EVERY element under the container element
      */
     disableTabbing() {
-        // Skip disabling tabbing if any element inside the container currently has focus
-        if (this.element.contains(document.activeElement)) {
+        // Keep current descendant focus intact while the user is actively traversing the container.
+        // The container itself is the locked state, so it should still trigger a rescan.
+        const activeElement = document.activeElement as HTMLElement | null;
+        if (activeElement && activeElement !== this.element && this.element.contains(activeElement)) {
             return;
         }
+        this.isTabbingEnabled = false;
         const tab_list = Array.prototype.filter.call(this.element.querySelectorAll(TABBABLE_TAGS), () => {
             return true;
         }) as HTMLElement[];
 
         tab_list.forEach((el: HTMLElement) => {
-            el.tabIndex = -1;
+            if (el.tabIndex !== -1) {
+                el.tabIndex = -1;
+            }
         });
     }
 
@@ -156,6 +182,7 @@ class FocusContainerManager {
      * @return {HTMLElement} the first valid element
      */
     enableTabbing() {
+        this.isTabbingEnabled = true;
         let first_tabbable_item: any = undefined;
         Array.prototype.map.call(this.element.querySelectorAll(TABBABLE_TAGS), el => {
             // !!el.offsetParent means it is visible
@@ -164,7 +191,9 @@ class FocusContainerManager {
                     (el.closest(FOCUS_ATTRS) === el && el.parentElement!.closest(FOCUS_ATTRS) === this.element)) &&
                 !!el.offsetParent
             ) {
-                el.tabIndex = 0;
+                if (el.tabIndex !== 0) {
+                    el.tabIndex = 0;
+                }
                 if (first_tabbable_item === undefined) {
                     first_tabbable_item = el;
                 }
