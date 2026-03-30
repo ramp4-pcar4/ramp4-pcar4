@@ -39,7 +39,7 @@ import type { BasemapChange } from '@/geo/api';
 const iApi = inject('iApi') as InstanceAPI;
 
 const panelStore = usePanelStore();
-const slider = useTemplateRef('slider');
+const slider = useTemplateRef<HTMLInputElement>('slider');
 const sliderPosition = ref<number>(45);
 const clientHeight = ref<number>(0);
 const refreshCounter = ref(0);
@@ -47,14 +47,14 @@ const swipeComponentPosition = ref<number>(50);
 const view = ref<EsriMapView>();
 const swipeComponent = ref<HTMLArcgisSwipeElement | null | undefined>();
 
-const linePosition = computed(() => {
-    const thumbWidth = 30 + refreshCounter.value - refreshCounter.value;
-    const sliderWidth = slider.value?.getBoundingClientRect()
+const linePosition = computed<string>(() => {
+    const thumbWidth: number = 30 + refreshCounter.value - refreshCounter.value;
+    const sliderWidth: number = slider.value?.getBoundingClientRect()
         ? slider.value?.getBoundingClientRect().right - slider.value?.getBoundingClientRect().left
         : 0;
-    const inputToPercentage = +sliderPosition.value / 90; // Percentage of the slider that the slider thumb has surpassed
-    const sliderOffset = (sliderWidth - thumbWidth) * inputToPercentage; // Number of pixels within slider that slider thumb has surpassed
-    const pos = (slider.value?.getBoundingClientRect().x ?? 0) + sliderOffset + (thumbWidth - 5.25) / 2; // Left position of the vertical line
+    const inputToPercentage: number = sliderPosition.value / 90; // Percentage of the slider that the slider thumb has surpassed
+    const sliderOffset: number = (sliderWidth - thumbWidth) * inputToPercentage; // Number of pixels within slider that slider thumb has surpassed
+    const pos: number = (slider.value?.getBoundingClientRect().x ?? 0) + sliderOffset + (thumbWidth - 5.25) / 2; // Left position of the vertical line
 
     // eslint-disable-next-line vue/no-side-effects-in-computed-properties
     swipeComponentPosition.value = (pos / iApi.$rootEl.clientWidth) * 100 + 0.2;

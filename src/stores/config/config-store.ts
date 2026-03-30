@@ -1,11 +1,23 @@
 import type { RampBasemapConfig } from '@/geo/api';
 import type { RampConfig, RampConfigs } from '@/types';
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, shallowRef, type Ref, type ShallowRef } from 'vue';
 import { useLayerStore } from '../layer';
 
-export const useConfigStore = defineStore('config', () => {
-    const config = ref<RampConfig>({
+type ConfigStoreDefinition = {
+    activeBasemapConfig: Ref<RampBasemapConfig | undefined>;
+    config: ShallowRef<RampConfig>;
+    registeredConfigs: Ref<Record<string, RampConfig>>;
+    registeredLangs: Ref<Record<string, string>>;
+    startingFixtures: Ref<Array<string>>;
+    getActiveConfig: (lang: string) => RampConfig;
+    newConfig: (newConfig: RampConfig) => void;
+    registerAllConfigs: (allConfigs: RampConfigs, allLangs: Array<string>) => void;
+    registerConfig: (config: RampConfig, lang: string) => void;
+};
+
+export const useConfigStore = defineStore('config', (): ConfigStoreDefinition => {
+    const config = shallowRef<RampConfig>({
         map: {
             lodSets: [],
             extentSets: [],

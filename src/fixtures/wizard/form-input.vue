@@ -194,7 +194,7 @@ import { useI18n } from 'vue-i18n';
 import { Treeselect } from '@ramp4-pcar4/vue3-treeselect';
 import '@ramp4-pcar4/vue3-treeselect/dist/vue3-treeselect.css';
 
-interface ValidationMsgs {
+export interface ValidationMsgs {
     required?: string;
     invalid?: string;
     failure?: string;
