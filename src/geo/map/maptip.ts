@@ -31,7 +31,7 @@ export class MaptipAPI extends APIScope {
         this.#currentCheck = screenPoint;
 
         // Get the graphic object
-        const graphicHit: GraphicHitResult | undefined = await this.$iApi.geo.map.getGraphicAtCoord(screenPoint);
+        const graphicHit = await this.$iApi.geo.map.getGraphicAtCoord(screenPoint);
 
         // cancel if new check came in while waiting for `getGraphicAtCoord`
         // If the same point is checked twice technically it can get out of sync but then we're checking the same point anyways
@@ -47,7 +47,7 @@ export class MaptipAPI extends APIScope {
             return;
         }
         // Get the layer
-        const layerInstance: LayerInstance | undefined = this.$iApi.geo.layer.getLayer(graphicHit.layerId);
+        const layerInstance = graphicHit.layer ?? this.$iApi.geo.layer.getLayer(graphicHit.layerId);
 
         if (layerInstance?.geomType != GeometryType.POLYGON) {
             // Check if the same maptip already exists
