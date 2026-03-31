@@ -704,7 +704,7 @@ export class AttribSource {
  * An object that is passed into the asynch attribute loader. The loader can read and update these properties on each iteration
  * @internal
  */
-export class AsynchAttribController {
+class AsynchAttribController {
     loadedCount: number;
     loadAbortFlag: boolean;
     loadIsDone: boolean;
@@ -721,7 +721,7 @@ export class AsynchAttribController {
  * The base class contains common definitions, but is expected to be inherited.
  * @internal
  */
-export class AttributeLoaderBase extends APIScope {
+class AttributeLoaderBase extends APIScope {
     protected aac: AsynchAttribController;
     protected loadPromise: Promise<AttributeSet> | undefined;
     protected details: AttributeLoaderDetails;
