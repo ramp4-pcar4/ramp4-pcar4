@@ -128,7 +128,7 @@ export class MapCaptionAPI extends APIScope {
                 attribution.logo!.link = newAttribution.logo.link || esriLogo.link;
                 attribution.logo!.value = newAttribution.logo.value || esriLogo.value;
             } else {
-                attribution!.logo!.disabled = true; // logo is disabled, so keep logo empty
+                attribution.logo!.disabled = true; // logo is disabled, so keep logo empty
             }
 
             // Check if attribution text does not exists. If so, set to default esri text

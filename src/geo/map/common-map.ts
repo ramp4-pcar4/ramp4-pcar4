@@ -283,11 +283,11 @@ export class CommonMapAPI extends APIScope {
         this.esriView.map = null;
         // TODO: explain why this is needed or remove
         this.esriView.container = null;
-        // @ts-expect-error TODO: explain why this is needed or remove
+        // @ts-expect-error I think this was needed to clear bindings/pointers/reactive nonsense. TODO dig into it at some point
         this.esriView.spatialReference = null;
-        // @ts-expect-error TODO: explain why this is needed or remove
+        // @ts-expect-error I think this was needed to clear bindings/pointers/reactive nonsense. TODO dig into it at some point
         this.esriView.extent = null;
-        // @ts-expect-error TODO: explain why this is needed or remove
+        // @ts-expect-error I think this was needed to clear bindings/pointers/reactive nonsense. TODO dig into it at some point
         this.esriView.navigation = null;
         this.esriView.destroy();
         delete this.esriView;

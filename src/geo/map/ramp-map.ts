@@ -181,6 +181,7 @@ export class MapAPI extends CommonMapAPI {
                     lods: <Array<EsriLOD>>lodSetConfig.lods,
                     rotationEnabled: false
                 },
+                attributionVisible: false,
                 spatialReference: this._rampSR.toESRI(),
                 extent: this._rampExtentSet.defaultExtent.toESRI(),
                 navigation: {
