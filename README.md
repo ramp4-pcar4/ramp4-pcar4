@@ -123,9 +123,8 @@ Static site generated in the `ts-docs` directory. Open `index.html` to preview.
 
 #### Important:
 
-1. Install [Volar](https://marketplace.visualstudio.com/items?itemName=vue.volar).
+1. Install [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=vue.volar).
 2. Disable/remove [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur).
-3. Type `@builtin typescript` in the search box on the VSCode extensions tab and **disable** "TypeScript and JavaScript Language Features". Volar has its own TS language server so we don't want to run two concurrently.
 
 ### public vs demos folders
 
