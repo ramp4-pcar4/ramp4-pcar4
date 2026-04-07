@@ -110,12 +110,20 @@ const props = defineProps({
 const temporary = computed((): Array<string> | undefined => (iApi.fixture.get('appbar') ? appbarStore.temporary : []));
 const mobileView = computed(() => panelStore.mobileView);
 const reorderable = computed(() => panelStore.reorderable);
+const FOCUS_CONTAINER_ATTR = 'focus-container';
+const ACTIVE_FOCUS_CONTAINER_ATTR = 'focus-container-active';
 // Managed focus descendants own keyboard traversal; wrapper should not become a competing tab stop.
-const MANAGED_FOCUS_SELECTOR = '[focus-list], [focus-container]';
+const MANAGED_FOCUS_SELECTOR = `[focus-list], [${FOCUS_CONTAINER_ATTR}]`;
 const isScrollable = (element: HTMLElement) => element.scrollHeight > element.clientHeight;
 const getManagedFocusTarget = (element: HTMLElement) => element.querySelector<HTMLElement>(MANAGED_FOCUS_SELECTOR);
 const getExpectedContentTabIndex = () => {
     if (!contentEl.value) {
+        return '-1';
+    }
+
+    const focusContainer = contentEl.value.closest<HTMLElement>(`[${FOCUS_CONTAINER_ATTR}]`);
+    // Keep the scroll wrapper locked until the surrounding focus container is explicitly activated.
+    if (focusContainer && !focusContainer.hasAttribute(ACTIVE_FOCUS_CONTAINER_ATTR)) {
         return '-1';
     }
 

@@ -7,10 +7,17 @@ const enum KEYS {
 }
 
 const CONTAINER_ATTR = 'focus-container';
+const ACTIVE_ATTR = 'focus-container-active';
 const LIST_ATTR = 'focus-list';
 const ICON_ATTR = 'focus-icon';
 const FOCUS_ATTRS = `[${LIST_ATTR}],[${CONTAINER_ATTR}]`;
 const TABBABLE_TAGS = `button,input,select,a,textarea,[contenteditable],.ag-tab-guard,[${LIST_ATTR}],[${CONTAINER_ATTR}],[${ICON_ATTR}],[tabindex]`;
+const OBSERVER_OPTIONS: MutationObserverInit = {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['tabindex', LIST_ATTR, CONTAINER_ATTR, ICON_ATTR]
+};
 
 let managers: FocusContainerManager[] = [];
 
@@ -67,6 +74,7 @@ class FocusContainerManager {
         this.element = element;
         this.isTabbingEnabled = false;
         this.element.toggleAttribute(CONTAINER_ATTR, true);
+        this.element.toggleAttribute(ACTIVE_ATTR, false);
         this.element.tabIndex = 0;
         this.initialDisableTimeout = setTimeout(() => this.disableTabbing(), 600); // elements of container need more time to render, otherwise they wont be detected
         this.keypressHandler = (event: KeyboardEvent) => {
@@ -94,12 +102,7 @@ class FocusContainerManager {
                 this.disableTabbing();
             }
         });
-        this.mutationObserver.observe(this.element, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeFilter: ['tabindex', LIST_ATTR, CONTAINER_ATTR, ICON_ATTR]
-        });
+        this.observeMutations();
     }
 
     /**
@@ -109,6 +112,7 @@ class FocusContainerManager {
         if (this.initialDisableTimeout) {
             clearTimeout(this.initialDisableTimeout);
         }
+        this.setTabbingEnabled(false);
         this.mutationObserver?.disconnect();
         this.element.removeEventListener('keypress', this.keypressHandler);
         this.element.removeEventListener('click', this.clickHandler);
@@ -165,15 +169,17 @@ class FocusContainerManager {
         if (activeElement && activeElement !== this.element && this.element.contains(activeElement)) {
             return;
         }
-        this.isTabbingEnabled = false;
+        this.setTabbingEnabled(false);
         const tab_list = Array.prototype.filter.call(this.element.querySelectorAll(TABBABLE_TAGS), () => {
             return true;
         }) as HTMLElement[];
 
-        tab_list.forEach((el: HTMLElement) => {
-            if (el.tabIndex !== -1) {
-                el.tabIndex = -1;
-            }
+        this.withPausedObserver(() => {
+            tab_list.forEach((el: HTMLElement) => {
+                if (el.tabIndex !== -1) {
+                    el.tabIndex = -1;
+                }
+            });
         });
     }
 
@@ -182,23 +188,44 @@ class FocusContainerManager {
      * @return {HTMLElement} the first valid element
      */
     enableTabbing() {
-        this.isTabbingEnabled = true;
+        this.setTabbingEnabled(true);
         let first_tabbable_item: any = undefined;
-        Array.prototype.map.call(this.element.querySelectorAll(TABBABLE_TAGS), el => {
-            // !!el.offsetParent means it is visible
-            if (
-                (el.closest(FOCUS_ATTRS) === this.element ||
-                    (el.closest(FOCUS_ATTRS) === el && el.parentElement!.closest(FOCUS_ATTRS) === this.element)) &&
-                !!el.offsetParent
-            ) {
-                if (el.tabIndex !== 0) {
-                    el.tabIndex = 0;
+        this.withPausedObserver(() => {
+            Array.prototype.map.call(this.element.querySelectorAll(TABBABLE_TAGS), el => {
+                // !!el.offsetParent means it is visible
+                if (
+                    (el.closest(FOCUS_ATTRS) === this.element ||
+                        (el.closest(FOCUS_ATTRS) === el &&
+                            el.parentElement!.closest(FOCUS_ATTRS) === this.element)) &&
+                    !!el.offsetParent
+                ) {
+                    if (el.tabIndex !== 0) {
+                        el.tabIndex = 0;
+                    }
+                    if (first_tabbable_item === undefined) {
+                        first_tabbable_item = el;
+                    }
                 }
-                if (first_tabbable_item === undefined) {
-                    first_tabbable_item = el;
-                }
-            }
+            });
         });
         return first_tabbable_item;
+    }
+
+    private setTabbingEnabled(enabled: boolean) {
+        this.isTabbingEnabled = enabled;
+        this.element.toggleAttribute(ACTIVE_ATTR, enabled);
+    }
+
+    private observeMutations() {
+        this.mutationObserver?.observe(this.element, OBSERVER_OPTIONS);
+    }
+
+    private withPausedObserver(callback: () => void) {
+        this.mutationObserver?.disconnect();
+        try {
+            callback();
+        } finally {
+            this.observeMutations();
+        }
     }
 }
