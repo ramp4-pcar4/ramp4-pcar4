@@ -154,21 +154,18 @@ const loadMetadata = () => {
                     )
                 );
 
-                //@ts-expect-error TODO: explain why this is needed or remove
                 metadataStore.response = textContainer.outerHTML;
             }
         });
     } else if (props.payload.type === 'html') {
         requestContent(props.payload.url).then(r => {
             metadataStore.status = r.status;
-            //@ts-expect-error TODO: explain why this is needed or remove
             metadataStore.response = r.response;
         });
     } else if (props.payload.type === 'md') {
         requestContent(props.payload.url).then(r => {
             metadataStore.status = r.status;
-            //@ts-expect-error TODO: explain why this is needed or remove
-            metadataStore.response = marked(r.response);
+            metadataStore.response = marked(r.response, { async: false });
         });
     }
 };
@@ -181,7 +178,7 @@ const loadMetadata = () => {
  * @param {Array} params an array which never seems to be set and is never used
  * @return {Promise} a promise resolving with an HTML fragment
  */
-const loadFromURL = (xmlUrl: string, params: any[]) => {
+const loadFromURL = async (xmlUrl: string, params: any[]) => {
     let XSLT;
     if (props.payload.xmlType && props.payload.xmlType === 'DCAT') {
         XSLT = iApi.language === 'en' ? XSLT_DCAT_en : XSLT_DCAT_fr;
@@ -193,13 +190,11 @@ const loadFromURL = (xmlUrl: string, params: any[]) => {
     XSLT = XSLT.replace(/\{\{([\w.]+)\}\}/g, (_: string, tag: string) => t(tag));
 
     if (!cache[xmlUrl]) {
-        return requestContent(xmlUrl).then(xmlData => {
-            cache[xmlUrl] = xmlData.response;
-            return applyXSLT(cache[xmlUrl], XSLT, params);
-        });
-    } else {
-        return Promise.resolve(applyXSLT(cache[xmlUrl], XSLT, params));
+        const xmlData = await requestContent(xmlUrl);
+        cache[xmlUrl] = xmlData.response;
     }
+
+    return applyXSLT(cache[xmlUrl], XSLT, params);
 };
 
 /**

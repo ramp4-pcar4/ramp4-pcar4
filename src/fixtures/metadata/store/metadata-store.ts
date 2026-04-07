@@ -3,7 +3,7 @@ import { ref } from 'vue';
 
 export const useMetadataStore = defineStore('metadata', () => {
     const status = ref('');
-    const response = ref({ type: 'LineString', coordinates: [] });
+    const response = ref('');
 
     return { status, response };
 });

@@ -606,7 +606,7 @@ const controlAvailable = (control: LegendControl | LayerControl): boolean | unde
 };
 
 const markdownToHtml = (md: string) => {
-    return marked(md);
+    return marked(md, { async: false });
 };
 
 const toggleExpand = () => {

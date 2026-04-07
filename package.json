@@ -55,7 +55,7 @@
         "flatgeobuf": "^4.4.0",
         "jszip": "^3.10.1",
         "linkify-html": "^4.1.0",
-        "marked": "^17.0.5",
+        "marked": "^18.0.2",
         "pinia": "^3.0.4",
         "popper-max-size-modifier": "^0.2.0",
         "proj4": "^2.20.2",
