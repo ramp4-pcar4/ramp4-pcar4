@@ -78,16 +78,16 @@ jobs:
 
             - name: Upload artifact
               if: env.changes == 'true'
-              uses: actions/upload-pages-artifact@v3
+              uses: actions/upload-pages-artifact@v4
               with:
                   path: '.'
                   retention-days: 1
 
             - name: Setup Pages
               if: env.changes == 'true'
-              uses: actions/configure-pages@v5
+              uses: actions/configure-pages@v6
 
             - name: Deploy to GitHub Pages
               if: env.changes == 'true'
               id: deployment
-              uses: actions/deploy-pages@v4
+              uses: actions/deploy-pages@v5
