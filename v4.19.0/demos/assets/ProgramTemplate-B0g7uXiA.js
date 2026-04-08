@@ -1,0 +1,1 @@
+import{t as e}from"./Program-oAY3wefg.js";function t(t,n,r,i=``){return new e(t,i+n.vertexShader,i+n.fragmentShader,r)}export{t};

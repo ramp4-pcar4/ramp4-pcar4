@@ -1,0 +1,1 @@
+import{_ as a}from"./preload-helper-DMGCcr4D.js";import{gD as n}from"./main-BGlWJBv6.js";let t=null;async function u(){return t||(t=o()),t}async function o(){const r=await a(()=>import("./bundle-Ddgqihk6.js"),[],import.meta.url);return await r.default({module_or_path:n("esri/libs/parquet/pkg/bundle_bg.wasm")}),r}export{u as s};

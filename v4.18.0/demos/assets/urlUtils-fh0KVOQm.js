@@ -1,0 +1,1 @@
+import{k as a}from"./main-BGlWJBv6.js";import"./preload-helper-DMGCcr4D.js";const s=/\.(\w+)$/;function p(e){const t=new URL(e).pathname.match(s);return!t||t.length<2?null:t[1].toUpperCase()}const c=async(e,t)=>{const o=await a(e,{...t,method:"head"}),n=o?.getHeader?.("Content-Type");return n?n.split("/")[1]:null};export{c as getDatasetFormat,p as guessExtensionFromURI};

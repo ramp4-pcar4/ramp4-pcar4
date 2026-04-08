@@ -1,0 +1,1 @@
+import{n as e}from"./vec3-wFzKlETV.js";import{n as t}from"./LineSnappingHint-BB4E8KjC.js";var n=class n extends t{constructor(e,t,n,r,i=3){super(r,i),this.previousVertex=e,this.centerVertex=t,this.nextVertex=n}equals(t){return t instanceof n&&e(this.previousVertex,t.previousVertex)&&e(this.centerVertex,t.centerVertex)&&e(this.nextVertex,t.nextVertex)}};export{n as t};

@@ -1,0 +1,59 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "thing_name": "Priority A"
+            },
+            "geometry": {
+                "coordinates": [
+                    [
+                        [-99.1177, 58.9126],
+                        [-100.9308, 55.7472],
+                        [-98.8637, 56.9477],
+                        [-96.6496, 56.1142],
+                        [-99.1177, 58.9126]
+                    ]
+                ],
+                "type": "Polygon"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "thing_name": "Priority B"
+            },
+            "geometry": {
+                "coordinates": [
+                    [
+                        [-89.353, 60.9638],
+                        [-87.6331, 58.0278],
+                        [-84.5366, 60.7483],
+                        [-87.1628, 59.857],
+                        [-89.353, 60.9638]
+                    ]
+                ],
+                "type": "Polygon"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "thing_name": "Priority C"
+            },
+            "geometry": {
+                "coordinates": [
+                    [
+                        [-125.7696, 59.1173],
+                        [-122.1297, 58.1059],
+                        [-124.5975, 56.7919],
+                        [-115.4387, 58.4719],
+                        [-125.7696, 59.1173]
+                    ]
+                ],
+                "type": "Polygon"
+            }
+        }
+    ]
+}

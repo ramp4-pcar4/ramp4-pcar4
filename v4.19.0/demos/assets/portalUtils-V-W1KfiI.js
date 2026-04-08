@@ -1,0 +1,1 @@
+import{t as e}from"./Portal-iCYz41S5.js";function t(t,n){return t===null?n:new e({url:t.field(`url`)})}export{t};

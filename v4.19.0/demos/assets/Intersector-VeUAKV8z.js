@@ -1,0 +1,1 @@
+var e=class{constructor(e){this.layerViewUid=e}},t=class extends e{constructor(e,t){super(e),this.graphicUid=t}},n=class extends t{constructor(e,t,n,r,i){super(e,t),this.layerViewUid=e,this.graphicUid=t,this.triangleNr=n,this.baseBoundingSphere=r,this.numLodLevels=i}};export{n as t};

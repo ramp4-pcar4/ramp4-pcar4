@@ -1,0 +1,1 @@
+import{t as e}from"./request-AhP-o5BM.js";async function t(t,n){return(await e(t,{responseType:`image`,...n})).data}export{t};

@@ -1,0 +1,1 @@
+import{n as e}from"./jsonMap-DTnSoY1F.js";var t=new e({none:`none`,standardDeviation:`standard-deviation`,histogramEqualization:`histogram-equalization`,minMax:`min-max`,percentClip:`percent-clip`,sigmoid:`sigmoid`}),n={0:`none`,3:`standardDeviation`,4:`histogramEqualization`,5:`minMax`,6:`percentClip`,9:`sigmoid`};export{t as n,n as t};
