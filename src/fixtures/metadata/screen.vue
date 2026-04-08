@@ -234,10 +234,13 @@ const applyXSLT = (xmlString: string, xslString: string, params: any[]) => {
             }
         };
 
-        if (props.payload.treatXmlAsMarkdown) {
-            output.firstChild.innerHTML = marked.parse(output.firstChild.innerHTML);
-        } else {
-            output.firstChild.innerHTML = linkifyHtml(output.firstChild.innerHTML, options);
+        const outputElement = output.firstElementChild as HTMLElement | null;
+        if (outputElement) {
+            if (props.payload.treatXmlAsMarkdown) {
+                outputElement.innerHTML = marked.parse(outputElement.innerHTML, { async: false });
+            } else {
+                outputElement.innerHTML = linkifyHtml(outputElement.innerHTML, options);
+            }
         }
     }
     // ('-')7 IE retirement (╯°□°）╯︵ ┻━┻

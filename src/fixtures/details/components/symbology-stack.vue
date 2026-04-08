@@ -11,8 +11,8 @@
                     v-for="(item, idx) in stack.slice(0, 3).reverse()"
                     :key="idx"
                 >
-                    <span v-if="stack[idx].svgcode" class="symbologyIcon w-28 h-28" v-html="stack[idx].svgcode"></span>
-                    <img v-else-if="stack[idx].imgUrl" class="symbologyIcon w-28 h-28" :src="stack[idx].imgUrl" />
+                    <span v-if="item.svgcode" class="symbologyIcon w-28 h-28" v-html="item.svgcode"></span>
+                    <img v-else-if="item.imgUrl" class="symbologyIcon w-28 h-28" :src="item.imgUrl" />
                 </div>
             </div>
 
@@ -43,6 +43,7 @@
 // includes symbol stacking, loading spinners, result count badge
 
 import type { LayerInstance } from '@/api';
+import type { LegendSymbology } from '@/geo/api';
 
 import { onMounted, type PropType, ref } from 'vue';
 
@@ -51,7 +52,7 @@ const props = defineProps({
     result: { type: Object as any, required: true }
 });
 
-const stack = ref<any>([]); // ref instead of reactive to maintain reactivity after promise
+const stack = ref<Array<LegendSymbology>>([]); // ref instead of reactive to maintain reactivity after promise
 
 onMounted(() => {
     stack.value = props.layer.legend;
