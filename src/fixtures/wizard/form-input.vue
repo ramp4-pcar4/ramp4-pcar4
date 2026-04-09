@@ -118,7 +118,7 @@
                 <div v-else>
                     <select
                         class="block border-solid border-gray-300 w-full p-3 overflow-y-auto"
-                        v-bind:class="size && 'configure-select'"
+                        :class="size ? 'configure-select' : ''"
                         :size="size"
                         :value="modelValue"
                         @input="handleServiceSelection(size, $event)"
