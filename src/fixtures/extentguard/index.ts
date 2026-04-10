@@ -1,7 +1,8 @@
 import { Extent } from '@/geo/api';
 import type { BasemapChange } from '@/geo/api';
 import { ExtentguardAPI } from './api/extentguard';
-import { type ExtentguardConfig, useExtentguardStore } from './store';
+import { useExtentguardStore } from './store';
+import type { ExtentguardConfig } from './store';
 import { GlobalEvents } from '@/api';
 
 interface ClipResult {

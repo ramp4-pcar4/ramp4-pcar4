@@ -1,5 +1,7 @@
-import { GlobalEvents, type InstanceAPI, TileLayer } from '@/api';
-import { type Graphic, LayerType, type RampBasemapConfig } from '@/geo/api';
+import { GlobalEvents, TileLayer } from '@/api';
+import type { InstanceAPI } from '@/api';
+import { LayerType } from '@/geo/api';
+import type { Graphic, RampBasemapConfig } from '@/geo/api';
 import { useConfigStore } from '@/stores/config';
 import { FOG_HILIGHT_LAYER_NAME } from '../hilight-defs';
 import { LiftHilightMode } from './lift-hilight-mode';

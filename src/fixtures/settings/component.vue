@@ -3,7 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import { markRaw, reactive, type PropType } from 'vue';
+import { markRaw, reactive } from 'vue';
+import type { PropType } from 'vue';
 
 // Import control templates.
 import SliderControl from './templates/slider-control.vue';

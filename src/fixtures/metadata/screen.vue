@@ -42,8 +42,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject, onBeforeUnmount, onMounted, reactive, ref, watch, type PropType } from 'vue';
-import { GlobalEvents, InstanceAPI, LayerInstance, type PanelInstance } from '@/api';
+import { computed, inject, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+import type { PropType } from 'vue';
+import { GlobalEvents, InstanceAPI, LayerInstance } from '@/api';
+import type { PanelInstance } from '@/api';
 import type { MetadataCache, MetadataPayload, MetadataResult } from './store';
 import { useMetadataStore } from './store';
 import { marked } from 'marked';

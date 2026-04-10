@@ -1,5 +1,6 @@
 import { DataLayer, InstanceAPI } from '@/api/internal';
-import { LayerType, type RampLayerConfig } from '@/geo/api';
+import { LayerType } from '@/geo/api';
+import type { RampLayerConfig } from '@/geo/api';
 
 /**
  * A layer class which implements a Data Layer with data from a Compact JSON source.

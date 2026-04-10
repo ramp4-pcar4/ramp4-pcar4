@@ -45,7 +45,8 @@
 import type { LayerInstance } from '@/api';
 import type { LegendSymbology } from '@/geo/api';
 
-import { onMounted, type PropType, ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import type { PropType } from 'vue';
 
 const props = defineProps({
     layer: { type: Object as PropType<LayerInstance>, required: true },

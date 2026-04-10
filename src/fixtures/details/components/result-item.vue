@@ -92,9 +92,10 @@
 // has support for the different supported formats, and applying vue templates
 
 import { useLayerStore } from '@/stores/layer';
-import { NotificationType } from '@/api';
-import { DetailsItemInstance, useDetailsStore, type DetailsFieldItem } from '../store';
+import { DetailsItemInstance, useDetailsStore } from '../store';
+import type { DetailsFieldItem } from '../store';
 import { computed, inject, nextTick, onBeforeMount, onBeforeUnmount, ref, resolveDynamicComponent, watch } from 'vue';
+import type { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import linkifyHtml from 'linkify-html';
 
@@ -102,8 +103,8 @@ import ESRIDefault from '../templates/esri-default.vue';
 import HTMLDefault from '../templates/html-default.vue';
 
 import type { FieldDefinition } from '@/geo/api';
+import { NotificationType } from '@/api';
 import type { IdentifyItem, InstanceAPI, LayerInstance } from '@/api';
-import type { PropType } from 'vue';
 
 const layerStore = useLayerStore();
 const props = defineProps({

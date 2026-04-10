@@ -1,7 +1,8 @@
 import type { RampBasemapConfig } from '@/geo/api';
 import type { RampConfig, RampConfigs } from '@/types';
 import { defineStore } from 'pinia';
-import { ref, shallowRef, type Ref, type ShallowRef } from 'vue';
+import { ref, shallowRef } from 'vue';
+import type { Ref, ShallowRef } from 'vue';
 import { useLayerStore } from '../layer';
 
 type ConfigStoreDefinition = {

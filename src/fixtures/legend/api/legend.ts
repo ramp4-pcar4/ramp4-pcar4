@@ -1,6 +1,8 @@
 import { FixtureInstance, LayerInstance } from '@/api';
-import { LayerType, type TreeNode } from '@/geo/api';
-import { type LegendConfig, useLegendStore } from '../store';
+import { LayerType } from '@/geo/api';
+import type { TreeNode } from '@/geo/api';
+import { useLegendStore } from '../store';
+import type { LegendConfig } from '../store';
 import { LayerItem } from '../store/layer-item';
 import { LegendItem } from '../store/legend-item';
 import { SectionItem } from '../store/section-item';

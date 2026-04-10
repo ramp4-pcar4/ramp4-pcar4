@@ -1,5 +1,5 @@
-import { createI18n, type I18n } from 'vue-i18n';
-import type { IntlDateTimeFormats, IntlNumberFormats, LocaleMessages, VueMessageType } from 'vue-i18n';
+import { createI18n } from 'vue-i18n';
+import type { IntlDateTimeFormats, IntlNumberFormats, I18n, LocaleMessages, VueMessageType } from 'vue-i18n';
 import messages from './lang.csv';
 
 export type I18nComponentOptions = {
