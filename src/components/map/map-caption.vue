@@ -6,21 +6,6 @@
 
         <notifications-caption-button class="sm:block display-none" />
 
-        <span class="relative top-2 sm:top-1 ml-4 sm:ml-0 shrink-0" v-if="showLogo()">
-            <a
-                class="pointer-events-auto cursor-pointer"
-                :href="attribution?.logo!.link"
-                target="_blank"
-                :aria-label="attribution?.logo!.altText"
-            >
-                <img
-                    class="object-contain h-18 sm:h-26"
-                    :src="attribution?.logo!.value"
-                    :alt="attribution?.logo!.altText"
-                />
-            </a>
-        </span>
-
         <span
             v-if="chainDisplay"
             class="relative ml-10 top-2 text-sm sm:text-base font-mono flex items-center gap-2"
@@ -231,9 +216,6 @@ onUpdated(() => {
         }
     });
 });
-
-const showLogo = () =>
-    attribution.value?.logo?.link && attribution.value?.logo?.value && !attribution.value?.logo?.disabled;
 
 const changeLang = (lang: string) => {
     if (iApi.$i18n.locale.value != lang) {

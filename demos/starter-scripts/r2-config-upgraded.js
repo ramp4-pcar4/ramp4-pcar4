@@ -428,9 +428,6 @@ const r2config = {
                     text: {
                         enabled: true,
                         value: 'Custom Attribution'
-                    },
-                    logo: {
-                        enabled: true
                     }
                 }
             },

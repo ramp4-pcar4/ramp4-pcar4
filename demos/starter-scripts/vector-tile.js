@@ -154,9 +154,6 @@ let config = {
                         attribution: {
                             text: {
                                 disabled: true
-                            },
-                            logo: {
-                                disabled: true
                             }
                         }
                     },

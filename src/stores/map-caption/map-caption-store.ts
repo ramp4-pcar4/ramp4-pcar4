@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useMapCaptionStore = defineStore('map-caption', () => {
-    const attribution = ref<Attribution>({ text: {}, logo: {} });
+    const attribution = ref<Attribution>({ text: {} });
     const scale = ref<ScaleBar>({});
     const coords = ref<MapCoords>({});
     const langtoggle = ref<LangToggle>({});
@@ -22,10 +22,6 @@ export const useMapCaptionStore = defineStore('map-caption', () => {
         // to access the value of a ref
         attribution.value.text!.value = newAttribution!.text!.value;
         attribution.value.text!.disabled = newAttribution!.text!.disabled;
-        attribution.value.logo!.altText = newAttribution!.logo!.altText;
-        attribution.value.logo!.link = newAttribution!.logo!.link;
-        attribution.value.logo!.value = newAttribution!.logo!.value;
-        attribution.value.logo!.disabled = newAttribution!.logo!.disabled;
     }
 
     return {

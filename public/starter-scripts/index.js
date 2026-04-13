@@ -145,9 +145,6 @@ let config = {
                         attribution: {
                             text: {
                                 disabled: true
-                            },
-                            logo: {
-                                disabled: true
                             }
                         }
                     },
@@ -562,9 +559,6 @@ let config = {
                         tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857',
                         attribution: {
                             text: {
-                                disabled: true
-                            },
-                            logo: {
                                 disabled: true
                             }
                         }
