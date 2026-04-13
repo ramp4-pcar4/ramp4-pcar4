@@ -316,18 +316,11 @@ function mapUpgrader(r2Map: any, r4c: any): void {
             // process basemap attribution
             if (r2bm.attribution) {
                 r4bm.attribution = {
-                    text: {},
-                    logo: {}
+                    text: {}
                 };
                 if (r2bm.attribution.text) {
                     r4bm.attribution.text!.disabled = !r2bm.attribution.text.enabled;
                     r4bm.attribution.text!.value = r2bm.attribution.text.value;
-                }
-                if (r2bm.attribution.logo) {
-                    r4bm.attribution.logo!.disabled = !r2bm.attribution.logo.enabled;
-                    r4bm.attribution.logo!.altText = r2bm.attribution.logo.altText;
-                    r4bm.attribution.logo!.value = r2bm.attribution.logo.value;
-                    r4bm.attribution.logo!.link = r2bm.attribution.logo.link;
                 }
             }
 

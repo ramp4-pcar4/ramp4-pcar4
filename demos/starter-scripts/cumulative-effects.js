@@ -146,9 +146,6 @@ const enConfig = {
                 attribution: {
                     text: {
                         disabled: true
-                    },
-                    logo: {
-                        disabled: true
                     }
                 }
             },
