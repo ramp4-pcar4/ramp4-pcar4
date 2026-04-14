@@ -182,7 +182,7 @@ jobs:
                   git push origin HEAD --force
 
             - name: Upload artifact
-              uses: actions/upload-pages-artifact@v4
+              uses: actions/upload-pages-artifact@v5
               with:
                   path: demo-page
                   retention-days: 1
