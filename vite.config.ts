@@ -10,6 +10,11 @@ import dts from 'vite-plugin-dts';
 
 const distName = resolve(__dirname, process.env.DIST_NAME || 'dist');
 
+const browserBuildDefines = {
+    'process.env.NODE_ENV': JSON.stringify('production'),
+    'process.env.ESRI_INTERNAL': JSON.stringify(false)
+};
+
 const baseConfig = {
     plugins: [
         vue({
@@ -50,6 +55,7 @@ const baseConfig = {
 
 function inlineConfig() {
     return mergeConfig(baseConfig, {
+        define: browserBuildDefines,
         build: {
             sourcemap: true,
             lib: {
@@ -67,6 +73,7 @@ function inlineConfig() {
 
 function esDynamicConfig() {
     const config = mergeConfig(baseConfig, {
+        define: browserBuildDefines,
         build: {
             outDir: `${distName}/esDynamic`,
             copyPublicDir: false,
@@ -86,6 +93,7 @@ function npmBundleConfig() {
     const externalImports = Object.keys(pkg.dependencies).map(dep => new RegExp(`^${dep}`));
 
     const config = mergeConfig(baseConfig, {
+        define: browserBuildDefines,
         build: {
             outDir: `${distName}/bundler`,
             copyPublicDir: false,
@@ -107,6 +115,7 @@ function testBuildConfig() {
     delete baseConfig.build.lib;
 
     const config = mergeConfig(baseConfig, {
+        define: browserBuildDefines,
         publicDir: false,
         root: 'demos',
         build: {
