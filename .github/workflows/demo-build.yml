@@ -148,9 +148,27 @@ jobs:
 
             - name: Move the built project and docs into the demo-page folder for deployment
               run: |
-                  mv ramp/dist/* demo-page/${{ github.ref_name }}
-                  mv ramp/vite-docs/* demo-page/${{ github.ref_name }}/docs
-                  mv ramp/ts-docs/* demo-page/${{ github.ref_name }}/docs/api-tech-docs
+                  TARGET_DIR="demo-page/${{ github.ref_name }}"
+
+                  if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+                      # Tagged releases do not publish every dist build type.
+                      # Only the esBuild assets are copied to keep the demo site a manageable size.
+                      for dir in demos docs file-layers help; do
+                          if [[ -d "ramp/dist/${dir}" ]]; then
+                              mkdir -p "${TARGET_DIR}/${dir}"
+                              cp -a "ramp/dist/${dir}/." "${TARGET_DIR}/${dir}/"
+                          fi
+                      done
+
+                      if [[ -f ramp/dist/ramp.css ]]; then
+                          cp ramp/dist/ramp.css "${TARGET_DIR}/"
+                      fi
+                  else
+                      mv ramp/dist/* "${TARGET_DIR}"
+                  fi
+
+                  mv ramp/vite-docs/* "${TARGET_DIR}/docs"
+                  mv ramp/ts-docs/* "${TARGET_DIR}/docs/api-tech-docs"
 
             - name: Commit and squash to the demo-page branch
               run: |
