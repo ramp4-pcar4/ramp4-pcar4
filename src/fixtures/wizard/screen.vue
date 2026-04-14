@@ -264,10 +264,10 @@ import {
     onMounted,
     reactive,
     ref,
-    type PropType,
     useTemplateRef,
     useId
 } from 'vue';
+import type { PropType } from 'vue';
 
 import { ColorPicker } from 'vue-accessible-color-picker';
 

@@ -1,5 +1,6 @@
 import { NortharrowAPI } from './api/northarrow';
-import { type NortharrowConfig, useNortharrowStore } from './store/index';
+import { useNortharrowStore } from './store/index';
+import type { NortharrowConfig } from './store/index';
 import NortharrowV from './northarrow.vue';
 
 export const POLE_MARKER_LAYER_ID: string = 'RampPoleMarker';

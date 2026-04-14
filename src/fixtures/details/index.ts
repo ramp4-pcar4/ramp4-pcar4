@@ -1,5 +1,6 @@
 import { DetailsAPI } from './api/details';
-import { type DetailsConfig, useDetailsStore } from './store';
+import { useDetailsStore } from './store';
+import type { DetailsConfig } from './store';
 import messages from './lang/lang.csv?raw';
 
 import { markRaw } from 'vue';

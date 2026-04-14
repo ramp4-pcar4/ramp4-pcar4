@@ -1,7 +1,7 @@
 import MapnavV from './mapnav.vue';
 import { MapnavAPI } from './api/mapnav';
-import { useMapnavStore, type MapnavItemSet } from './store';
-import type { MapnavFixtureConfig } from './store';
+import { useMapnavStore } from './store';
+import type { MapnavFixtureConfig, MapnavItemSet } from './store';
 import { GlobalEvents } from '@/api';
 import messages from './lang/lang.csv?raw';
 

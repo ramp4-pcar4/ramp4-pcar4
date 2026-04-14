@@ -1,5 +1,6 @@
 import { OverviewmapAPI } from './api/overviewmap';
-import { type OverviewmapConfig, useOverviewmapStore } from './store/index';
+import { useOverviewmapStore } from './store/index';
+import type { OverviewmapConfig } from './store/index';
 import OverviewmapV from './overviewmap.vue';
 import messages from './lang/lang.csv?raw';
 

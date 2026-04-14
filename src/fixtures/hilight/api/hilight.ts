@@ -1,6 +1,7 @@
 import { CommonGraphicLayer, FixtureInstance } from '@/api/internal';
 import { Graphic, LayerType } from '@/geo/api';
-import { DEFAULT_CONFIG, HILIGHT_LAYER_NAME, HilightMode, type HilightConfig } from './hilight-defs';
+import { DEFAULT_CONFIG, HILIGHT_LAYER_NAME, HilightMode } from './hilight-defs';
+import type { HilightConfig } from './hilight-defs';
 import { BaseHilightMode } from './hilight-mode/base-hilight-mode';
 import { FogHilightMode } from './hilight-mode/fog-hilight-mode';
 import { GlowHilightMode } from './hilight-mode/glow-hilight-mode';

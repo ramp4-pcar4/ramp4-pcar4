@@ -1,7 +1,8 @@
 import messages from './lang/lang.csv?raw';
 import ScrollguardV from './map-scrollguard.vue';
 import { ScrollguardAPI } from './api/scrollguard';
-import { type ScrollguardConfig, useScrollguardStore } from './store';
+import { useScrollguardStore } from './store';
+import type { ScrollguardConfig } from './store';
 
 class ScrollguardFixture extends ScrollguardAPI {
     added(): void {

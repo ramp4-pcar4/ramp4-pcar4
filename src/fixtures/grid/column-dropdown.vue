@@ -69,7 +69,8 @@
 
 <script setup lang="ts">
 import type { InstanceAPI } from '@/api';
-import { inject, type PropType } from 'vue';
+import { inject } from 'vue';
+import type { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const iApi = inject('iApi') as InstanceAPI;

@@ -37,7 +37,8 @@
 // it does not generate the symbology entries that appear when expanded.
 
 import type { LegendSymbology } from '@/geo/api';
-import { toRaw, onMounted, type PropType, ref } from 'vue';
+import { toRaw, onMounted, ref } from 'vue';
+import type { PropType } from 'vue';
 import type { LayerItem } from '../store/layer-item';
 
 const props = defineProps({

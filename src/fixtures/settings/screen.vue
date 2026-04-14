@@ -116,7 +116,8 @@
 import type { InstanceAPI, PanelInstance } from '@/api';
 import { GlobalEvents, LayerInstance } from '@/api/internal';
 import { LayerControl } from '@/geo/api';
-import { inject, onBeforeUnmount, onMounted, reactive, ref, watch, type PropType } from 'vue';
+import { inject, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
+import type { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 import type { SettingsAPI } from './api/settings';
 import SettingsComponent from './component.vue';

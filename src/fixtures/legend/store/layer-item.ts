@@ -1,4 +1,5 @@
-import { GlobalEvents, LayerInstance, type InstanceAPI } from '@/api';
+import { GlobalEvents, LayerInstance } from '@/api';
+import type { InstanceAPI } from '@/api';
 import { CoreFilter, DrawState, LayerControl } from '@/geo/api';
 import type { LegendSymbology } from '@/geo/api';
 import { LegendItem, LegendType } from './legend-item';
