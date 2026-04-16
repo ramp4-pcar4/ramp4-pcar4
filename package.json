@@ -95,7 +95,7 @@
         "prettier": "^3.3.2",
         "sass": "^1.50.0",
         "semver": "^7.6.3",
-        "tailwindcss": "^3.4.11",
+        "tailwindcss": "^4.2.2",
         "typedoc": "^0.28.18",
         "typescript": "^6.0.2",
         "vite": "^8.0.8",
