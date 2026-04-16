@@ -1,0 +1,10 @@
+version: 2
+updates:
+    - package-ecosystem: 'npm'
+      directory: '/'
+      schedule:
+          interval: 'daily'
+      # Cooldown settings matching .npmrc's min-release-age=3
+      # Security updates bypass the cooldown
+      cooldown:
+          default-days: 3
