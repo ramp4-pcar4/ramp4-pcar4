@@ -2453,7 +2453,7 @@
         },
         "attribution": {
             "type": "object",
-            "description": "Custom attribution and logo for associated basemap when selected.",
+            "description": "Custom attribution for associated basemap when selected.",
             "properties": {
                 "text": {
                     "type": "object",
@@ -2469,34 +2469,9 @@
                             "description": "Contains the attribution value. If empty, it will use copyright text from the server."
                         }
                     }
-                },
-                "logo": {
-                    "type": "object",
-                    "properties": {
-                        "disabled": {
-                            "type": "boolean",
-                            "default": false,
-                            "description": "Specifies if basemap attribution logo is disabled."
-                        },
-                        "altText": {
-                            "type": "string",
-                            "default": "",
-                            "description": "Alternate text for the image."
-                        },
-                        "value": {
-                            "type": "string",
-                            "default": "",
-                            "description": "URL for the image."
-                        },
-                        "link": {
-                            "type": "string",
-                            "default": "",
-                            "description": "URL to go to when clicked."
-                        }
-                    }
                 }
             },
-            "required": ["text", "logo"],
+            "required": ["text"],
             "unevaluatedProperties": false
         },
         "extentSet": {
