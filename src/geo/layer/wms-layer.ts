@@ -177,10 +177,9 @@ export class WmsLayer extends MapLayer {
         // TODO add full documentation for options parameter
 
         if (options.geometry.type !== GeometryType.POINT) {
-            // TODO too harsh? maybe a console warning and generic no result?
-            //      just thinking if someone attempts a fancy identify on a map
-            //      that happens to have a WMS on it, it will never work.
-            throw new Error('a point must be used for WMS Identify');
+            // WMS GetFeatureInfo is inherently point-based. Non-point map identifies should not break
+            // vector layers that can answer against the supplied geometry.
+            return [];
         }
 
         // early kickout check. not loaded/error

@@ -329,6 +329,21 @@ export interface MapClick {
 }
 
 /**
+ * Allows optional tools to adjust or suppress map identify geometry without making identify depend on those tools.
+ */
+export interface IdentifyGeometryProvider {
+    /**
+     * Return true when this provider wants the map identify request blocked.
+     */
+    suppressIdentify?(mapClick: MapClick): boolean;
+
+    /**
+     * Return an alternate geometry to identify against for the supplied map click.
+     */
+    getIdentifyGeometry(mapClick: MapClick): BaseGeometry | undefined;
+}
+
+/**
  * Event payload for a Map Move
  */
 export interface MapMove {
