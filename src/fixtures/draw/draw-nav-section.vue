@@ -1,5 +1,6 @@
 <template>
     <div
+        v-if="filteredDrawingTools.length"
         :class="{ active: drawStore.activeTool || drawStore.activeTool == '' }"
         class="mapnav-section bg-white-75 hover:bg-white"
     >
@@ -64,12 +65,17 @@ const drawingTools = [
 
 // only show tools listed in config
 const filteredDrawingTools = computed(() => {
-    const fTools = drawingTools.filter(tool => drawStore.supportedTypes.some(item => item.type === tool.type));
-    fTools.push({
-        type: 'edit',
-        icon: markRaw(defineAsyncComponent(() => import('./icons/edit-icon.vue')))
-    });
-    return fTools;
+    if (!drawStore.configParsed) {
+        return [];
+    }
+
+    return [
+        ...drawingTools.filter(tool => drawStore.supportedTypes.some(item => item.type === tool.type)),
+        {
+            type: 'edit',
+            icon: markRaw(defineAsyncComponent(() => import('./icons/edit-icon.vue')))
+        }
+    ];
 });
 
 const toggleTool = (toolType: ActiveToolList) => {

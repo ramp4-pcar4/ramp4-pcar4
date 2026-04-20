@@ -26,6 +26,7 @@ import EsriPoint from '@arcgis/core/geometry/Point';
 import EsriPolygon from '@arcgis/core/geometry/Polygon';
 import EsriPolyline from '@arcgis/core/geometry/Polyline';
 import EsriSpatialReference from '@arcgis/core/geometry/SpatialReference';
+import * as EsriIntersectsOperator from '@arcgis/core/geometry/operators/intersectsOperator';
 import { fromJSON as EsriGeometryFromJson } from '@arcgis/core/geometry/support/jsonUtils';
 
 import type EsriFeatureLayer from '@arcgis/core/layers/FeatureLayer';
@@ -261,6 +262,7 @@ export {
     type EsriImageryLayerProperties,
     type EsriImageryTileLayer,
     type EsriImageryTileLayerProperties,
+    EsriIntersectsOperator,
     type EsriLayer,
     type EsriLayerLayerviewCreateEvent,
     type EsriLayerView,

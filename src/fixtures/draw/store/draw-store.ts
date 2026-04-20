@@ -8,6 +8,7 @@ export type ActiveToolList = 'circle' | 'point' | 'polygon' | 'polyline' | 'rect
 
 export const useDrawStore = defineStore('draw', () => {
     const supportedTypes = ref<DrawTypeConfig[]>([]);
+    const configParsed = ref(false);
     const activeTool = ref<ActiveToolList>(null);
     const graphics = reactive<any[]>([]);
     const selectedGraphicId = ref<string | null>(null);
@@ -15,6 +16,7 @@ export const useDrawStore = defineStore('draw', () => {
 
     function setSupportedTypes(types: DrawTypeConfig[]) {
         supportedTypes.value.splice(0, supportedTypes.value.length, ...types);
+        configParsed.value = true;
     }
 
     function setActiveTool(tool: ActiveToolList) {
@@ -64,6 +66,7 @@ export const useDrawStore = defineStore('draw', () => {
 
     return {
         supportedTypes,
+        configParsed,
         activeTool,
         graphics,
         selectedGraphicId,
