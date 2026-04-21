@@ -67,9 +67,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, inject } from 'vue';
+import { computed, inject, toRaw } from 'vue';
 import type { PropType } from 'vue';
 import type { InstanceAPI, PanelInstance } from '@/api';
+import { GlobalEvents } from '@/api';
 import { Polygon, SpatialReference } from '@/geo/api';
 import { useGeosearchStore } from './store';
 import GeosearchBar from './search-bar.vue';
@@ -100,6 +101,8 @@ const fsaLookupUrl = computed<string>(() => geosearchStore.GSservice.config.fsaU
 
 // zoom in to a clicked result
 const zoomIn = async (result: ISearchResult): Promise<void> => {
+    let zoomPromise: Promise<void> | undefined;
+
     // use fancy fsa boundary service if appropriate
     if (result.flav === 'fsa' && fsaLookupUrl.value) {
         const targetedUrl = fsaLookupUrl.value.replace(FSATOKEN, result.name);
@@ -115,10 +118,7 @@ const zoomIn = async (result: ISearchResult): Promise<void> => {
                 SpatialReference.fromConfig(rRes.spatialReference), // technically not from a config, but config follows esri spec. this server result is raw, does not have esri class wrapper
                 true
             );
-            iApi.geo.map.zoomMapTo(poly);
-
-            // donethanks
-            return;
+            zoomPromise = iApi.geo.map.zoomMapTo(poly);
         }
 
         // solution if the response time here becomes too noticeable.
@@ -128,21 +128,27 @@ const zoomIn = async (result: ISearchResult): Promise<void> => {
         // 4. the logic here changes to check if result.esriPoly exists. if so, makes the new Polygon() and zoomies it
     }
 
-    const zoom = new Polygon(
-        'zoomies',
-        [
+    if (!zoomPromise) {
+        // we found nothing in the FSA logic above. do a normie zoom.
+        const zoom = new Polygon(
+            'zoomies',
             [
-                [result.bbox[0], result.bbox[1]],
-                [result.bbox[0], result.bbox[3]],
-                [result.bbox[2], result.bbox[3]],
-                [result.bbox[2], result.bbox[1]],
-                [result.bbox[0], result.bbox[1]]
-            ]
-        ],
-        SpatialReference.latLongSR(),
-        true
-    );
-    iApi.geo.map.zoomMapTo(zoom);
+                [
+                    [result.bbox[0], result.bbox[1]],
+                    [result.bbox[0], result.bbox[3]],
+                    [result.bbox[2], result.bbox[3]],
+                    [result.bbox[2], result.bbox[1]],
+                    [result.bbox[0], result.bbox[1]]
+                ]
+            ],
+            SpatialReference.latLongSR(),
+            true
+        );
+        zoomPromise = iApi.geo.map.zoomMapTo(zoom);
+    }
+
+    // raise event that we zoomed to zomthing.
+    iApi.event.emit(GlobalEvents.GEOSEARCH_ZOOM, { zoomPromise, searchItem: toRaw(result) });
 };
 
 /**

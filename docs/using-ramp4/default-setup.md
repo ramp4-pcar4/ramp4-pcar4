@@ -71,11 +71,12 @@ These events will be present if the associated core fixtures are running
 | Event Name                           | Payload                                                 | Event Announces                                                |
 | ------------------------------------ | ------------------------------------------------------- | -------------------------------------------------------------- |
 | DETAILS_TOGGLE<br>'details/toggle'   | { data: any, uid: string, format: string }, boolean (optional)         | A feature's details panel toggle was requested with optional force open/close       |
-| GRID_TOGGLE<br>'grid/toggle'         | _layer_: LayerInstance, _open_: boolean (optional)        | Grid panel toggle was requested with optional force open/close |
+| GEOSEARCH_ZOOM<br>'geosearch/zoom'   | _zoomPromise_: Promise, _searchItem_: ISearchResult     | An item in GeoSearch was selected and zoomed to |
+| GRID_TOGGLE<br>'grid/toggle'         | _layer_: LayerInstance, _open_: boolean (optional)      | Grid panel toggle was requested with optional force open/close |
 | HELP_TOGGLE<br>'help/toggle'         | boolean (optional)                                      | Help panel toggle was requested with optional force open/close |
-| METADATA_TOGGLE<br>'metadata/toggle' | { type: string, layerName: string, url: string, _layer_: LayerInstance }, open: boolean (optional)        | Metadata panel toggle was requested with optional force open/close                                 |
+| METADATA_TOGGLE<br>'metadata/toggle' | { type: string, layerName: string, url: string, layer: LayerInstance }, open: boolean (optional)        | Metadata panel toggle was requested with optional force open/close                                 |
 | REORDER_TOGGLE<br>'reorder/toggle'   | boolean (optional)                                      | Layer reorder panel toggle was requested with optional force open/close |
-| SETTINGS_TOGGLE<br>'settings/toggle' | _layer_: LayerInstance, _open_: boolean (optional)        | Settings panel toggle was requested for a layer with optional force open/close |
+| SETTINGS_TOGGLE<br>'settings/toggle' | _layer_: LayerInstance, _open_: boolean (optional)      | Settings panel toggle was requested for a layer with optional force open/close |
 | WIZARD_TOGGLE<br>'wizard/open'       | boolean (optional)                                      | Wizard panel toggle was requested with optional force open/close |
 
 ## Default Events Handlers
