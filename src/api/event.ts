@@ -69,6 +69,12 @@ export enum GlobalEvents {
     FIXTURE_REMOVED = 'fixture/removed',
 
     /**
+     * Fires when a result in GeoSearch is selected and zoomed to.
+     * Payload: `({ zoomPromise: Promise<void>, searchItem: ISearchResult })`
+     */
+    GEOSEARCH_ZOOM = 'geosearch/zoom',
+
+    /**
      * Fires when a request is issued to toggle (show if hidden, hide if showing) the grid of attributes.
      * Payload: `(uid: string, force?: boolean)`
      */
