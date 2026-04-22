@@ -11,7 +11,8 @@
             @click="onClickFunction()"
             v-focus-item
             :content="tooltip"
-            :aria-label="typeof tooltip === 'string' ? tooltip : ''"
+            :aria-label="ariaLabel || (typeof tooltip === 'string' ? tooltip : '')"
+            :aria-pressed="ariaPressed"
             v-tippy="{ placement: 'left' }"
         >
             <slot></slot>
@@ -28,6 +29,14 @@ defineProps({
     tooltip: {
         type: [String, Boolean],
         default: false
+    },
+    ariaLabel: {
+        type: String,
+        default: ''
+    },
+    ariaPressed: {
+        type: Boolean,
+        default: undefined
     },
     showOutline: {
         type: Boolean,
