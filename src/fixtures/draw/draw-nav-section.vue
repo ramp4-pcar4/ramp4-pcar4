@@ -1,7 +1,7 @@
 <template>
     <div
         v-if="filteredDrawingTools.length"
-        :class="{ active: drawStore.activeTool || drawStore.activeTool == '' }"
+        :class="{ active: drawStore.activeTool || drawStore.activeTool == '' || drawStore.measurementsEnabled }"
         class="mapnav-section bg-white-75 hover:bg-white"
     >
         <mapnav-button
@@ -17,6 +17,16 @@
         >
             <component :is="tool.icon" class="fill-current w-32 h-20"></component>
         </mapnav-button>
+        <mapnav-button
+            :onClickFunction="toggleMeasurements"
+            :tooltip="t('draw.measurements.tooltip')"
+            :ariaLabel="t('draw.measurements.tooltip')"
+            :ariaPressed="drawStore.measurementsEnabled"
+            :showOutline="showOutline"
+            :class="{ 'active-tool': drawStore.measurementsEnabled }"
+        >
+            <measure-icon class="fill-current w-32 h-20"></measure-icon>
+        </mapnav-button>
     </div>
 </template>
 
@@ -26,6 +36,7 @@ import type { ActiveToolList } from './store';
 import { useI18n } from 'vue-i18n';
 import { markRaw, defineAsyncComponent, computed, inject, useTemplateRef } from 'vue';
 import { InstanceAPI } from '@/api/internal';
+import MeasureIcon from './icons/measure-icon.vue';
 
 defineProps({
     showOutline: {
@@ -86,6 +97,10 @@ const toggleTool = (toolType: ActiveToolList) => {
         // Activate the selected tool
         drawStore.setActiveTool(toolType);
     }
+};
+
+const toggleMeasurements = () => {
+    drawStore.toggleMeasurements();
 };
 
 const mouseFocus = () => {

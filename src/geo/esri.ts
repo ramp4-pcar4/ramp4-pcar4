@@ -26,7 +26,20 @@ import EsriPoint from '@arcgis/core/geometry/Point';
 import EsriPolygon from '@arcgis/core/geometry/Polygon';
 import EsriPolyline from '@arcgis/core/geometry/Polyline';
 import EsriSpatialReference from '@arcgis/core/geometry/SpatialReference';
+import { execute as EsriAreaOperator } from '@arcgis/core/geometry/operators/areaOperator';
+import { execute as EsriCentroidOperator } from '@arcgis/core/geometry/operators/centroidOperator';
+import {
+    execute as EsriGeodeticAreaOperator,
+    isLoaded as EsriGeodeticAreaOperatorIsLoaded,
+    load as EsriGeodeticAreaOperatorLoad
+} from '@arcgis/core/geometry/operators/geodeticAreaOperator';
+import {
+    execute as EsriGeodeticLengthOperator,
+    isLoaded as EsriGeodeticLengthOperatorIsLoaded,
+    load as EsriGeodeticLengthOperatorLoad
+} from '@arcgis/core/geometry/operators/geodeticLengthOperator';
 import * as EsriIntersectsOperator from '@arcgis/core/geometry/operators/intersectsOperator';
+import { execute as EsriLengthOperator } from '@arcgis/core/geometry/operators/lengthOperator';
 import { fromJSON as EsriGeometryFromJson } from '@arcgis/core/geometry/support/jsonUtils';
 
 import type EsriFeatureLayer from '@arcgis/core/layers/FeatureLayer';
@@ -78,6 +91,7 @@ import EsriPictureMarkerSymbol from '@arcgis/core/symbols/PictureMarkerSymbol';
 import EsriSimpleFillSymbol from '@arcgis/core/symbols/SimpleFillSymbol';
 import EsriSimpleLineSymbol from '@arcgis/core/symbols/SimpleLineSymbol';
 import EsriSimpleMarkerSymbol from '@arcgis/core/symbols/SimpleMarkerSymbol';
+import EsriTextSymbol from '@arcgis/core/symbols/TextSymbol';
 import type { Symbol2DUnion as EsriSymbol } from '@arcgis/core/symbols/types';
 import { fromJSON as EsriSymbolFromJson } from '@arcgis/core/symbols/support/jsonUtils';
 
@@ -235,7 +249,9 @@ class EsriAPI {
 export {
     EsriAPI,
     type EsriArcadeExecutor,
+    EsriAreaOperator,
     type EsriBasemap,
+    EsriCentroidOperator,
     type EsriClassBreakInfo,
     type EsriClassBreaksRenderer,
     type EsriCollection,
@@ -250,6 +266,12 @@ export {
     type EsriFeatureReductionCluster,
     type EsriField,
     type EsriFieldProperties,
+    EsriGeodeticAreaOperator,
+    EsriGeodeticAreaOperatorIsLoaded,
+    EsriGeodeticAreaOperatorLoad,
+    EsriGeodeticLengthOperator,
+    EsriGeodeticLengthOperatorIsLoaded,
+    EsriGeodeticLengthOperatorLoad,
     type EsriGeometry,
     EsriGeometryFromJson,
     type EsriGoToOptions2D,
@@ -266,6 +288,7 @@ export {
     type EsriLayer,
     type EsriLayerLayerviewCreateEvent,
     type EsriLayerView,
+    EsriLengthOperator,
     type EsriLOD,
     type EsriMap,
     type EsriMapImageLayer,
@@ -297,6 +320,7 @@ export {
     type EsriSublayer,
     type EsriSymbol,
     EsriSymbolFromJson,
+    EsriTextSymbol,
     type EsriTileLayer,
     type EsriTileLayerProperties,
     type EsriUniqueValueInfo,

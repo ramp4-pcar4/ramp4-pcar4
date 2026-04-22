@@ -27,18 +27,27 @@ draw.button.polyline,Draw line,1,Dessiner une ligne,0
 draw.button.polygon,Draw polygon,1,Dessiner un polygone,0
 draw.button.rectangle,Draw rectangle,1,Dessiner un rectangle,0
 draw.button.circle,Draw circle,1,Dessiner un cercle,0
+draw.button.measurements,Toggle measurements,1,Afficher ou masquer les mesures,0
 draw.point.tooltip,Draw point,1,Dessiner un point,0
 draw.polyline.tooltip,Draw polyline,1,Dessiner une polyligne,0
 draw.polygon.tooltip,Draw polygon,1,Dessiner un polygone,0
 draw.circle.tooltip,Draw circle,1,Dessiner un cercle,0
 draw.rectangle.tooltip,Draw rectangle,1,Dessiner un rectangle,0
 draw.edit.tooltip,Edit Mode,1,Mode édition,0
+draw.measurements.tooltip,Toggle measurements,1,Afficher ou masquer les mesures,0
+draw.measurements.enabled,Measurements displayed,1,Mesures affichees,0
+draw.measurements.disabled,Measurements hidden,1,Mesures masquees,0
+draw.measurements.summary,Draw measurements. {measurements},1,Mesures de dessin. {measurements},0
+draw.measurements.none,No draw measurements available,1,Aucune mesure disponible,0
+draw.measurements.segment,Segment {index} distance {distance},1,Segment {index} distance {distance},0
+draw.measurements.area,Area {area},1,Superficie {area},0
 draw.keyboard.namespace,Draw Tools,1,Outils de dessin,0
 draw.keyboard.key.point,Draw a point,1,Dessine un point,0
 draw.keyboard.key.polyline,Draw a line,1,Dessine une ligne,0
 draw.keyboard.key.polygon,Draw a polygon,1,Dessine un polygone,0
 draw.keyboard.key.circle,Draw a circle,1,Dessine un cercle,0
 draw.keyboard.key.rectangle,Draw a rectangle,1,Dessine un rectangle,0
+draw.keyboard.key.measurements,Toggle measurements,1,Afficher ou masquer les mesures,0
 draw.keyboard.key.edit,Edit geometry,1,Mode édition,0
 draw.graphic.moved,Graphic moved,1,Graphique déplacé,0
 draw.shape,shape,1,forme,0
