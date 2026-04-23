@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue';
 import VitePluginI18n from './scripts/vite-plugin-i18n';
 import VitePluginVersion from './scripts/vite-plugin-version';
 import ViteMinifyEsPlugin from './scripts/vite-minify-es-plugin';
+import ViteCssFontRemovalPlugin from './scripts/vite-css-font-remover-plugin';
 import { resolve } from 'path';
 import pkg from './package.json';
 import dts from 'vite-plugin-dts';
@@ -54,7 +55,7 @@ const baseConfig = {
 } as Record<string, any>;
 
 function inlineConfig() {
-    return mergeConfig(baseConfig, {
+    const config = mergeConfig(baseConfig, {
         define: browserBuildDefines,
         build: {
             sourcemap: true,
@@ -69,6 +70,9 @@ function inlineConfig() {
             }
         }
     });
+
+    config.plugins.push(ViteCssFontRemovalPlugin(`${distName}/ramp.css`));
+    return config;
 }
 
 function esDynamicConfig() {
@@ -85,7 +89,7 @@ function esDynamicConfig() {
         },
         rolldown: { legalComments: 'none' }
     });
-    config.plugins.push(ViteMinifyEsPlugin());
+    config.plugins.push(ViteMinifyEsPlugin(), ViteCssFontRemovalPlugin(`${distName}/esDynamic/ramp.css`));
     return config;
 }
 
