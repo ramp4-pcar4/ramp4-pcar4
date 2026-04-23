@@ -6,6 +6,8 @@ import messages from './lang/lang.csv?raw';
 import { GlobalEvents } from '@/api';
 
 class DrawFixture extends DrawAPI {
+    private unregisterIdentifyGeometryProvider?: () => void;
+
     async init() {
         // Add language messages
         Object.entries(messages).forEach(value => this.$iApi.$i18n.mergeLocaleMessage(...value));
@@ -29,10 +31,19 @@ class DrawFixture extends DrawAPI {
     }
 
     async added() {
+        if (!this.unregisterIdentifyGeometryProvider) {
+            this.unregisterIdentifyGeometryProvider = this.$iApi.geo.map.registerIdentifyGeometryProvider(this);
+        }
+
         // Re-initialize on map create or config change
         this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
             this.init();
         });
+    }
+
+    removed() {
+        this.unregisterIdentifyGeometryProvider?.();
+        this.unregisterIdentifyGeometryProvider = undefined;
     }
 }
 

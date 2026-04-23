@@ -66,8 +66,10 @@ const buildLocaleRecord = (messageKey: string): Record<string, string> => {
 // Sketch widget and graphics layer reference variables
 let sketch: HTMLArcgisSketchElement | null = null;
 const sketchEl = useTemplateRef<HTMLArcgisSketchElement>('sketchEl');
-let sketchHandler: { remove: () => void } | null = null;
 let graphicsLayer: EsriGraphicsLayer | null = null;
+let viewClickHandler: { remove: () => void } | null = null;
+let sketchEventsRegistered = false;
+let drawToolsInitId = 0;
 
 // Variables for selected and highlighted graphics
 let selectedGraphic: EsriGraphic | null = null;
@@ -82,6 +84,22 @@ let multiPointVertices: Vertex[] = [];
 
 const rampEventHandlers = reactive<Array<string>>([]);
 let keyboardNamespace: string | undefined;
+
+const onSketchCreate = (event: Event) => {
+    handleSketchCreateEvent((event as CustomEvent<EsriSketchCreateEvent>).detail);
+};
+
+const onSketchUpdate = (event: Event) => {
+    handleSketchUpdateEvent((event as CustomEvent<EsriSketchUpdateEvent>).detail);
+};
+
+const cancelSketch = () => {
+    try {
+        sketch?.cancel();
+    } catch (e) {
+        console.warn('Unable to cancel draw sketch.', e);
+    }
+};
 
 async function handleKeyboardShortcuts() {
     const keyboardNav = iApi.keyboardNav;
@@ -210,7 +228,7 @@ watch(
     (newId, oldId) => {
         if (!sketch || !graphicsLayer) return;
         if (!newId) {
-            sketch.cancel();
+            cancelSketch();
             highlightSelectedGraphic();
         } else if (newId !== oldId) {
             const graphics = graphicsLayer.graphics.toArray();
@@ -708,26 +726,35 @@ const handleViewClick = async (event: EsriViewClickEvent) => {
 };
 
 const initializeDrawTools = async () => {
+    const initId = ++drawToolsInitId;
     await iApi.geo.map.viewPromise;
+
+    if (initId !== drawToolsInitId || !sketchEl.value || !iApi.geo.map.esriView) {
+        return;
+    }
 
     // Create or get the graphics layer for drawings
     if (!iApi.geo.layer.getLayer(DRAW_GRAPHICS_LAYER_ID)) {
-        // @ts-expect-error esri type mismatch
-        graphicsLayer = iApi.geo.layer.createLayer({
+        const drawLayer = iApi.geo.layer.createLayer({
             id: DRAW_GRAPHICS_LAYER_ID,
             layerType: LayerType.GRAPHIC,
             cosmetic: true,
             system: true,
             url: ''
         });
-        // @ts-expect-error esri type mismatch
-        await iApi.geo.map.addLayer(graphicsLayer);
+        await iApi.geo.map.addLayer(drawLayer);
+        if (initId !== drawToolsInitId || !iApi.geo.map.esriView) {
+            return;
+        }
+        graphicsLayer = drawLayer.esriLayer as EsriGraphicsLayer;
     } else {
         // @ts-expect-error esri type mismatch
         graphicsLayer = iApi.geo.layer.getLayer(DRAW_GRAPHICS_LAYER_ID)!.esriLayer;
     }
-    // @ts-expect-error esri type mismatch
-    if (graphicsLayer?.esriLayer) graphicsLayer = graphicsLayer.esriLayer;
+
+    if (!graphicsLayer) {
+        return;
+    }
 
     Object.assign(sketchEl.value!, {
         view: iApi.geo.map.esriView!,
@@ -743,19 +770,22 @@ const initializeDrawTools = async () => {
     });
     iApi.geo.map.esriView!.ui.add(sketchEl.value!, 'bottom-right');
 
-    sketchEl.value?.addEventListener('arcgisCreate', e => handleSketchCreateEvent(e.detail));
-    sketchEl.value?.addEventListener('arcgisUpdate', e => handleSketchUpdateEvent(e.detail));
-
-    sketchHandler = {
-        remove: () => sketchEl.value?.removeEventListener('arcgisCreate', e => handleSketchCreateEvent(e.detail))
-    };
+    if (!sketchEventsRegistered) {
+        sketchEl.value.addEventListener('arcgisCreate', onSketchCreate);
+        sketchEl.value.addEventListener('arcgisUpdate', onSketchUpdate);
+        sketchEventsRegistered = true;
+    }
 
     sketch = sketchEl.value;
 
     // Add DOM event listeners
-    iApi.geo.map.esriView!.on('click', handleViewClick);
+    viewClickHandler = iApi.geo.map.esriView!.on('click', handleViewClick);
     document.addEventListener('keydown', handleNavigationKeyDown);
     document.addEventListener('keydown', handleGraphicKeyboardEdit, { capture: true });
+
+    if (drawStore.activeTool && drawStore.activeTool !== 'edit') {
+        sketch.create(drawStore.activeTool);
+    }
 };
 
 const cleanupKeyboardShortcuts = () => {
@@ -769,21 +799,53 @@ const cleanupKeyboardShortcuts = () => {
     keyboardNamespace = undefined;
 };
 
-const cleanupDrawTools = () => {
-    cleanupKeyboardShortcuts();
+type CleanupDrawToolsOptions = {
+    cleanupKeyboard?: boolean;
+    clearActiveTool?: boolean;
+    destroySketch?: boolean;
+};
+
+const cleanupDrawTools = ({
+    cleanupKeyboard = true,
+    clearActiveTool = false,
+    destroySketch = true
+}: CleanupDrawToolsOptions = {}) => {
+    drawToolsInitId++;
+
+    if (cleanupKeyboard) {
+        cleanupKeyboardShortcuts();
+    }
+
+    if (viewClickHandler) {
+        viewClickHandler.remove();
+        viewClickHandler = null;
+    }
 
     if (sketch) {
         if (iApi.geo.map.esriView) {
             iApi.geo.map.esriView.ui.remove(sketch);
         }
-        if (sketchHandler) {
-            sketchHandler.remove();
+        cancelSketch();
+        if (destroySketch) {
+            sketch.destroy();
         }
-        sketch.destroy();
+    }
+
+    if (sketchEventsRegistered && sketchEl.value) {
+        sketchEl.value.removeEventListener('arcgisCreate', onSketchCreate);
+        sketchEl.value.removeEventListener('arcgisUpdate', onSketchUpdate);
+        sketchEventsRegistered = false;
     }
 
     document.removeEventListener('keydown', handleNavigationKeyDown);
     document.removeEventListener('keydown', handleGraphicKeyboardEdit, { capture: true });
+
+    selectedGraphic = null;
+    highlightSelectedGraphic(undefined);
+    drawStore.clearSelection();
+    if (clearActiveTool && drawStore.activeTool) {
+        drawStore.setActiveTool(null);
+    }
 
     multiPointMode = false;
     multiPointGraphic = null;
@@ -823,7 +885,7 @@ const handleSketchUpdateEvent = (event: EsriSketchUpdateEvent) => {
 
     if (event.state === 'start') {
         if (drawStore.activeTool !== 'edit') {
-            sketch!.cancel();
+            cancelSketch();
             return;
         }
 
@@ -860,6 +922,20 @@ onMounted(() => {
             cleanupDrawTools();
         })
     );
+    rampEventHandlers.push(
+        iApi.event.on(GlobalEvents.MAP_REFRESH_START, () => {
+            cleanupDrawTools({
+                cleanupKeyboard: false,
+                clearActiveTool: true,
+                destroySketch: false
+            });
+        })
+    );
+    rampEventHandlers.push(
+        iApi.event.on(GlobalEvents.MAP_REFRESH_END, () => {
+            initializeDrawTools();
+        })
+    );
 });
 
 /* --------------------------------------------------------------------------
@@ -868,13 +944,19 @@ onMounted(() => {
 watch(
     () => drawStore.activeTool,
     newTool => {
-        sketch!.cancel();
+        if (!sketch) return;
+
+        cancelSketch();
         highlightSelectedGraphic();
         multiPointGraphic = null;
         multiPointVertices = [];
         multiPointMode = false;
         if (newTool && newTool != 'edit') {
-            sketch!.create(newTool);
+            try {
+                sketch.create(newTool);
+            } catch (e) {
+                console.warn('Unable to start draw sketch.', e);
+            }
         }
     }
 );

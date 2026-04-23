@@ -9,6 +9,7 @@ import {
     DefPromise,
     Extent,
     ExtentSet,
+    GeometryType,
     InitiationState,
     LayerIdentifyMode,
     LayerState,
@@ -17,7 +18,9 @@ import {
     ScaleSet
 } from '@/geo/api';
 import type {
+    BaseGeometry,
     GraphicHitResult,
+    IdentifyGeometryProvider,
     IdentifyParameters,
     LayerTimes,
     MapClick,
@@ -38,7 +41,6 @@ import { MapCaptionAPI } from './caption';
 import { markRaw, toRaw } from 'vue';
 import { useConfigStore } from '@/stores/config';
 import { debounce, throttle } from 'es-toolkit/function';
-import type { DrawAPI } from '@/fixtures/draw/api/drawApi';
 import type { HilightAPI } from '@/fixtures/hilight/api/hilight';
 
 export class MapAPI extends CommonMapAPI {
@@ -59,6 +61,11 @@ export class MapAPI extends CommonMapAPI {
      * @private
      */
     private _hilighLightLayerId: string = '';
+
+    /**
+     * Optional providers that can supply alternate geometries for map identify requests.
+     */
+    private identifyGeometryProviders: Array<IdentifyGeometryProvider> = [];
 
     /**
      * Map wide defaults for layer times. Layers can override.
@@ -1247,6 +1254,70 @@ export class MapAPI extends CommonMapAPI {
         return unaggregatedHitResults.flat();
     }
 
+    /**
+     * Register an optional provider that can adjust map identify geometry.
+     *
+     * @param provider provider to register
+     * @returns function that unregisters the provider
+     */
+    registerIdentifyGeometryProvider(provider: IdentifyGeometryProvider): () => void {
+        if (!this.identifyGeometryProviders.includes(provider)) {
+            this.identifyGeometryProviders.push(provider);
+        }
+
+        return () => this.unregisterIdentifyGeometryProvider(provider);
+    }
+
+    /**
+     * Unregister a map identify geometry provider.
+     *
+     * @param provider provider to unregister
+     */
+    unregisterIdentifyGeometryProvider(provider: IdentifyGeometryProvider): void {
+        const providerIdx = this.identifyGeometryProviders.indexOf(provider);
+        if (providerIdx !== -1) {
+            this.identifyGeometryProviders.splice(providerIdx, 1);
+        }
+    }
+
+    /**
+     * Checks whether any optional provider wants to suppress the current identify request.
+     *
+     * @param mapClick map click that initiated identify
+     * @returns true if identify should be skipped
+     */
+    private isIdentifySuppressed(mapClick: MapClick): boolean {
+        return this.identifyGeometryProviders.some(provider => {
+            try {
+                return !!provider.suppressIdentify?.(mapClick);
+            } catch (e) {
+                console.warn('Identify geometry provider failed while checking suppression.', e);
+                return false;
+            }
+        });
+    }
+
+    /**
+     * Gets the first alternate identify geometry offered by an optional provider.
+     *
+     * @param mapClick map click that initiated identify
+     * @returns alternate identify geometry, if any provider supplies one
+     */
+    private getIdentifyProviderGeometry(mapClick: MapClick): BaseGeometry | undefined {
+        for (const provider of this.identifyGeometryProviders.slice().reverse()) {
+            try {
+                const geometry = provider.getIdentifyGeometry(mapClick);
+                if (geometry) {
+                    return geometry;
+                }
+            } catch (e) {
+                console.warn('Identify geometry provider failed while resolving geometry.', e);
+            }
+        }
+
+        return undefined;
+    }
+
     // pending https://github.com/ramp4-pcar4/ramp4-pcar4/issues/130
     // commenting out to avoid any undecided constants being exposed
     /*
@@ -1297,12 +1368,8 @@ export class MapAPI extends CommonMapAPI {
             mapClick = targetPoint;
         }
 
-        const drawFixture = this.$iApi.fixture.get<DrawAPI>('draw');
-        if (drawFixture && this.esriView) {
-            // disable identify if any draw tools are active OR if a graphic is selected for editing
-            if (drawFixture.store.activeTool || drawFixture.store.selectedGraphicId !== null) {
-                return { click: mapClick, results: [] };
-            }
+        if (this.isIdentifySuppressed(mapClick)) {
+            return { click: mapClick, results: [] };
         }
 
         // Don't perform an identify request if the layers array hasn't been established yet.
@@ -1310,10 +1377,13 @@ export class MapAPI extends CommonMapAPI {
             return { click: mapClick, results: [] };
         }
 
+        const identifyGeometry = this.getIdentifyProviderGeometry(mapClick) ?? mapClick.mapPoint;
+
         // if any layers want symbolic identify, initiate the hit test now.
         // the promise will resolve in an array of any hits, providing layerid and objectid of hits
         let hitTestProm: Promise<Array<GraphicHitResult>> = Promise.resolve([]);
         if (
+            identifyGeometry.type === GeometryType.POINT &&
             layers.some(l => {
                 return l.identifyMode === LayerIdentifyMode.HYBRID || l.identifyMode === LayerIdentifyMode.SYMBOLIC;
             })
@@ -1322,7 +1392,7 @@ export class MapAPI extends CommonMapAPI {
         }
 
         const p: IdentifyParameters = {
-            geometry: mapClick.mapPoint,
+            geometry: identifyGeometry,
             hitTest: hitTestProm
         };
 
