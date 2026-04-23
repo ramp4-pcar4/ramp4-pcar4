@@ -1,0 +1,1 @@
+import{t as e}from"./Uniform-Dp2mgLmf.js";var t=class extends e{constructor(e,t,n){super(e,`mat4`,0,(r,i)=>r.setUniformMatrix4fv(e,t(i),n))}};export{t};

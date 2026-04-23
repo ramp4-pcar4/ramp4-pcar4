@@ -1,0 +1,1 @@
+import{_ as e,ft as t}from"./SpatialReference-D6ptZ0gt.js";var n=class extends e{getOperatorType(){return 6}execute(e,n,r,i){return t(e,n,r,16,i)}};export{n as t};

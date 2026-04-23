@@ -1,0 +1,1 @@
+import{t as e}from"./Program-R7TwD4Ak.js";function t(t,n,r,i=``){return new e(t,i+n.vertexShader,i+n.fragmentShader,r)}export{t};

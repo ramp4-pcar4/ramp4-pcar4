@@ -1,0 +1,1 @@
+import"./teleport-details-DK7O13Ep.js";

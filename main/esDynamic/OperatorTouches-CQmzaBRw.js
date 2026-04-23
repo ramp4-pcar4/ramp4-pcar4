@@ -1,0 +1,1 @@
+import{_ as e,ft as t}from"./SpatialReference-DESQkHRK.js";var n=class extends e{getOperatorType(){return 5}execute(e,n,r,i){return t(e,n,r,8,i)}};export{n as t};

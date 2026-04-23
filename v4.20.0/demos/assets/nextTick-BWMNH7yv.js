@@ -1,0 +1,1 @@
+var e=[];function t(t){e.push(t),e.length===1&&queueMicrotask(()=>{let t=e.slice();e.length=0;for(let e of t)e()})}export{t};

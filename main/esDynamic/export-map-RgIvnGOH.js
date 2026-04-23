@@ -1,0 +1,1 @@
+import{s as e}from"./main-q9Tq1sTd.js";import{t}from"./fabric-DvUJd6d-.js";var n=t(),r=class extends e{get config(){return this.$iApi.fixture.get(`export`).config?.map}async make(e){let t=await this.$iApi.geo.map.takeScreenshot({quality:1,format:`png`}),r=new Image;r.src=t.dataUrl;let i=await new Promise(e=>r.onload=()=>e(r));return new n.fabric.Image(i,e)}};export{r as default};

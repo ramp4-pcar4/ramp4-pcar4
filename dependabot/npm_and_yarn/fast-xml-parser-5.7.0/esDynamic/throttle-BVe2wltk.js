@@ -1,0 +1,1 @@
+import{t as e}from"./debounce-UPMvVyUs.js";function t(t,n,{signal:r,edges:i=[`leading`,`trailing`]}={}){let a=null,o=e(function(...e){a=Date.now(),t.apply(this,e)},n,{signal:r,edges:i}),s=function(...e){if(a??=Date.now(),Date.now()-a>=n){a=Date.now(),t.apply(this,e),o.cancel(),o.schedule();return}o.apply(this,e)};return s.cancel=o.cancel,s.flush=o.flush,s}export{t};

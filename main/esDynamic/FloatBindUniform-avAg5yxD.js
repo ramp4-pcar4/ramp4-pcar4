@@ -1,0 +1,1 @@
+import{t as e}from"./Uniform-Dp2mgLmf.js";var t=class extends e{constructor(e,t,n){super(e,`float`,0,(r,i)=>r.setUniform1f(e,t(i),n))}};export{t};

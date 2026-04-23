@@ -1,0 +1,1 @@
+import{t as e}from"./request-DV9juA1W.js";async function t(t,n){return(await e(t,{responseType:`image`,...n})).data}export{t};

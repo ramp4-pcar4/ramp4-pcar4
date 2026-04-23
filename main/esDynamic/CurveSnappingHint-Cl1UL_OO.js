@@ -1,0 +1,1 @@
+import{l as e}from"./curveUtils-C9O3Q6kr.js";import{n as t}from"./vec3-D0JSMCWt.js";import{n}from"./LineSnappingHint-DQAM0wts.js";var r=class r extends n{constructor(e,t,n=1){super(!1,n),this.start=e,this.curve=t}equals(n){return n instanceof r&&t(this.start,n.start)&&e(this.curve,n.curve)&&this.isDraped===n.isDraped&&this.domain===n.domain}};export{r as t};

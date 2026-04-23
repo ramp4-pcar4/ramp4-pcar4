@@ -1,0 +1,1 @@
+import{n as e}from"./workers-Bp4qysmZ.js";var t=e;export{t};

@@ -1,0 +1,359 @@
+import { K as e, m as t, mt as n, q as r, s as i } from "./main-Bz1ia27O.js";
+import { markRaw as a } from "vue";
+import o from "redaxios";
+//#region src/fixtures/wizard/api/wizard.ts
+var s = class extends i {
+	toggleWizard(e) {
+		let t = this.$iApi.panel.get("wizard");
+		this.$iApi.panel.toggle(t, e);
+	}
+}, c = class extends e {
+	layerCount = 0;
+	sublayerCount = 0;
+	constructor(e) {
+		super(e);
+	}
+	async fetchFileInfo(e, t, r) {
+		switch (r ||= await this.$iApi.geo.layer.files.fetchFileData(e, t), t) {
+			case n.GEOJSON: return this.getGeojsonInfo(e, r);
+			case n.SHAPEFILE: return this.getShapfileInfo(e, r);
+			case n.CSV: return this.getCsvInfo(e, r);
+			default: console.error(`Unsupported file type passed to fetchFileInfo - '${t}'`);
+		}
+	}
+	async getGeojsonInfo(e, t) {
+		return t instanceof ArrayBuffer && (t = JSON.parse(new TextDecoder("utf-8").decode(new Uint8Array(t)))), {
+			config: {
+				id: `geojson#${++this.layerCount}`,
+				layerType: n.GEOJSON,
+				url: e,
+				name: e.substring(e.lastIndexOf("/") + 1),
+				state: {
+					opacity: 1,
+					visibility: !0
+				},
+				rawData: t
+			},
+			fields: [{
+				name: "OBJECTID",
+				type: "oid"
+			}].concat(this.$iApi.geo.layer.files.extractGeoJsonFields(t)),
+			configOptions: [
+				"name",
+				"nameField",
+				"maptipField",
+				"colour"
+			]
+		};
+	}
+	async getCsvInfo(e, t) {
+		return t instanceof ArrayBuffer && (t = new TextDecoder("utf-8").decode(new Uint8Array(t))), {
+			config: {
+				id: `csv#${++this.layerCount}`,
+				layerType: n.CSV,
+				url: e,
+				name: e.substring(e.lastIndexOf("/") + 1),
+				state: {
+					opacity: 1,
+					visibility: !0
+				},
+				rawData: t
+			},
+			fields: [{
+				name: "OBJECTID",
+				type: "oid"
+			}].concat(this.$iApi.geo.layer.files.extractCsvFields(t)),
+			latLonFields: this.$iApi.geo.layer.files.filterCsvLatLonFields(t),
+			configOptions: [
+				"name",
+				"nameField",
+				"maptipField",
+				"latField",
+				"longField",
+				"colour"
+			]
+		};
+	}
+	async getShapfileInfo(e, t) {
+		let n = await this.$iApi.geo.layer.files.shapefileToGeoJson(t);
+		return this.getGeojsonInfo(e, n);
+	}
+	async fetchServiceInfo(e, t, r, i) {
+		switch (t) {
+			case n.FEATURE: return this.getFeatureInfo(e);
+			case n.MAPIMAGE: return this.getMapImageInfo(e, r);
+			case n.TILE: return this.getTileInfo(e);
+			case n.IMAGERY: return this.getImageryInfo(e);
+			case n.WFS: return this.getWfsInfo(e, i);
+			case n.WMS: return this.getWmsInfo(e, r);
+		}
+	}
+	async getFeatureInfo(e) {
+		let t = await o.get(e, { params: { f: "json" } });
+		return {
+			config: {
+				id: `${n.FEATURE}#${++this.layerCount}`,
+				url: e,
+				layerType: n.FEATURE,
+				name: t.data.name,
+				nameField: t.data.displayField,
+				maptipField: t.data.displayField,
+				state: {
+					opacity: 1,
+					visibility: !0
+				}
+			},
+			fields: t.data.fields,
+			configOptions: [
+				"name",
+				"nameField",
+				"maptipField"
+			]
+		};
+	}
+	async getMapImageInfo(e, t) {
+		let r = await o.get(e, { params: { f: "json" } });
+		return {
+			config: {
+				id: `${n.MAPIMAGE}#${++this.layerCount}`,
+				url: e,
+				layerType: n.MAPIMAGE,
+				name: r.data.mapName,
+				sublayers: [],
+				state: {
+					opacity: 1,
+					visibility: !0
+				}
+			},
+			layers: this.createLayerHierarchy(r.data.layers, t),
+			configOptions: ["name", "sublayers"],
+			layersRaw: r.data.layers
+		};
+	}
+	createLayerHierarchy(e, t) {
+		e.sort((e, t) => e.id - t.id);
+		let n = (e, t) => {
+			if (t === void 0) return !1;
+			let r;
+			if (t.find((t) => t.id === e)) return t.find((t) => t.id === e);
+			for (let i of t) if (r = n(e, i.children), r !== !1) return r;
+			return !1;
+		}, r = [], i = new Set(e.filter((e) => e.subLayerIds && e.subLayerIds.length > 0).map((e) => e.id));
+		for (let a of e) if (t && a.parentLayerId === -1) r.push({
+			id: a.id,
+			label: a.name,
+			children: a.subLayerIds ? [] : void 0
+		});
+		else if (t) {
+			let e = n(a.parentLayerId, r);
+			e.children = [...e.children, {
+				id: a.id,
+				label: a.name,
+				children: a.subLayerIds ? [] : void 0
+			}];
+		} else i.has(a.id) || r.push({
+			id: a.id,
+			label: a.name,
+			children: void 0
+		});
+		return r;
+	}
+	async getTileInfo(e) {
+		let t = await o.get(e, { params: { f: "json" } });
+		return {
+			config: {
+				id: `${n.TILE}#${++this.layerCount}`,
+				url: e,
+				layerType: n.TILE,
+				name: t.data.mapName,
+				state: {
+					opacity: 1,
+					visibility: !0
+				}
+			},
+			configOptions: ["name"]
+		};
+	}
+	async getImageryInfo(e) {
+		let t = await o.get(e, { params: { f: "json" } });
+		return {
+			config: {
+				id: `${n.IMAGERY}#${++this.layerCount}`,
+				url: e,
+				layerType: n.IMAGERY,
+				name: t.data.name,
+				state: {
+					opacity: 1,
+					visibility: !0
+				}
+			},
+			configOptions: ["name"]
+		};
+	}
+	async getWfsInfo(e, t) {
+		let { offset: n, limit: i } = new r(e).queryMap, a = await this.$iApi.geo.layer.ogc.loadWfsData(e, -1, parseInt(n) || 0, parseInt(i) || 1e3, void 0, !1, t);
+		return this.getGeojsonInfo(e.match(/\/([^/]+)\/items/)?.[1] || "Layer", a);
+	}
+	async getWmsInfo(e, t) {
+		let r = await this.$iApi.geo.layer.ogc.parseCapabilities(e);
+		return {
+			config: {
+				id: `${n.WMS}#${++this.layerCount}`,
+				url: e,
+				layerType: n.WMS,
+				name: e,
+				featureInfoMimeType: r.queryTypes[0],
+				state: {
+					opacity: 1,
+					visibility: !0
+				}
+			},
+			layers: this.mapWmsLayerList(r.layers, t),
+			configOptions: ["name", "sublayers"],
+			layersRaw: r.layers
+		};
+	}
+	mapWmsLayerList(e, t) {
+		let n = [];
+		return e.forEach((e) => {
+			e.name === null && e.layers ? n = n.concat(e.layers) : n.push(e);
+		}), t ? n.flatMap((e) => ({
+			id: `${e.name}#${++this.sublayerCount}`,
+			label: e.title,
+			children: e.layers.length > 0 ? this.mapWmsLayerList(e.layers, t) : void 0
+		})) : n.flatMap((e) => e.layers && e.layers.length > 0 ? this.mapWmsLayerList(e.layers, t) : {
+			id: `${e.name}#${++this.sublayerCount}`,
+			label: e.title
+		});
+	}
+	guessFormatFromURL(e) {
+		switch (e.match(/\.(zip|csv|geojson|json)$/)?.[1]) {
+			case "zip": return n.SHAPEFILE;
+			case "csv": return n.CSV;
+			case "geojson":
+			case "json": return n.GEOJSON;
+		}
+		return e.match(/\/ImageServer\/?$/gi) ? n.IMAGERY : e.match(/\/collections\//gi) ? n.WFS : e.match(/arcgis\/rest\/services\//gi) ? e.match(/\/\d+\/?$/g) ? n.FEATURE : n.MAPIMAGE : e.match(/service=|version=|\/wms/gi) ? n.WMS : "";
+	}
+}, l = {
+	en: {
+		"wizard.title": "Import Layer",
+		"wizard.upload.title": "Upload data",
+		"wizard.upload.or": "or",
+		"wizard.upload.file.label": "Upload a file",
+		"wizard.upload.file.help": "Drop or select a file to upload",
+		"wizard.upload.file.error.failed": "File upload failed",
+		"wizard.upload.url.label": "URL to file or service",
+		"wizard.upload.url.error.required": "URL is required",
+		"wizard.upload.url.error.url": "Please enter a valid URL",
+		"wizard.format.title": "Select format",
+		"wizard.format.type.service": "Service type",
+		"wizard.format.type.file": "File format",
+		"wizard.format.type.error.required": "Service or file type is required",
+		"wizard.format.type.error.invalid": "Invalid file or service type",
+		"wizard.format.type.error.failure": "Failed to load data from file/service",
+		"wizard.format.info.cors": "Service needs to be CORS enabled",
+		"wizard.format.warn.cors": "Service may not support CORS",
+		"wizard.format.warn.vpn": "Service may require a VPN connection",
+		"wizard.fileType.csv": "CSV",
+		"wizard.fileType.shapefile": "zipped Shapefile",
+		"wizard.fileType.geojson": "GeoJSON",
+		"wizard.layerType.esriFeature": "ESRI Feature Layer",
+		"wizard.layerType.esriMapImage": "ESRI Map Image Layer",
+		"wizard.layerType.esriImagery": "ESRI Imagery Layer",
+		"wizard.layerType.esriTile": "ESRI Tile Layer",
+		"wizard.layerType.ogcWms": "OGC Web Map Service",
+		"wizard.layerType.ogcWfs": "OGC Web Feature Service",
+		"wizard.configure.title": "Configure layer",
+		"wizard.configure.name.error.required": "Name is required",
+		"wizard.configure.name.label": "Layer Name",
+		"wizard.configure.nameField.label": "Primary Field",
+		"wizard.configure.maptipField.label": "Maptip Field",
+		"wizard.configure.latField.label": "Latitude Field",
+		"wizard.configure.longField.label": "Longitude Field",
+		"wizard.configure.sublayers.error.required": "Sublayers are required",
+		"wizard.configure.sublayers.label": "Layers",
+		"wizard.configure.sublayers.results": "No results",
+		"wizard.configure.sublayers.search": "Search layers",
+		"wizard.configure.sublayers.select": "Select layer(s)",
+		"wizard.configure.sublayers.clearAll": "Clear all",
+		"wizard.configure.sublayers.nested": "Nested",
+		"wizard.configure.colour.label": "Colour",
+		"wizard.configure.colour.hue": "Hue",
+		"wizard.configure.colour.copy": "Copy colour",
+		"wizard.configure.colour.hex": "Hex",
+		"wizard.step.cancel": "Cancel",
+		"wizard.step.continue": "Continue",
+		"wizard.upload.success": "has been uploaded successfully.",
+		"wizard.upload.fail": "failed to upload."
+	},
+	fr: {
+		"wizard.title": "Importer un fichier",
+		"wizard.upload.title": "Charger des données",
+		"wizard.upload.or": "ou",
+		"wizard.upload.file.label": "Télécharger un fichier",
+		"wizard.upload.file.help": "Déposer ou sélectionner un fichier à télécharger",
+		"wizard.upload.file.error.failed": "Le téléchargement du fichier a échoué",
+		"wizard.upload.url.label": "URL vers fichier ou service",
+		"wizard.upload.url.error.required": "L'URL est requise",
+		"wizard.upload.url.error.url": "Veuillez saisir une adresse URL valide",
+		"wizard.format.title": "Choisir un format",
+		"wizard.format.type.service": "Type de service",
+		"wizard.format.type.file": "Format du fichier",
+		"wizard.format.type.error.required": "Le service ou le type de fichier est requis",
+		"wizard.format.type.error.invalid": "Type de fichier ou de service non valide",
+		"wizard.format.type.error.failure": "Échec du chargement des données à partir du fichier/service",
+		"wizard.format.info.cors": "Le service doit être compatible CORS.",
+		"wizard.format.warn.cors": "Le service ne pend peut-être pas en charge CORS.",
+		"wizard.format.warn.vpn": "Le service peut nécessiter une connexion RPV",
+		"wizard.fileType.csv": "CSV",
+		"wizard.fileType.shapefile": "Shapefile zippé",
+		"wizard.fileType.geojson": "GeoJSON",
+		"wizard.layerType.esriFeature": "Couche d'éléments d'ESRI",
+		"wizard.layerType.esriMapImage": "Couche d'image de la carte ESRI",
+		"wizard.layerType.esriImagery": "Couche d'imagerie d'ESRI",
+		"wizard.layerType.esriTile": "Couche de tuiles d'ESRI",
+		"wizard.layerType.ogcWms": "Couche WMS de l'OGC",
+		"wizard.layerType.ogcWfs": "Service d'entités Web OGC",
+		"wizard.configure.title": "Configurer la couche",
+		"wizard.configure.name.error.required": "Le champ Nom est obligatoire",
+		"wizard.configure.name.label": "Nom de la couche",
+		"wizard.configure.nameField.label": "Champ clé",
+		"wizard.configure.maptipField.label": "Champ infobulle",
+		"wizard.configure.latField.label": "Champ latitude",
+		"wizard.configure.longField.label": "Champ longitude",
+		"wizard.configure.sublayers.error.required": "Des sous-couches sont requises",
+		"wizard.configure.sublayers.label": "Couches",
+		"wizard.configure.sublayers.results": "Aucun résultat",
+		"wizard.configure.sublayers.search": "Rechercher des couches",
+		"wizard.configure.sublayers.select": "Sélectionner les couches",
+		"wizard.configure.sublayers.clearAll": "Effacer tout",
+		"wizard.configure.sublayers.nested": "Imbriquées",
+		"wizard.configure.colour.label": "Couleur",
+		"wizard.configure.colour.hue": "Teinte",
+		"wizard.configure.colour.copy": "Copier la couleur",
+		"wizard.configure.colour.hex": "Hex",
+		"wizard.step.cancel": "Annuler",
+		"wizard.step.continue": "Continuer",
+		"wizard.upload.success": "a été téléversé avec succès.",
+		"wizard.upload.fail": "n'a pas pu être téléversé."
+	}
+}, u = class extends s {
+	added() {
+		this.$iApi.panel.register({ wizard: {
+			screens: { "wizard-screen": () => a(import("./screen-Nv7k52gt.js")) },
+			button: {
+				tooltip: "wizard.title",
+				icon: "<svg class=\"fill-current\" viewBox=\"0 0 23 21\"><path d=\"M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z\"></path></svg>"
+			},
+			style: { width: "350px" },
+			alertName: "wizard.title"
+		} }, { i18n: { messages: l } }), this.handlePanelTeleports(["wizard"]);
+		let e = new c(this.$iApi), n = t(this.$vApp.$pinia);
+		n.layerSource = e, this.removed = () => {
+			this.$iApi.panel.remove("wizard"), e = void 0, n.$reset();
+		};
+	}
+};
+//#endregion
+export { u as default };

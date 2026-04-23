@@ -1,0 +1,1 @@
+function e(e,t){let n=e.featureReduction;return n&&n.type!==`selection`&&(!(`maxScale`in n)||!n.maxScale||n.maxScale<t.scale)?n:null}export{e as t};

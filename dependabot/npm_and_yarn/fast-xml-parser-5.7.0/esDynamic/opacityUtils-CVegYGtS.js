@@ -1,0 +1,1 @@
+import{V as e}from"./decorators-ZlNXPDAo.js";function t(t){let n=e(100*(1-t));return Math.max(0,Math.min(n,100))}function n(e){let t=1-e/100;return Math.max(0,Math.min(t,1))}export{n,t};

@@ -1,0 +1,1 @@
+import{g as e,l as t}from"./typedArrayUtil-DYSyCOD_.js";function n(e){return t(e)&&e.length>=3}function r(t){return(e(t)||Array.isArray(t))&&t.length>=3}function i(e){return n(e)||r(e)}export{i as t};

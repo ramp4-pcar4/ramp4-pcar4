@@ -1,0 +1,1 @@
+import{t as e}from"./Uniform-DlntK5q6.js";var t=class extends e{constructor(e,t,n){super(e,`vec4`,0,(r,i)=>r.setUniform4fv(e,t(i),n))}};export{t};

@@ -1,0 +1,1 @@
+import{t as e}from"./Uniform-Dp2mgLmf.js";var t=class extends e{constructor(e,t){super(e,`sampler2D`,0,(n,r)=>n.bindTexture(e,t(r)))}};export{t};

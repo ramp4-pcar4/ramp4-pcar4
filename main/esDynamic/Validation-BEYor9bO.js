@@ -1,0 +1,1 @@
+import{B as e,U as t,h as n,u as r}from"./runtime-CaipCQyx.js";var i={validationContainer:`validation-container`},a=()=>{},o=({scale:o,status:s,id:c,icon:l,message:u,ref:d})=>t`<div class=${r(i.validationContainer)} ${n(d||a)}><calcite-input-message aria-live=polite .icon=${l} id=${c??e} .scale=${o} .status=${s}>${u}</calcite-input-message></div>`;export{o as t};

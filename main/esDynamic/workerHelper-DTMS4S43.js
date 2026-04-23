@@ -1,0 +1,1 @@
+import{r as e,t}from"./InterleavedLayout-CDRPL8h0.js";function n(t,n){return n.push(t.buffer),{buffer:t.buffer,layout:new e(t.layout)}}function r(e){return new t(e.layout).createView(e.buffer)}export{n,r as t};

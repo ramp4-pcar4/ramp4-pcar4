@@ -1,0 +1,1 @@
+import"./typedArrayUtil-DYSyCOD_.js";import{i as e,o as t,r as n}from"./jsonConverter-BRdv0MT_.js";import{t as r}from"./operatorIntersection-XcITNatG.js";function i(i,a){let o=t(i),s=o.getSpatialReference();return e(r(o.getGeometry(),n(a),s),s)}export{i as execute};

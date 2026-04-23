@@ -1,0 +1,1 @@
+var e=(e,t,n)=>(n.addLayerLegend({id:`Happy`,name:`Happy Tester`,layerType:`file-geojson`,url:`../file-layers/geojson.json`,colour:`#4ef542`,nameField:`name`}),e.configs.fr.fixtures.hilight={mode:`glow`,options:{colour:`#00bfff`}},{config:e,options:t}),t=()=>{};export{t as runPostTest,e as runPreTest};

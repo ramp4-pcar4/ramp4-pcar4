@@ -1,0 +1,1 @@
+import{n as e}from"./controllers-BB20cB10.js";var t=()=>e((e,t)=>{let n=new Set;return t.onDisconnected(()=>{n.forEach(e=>e.cancel())}),{add:e=>{[e].flat().forEach(e=>n.add(e))},resources:n}});export{t};
