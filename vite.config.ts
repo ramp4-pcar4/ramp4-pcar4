@@ -4,6 +4,7 @@ import vue from '@vitejs/plugin-vue';
 import VitePluginI18n from './scripts/vite-plugin-i18n';
 import VitePluginVersion from './scripts/vite-plugin-version';
 import ViteMinifyEsPlugin from './scripts/vite-minify-es-plugin';
+import ViteCssFontRemovalPlugin from './scripts/vite-css-font-remover-plugin';
 import { resolve } from 'path';
 import pkg from './package.json';
 import dts from 'vite-plugin-dts';
@@ -17,6 +18,7 @@ const browserBuildDefines = {
 
 const baseConfig = {
     plugins: [
+        ViteCssFontRemovalPlugin(),
         vue({
             template: {
                 compilerOptions: {
