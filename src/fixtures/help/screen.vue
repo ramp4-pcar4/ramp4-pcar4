@@ -152,7 +152,8 @@ onBeforeMount(() => {
                             // parse markdown on info section, split/splice/join removes the header
                             // since we can't put info section into its own regex grouping
                             info: marked(section[0].split('\n').splice(2).join('\n'), {
-                                renderer
+                                renderer,
+                                async: false
                             }),
                             drawn: true,
                             expanded: false
@@ -160,7 +161,8 @@ onBeforeMount(() => {
                         //copy of the original text to refer to after highlighting
                         originalTextArray.value.push(
                             marked(section[0].split('\n').splice(2).join('\n'), {
-                                renderer
+                                renderer,
+                                async: false
                             })
                         );
                     }
