@@ -8,13 +8,16 @@ export type ActiveToolList = 'circle' | 'point' | 'polygon' | 'polyline' | 'rect
 
 export const useDrawStore = defineStore('draw', () => {
     const supportedTypes = ref<DrawTypeConfig[]>([]);
+    const configParsed = ref(false);
     const activeTool = ref<ActiveToolList>(null);
     const graphics = reactive<any[]>([]);
     const selectedGraphicId = ref<string | null>(null);
     const mapNavEl = ref<unknown | null>(null);
+    const measurementsEnabled = ref(false);
 
     function setSupportedTypes(types: DrawTypeConfig[]) {
         supportedTypes.value.splice(0, supportedTypes.value.length, ...types);
+        configParsed.value = true;
     }
 
     function setActiveTool(tool: ActiveToolList) {
@@ -62,11 +65,21 @@ export const useDrawStore = defineStore('draw', () => {
         }
     }
 
+    function setMeasurementsEnabled(enabled: boolean) {
+        measurementsEnabled.value = enabled;
+    }
+
+    function toggleMeasurements() {
+        measurementsEnabled.value = !measurementsEnabled.value;
+    }
+
     return {
         supportedTypes,
+        configParsed,
         activeTool,
         graphics,
         selectedGraphicId,
+        measurementsEnabled,
         setSupportedTypes,
         setActiveTool,
         addGraphic,
@@ -75,6 +88,8 @@ export const useDrawStore = defineStore('draw', () => {
         clearSelection,
         getSelectedGraphic,
         updateGraphicGeometry,
+        setMeasurementsEnabled,
+        toggleMeasurements,
         mapNavEl
     };
 });

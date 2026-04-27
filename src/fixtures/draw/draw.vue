@@ -1,6 +1,9 @@
 |
 <template>
     <arcgis-sketch ref="sketchEl" style="display: none" />
+    <div v-if="drawStore.measurementsEnabled" class="sr-only" aria-live="polite" aria-atomic="true">
+        {{ measurementSummary }}
+    </div>
 </template>
 <script lang="ts">
 export const DRAW_GRAPHICS_LAYER_ID = 'RampDrawGraphicsLayer';
@@ -18,22 +21,33 @@ export const DRAW_GRAPHICS_LAYER_ID = 'RampDrawGraphicsLayer';
 /* --------------------------------------------------------------------------
  * IMPORTS
  * -------------------------------------------------------------------------- */
-import { inject, onMounted, onUnmounted, watch, reactive, useTemplateRef } from 'vue';
+import { inject, onMounted, onUnmounted, watch, reactive, ref, toRaw, useTemplateRef } from 'vue';
 import { useDrawStore } from './store';
 import { InstanceAPI } from '@/api/internal';
 
 import { LayerType } from '@/geo/api';
 import { useI18n } from 'vue-i18n';
 import {
+    EsriAreaOperator,
+    EsriCentroidOperator,
+    EsriGeodeticAreaOperator,
+    EsriGeodeticAreaOperatorIsLoaded,
+    EsriGeodeticAreaOperatorLoad,
+    EsriGeodeticLengthOperator,
+    EsriGeodeticLengthOperatorIsLoaded,
+    EsriGeodeticLengthOperatorLoad,
     EsriGraphic,
+    EsriLengthOperator,
     EsriPoint,
     EsriPolygon,
     EsriPolyline,
     EsriSimpleFillSymbol,
     EsriSimpleLineSymbol,
-    EsriSimpleMarkerSymbol
+    EsriSimpleMarkerSymbol,
+    EsriTextSymbol
 } from '@/geo/esri';
 import type {
+    EsriGeometry,
     EsriGraphicHit,
     EsriGraphicsLayer,
     EsriSketchCreateEvent,
@@ -66,8 +80,16 @@ const buildLocaleRecord = (messageKey: string): Record<string, string> => {
 // Sketch widget and graphics layer reference variables
 let sketch: HTMLArcgisSketchElement | null = null;
 const sketchEl = useTemplateRef<HTMLArcgisSketchElement>('sketchEl');
-let sketchHandler: { remove: () => void } | null = null;
 let graphicsLayer: EsriGraphicsLayer | null = null;
+let viewClickHandler: { remove: () => void } | null = null;
+let sketchEventsRegistered = false;
+let drawToolsInitId = 0;
+let sketchUpdateFrame: number | null = null;
+let measurementRefreshFrame: number | null = null;
+let measurementRefreshRunId = 0;
+let measurementOperatorLoadPromise: Promise<void> | null = null;
+let measurementGraphics: EsriGraphic[] = [];
+let pendingMeasurementRefresh: { activeGraphic?: EsriGraphic; activeTool?: string } | null = null;
 
 // Variables for selected and highlighted graphics
 let selectedGraphic: EsriGraphic | null = null;
@@ -82,6 +104,30 @@ let multiPointVertices: Vertex[] = [];
 
 const rampEventHandlers = reactive<Array<string>>([]);
 let keyboardNamespace: string | undefined;
+const measurementSummary = ref('');
+
+const onSketchCreate = (event: Event) => {
+    handleSketchCreateEvent((event as CustomEvent<EsriSketchCreateEvent>).detail);
+};
+
+const onSketchUpdate = (event: Event) => {
+    handleSketchUpdateEvent((event as CustomEvent<EsriSketchUpdateEvent>).detail);
+};
+
+const cancelSketch = () => {
+    try {
+        sketch?.cancel();
+    } catch (e) {
+        console.warn('Unable to cancel draw sketch.', e);
+    }
+};
+
+const cancelPendingSketchUpdate = () => {
+    if (sketchUpdateFrame === null) return;
+
+    window.cancelAnimationFrame(sketchUpdateFrame);
+    sketchUpdateFrame = null;
+};
 
 async function handleKeyboardShortcuts() {
     const keyboardNav = iApi.keyboardNav;
@@ -145,6 +191,14 @@ async function handleKeyboardShortcuts() {
                 handler: () => {
                     drawStore.setActiveTool('edit');
                 }
+            },
+            {
+                key: 'M',
+                description: buildLocaleRecord('draw.keyboard.key.measurements'),
+                handler: () => {
+                    drawStore.toggleMeasurements();
+                    return 'reset';
+                }
             }
         ]
     });
@@ -201,6 +255,507 @@ const highlightSelectedGraphic = (graphic?: EsriGraphic | undefined) => {
     graphicsLayer?.add(highlightGraphic);
 };
 
+const startSketchUpdate = (graphic: EsriGraphic) => {
+    if (!sketch || drawStore.activeTool !== 'edit') return;
+
+    selectedGraphic = graphic;
+    if (graphic.attributes?.id) {
+        drawStore.selectGraphic(graphic.attributes.id);
+    }
+    highlightSelectedGraphic(graphic);
+
+    cancelPendingSketchUpdate();
+    sketchUpdateFrame = window.requestAnimationFrame(() => {
+        sketchUpdateFrame = null;
+
+        if (!sketch || drawStore.activeTool !== 'edit' || selectedGraphic !== graphic || sketch.state === 'active') {
+            return;
+        }
+
+        void sketch.triggerUpdate([graphic], {
+            tool: 'transform',
+            toggleToolOnClick: false,
+            highlightOptions: { enabled: false }
+        });
+    });
+};
+
+type FormattedMeasurement = {
+    display: string;
+    spoken: string;
+};
+
+type MeasurementLabelInfo = {
+    graphic: EsriGraphic;
+    accessibleText: string;
+};
+
+type MeasurableGraphic = {
+    id: string;
+    type: string;
+    geometry: EsriGeometry;
+};
+
+const formatMeasurementNumber = (value: number, maximumFractionDigits: number): string =>
+    value.toLocaleString(locale.value, {
+        maximumFractionDigits,
+        minimumFractionDigits: 0
+    });
+
+const formatLength = (meters: number): FormattedMeasurement => {
+    const absMeters = Math.abs(meters);
+
+    if (absMeters >= 1000) {
+        const kilometers = absMeters / 1000;
+        const decimals = kilometers >= 10 ? 1 : 2;
+        const value = formatMeasurementNumber(kilometers, decimals);
+        return {
+            display: `${value} km`,
+            spoken: `${value} kilometers`
+        };
+    }
+
+    if (absMeters >= 1) {
+        const decimals = absMeters >= 10 ? 0 : 1;
+        const value = formatMeasurementNumber(absMeters, decimals);
+        return {
+            display: `${value} m`,
+            spoken: `${value} meters`
+        };
+    }
+
+    const centimeters = absMeters * 100;
+    const value = formatMeasurementNumber(centimeters, centimeters >= 10 ? 0 : 1);
+    return {
+        display: `${value} cm`,
+        spoken: `${value} centimeters`
+    };
+};
+
+const formatArea = (squareMeters: number): FormattedMeasurement => {
+    const absSquareMeters = Math.abs(squareMeters);
+
+    if (absSquareMeters >= 1000000) {
+        const squareKilometers = absSquareMeters / 1000000;
+        const decimals = squareKilometers >= 10 ? 1 : 2;
+        const value = formatMeasurementNumber(squareKilometers, decimals);
+        return {
+            display: `${value} sq km`,
+            spoken: `${value} square kilometers`
+        };
+    }
+
+    const decimals = absSquareMeters >= 100 ? 0 : absSquareMeters >= 10 ? 1 : 2;
+    const value = formatMeasurementNumber(absSquareMeters, decimals);
+    return {
+        display: `${value} sq m`,
+        spoken: `${value} square meters`
+    };
+};
+
+const shouldUseGeodesicMeasurement = (geometry: EsriGeometry): boolean =>
+    !!geometry.spatialReference?.isGeographic || !!geometry.spatialReference?.isWebMercator;
+
+const loadMeasurementOperators = async (): Promise<void> => {
+    measurementOperatorLoadPromise ??= Promise.all([
+        EsriGeodeticAreaOperatorIsLoaded() ? Promise.resolve() : EsriGeodeticAreaOperatorLoad(),
+        EsriGeodeticLengthOperatorIsLoaded() ? Promise.resolve() : EsriGeodeticLengthOperatorLoad()
+    ]).then(() => undefined);
+
+    await measurementOperatorLoadPromise;
+};
+
+const executeLengthMeters = (polyline: EsriPolyline, geodesic: boolean): number =>
+    geodesic
+        ? EsriGeodeticLengthOperator(polyline, { unit: 'meters' })
+        : EsriLengthOperator(polyline, { unit: 'meters' });
+
+const measurePolylineMeters = (polyline: EsriPolyline): number | undefined => {
+    const geodesic = shouldUseGeodesicMeasurement(polyline);
+
+    try {
+        const length = Math.abs(executeLengthMeters(polyline, geodesic));
+        if (Number.isFinite(length)) return length;
+    } catch {
+        // Try the alternate measurement below.
+    }
+
+    try {
+        const length = Math.abs(executeLengthMeters(polyline, !geodesic));
+        return Number.isFinite(length) ? length : undefined;
+    } catch {
+        return undefined;
+    }
+};
+
+const executeAreaSquareMeters = (polygon: EsriPolygon, geodesic: boolean): number =>
+    geodesic
+        ? EsriGeodeticAreaOperator(polygon, { unit: 'square-meters' })
+        : EsriAreaOperator(polygon, { unit: 'square-meters' });
+
+const measurePolygonSquareMeters = (polygon: EsriPolygon): number | undefined => {
+    const geodesic = shouldUseGeodesicMeasurement(polygon);
+
+    try {
+        const area = Math.abs(executeAreaSquareMeters(polygon, geodesic));
+        if (Number.isFinite(area)) return area;
+    } catch {
+        // Try the alternate measurement below.
+    }
+
+    try {
+        const area = Math.abs(executeAreaSquareMeters(polygon, !geodesic));
+        return Number.isFinite(area) ? area : undefined;
+    } catch {
+        return undefined;
+    }
+};
+
+const segmentMidpoint = (start: Vertex, end: Vertex, spatialReference: EsriGeometry['spatialReference']): EsriPoint =>
+    new EsriPoint({
+        x: (start[0] + end[0]) / 2,
+        y: (start[1] + end[1]) / 2,
+        spatialReference
+    });
+
+const normalizeTextAngle = (angle: number): number => {
+    if (angle > 90) return angle - 180;
+    if (angle < -90) return angle + 180;
+    return angle;
+};
+
+const segmentAngle = (start: Vertex, end: Vertex, spatialReference: EsriGeometry['spatialReference']): number => {
+    const view = iApi.geo.map.esriView;
+    if (view) {
+        const startScreen = view.toScreen(new EsriPoint({ x: start[0], y: start[1], spatialReference }));
+        const endScreen = view.toScreen(new EsriPoint({ x: end[0], y: end[1], spatialReference }));
+        if (startScreen && endScreen) {
+            return normalizeTextAngle(
+                (Math.atan2(endScreen.y - startScreen.y, endScreen.x - startScreen.x) * 180) / Math.PI
+            );
+        }
+    }
+
+    return normalizeTextAngle((Math.atan2(end[1] - start[1], end[0] - start[0]) * 180) / Math.PI);
+};
+
+const segmentLengthMeters = (
+    start: Vertex,
+    end: Vertex,
+    spatialReference: EsriGeometry['spatialReference']
+): number | undefined =>
+    measurePolylineMeters(
+        new EsriPolyline({
+            paths: [
+                [
+                    [start[0], start[1]],
+                    [end[0], end[1]]
+                ]
+            ],
+            spatialReference
+        })
+    );
+
+const polygonLabelPoint = (polygon: EsriPolygon): EsriPoint | undefined => {
+    try {
+        const centroid = EsriCentroidOperator(polygon);
+        if (centroid) {
+            return centroid;
+        }
+    } catch {
+        // Fall back to the extent center below.
+    }
+
+    const extent = polygon.extent;
+    if (!extent) return undefined;
+
+    return new EsriPoint({
+        x: (extent.xmin + extent.xmax) / 2,
+        y: (extent.ymin + extent.ymax) / 2,
+        spatialReference: polygon.spatialReference
+    });
+};
+
+const createMeasurementTextGraphic = (
+    point: EsriPoint,
+    text: string,
+    kind: 'distance' | 'area',
+    angle = 0
+): EsriGraphic =>
+    new EsriGraphic({
+        geometry: point,
+        symbol: new EsriTextSymbol({
+            text,
+            angle,
+            color: kind === 'area' ? [255, 255, 255, 1] : [17, 24, 39, 1],
+            haloColor: kind === 'area' ? [17, 24, 39, 1] : [255, 255, 255, 1],
+            haloSize: 1.5,
+            backgroundColor: kind === 'area' ? [17, 24, 39, 0.92] : [255, 255, 255, 0.9],
+            borderLineColor: kind === 'area' ? [255, 255, 255, 0.95] : [17, 24, 39, 0.85],
+            borderLineSize: 0.6,
+            horizontalAlignment: 'center',
+            verticalAlignment: 'middle',
+            yoffset: kind === 'area' ? 0 : 8,
+            font: {
+                family: 'Arial',
+                size: 11,
+                weight: 'bold'
+            }
+        }),
+        attributes: {
+            drawMeasurement: true
+        }
+    });
+
+const buildSegmentMeasurementLabels = (geometry: EsriGeometry, toolType: string): MeasurementLabelInfo[] => {
+    if (toolType === 'circle') {
+        return [];
+    }
+
+    const paths =
+        geometry.type === 'polyline'
+            ? (geometry as EsriPolyline).paths
+            : geometry.type === 'polygon'
+              ? (geometry as EsriPolygon).rings
+              : [];
+
+    let segmentIndex = 0;
+    return paths.flatMap(path => {
+        const labels: MeasurementLabelInfo[] = [];
+        for (let index = 0; index < path.length - 1; index++) {
+            const start = path[index] as Vertex;
+            const end = path[index + 1] as Vertex;
+            const length = segmentLengthMeters(start, end, geometry.spatialReference);
+
+            if (!length || length < 0.01) {
+                continue;
+            }
+
+            segmentIndex++;
+            const formatted = formatLength(length);
+            labels.push({
+                graphic: createMeasurementTextGraphic(
+                    segmentMidpoint(start, end, geometry.spatialReference),
+                    formatted.display,
+                    'distance',
+                    segmentAngle(start, end, geometry.spatialReference)
+                ),
+                accessibleText: t('draw.measurements.segment', {
+                    index: segmentIndex,
+                    distance: formatted.spoken
+                })
+            });
+        }
+        return labels;
+    });
+};
+
+const buildAreaMeasurementLabel = (geometry: EsriGeometry): MeasurementLabelInfo | undefined => {
+    if (geometry.type !== 'polygon') {
+        return undefined;
+    }
+
+    const polygon = geometry as EsriPolygon;
+    const area = measurePolygonSquareMeters(polygon);
+    const point = polygonLabelPoint(polygon);
+
+    if (!area || area < 0.01 || !point) {
+        return undefined;
+    }
+
+    const formatted = formatArea(area);
+    return {
+        graphic: createMeasurementTextGraphic(point, formatted.display, 'area'),
+        accessibleText: t('draw.measurements.area', {
+            area: formatted.spoken
+        })
+    };
+};
+
+const buildGraphicMeasurementLabels = (graphic: MeasurableGraphic): MeasurementLabelInfo[] => {
+    const geometry = graphic.geometry;
+    if (!geometry || geometry.type === 'point' || geometry.type === 'multipoint') {
+        return [];
+    }
+
+    const labels = buildSegmentMeasurementLabels(geometry, graphic.type);
+    const areaLabel = buildAreaMeasurementLabel(geometry);
+    if (areaLabel) {
+        labels.push(areaLabel);
+    }
+
+    return labels;
+};
+
+const getGraphicId = (graphic: EsriGraphic): string | undefined => graphic.attributes?.id;
+
+const makeMeasurableGraphic = (
+    id: string,
+    type: string | undefined,
+    geometry: EsriGeometry | null | undefined
+): MeasurableGraphic | undefined => {
+    if (!geometry) return undefined;
+
+    return {
+        id,
+        type: type ?? geometry.type,
+        geometry
+    };
+};
+
+const getStoredMeasurableGraphics = (): MeasurableGraphic[] =>
+    drawStore.graphics
+        .map(graphic =>
+            makeMeasurableGraphic(
+                String(graphic.id ?? graphic.attributes?.id ?? ''),
+                graphic.type ?? graphic.attributes?.type,
+                toRaw(graphic.geometry) as EsriGeometry | null | undefined
+            )
+        )
+        .filter((graphic): graphic is MeasurableGraphic => !!graphic?.id);
+
+const getLayerMeasurableGraphics = (): MeasurableGraphic[] =>
+    (graphicsLayer?.graphics.toArray() ?? [])
+        .filter(graphic => !!getGraphicId(graphic))
+        .map(graphic =>
+            makeMeasurableGraphic(
+                getGraphicId(graphic)!,
+                graphic.attributes?.type,
+                graphic.geometry as EsriGeometry | null | undefined
+            )
+        )
+        .filter((graphic): graphic is MeasurableGraphic => !!graphic);
+
+const getActiveMeasurableGraphic = (
+    activeGraphic?: EsriGraphic,
+    activeTool?: string
+): MeasurableGraphic | undefined => {
+    if (!activeGraphic) return undefined;
+
+    return makeMeasurableGraphic(
+        getGraphicId(activeGraphic) ?? 'active-draw-measurement',
+        activeTool ?? activeGraphic.attributes?.type,
+        activeGraphic.geometry as EsriGeometry | null | undefined
+    );
+};
+
+const buildMeasurementLabels = (activeGraphic?: EsriGraphic, activeTool?: string): MeasurementLabelInfo[] => {
+    const sources = new Map<string, MeasurableGraphic>();
+
+    getStoredMeasurableGraphics().forEach(graphic => sources.set(graphic.id, graphic));
+    getLayerMeasurableGraphics().forEach(graphic => sources.set(graphic.id, graphic));
+
+    const activeSource = getActiveMeasurableGraphic(activeGraphic, activeTool);
+    if (activeSource) {
+        sources.set(activeSource.id, activeSource);
+    }
+
+    return Array.from(sources.values()).flatMap(graphic => buildGraphicMeasurementLabels(graphic));
+};
+
+const clearMeasurementGraphics = () => {
+    measurementRefreshRunId++;
+
+    if (measurementRefreshFrame !== null) {
+        window.cancelAnimationFrame(measurementRefreshFrame);
+        measurementRefreshFrame = null;
+    }
+    pendingMeasurementRefresh = null;
+    measurementSummary.value = '';
+
+    try {
+        iApi.geo.map.esriView?.graphics.removeMany(measurementGraphics);
+    } catch (e) {
+        console.warn('Unable to clear draw measurement graphics.', e);
+    }
+    measurementGraphics = [];
+};
+
+const updateMeasurementSummary = (labels: MeasurementLabelInfo[]) => {
+    const nextSummary = labels.length
+        ? t('draw.measurements.summary', {
+              measurements: labels.map(label => label.accessibleText).join('. ')
+          })
+        : t('draw.measurements.none');
+
+    if (measurementSummary.value !== nextSummary) {
+        measurementSummary.value = nextSummary;
+    }
+};
+
+const refreshMeasurementGraphics = async (activeGraphic?: EsriGraphic, activeTool?: string) => {
+    const refreshRunId = ++measurementRefreshRunId;
+
+    if (measurementRefreshFrame !== null) {
+        window.cancelAnimationFrame(measurementRefreshFrame);
+        measurementRefreshFrame = null;
+        pendingMeasurementRefresh = null;
+    }
+
+    if (!drawStore.measurementsEnabled) {
+        clearMeasurementGraphics();
+        return;
+    }
+
+    try {
+        await loadMeasurementOperators();
+    } catch (e) {
+        console.warn('Unable to load draw measurement operators.', e);
+        return;
+    }
+
+    if (refreshRunId !== measurementRefreshRunId || !drawStore.measurementsEnabled) {
+        return;
+    }
+
+    const labels = buildMeasurementLabels(activeGraphic, activeTool);
+    const viewGraphics = iApi.geo.map.esriView?.graphics;
+
+    if (!viewGraphics) {
+        return;
+    }
+
+    try {
+        if (measurementGraphics.length) {
+            viewGraphics.removeMany(measurementGraphics);
+        }
+    } catch (e) {
+        console.warn('Unable to remove stale draw measurement graphics.', e);
+    }
+
+    measurementGraphics = labels.map(label => label.graphic);
+
+    try {
+        if (measurementGraphics.length) {
+            viewGraphics.addMany(measurementGraphics);
+        }
+    } catch (e) {
+        console.warn('Unable to add draw measurement graphics.', e);
+        measurementGraphics = [];
+    }
+
+    updateMeasurementSummary(labels);
+};
+
+const scheduleMeasurementRefresh = (activeGraphic?: EsriGraphic, activeTool?: string) => {
+    if (!drawStore.measurementsEnabled) {
+        clearMeasurementGraphics();
+        return;
+    }
+
+    pendingMeasurementRefresh = { activeGraphic, activeTool };
+    if (measurementRefreshFrame !== null) {
+        return;
+    }
+
+    measurementRefreshFrame = window.requestAnimationFrame(() => {
+        measurementRefreshFrame = null;
+        const refreshRequest = pendingMeasurementRefresh;
+        pendingMeasurementRefresh = null;
+        void refreshMeasurementGraphics(refreshRequest?.activeGraphic, refreshRequest?.activeTool);
+    });
+};
+
 /* --------------------------------------------------------------------------
  * WATCHERS
  * -------------------------------------------------------------------------- */
@@ -210,16 +765,29 @@ watch(
     (newId, oldId) => {
         if (!sketch || !graphicsLayer) return;
         if (!newId) {
-            sketch.cancel();
+            cancelPendingSketchUpdate();
+            cancelSketch();
             highlightSelectedGraphic();
         } else if (newId !== oldId) {
             const graphics = graphicsLayer.graphics.toArray();
             const selectedEsriGraphic = graphics.find(g => g.attributes && g.attributes.id === newId);
             if (selectedEsriGraphic) {
-                sketch.triggerUpdate([selectedEsriGraphic]);
                 highlightSelectedGraphic(selectedEsriGraphic);
             }
         }
+    }
+);
+
+watch(
+    () => drawStore.measurementsEnabled,
+    enabled => {
+        if (enabled) {
+            void refreshMeasurementGraphics();
+        } else {
+            clearMeasurementGraphics();
+        }
+
+        iApi.updateAlert(t(enabled ? 'draw.measurements.enabled' : 'draw.measurements.disabled'));
     }
 );
 
@@ -240,23 +808,20 @@ const selectCenteredGraphic = async () => {
         width: 20,
         height: 20
     };
-    const response = await view.hitTest(searchArea);
+    const response = await view.hitTest(searchArea, { include: graphicsLayer });
     const hits = response.results.filter((result): result is EsriGraphicHit => {
         if (!('graphic' in result) || result.graphic.layer !== graphicsLayer) return false;
         return !!result.graphic.attributes?.id;
     });
     if (hits.length > 0) {
-        selectedGraphic = hits[0].graphic;
-        sketch.triggerUpdate([selectedGraphic]);
-        if (selectedGraphic.attributes?.id) {
-            drawStore.selectGraphic(selectedGraphic.attributes.id);
-        }
+        startSketchUpdate(hits[0].graphic);
         iApi.updateAlert(
             t('draw.graphic.selected', {
-                type: translateTerm(selectedGraphic.attributes?.type)
+                type: translateTerm(hits[0].graphic.attributes?.type)
             })
         );
     } else {
+        cancelPendingSketchUpdate();
         sketch.cancel();
         selectedGraphic = null;
         drawStore.clearSelection();
@@ -371,6 +936,7 @@ const createGraphicAtCenter = async () => {
             geometry: graphic.geometry,
             attributes: graphic.attributes
         });
+        void refreshMeasurementGraphics();
 
         // cancel sketch if graphic is not a point
         if (drawStore.activeTool !== 'point') {
@@ -439,6 +1005,7 @@ const handleNavigationKeyDown = (e: KeyboardEvent) => {
                         }
                         multiPointGraphic.attributes = { id: `temp-graphic-${Date.now()}`, type: drawStore.activeTool };
                         graphicsLayer?.add(multiPointGraphic);
+                        void refreshMeasurementGraphics(multiPointGraphic, drawStore.activeTool ?? undefined);
 
                         iApi.updateAlert(
                             t('draw.multiPoint.started', {
@@ -459,6 +1026,7 @@ const handleNavigationKeyDown = (e: KeyboardEvent) => {
                                 spatialReference: view.spatialReference
                             });
                         }
+                        void refreshMeasurementGraphics(multiPointGraphic!, drawStore.activeTool ?? undefined);
 
                         iApi.updateAlert(
                             t('draw.multiPoint.pointAdded', {
@@ -494,6 +1062,7 @@ const handleNavigationKeyDown = (e: KeyboardEvent) => {
                 }
                 // Notify geometry change using public API
                 multiPointGraphic!.set('geometry', multiPointGraphic?.geometry);
+                void refreshMeasurementGraphics(multiPointGraphic!, drawStore.activeTool ?? undefined);
                 iApi.updateAlert(
                     t('draw.multiPoint.pointRemoved', {
                         type: translateTerm(drawStore.activeTool ?? undefined),
@@ -508,6 +1077,7 @@ const handleNavigationKeyDown = (e: KeyboardEvent) => {
                 multiPointGraphic = null;
                 multiPointVertices = [];
                 multiPointMode = false;
+                void refreshMeasurementGraphics();
                 iApi.updateAlert(t('draw.multiPoint.canceled'));
             } else if (selectedGraphic) {
                 e.preventDefault();
@@ -518,6 +1088,7 @@ const handleNavigationKeyDown = (e: KeyboardEvent) => {
                 }
                 selectedGraphic = null;
                 highlightSelectedGraphic(undefined);
+                void refreshMeasurementGraphics();
                 iApi.updateAlert(t('draw.graphic.deleted'));
             }
             break;
@@ -528,6 +1099,7 @@ const handleNavigationKeyDown = (e: KeyboardEvent) => {
             selectedGraphic = null;
             highlightSelectedGraphic(undefined);
             drawStore.clearSelection();
+            void refreshMeasurementGraphics();
             iApi.updateAlert(t('draw.tool.canceled'));
             break;
     }
@@ -676,6 +1248,7 @@ const handleGraphicKeyboardEdit = (e: KeyboardEvent) => {
         if (selectedGraphic.attributes?.id) {
             drawStore.updateGraphicGeometry(selectedGraphic.attributes.id, newGeometry);
         }
+        scheduleMeasurementRefresh(selectedGraphic, selectedGraphic.attributes?.type);
         const action = isResizing ? 'resized' : isRotating ? 'rotated' : 'moved';
         iApi.updateAlert(t(`draw.graphic.${action}`));
     }
@@ -690,16 +1263,30 @@ const handleGraphicKeyboardEdit = (e: KeyboardEvent) => {
  * @param event The view click event.
  */
 const handleViewClick = async (event: EsriViewClickEvent) => {
+    if (drawStore.activeTool !== 'edit') return;
+
     const view = iApi.geo.map.esriView!;
-    const response = await view.hitTest(event);
+    const response = await view.hitTest(event, { include: graphicsLayer });
     const hit = response.results.find(
         (result): result is EsriGraphicHit =>
             'graphic' in result && result.graphic.layer === graphicsLayer && !!result.graphic.attributes?.id
     );
 
-    if (hit && drawStore.activeTool === 'edit') {
-        sketch?.triggerUpdate([hit.graphic]);
-    } else {
+    if (hit) {
+        if (sketch?.state === 'active') {
+            selectedGraphic = hit.graphic;
+            if (hit.graphic.attributes?.id) {
+                drawStore.selectGraphic(hit.graphic.attributes.id);
+            }
+            highlightSelectedGraphic(hit.graphic);
+        } else {
+            startSketchUpdate(hit.graphic);
+        }
+        return;
+    }
+
+    if (sketch?.state !== 'active') {
+        cancelPendingSketchUpdate();
         sketch?.cancel();
         selectedGraphic = null;
         drawStore.clearSelection();
@@ -708,26 +1295,35 @@ const handleViewClick = async (event: EsriViewClickEvent) => {
 };
 
 const initializeDrawTools = async () => {
+    const initId = ++drawToolsInitId;
     await iApi.geo.map.viewPromise;
+
+    if (initId !== drawToolsInitId || !sketchEl.value || !iApi.geo.map.esriView) {
+        return;
+    }
 
     // Create or get the graphics layer for drawings
     if (!iApi.geo.layer.getLayer(DRAW_GRAPHICS_LAYER_ID)) {
-        // @ts-expect-error esri type mismatch
-        graphicsLayer = iApi.geo.layer.createLayer({
+        const drawLayer = iApi.geo.layer.createLayer({
             id: DRAW_GRAPHICS_LAYER_ID,
             layerType: LayerType.GRAPHIC,
             cosmetic: true,
             system: true,
             url: ''
         });
-        // @ts-expect-error esri type mismatch
-        await iApi.geo.map.addLayer(graphicsLayer);
+        await iApi.geo.map.addLayer(drawLayer);
+        if (initId !== drawToolsInitId || !iApi.geo.map.esriView) {
+            return;
+        }
+        graphicsLayer = drawLayer.esriLayer as EsriGraphicsLayer;
     } else {
         // @ts-expect-error esri type mismatch
         graphicsLayer = iApi.geo.layer.getLayer(DRAW_GRAPHICS_LAYER_ID)!.esriLayer;
     }
-    // @ts-expect-error esri type mismatch
-    if (graphicsLayer?.esriLayer) graphicsLayer = graphicsLayer.esriLayer;
+
+    if (!graphicsLayer) {
+        return;
+    }
 
     Object.assign(sketchEl.value!, {
         view: iApi.geo.map.esriView!,
@@ -739,23 +1335,33 @@ const initializeDrawTools = async () => {
             selectionTools: { enable: true },
             settingsMenu: false
         },
-        defaultUpdateOptions: { highlightOptions: { enabled: false } }
+        defaultUpdateOptions: {
+            highlightOptions: { enabled: false },
+            toggleToolOnClick: false
+        }
     });
     iApi.geo.map.esriView!.ui.add(sketchEl.value!, 'bottom-right');
 
-    sketchEl.value?.addEventListener('arcgisCreate', e => handleSketchCreateEvent(e.detail));
-    sketchEl.value?.addEventListener('arcgisUpdate', e => handleSketchUpdateEvent(e.detail));
-
-    sketchHandler = {
-        remove: () => sketchEl.value?.removeEventListener('arcgisCreate', e => handleSketchCreateEvent(e.detail))
-    };
+    if (!sketchEventsRegistered) {
+        sketchEl.value.addEventListener('arcgisCreate', onSketchCreate);
+        sketchEl.value.addEventListener('arcgisUpdate', onSketchUpdate);
+        sketchEventsRegistered = true;
+    }
 
     sketch = sketchEl.value;
 
     // Add DOM event listeners
-    iApi.geo.map.esriView!.on('click', handleViewClick);
+    viewClickHandler = iApi.geo.map.esriView!.on('click', handleViewClick);
     document.addEventListener('keydown', handleNavigationKeyDown);
     document.addEventListener('keydown', handleGraphicKeyboardEdit, { capture: true });
+
+    if (drawStore.activeTool && drawStore.activeTool !== 'edit') {
+        sketch.create(drawStore.activeTool);
+    }
+
+    if (drawStore.measurementsEnabled) {
+        void refreshMeasurementGraphics();
+    }
 };
 
 const cleanupKeyboardShortcuts = () => {
@@ -769,21 +1375,56 @@ const cleanupKeyboardShortcuts = () => {
     keyboardNamespace = undefined;
 };
 
-const cleanupDrawTools = () => {
-    cleanupKeyboardShortcuts();
+type CleanupDrawToolsOptions = {
+    cleanupKeyboard?: boolean;
+    clearActiveTool?: boolean;
+    destroySketch?: boolean;
+};
+
+const cleanupDrawTools = ({
+    cleanupKeyboard = true,
+    clearActiveTool = false,
+    destroySketch = true
+}: CleanupDrawToolsOptions = {}) => {
+    drawToolsInitId++;
+
+    if (cleanupKeyboard) {
+        cleanupKeyboardShortcuts();
+    }
+
+    if (viewClickHandler) {
+        viewClickHandler.remove();
+        viewClickHandler = null;
+    }
 
     if (sketch) {
         if (iApi.geo.map.esriView) {
             iApi.geo.map.esriView.ui.remove(sketch);
         }
-        if (sketchHandler) {
-            sketchHandler.remove();
+        cancelPendingSketchUpdate();
+        cancelSketch();
+        if (destroySketch) {
+            sketch.destroy();
         }
-        sketch.destroy();
+    }
+
+    if (sketchEventsRegistered && sketchEl.value) {
+        sketchEl.value.removeEventListener('arcgisCreate', onSketchCreate);
+        sketchEl.value.removeEventListener('arcgisUpdate', onSketchUpdate);
+        sketchEventsRegistered = false;
     }
 
     document.removeEventListener('keydown', handleNavigationKeyDown);
     document.removeEventListener('keydown', handleGraphicKeyboardEdit, { capture: true });
+
+    selectedGraphic = null;
+    highlightSelectedGraphic(undefined);
+    cancelPendingSketchUpdate();
+    clearMeasurementGraphics();
+    drawStore.clearSelection();
+    if (clearActiveTool && drawStore.activeTool) {
+        drawStore.setActiveTool(null);
+    }
 
     multiPointMode = false;
     multiPointGraphic = null;
@@ -795,6 +1436,16 @@ const cleanupDrawTools = () => {
 
 // Extract the existing sketch event handlers for reuse
 const handleSketchCreateEvent = (event: EsriSketchCreateEvent) => {
+    if (event.state === 'active' && event.graphic) {
+        scheduleMeasurementRefresh(event.graphic, event.tool);
+        return;
+    }
+
+    if (event.state === 'cancel') {
+        void refreshMeasurementGraphics();
+        return;
+    }
+
     if (event.state === 'complete') {
         const graphic = event.graphic;
         if (!graphic) {
@@ -803,12 +1454,14 @@ const handleSketchCreateEvent = (event: EsriSketchCreateEvent) => {
         const id = `graphic-${Date.now()}`;
         graphic.attributes = graphic.attributes || {};
         graphic.attributes.id = id;
+        graphic.attributes.type = event.tool;
         drawStore.addGraphic({
             id,
             type: event.tool,
             geometry: graphic.geometry,
             attributes: graphic.attributes
         });
+        void refreshMeasurementGraphics(graphic, event.tool);
 
         if (event.tool !== 'point') {
             drawStore.setActiveTool('');
@@ -823,10 +1476,11 @@ const handleSketchUpdateEvent = (event: EsriSketchUpdateEvent) => {
 
     if (event.state === 'start') {
         if (drawStore.activeTool !== 'edit') {
-            sketch!.cancel();
+            cancelSketch();
             return;
         }
 
+        cancelPendingSketchUpdate();
         selectedGraphic = graphic;
         if (graphic.attributes?.id) {
             drawStore.selectGraphic(graphic.attributes.id);
@@ -839,11 +1493,13 @@ const handleSketchUpdateEvent = (event: EsriSketchUpdateEvent) => {
     } else if (event.state === 'active') {
         // update highlight while editing
         highlightSelectedGraphic(graphic);
+        scheduleMeasurementRefresh(graphic, graphic.attributes?.type);
     } else if (event.state === 'complete') {
         if (graphic.attributes?.id) {
             drawStore.updateGraphicGeometry(graphic.attributes.id, graphic.geometry);
             iApi.updateAlert(t('draw.graphic.updated'));
         }
+        void refreshMeasurementGraphics(graphic, graphic.attributes?.type);
     }
 };
 
@@ -860,6 +1516,20 @@ onMounted(() => {
             cleanupDrawTools();
         })
     );
+    rampEventHandlers.push(
+        iApi.event.on(GlobalEvents.MAP_REFRESH_START, () => {
+            cleanupDrawTools({
+                cleanupKeyboard: false,
+                clearActiveTool: true,
+                destroySketch: false
+            });
+        })
+    );
+    rampEventHandlers.push(
+        iApi.event.on(GlobalEvents.MAP_REFRESH_END, () => {
+            initializeDrawTools();
+        })
+    );
 });
 
 /* --------------------------------------------------------------------------
@@ -868,13 +1538,21 @@ onMounted(() => {
 watch(
     () => drawStore.activeTool,
     newTool => {
-        sketch!.cancel();
+        if (!sketch) return;
+
+        cancelPendingSketchUpdate();
+        cancelSketch();
         highlightSelectedGraphic();
         multiPointGraphic = null;
         multiPointVertices = [];
         multiPointMode = false;
+        void refreshMeasurementGraphics();
         if (newTool && newTool != 'edit') {
-            sketch!.create(newTool);
+            try {
+                sketch.create(newTool);
+            } catch (e) {
+                console.warn('Unable to start draw sketch.', e);
+            }
         }
     }
 );
