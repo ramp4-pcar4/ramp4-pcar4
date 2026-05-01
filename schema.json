@@ -520,6 +520,29 @@
             "required": ["target"],
             "unevaluatedProperties": false
         },
+        "pindrop": {
+            "type": "object",
+            "description": "Provides configuration to the pindrop fixture.",
+            "properties": {
+                "linkIdentify": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether to drop a pin when a map identify occurs."
+                },
+                "linkDetails": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether to tie the pin visibility to the Details panel."
+                },
+
+                "pinSymbol": {
+                    "type": "object",
+                    "description": "Optional styling for a custom pin symbol. Object of type PointMarkerStyleOptions or PointIconStyleOptions.",
+                    "additionalProperties": true
+                }
+            },
+            "unevaluatedProperties": false
+        },
         "sectionItem": {
             "type": "object",
             "description": "A legend item not bound to a layer, used only for grouping legend items or displaying info sections.",
@@ -2817,6 +2840,10 @@
                 "overviewmap": {
                     "$ref": "#/$defs/overviewmap",
                     "description": "Provides the configuration to the overviewmap fixture"
+                },
+                "pindrop": {
+                    "$ref": "#/$defs/pindrop",
+                    "description": "Provides configuration to the pindrop fixture"
                 },
                 "scrollguard": {
                     "$ref": "#/$defs/scrollguard",
