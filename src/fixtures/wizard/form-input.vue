@@ -7,7 +7,8 @@
                     class="absolute w-full opacity-0 inset-0 cursor-pointer"
                     type="file"
                     name="file"
-                    accept=".geojson,.json,.csv,.zip"
+                    :accept="fileAccept"
+                    :multiple="multipleFiles"
                     :aria-label="props.ariaLabel"
                     @input="
                         event => {
@@ -223,6 +224,10 @@ const props = defineProps({
         type: Boolean,
         default: false
     },
+    fileAccept: {
+        type: String,
+        default: '.geojson,.json,.csv,.zip'
+    },
     help: {
         type: [String, Boolean],
         default: false
@@ -260,6 +265,10 @@ const props = defineProps({
         }
     },
     multiple: {
+        type: Boolean,
+        default: false
+    },
+    multipleFiles: {
         type: Boolean,
         default: false
     },
@@ -353,8 +362,12 @@ const validUrl = (url: string) => {
 };
 
 const handleUpload = (event: Event) => {
-    emit('upload', (event.target as HTMLInputElement).files![0]);
-    (event.target as HTMLInputElement).value = '';
+    const input = event.target as HTMLInputElement;
+    const files = Array.from(input.files ?? []);
+    if (files.length) {
+        emit('upload', props.multipleFiles ? files : files[0]);
+    }
+    input.value = '';
 };
 
 const handleUrlInput = (event: Event) => {
@@ -440,7 +453,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     // remove the resize observer
-    resizeObserver.value!.disconnect();
+    resizeObserver.value?.disconnect();
     watchers.forEach(unwatch => unwatch());
 });
 </script>

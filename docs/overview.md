@@ -41,6 +41,7 @@ APIs exposed by the library:
 - [Geometry API](api-guides/geometry.md)
 - [Layers API](api-guides/layers.md)
 - [Legend Fixture API](api-guides/legend.md)
+- [Draw Fixture API](api-guides/draw.md)
 - [Notification API](api-guides/notifications.md)
 - [Panels API](api-guides/panels.md#the-panel-api) (doc is incomplete)
 

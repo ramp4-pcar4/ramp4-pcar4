@@ -1,0 +1,78 @@
+.ramp-markdown kbd {
+    display: inline-block;
+    min-width: 1.7em;
+    padding: 0 0.4em;
+    border: 1px solid #9ca3af;
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    background: #f9fafb;
+    box-shadow: inset 0 -1px 0 #e5e7eb;
+    color: #111827;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    font-size: 0.875em;
+    font-weight: 600;
+    line-height: inherit;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.ramp-markdown .rv-draw-help-icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    color: currentColor;
+    line-height: inherit;
+    vertical-align: -0.125em;
+}
+
+.ramp-markdown .rv-draw-help-mapnav-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5em;
+    height: 1.5em;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.75);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+    color: #4b5563;
+    line-height: inherit;
+    vertical-align: -0.25em;
+}
+
+.ramp-markdown .rv-draw-help-mapnav-button .rv-draw-help-icon {
+    width: 1.125em;
+    height: 1.125em;
+    line-height: inherit;
+    vertical-align: middle;
+}
+
+.ramp-markdown .rv-draw-help-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25em;
+    padding: 0 0.5em;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #374151;
+    font-size: 0.875em;
+    line-height: inherit;
+    white-space: nowrap;
+    vertical-align: baseline;
+}
+
+.ramp-markdown .rv-draw-help-action-button .rv-draw-help-icon {
+    width: 1em;
+    height: 1em;
+    flex: 0 0 auto;
+    line-height: inherit;
+    vertical-align: -0.125em;
+}
+
+.ramp-markdown .rv-draw-help-action-label {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    line-height: inherit;
+}

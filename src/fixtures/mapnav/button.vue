@@ -8,11 +8,13 @@
                     ? 'focus:outline focus:outline-2 focus:outline-blue-400 focus:absolute focus:z-50'
                     : 'focus:outline-none'
             ]"
-            @click="onClickFunction()"
+            :disabled="disabled"
+            @click="!disabled && onClickFunction()"
             v-focus-item
             :content="tooltip"
             :aria-label="ariaLabel || (typeof tooltip === 'string' ? tooltip : '')"
             :aria-pressed="ariaPressed"
+            :aria-disabled="disabled"
             v-tippy="{ placement: 'left' }"
         >
             <slot></slot>
@@ -41,8 +43,16 @@ defineProps({
     showOutline: {
         type: Boolean,
         default: false
+    },
+    disabled: {
+        type: Boolean,
+        default: false
     }
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+button:disabled {
+    @apply text-gray-400 cursor-not-allowed;
+}
+</style>
