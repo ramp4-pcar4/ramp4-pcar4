@@ -45,6 +45,57 @@ The Draw tools are intended for advanced users and are _not_ enabled by default.
 
 > If the draw config is missing, all types will be loaded with default configuration.
 
+## Importing Shapes By API
+
+Map authors can import saved draw shapes through the Draw fixture API. The source can be a JSON URL or a JSON object using the same format produced by the Draw fixture export buttons.
+
+```js
+await rInstance.fixture.isLoaded('draw');
+await rInstance.fixture.get('draw').importShapes('/draw-shapes/sample-13-draw-shapes.json');
+```
+
+The API can also accept an object directly:
+
+```js
+await rInstance.fixture.get('draw').importShapes({
+    fileType: 'ramp4-draw-shapes',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    shapes: [
+        {
+            type: 'point',
+            geometry: {
+                spatialReference: { wkid: 3978 },
+                x: 0,
+                y: 0
+            },
+            settings: {
+                drawStyle: {
+                    fillColor: '#0099db',
+                    borderColor: '#006895',
+                    bufferColor: '#75c8ec',
+                    opacity: 35,
+                    borderColorManual: false,
+                    bufferColorManual: false
+                },
+                drawBuffer: {
+                    distance: 0,
+                    unit: 'kilometers'
+                },
+                drawIdentifyBufferMode: 'shape-buffer',
+                drawMapLabels: {
+                    areaLabel: false,
+                    segmentLength: false,
+                    vertexNumbers: false
+                }
+            }
+        }
+    ]
+});
+```
+
+See the [Draw Fixture API guide](../../api-guides/draw.md) for more details.
+
 ## Basic Keyboard Controls
 
 | Key        | Function |

@@ -3,6 +3,8 @@ Test 13: Drawing Tools
 - Adds a draw tool to the map
  */
 
+const sampleDrawShapesUrl = '../draw-shapes/sample-13-draw-shapes.json';
+
 const runPreTest = (config, options, utils) => {
     const happy = {
         id: 'Happy',
@@ -34,8 +36,22 @@ const runPreTest = (config, options, utils) => {
     return { config, options };
 };
 
-const runPostTest = () => {
-    // Not used in this test
+const runPostTest = async instance => {
+    await instance.fixture.isLoaded('draw');
+
+    const importSampleShapes = () => {
+        instance.fixture
+            .get('draw')
+            .importShapes(sampleDrawShapesUrl)
+            .catch(error => console.warn('Unable to import sample draw shapes.', error));
+    };
+
+    if (instance.geo.map.created) {
+        importSampleShapes();
+        return;
+    }
+
+    instance.event.once('map/created', importSampleShapes);
 };
 
 export { runPreTest, runPostTest };
