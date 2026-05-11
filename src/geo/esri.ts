@@ -27,7 +27,14 @@ import EsriPolygon from '@arcgis/core/geometry/Polygon';
 import EsriPolyline from '@arcgis/core/geometry/Polyline';
 import EsriSpatialReference from '@arcgis/core/geometry/SpatialReference';
 import { execute as EsriAreaOperator } from '@arcgis/core/geometry/operators/areaOperator';
+import { execute as EsriBufferOperator } from '@arcgis/core/geometry/operators/bufferOperator';
 import { execute as EsriCentroidOperator } from '@arcgis/core/geometry/operators/centroidOperator';
+import { execute as EsriDifferenceOperator } from '@arcgis/core/geometry/operators/differenceOperator';
+import {
+    execute as EsriGeodesicBufferOperator,
+    isLoaded as EsriGeodesicBufferOperatorIsLoaded,
+    load as EsriGeodesicBufferOperatorLoad
+} from '@arcgis/core/geometry/operators/geodesicBufferOperator';
 import {
     execute as EsriGeodeticAreaOperator,
     isLoaded as EsriGeodeticAreaOperatorIsLoaded,
@@ -116,9 +123,12 @@ import type {
 import type EsriColorBackground from '@arcgis/core/webmap/background/ColorBackground';
 import type { ColorBackgroundProperties as EsriColorBackgroundProperties } from '@arcgis/core/webmap/background/ColorBackground';
 
+import type EsriSketch from '@arcgis/core/widgets/Sketch';
+import EsriSketchViewModel from '@arcgis/core/widgets/Sketch/SketchViewModel';
 import type {
     CreateEvent as EsriSketchCreateEvent,
-    UpdateEvent as EsriSketchUpdateEvent
+    UpdateEvent as EsriSketchUpdateEvent,
+    UpdateOptions as EsriSketchUpdateOptions
 } from '@arcgis/core/widgets/Sketch/types';
 
 import '@arcgis/map-components/components/arcgis-sketch';
@@ -251,6 +261,7 @@ export {
     type EsriArcadeExecutor,
     EsriAreaOperator,
     type EsriBasemap,
+    EsriBufferOperator,
     EsriCentroidOperator,
     type EsriClassBreakInfo,
     type EsriClassBreaksRenderer,
@@ -258,6 +269,7 @@ export {
     EsriColour,
     type EsriColorBackground,
     EsriConfig,
+    EsriDifferenceOperator,
     EsriExtent,
     type EsriFeatureFilter,
     type EsriFeatureLayer,
@@ -266,6 +278,9 @@ export {
     type EsriFeatureReductionCluster,
     type EsriField,
     type EsriFieldProperties,
+    EsriGeodesicBufferOperator,
+    EsriGeodesicBufferOperatorIsLoaded,
+    EsriGeodesicBufferOperatorLoad,
     EsriGeodeticAreaOperator,
     EsriGeodeticAreaOperatorIsLoaded,
     EsriGeodeticAreaOperatorLoad,
@@ -314,8 +329,11 @@ export {
     EsriSimpleLineSymbol,
     EsriSimpleMarkerSymbol,
     type EsriSimpleRenderer,
+    type EsriSketch,
     type EsriSketchCreateEvent,
     type EsriSketchUpdateEvent,
+    type EsriSketchUpdateOptions,
+    EsriSketchViewModel,
     EsriSpatialReference,
     type EsriSublayer,
     type EsriSymbol,
