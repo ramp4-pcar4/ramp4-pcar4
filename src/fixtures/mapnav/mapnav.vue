@@ -152,6 +152,10 @@ const visible = computed(() =>
 </script>
 
 <style lang="scss" scoped>
+.mapnav {
+    z-index: 2;
+}
+
 .mapnav-section {
     @apply flex-col flex flex-wrap-reverse items-start shadow-tm pointer-events-auto;
 
