@@ -460,6 +460,11 @@ export class InstanceAPI {
     component<VC extends DefineComponent>(id: string, vueConstructor: any): VC;
     component(id: string, definition?: any) {
         if (definition) {
+            const existing = this.$element.component(id);
+            if (existing) {
+                return existing;
+            }
+
             const vc = this.$element.component(id, definition);
             this.event.emit(GlobalEvents.COMPONENT, id);
             return vc;

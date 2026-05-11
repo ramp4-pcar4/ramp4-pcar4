@@ -5,7 +5,26 @@
     @tailwind variants;
 
     @layer base {
-        .ramp-markdown :not(table, td, img) {
+        .ramp-markdown
+            :not(
+                table,
+                td,
+                img,
+                kbd,
+                svg,
+                g,
+                path,
+                rect,
+                circle,
+                ellipse,
+                line,
+                polyline,
+                polygon,
+                .rv-draw-help-icon,
+                .rv-draw-help-mapnav-button,
+                .rv-draw-help-action-button,
+                .rv-draw-help-action-label
+            ) {
             all: revert;
         }
 

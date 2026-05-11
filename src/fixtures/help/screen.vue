@@ -11,7 +11,7 @@
                     :placeholder="t('help.search')"
                     v-model="searchTerm"
                     :aria-label="t('help.search')"
-                    @input="doSearch(searchTerm, helpSections)"
+                    @input="doSearch(helpSections)"
                     @keypress.enter.prevent
                     enterkeyhint="done"
                 />
@@ -35,6 +35,7 @@ import type { PropType } from 'vue';
 
 import type { InstanceAPI, PanelInstance } from '@/api';
 import { useHelpStore } from './store';
+import type { DynamicHelpMarkdown } from './store';
 import HelpSection from './section.vue';
 import axios from 'redaxios';
 import { marked } from 'marked';
@@ -53,20 +54,23 @@ defineProps({
 });
 
 const location = computed<string>(() => helpStore.location);
+const dynamicSections = computed(() => helpStore.dynamicSections);
 const helpSections = ref<Array<any>>([]);
 const originalTextArray = ref<Array<any>>([]);
 const watchers = ref<Array<() => void>>([]);
 
 const noResults = ref<boolean>(false);
 let numResults: number;
-let searchTerm: string;
+const searchTerm = ref<string>('');
+let loadRequestId = 0;
 
 //find search term in info sections without impacting the HTML tags
-function findInfo(searchTerm: string, section: any) {
+function findInfo(section: any) {
+    const currentSearchTerm = searchTerm.value.toLowerCase();
     const segments: string[] = section.info.split(/(<[^>]*>)/);
     for (const [i, segment] of segments.entries()) {
         if (i % 2 === 0) {
-            if (segment.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1) {
+            if (segment.toLowerCase().indexOf(currentSearchTerm) > -1) {
                 return true;
             }
         }
@@ -75,7 +79,8 @@ function findInfo(searchTerm: string, section: any) {
 }
 
 // highlight the search term
-function highlightSearchTerm(searchTerm: string, idx: number) {
+function highlightSearchTerm(idx: number) {
+    const currentSearchTerm = searchTerm.value;
     const originalText = originalTextArray.value[idx];
     // split text around <a> and <img> to preserve links
     const segments: string[] = originalText.split(/(<[^>]*>)/);
@@ -83,7 +88,7 @@ function highlightSearchTerm(searchTerm: string, idx: number) {
     for (const [i, segment] of segments.entries()) {
         if (i % 2 === 0) {
             highlightedText += segment.replace(
-                new RegExp(searchTerm, 'gi'),
+                new RegExp(currentSearchTerm, 'gi'),
                 (match: string) => `<mark>${match}</mark>`
             );
         } else {
@@ -95,18 +100,20 @@ function highlightSearchTerm(searchTerm: string, idx: number) {
 }
 
 // find the help sections which contain the search term
-function doSearch(searchTerm: string, sections: any) {
+function doSearch(sections: any) {
+    const currentSearchTerm = searchTerm.value;
+    const normalizedSearchTerm = currentSearchTerm.toLowerCase();
     numResults = 0;
     sections.forEach((section: any, index: number) => {
         //reset the text to original before looking for search term
         section.info = originalTextArray.value[index];
         //find the search term in each section
         section.drawn =
-            findInfo(searchTerm, section) || section.header.toLowerCase().indexOf(searchTerm.toLowerCase()) > -1;
+            findInfo(section) || section.header.toLowerCase().indexOf(normalizedSearchTerm) > -1;
         numResults = section.drawn ? numResults + 1 : numResults;
-        section.expanded = section.drawn && searchTerm.length > 2;
-        if (section.drawn && searchTerm.length > 2) {
-            highlightSearchTerm(searchTerm, index);
+        section.expanded = section.drawn && currentSearchTerm.length > 2;
+        if (section.drawn && currentSearchTerm.length > 2) {
+            highlightSearchTerm(index);
         }
     });
     noResults.value = numResults === 0;
@@ -116,59 +123,95 @@ function toggleExpanded(section: any) {
     section.expanded = !section.expanded;
 }
 
+function resolveLocalizedMarkdown(markdown: DynamicHelpMarkdown, locale: string): string {
+    if (typeof markdown === 'string') {
+        return markdown;
+    }
+
+    const baseLocale = locale.split('-')[0];
+    return markdown[locale] ?? markdown[baseLocale] ?? markdown.en ?? Object.values(markdown)[0] ?? '';
+}
+
+function createRenderer(loc: string) {
+    const renderer = new marked.Renderer();
+    // make it easier to use images in markdown by prepending path to href if href is not an external source
+    // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
+    renderer.image = (imageToken: Tokens.Image) => {
+        let href = imageToken.href;
+        if (href.indexOf('http') === -1) {
+            href = `${loc}images/` + href;
+        }
+        return `<img src="${href}" alt="${imageToken.text}">`;
+    };
+    return renderer;
+}
+
+function parseHelpMarkdown(helpMd: string, renderer: ReturnType<typeof createRenderer>) {
+    // matches help sections from markdown file where each section begins with one hashbang and a space
+    // followed by the section header, exactly 2 newlines, then up to but not including a double newline
+    // note that the {2,} below is used as the double line deparator since each double new line is actually 6
+    // but we'll also accept more than a double space
+    const reg = /^#\s(.*)\n{2}(?:.+|\n(?!\n{2,}))*/gm;
+    const nextHelpSections: Array<any> = [];
+    const nextOriginalTextArray: Array<any> = [];
+    let section;
+    while ((section = reg.exec(helpMd))) {
+        const info = marked(section[0].split('\n').splice(2).join('\n'), {
+            renderer,
+            async: false
+        });
+        nextHelpSections.push({
+            header: section[1],
+            info,
+            drawn: true,
+            expanded: false
+        });
+        //copy of the original text to refer to after highlighting
+        nextOriginalTextArray.push(info);
+    }
+
+    helpSections.value = nextHelpSections;
+    originalTextArray.value = nextOriginalTextArray;
+
+    if (searchTerm.value.length) {
+        doSearch(helpSections.value);
+    } else {
+        noResults.value = false;
+    }
+}
+
+async function loadHelpSections(locale: string) {
+    const requestId = ++loadRequestId;
+    // path to where HELP is hosted is different if RAMP is built as prod library
+    const loc = location.value.slice(-1) === '/' ? location.value : `${location.value}/`;
+    const renderer = createRenderer(loc);
+    const response = await axios.get(`${loc}${locale}.md`);
+
+    if (requestId !== loadRequestId) {
+        return;
+    }
+
+    // remove new line character ASCII (13) so that above regex is compatible with all
+    // operating systems (markdown file varies by OS new line preference)
+    const staticMarkdown = response.data.replace(new RegExp(String.fromCharCode(13), 'g'), '');
+    const dynamicMarkdown = dynamicSections.value
+        .map(section => resolveLocalizedMarkdown(section.markdown, locale))
+        .filter(markdown => markdown.trim().length > 0)
+        .join('\n\n')
+        .replace(new RegExp(String.fromCharCode(13), 'g'), '');
+
+    parseHelpMarkdown([staticMarkdown, dynamicMarkdown].filter(Boolean).join('\n\n'), renderer);
+}
+
 onBeforeMount(() => {
-    // make help request when fixture loads or locale changes
+    // make help request when fixture loads, locale changes, or dynamic fixture help changes
     watchers.value.push(
         watch(
-            () => iApi.language,
-            (newLocale: any, oldLocale: any) => {
-                if (newLocale === oldLocale) return;
-                // path to where HELP is hosted is different if RAMP is built as prod library
-                const renderer = new marked.Renderer();
-                const loc = location.value.slice(-1) === '/' ? location.value : `${location.value}/`;
-                // make it easier to use images in markdown by prepending path to href if href is not an external source
-                // this avoids the need for ![](help/images/myimg.png) to just ![](myimg.png). This overrides the default image renderer completely.
-                renderer.image = (imageToken: Tokens.Image) => {
-                    let href = imageToken.href;
-                    if (href.indexOf('http') === -1) {
-                        href = `${loc}images/` + href;
-                    }
-                    return `<img src="${href}" alt="${imageToken.text}">`;
-                };
-                axios.get(`${loc}${newLocale}.md`).then(r => {
-                    // matches help sections from markdown file where each section begins with one hashbang and a space
-                    // followed by the section header, exactly 2 newlines, then up to but not including a double newline
-                    // note that the {2,} below is used as the double line deparator since each double new line is actually 6
-                    // but we'll also accept more than a double space
-                    const reg = /^#\s(.*)\n{2}(?:.+|\n(?!\n{2,}))*/gm;
-                    // remove new line character ASCII (13) so that above regex is compatible with all
-                    // operating systems (markdown file varies by OS new line preference)
-                    const helpMd = r.data.replace(new RegExp(String.fromCharCode(13), 'g'), '');
-                    helpSections.value = [];
-                    let section;
-                    while ((section = reg.exec(helpMd))) {
-                        helpSections.value.push({
-                            header: section[1],
-                            // parse markdown on info section, split/splice/join removes the header
-                            // since we can't put info section into its own regex grouping
-                            info: marked(section[0].split('\n').splice(2).join('\n'), {
-                                renderer,
-                                async: false
-                            }),
-                            drawn: true,
-                            expanded: false
-                        });
-                        //copy of the original text to refer to after highlighting
-                        originalTextArray.value.push(
-                            marked(section[0].split('\n').splice(2).join('\n'), {
-                                renderer,
-                                async: false
-                            })
-                        );
-                    }
-                });
+            [() => iApi.language, location, dynamicSections],
+            ([newLocale]: any) => {
+                void loadHelpSections(newLocale);
             },
-            { immediate: true }
+            { immediate: true, deep: true }
         )
     );
 });
