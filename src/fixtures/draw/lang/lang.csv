@@ -50,6 +50,141 @@ draw.keyboard.key.rectangle,Draw a rectangle,1,Dessine un rectangle,0
 draw.keyboard.key.measurements,Toggle measurements,1,Afficher ou masquer les mesures,0
 draw.keyboard.key.edit,Edit geometry,1,Mode édition,0
 draw.graphic.moved,Graphic moved,1,Graphique déplacé,0
+draw.settings.tooltip,Default draw settings,1,Parametres de dessin par defaut,0
+draw.settings.appearance,Appearance,1,Apparence,0
+draw.settings.color.hue,Hue,1,Teinte,0
+draw.settings.color.copy,Copy colour,1,Copier la couleur,0
+draw.settings.color.edit,Edit,1,Modifier,0
+draw.settings.color.done,Done,1,Termine,0
+draw.settings.color.invalid,Enter a valid hex colour.,1,Entrez une couleur hexadecimale valide.,0
+draw.settings.opacity,Opacity,1,Opacite,0
+draw.settings.buffer,Buffer,1,Tampon,0
+draw.settings.buffer.distance,Distance,1,Distance,0
+draw.settings.buffer.unit,Unit,1,Unite,0
+draw.settings.identifyBufferUses,Identify buffer uses,1,Le tampon d'identification utilise,0
+draw.settings.identify.shapeAndBuffer,Original Shape + Buffer,1,Forme originale + tampon,0
+draw.settings.identify.shapeAndBuffer.description,Identify within the original shape and the buffer. This is the default.,1,Identifier dans la forme originale et le tampon. C'est la valeur par defaut.,0
+draw.settings.identify.originalShapeOnly,Original Shape Only,1,Forme originale seulement,0
+draw.settings.identify.originalShapeOnly.description,Identify only within the original shape and not the buffer.,1,Identifier seulement dans la forme originale et non dans le tampon.,0
+draw.settings.identify.bufferOnly,Buffer Only,1,Tampon seulement,0
+draw.settings.identify.bufferOnly.description,Identify only the buffer and omit the shape itself.,1,Identifier seulement le tampon et exclure la forme elle-meme.,0
+draw.settings.unit.meters,Meters,1,Metres,0
+draw.settings.unit.kilometers,Kilometers,1,Kilometres,0
+draw.settings.unit.feet,Feet,1,Pieds,0
+draw.settings.unit.usFeet,US feet,1,Pieds US,0
+draw.settings.unit.yards,Yards,1,Verges,0
+draw.settings.unit.miles,Miles,1,Milles,0
+draw.settings.unit.nauticalMiles,Nautical miles,1,Milles nautiques,0
+draw.settings.unit.centimeters,Centimeters,1,Centimetres,0
+draw.settings.unit.millimeters,Millimeters,1,Millimetres,0
+draw.settings.unit.decimeters,Decimeters,1,Decimetres,0
+draw.settings.unit.inches,Inches,1,Pouces,0
+draw.defaults.title,Draw Defaults,1,Valeurs par defaut du dessin,0
+draw.defaults.helper,These settings apply to new shapes you draw. They do not change the currently selected shape.,1,Ces parametres s'appliquent aux nouvelles formes dessinees. Ils ne changent pas la forme selectionnee.,0
+draw.defaults.color.shape,Default fill colour,1,Couleur de remplissage par defaut,0
+draw.defaults.color.border,Default border colour,1,Couleur de bordure par defaut,0
+draw.defaults.color.buffer,Default buffer colour,1,Couleur du tampon par defaut,0
+draw.defaults.opacity,Default shape opacity,1,Opacite de la forme par defaut,0
+draw.defaults.buffer.distance,Default buffer distance,1,Distance du tampon par defaut,0
+draw.defaults.identifyBufferUses,Identify buffer options for new shapes,1,Options du tampon d'identification pour les nouvelles formes,0
+draw.export.shape.tooltip,Export selected shape,1,Exporter la forme selectionnee,0
+draw.export.all.tooltip,Export all shapes,1,Exporter toutes les formes,0
+draw.export.action.exportShort,Export,1,Exporter,0
+draw.export.shape.success,Shape exported,1,Forme exportee,0
+draw.export.all.success,Shapes exported,1,Formes exportees,0
+draw.export.none,No shapes to export,1,Aucune forme a exporter,0
+draw.import.title,Import shape,1,Importer une forme,0
+draw.import.tooltip,Import shape,1,Importer une forme,0
+draw.import.action.importShort,Import,1,Importer,0
+draw.import.file.label,Upload a file,1,Televerser un fichier,0
+draw.import.file.help,Select one or more draw shape JSON files.,1,Selectionnez un ou plusieurs fichiers JSON de formes dessinees.,0
+draw.import.error.invalid,The selected file is not a valid draw shape export.,1,Le fichier selectionne n'est pas une exportation de forme valide.,0
+draw.import.success,Imported {count} shapes,1,{count} formes importees,0
+draw.details.tooltip,Inspect shape details,1,Inspecter les details de la forme,0
+draw.details.shapeType,Shape Type,1,Type de forme,0
+draw.details.shapeType.point,Point,1,Point,0
+draw.details.shapeType.polyline,Line,1,Ligne,0
+draw.details.shapeType.polygon,Polygon,1,Polygone,0
+draw.details.shapeType.rectangle,Rectangle,1,Rectangle,0
+draw.details.shapeType.circle,Circle,1,Cercle,0
+draw.details.shapeType.unknown,Unknown,1,Inconnu,0
+draw.details.measurements,Measurements,1,Mesures,0
+draw.details.measurements.length,Length,1,Longueur,0
+draw.details.measurements.perimeter,Perimeter,1,Perimetre,0
+draw.details.measurements.area,Area,1,Superficie,0
+draw.details.measurements.bufferArea,Buffer Area,1,Superficie du tampon,0
+draw.details.measurements.bufferPerimeter,Buffer Perimeter,1,Perimetre du tampon,0
+draw.details.segments,Segments,1,Segments,0
+draw.details.location,Location,1,Emplacement,0
+draw.details.location.centroid,Centroid,1,Centroide,0
+draw.details.vertices,Vertices,1,Sommets,0
+draw.details.vertexCount,Vertex Count,1,Nombre de sommets,0
+draw.details.showOnMap.areaLabel,Area Label,1,Etiquette de superficie,0
+draw.details.showOnMap.segmentLength,Segment Length,1,Longueur du segment,0
+draw.details.showOnMap.segmentLetters,Segment letters,1,Lettres des segments,0
+draw.details.showOnMap.vertexNumbers,Vertex numbers,1,Numeros des sommets,0
+draw.details.extent,Bounding Extent,1,Etendue englobante,0
+draw.details.extent.north,North,1,Nord,0
+draw.details.extent.south,South,1,Sud,0
+draw.details.extent.east,East,1,Est,0
+draw.details.extent.west,West,1,Ouest,0
+draw.details.featureCounts,Features,1,Entites,0
+draw.details.featureCounts.shape,Shape,1,Forme,0
+draw.details.featureCounts.buffer,Buffer,1,Tampon,0
+draw.details.featureCounts.total,Total,1,Total,0
+draw.details.featureCounts.totalHint.shapeBuffer,The total includes features identified inside the shape and its buffer.,1,Le total comprend les entites identifiees dans la forme et son tampon.,0
+draw.details.featureCounts.totalHint.shape,The total includes only features identified inside the shape.,1,Le total comprend seulement les entites identifiees dans la forme.,0
+draw.details.featureCounts.totalHint.bufferOnly,The total includes only features identified inside the buffer.,1,Le total comprend seulement les entites identifiees dans le tampon.,0
+draw.details.featureCounts.totalHint.noBuffer,The total includes features identified inside the shape because no buffer is applied.,1,Le total comprend les entites identifiees dans la forme parce qu'aucun tampon n'est applique.,0
+draw.details.identify.loading,Counting features,1,Denombrement des entites,0
+draw.details.action.copyCoordinates,Copy Coordinates,1,Copier les coordonnees,0
+draw.details.action.copySegment,Copy Segment,1,Copier le segment,0
+draw.details.action.copyAllSegments,Copy All Segments,1,Copier tous les segments,0
+draw.details.action.copyAllCoordinates,Copy All Vertex Coordinates,1,Copier toutes les coordonnees des sommets,0
+draw.details.action.copyAllCoordinatesShort,Copy All,1,Tout copier,0
+draw.details.action.runIdentify,Run Identify,1,Executer l'identification,0
+draw.details.action.deleteShape,Delete Shape,1,Supprimer la forme,0
+draw.details.action.deleteShapeShort,Delete,1,Supprimer,0
+draw.details.loading,Loading shape details,1,Chargement des details de la forme,0
+draw.details.notAvailable,Not available,1,Non disponible,0
+draw.details.coordinatesCopied,Coordinates copied,1,Coordonnees copiees,0
+draw.details.coordinatesCopyFailed,Unable to copy coordinates,1,Impossible de copier les coordonnees,0
+draw.details.segmentCopied,Segment copied,1,Segment copie,0
+draw.details.segmentCopyFailed,Unable to copy segment,1,Impossible de copier le segment,0
+draw.inspector.title,Shape Inspector,1,Inspecteur de forme,0
+draw.inspector.empty,Select a shape to inspect.,1,Selectionnez une forme a inspecter.,0
+draw.inspector.tab.details,Details,1,Details,0
+draw.inspector.tab.style,Style,1,Style,0
+draw.inspector.tab.edit,Edit,1,Modifier,0
+draw.inspector.subtitle.selected,selected,1,selectionnee,0
+draw.inspector.subtitle.vertices,{count} vertices,1,{count} sommets,0
+draw.inspector.subtitle.segments,{count} segments,1,{count} segments,0
+draw.inspector.state,State,1,Etat,0
+draw.inspector.state.selected,Selected,1,Selectionnee,0
+draw.inspector.state.editing,Editing,1,Modification,0
+draw.inspector.labels,Labels,1,Etiquettes,0
+draw.inspector.geometry,Geometry,1,Geometrie,0
+draw.inspector.geometry.coordinateSystem,Coordinate system,1,Systeme de coordonnees,0
+draw.inspector.style.notice,Applies only to the selected shape. Global defaults stay under Draw Defaults.,1,S'applique seulement a la forme selectionnee. Les valeurs globales restent dans Valeurs par defaut du dessin.,0
+draw.inspector.style.presets,Presets,1,Prereglages,0
+draw.inspector.style.preset.default,Default,1,Defaut,0
+draw.inspector.style.preset.highlight,Highlight,1,Surligner,0
+draw.inspector.style.preset.muted,Muted,1,Attenue,0
+draw.inspector.style.preset.alert,Alert,1,Alerte,0
+draw.inspector.style.fillColor,Fill colour,1,Couleur de remplissage,0
+draw.inspector.style.borderColor,Border colour,1,Couleur de bordure,0
+draw.inspector.style.bufferColor,Buffer colour,1,Couleur du tampon,0
+draw.inspector.edit.active,Edit mode active,1,Mode modification actif,0
+draw.inspector.edit.shapeId,Shape ID,1,ID de forme,0
+draw.inspector.edit.guidance,Use map handles to resize or move the shape. Finish or cancel from this panel.,1,Utilisez les poignees de la carte pour redimensionner ou deplacer la forme. Terminez ou annulez depuis ce panneau.,0
+draw.inspector.edit.vertexToggleHint,Click the selected shape again to toggle vertex editing.,1,Cliquez a nouveau sur la forme selectionnee pour activer ou desactiver la modification des sommets.,0
+draw.inspector.edit.aids,Editing aids,1,Aides de modification,0
+draw.inspector.edit.viewVertices,View vertices in Details,1,Afficher les sommets dans Details,0
+draw.inspector.action.reset,Reset,1,Reinitialiser,0
+draw.inspector.action.cancel,Cancel,1,Annuler,0
+draw.inspector.action.done,Done,1,Termine,0
+draw.inspector.action.yesDelete,"Yes, Delete",1,"Oui, supprimer",0
+draw.inspector.delete.confirm,Are you sure you want to delete this shape?,1,Etes-vous sur de vouloir supprimer cette forme?,0
 draw.shape,shape,1,forme,0
 draw.point,point,1,indiquer,0
 draw.multipoint,multipoint,1,multipoint,0
