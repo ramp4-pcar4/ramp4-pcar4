@@ -23,7 +23,7 @@
                             @upload="updateFile"
                             :aria-label="t('wizard.upload.file.label')"
                         />
-                        <span class="block text-center mb-10">or</span>
+                        <span class="block text-center mb-10">{{ t('wizard.upload.or') }}</span>
 
                         <!-- Provide layer URL -->
                         <wizard-input
