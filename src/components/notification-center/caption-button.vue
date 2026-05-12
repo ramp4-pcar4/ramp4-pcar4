@@ -3,10 +3,11 @@
         position="top-start"
         :tooltip="t('notifications.title')"
         tooltipPlacement="top"
+        trigger-class="text-gray-500 hover:text-white"
         class="pointer-events-auto sm:flex ml-4 mr-8"
     >
         <template #header>
-            <div class="flex items-center hover:text-white">
+            <div class="flex items-center">
                 <!-- https://fonts.google.com/icons?selected=Material%20Icons%3Anotifications -->
                 <svg
                     class="fill-current w-24 h-24"

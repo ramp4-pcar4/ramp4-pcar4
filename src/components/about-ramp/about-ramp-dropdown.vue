@@ -4,10 +4,11 @@
         :position="position"
         :tooltip="t('ramp.about')"
         :tooltipPlacement="position"
+        trigger-class="text-gray-500 hover:text-white"
         v-focus-item
     >
         <template #header>
-            <div class="flex hover:text-white">
+            <div class="flex">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
