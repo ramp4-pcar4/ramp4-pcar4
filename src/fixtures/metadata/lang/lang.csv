@@ -2,6 +2,8 @@ key,enValue,enValid,frValue,frValid
 metadata.title,Metadata,1,Métadonnées,1
 metadata.loading,Loading...,1,Chargement en cours...,1
 metadata.error,There was an error retrieving this resource. Please try again.,1,Une erreur s'est produite lors du chargement de cette ressource. Veuillez essayer de nouveau.,1
+metadata.notification.rawFallback,Metadata could not be displayed in formatted view. Raw metadata is available instead.,1,Les métadonnées n'ont pas pu être affichées en format structuré. Les métadonnées brutes sont disponibles à la place.,0
+metadata.notification.rawFallbackWithReason,Metadata could not be displayed in formatted view. Raw metadata is available instead. Reason: {reason},1,Les métadonnées n'ont pas pu être affichées en format structuré. Les métadonnées brutes sont disponibles à la place. Raison : {reason},0
 metadata.label.no.layer,No metadata to show because the layer has been removed,1,Aucune métadonnée à afficher, car la couche a été supprimée.,1
 metadata.xslt.Abstract,Abstract,1,Résumé,1
 metadata.xslt.Scope,Scope,1,Portée,1
