@@ -2,7 +2,8 @@
     <div ref="el">
         <button
             type="button"
-            class="text-gray-500 hover:text-black dropdown-button"
+            class="dropdown-button"
+            :class="triggerClass"
             @click="toggleDropdown"
             :content="tooltip"
             :aria-label="ariaLabel ? String(ariaLabel) : String(tooltip)"
@@ -57,6 +58,7 @@ const props = defineProps({
     tooltipPlacementAlt: { type: String, default: 'top' },
     tooltipTheme: { type: String, default: 'ramp4' },
     tooltipAnimation: { type: String, default: 'scale' },
+    triggerClass: { type: String, default: 'text-gray-500 hover:text-black' },
     centered: { type: Boolean, default: true },
     ariaLabel: { type: String }
 });
