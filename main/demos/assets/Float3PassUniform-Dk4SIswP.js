@@ -1,0 +1,1 @@
+import{t as e}from"./Uniform-B9-emOB0.js";var t=class extends e{constructor(e,t,n){super(e,`vec3`,1,(r,i,a)=>r.setUniform3fv(e,t(i,a),n))}};export{t};

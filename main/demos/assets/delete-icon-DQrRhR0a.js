@@ -1,0 +1,1 @@
+import{t as e}from"./delete-icon-Bg-e22d0.js";export{e as default};

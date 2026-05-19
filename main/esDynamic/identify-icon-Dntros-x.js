@@ -1,0 +1,1 @@
+import{t as e}from"./identify-icon-DQXqcIiB.js";export{e as default};

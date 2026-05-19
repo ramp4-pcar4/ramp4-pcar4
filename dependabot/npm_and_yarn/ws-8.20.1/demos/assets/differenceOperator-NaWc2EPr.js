@@ -1,0 +1,1 @@
+import{r as e}from"./chunk-CaO2_eQ1.js";import"./apiConverter-Bd2BiEVb.js";import{i as t,r as n,t as r}from"./differenceOperator-Cv6CbsZZ.js";var i=e({execute:()=>n,executeMany:()=>t,supportsCurves:()=>r});export{i as t};

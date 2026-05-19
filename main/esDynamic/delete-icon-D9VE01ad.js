@@ -1,0 +1,1 @@
+import{t as e}from"./delete-icon-DWTx1Paz.js";export{e as default};

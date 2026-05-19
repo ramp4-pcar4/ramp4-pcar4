@@ -1,0 +1,1 @@
+import{t as e}from"./copy-icon-COO18_fM.js";export{e as default};

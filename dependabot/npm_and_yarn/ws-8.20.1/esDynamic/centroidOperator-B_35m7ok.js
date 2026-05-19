@@ -1,0 +1,1 @@
+import{r as e}from"./chunk-BQCxAhux.js";import"./apiConverter-xXJ9V9U3.js";import{t}from"./centroidOperator-4ewcZi0w.js";var n=e({execute:()=>t});export{n as t};

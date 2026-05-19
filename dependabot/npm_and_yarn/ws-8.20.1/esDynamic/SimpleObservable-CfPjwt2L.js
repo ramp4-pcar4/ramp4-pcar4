@@ -1,0 +1,1 @@
+import{t as e}from"./ObservableBase-Bh0n92o6.js";var t=class extends e{notify(){let e=this._observers;if(e&&e.length>0){let t=e.slice();for(let e of t)e.onInvalidated(),e.onCommitted()}}};export{t};

@@ -1,0 +1,1 @@
+function e(e,t,n,r){return{x:e,y:t,z:n,hasZ:n!=null,hasM:!1,spatialReference:r,type:`point`}}function t(e,t,n,r,i){e.x=t,e.y=n,e.z=r,e.hasZ=r!=null,e.spatialReference=i}export{e as n,t};

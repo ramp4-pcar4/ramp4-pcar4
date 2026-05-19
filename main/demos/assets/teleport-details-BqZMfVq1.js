@@ -1,0 +1,1 @@
+import"./teleport-details-C_lZvW03.js";

@@ -1,0 +1,1 @@
+import{t as e}from"./copy-icon-DU6jOTZz.js";export{e as default};

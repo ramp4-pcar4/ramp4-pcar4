@@ -1,0 +1,1 @@
+import{t as e}from"./settings-icon-8EKkE-ZC.js";export{e as default};

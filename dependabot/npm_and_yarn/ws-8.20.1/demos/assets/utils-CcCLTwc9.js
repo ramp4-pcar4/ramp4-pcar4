@@ -1,0 +1,1 @@
+import{t as e}from"./Version-j4kFkFy1.js";function t(e){return typeof e==`object`&&!!e&&`declaredClass`in e&&e.declaredClass===`esri.WebMap`}new e(2,36,`webmap`);export{t};

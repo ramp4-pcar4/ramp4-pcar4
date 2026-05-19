@@ -1,0 +1,1 @@
+import"./typedArrayUtil-DYSyCOD_.js";function e(e,t=!1){return e<=1024?t?Array(e).fill(0):Array(e):new Float32Array(e)}function t(e){return(Array.isArray(e)?e.length:e.byteLength/8)<=1024?Array.from(e):new Float32Array(e)}function n(e,t,n){return Array.isArray(e)?e.slice(t,t+n):e.subarray(t,t+n)}export{t as n,e as r,n as t};
