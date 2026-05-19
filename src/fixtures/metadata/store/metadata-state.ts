@@ -23,4 +23,5 @@ export interface MetadataCache {
 export interface MetadataResult {
     status: string;
     response: string;
+    reason?: string;
 }

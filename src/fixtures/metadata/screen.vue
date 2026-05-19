@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import type { PropType } from 'vue';
-import { GlobalEvents, InstanceAPI, LayerInstance } from '@/api';
+import { GlobalEvents, InstanceAPI, LayerInstance, NotificationType } from '@/api';
 import type { PanelInstance } from '@/api';
 import type { MetadataCache, MetadataPayload, MetadataResult } from './store';
 import { useMetadataStore } from './store';
@@ -114,59 +114,63 @@ onBeforeUnmount(() => {
     watchers.forEach(unwatch => unwatch());
 });
 
-const loadMetadata = () => {
+const loadMetadata = async () => {
     // check if layer has not been removed
     layerExists.value = props.payload.layer !== undefined && !props.payload.layer!.isRemoved;
 
+    if (!layerExists.value) {
+        return;
+    }
+
     if (props.payload.type === 'xml') {
-        loadFromURL(props.payload.url, []).then((r: any) => {
-            metadataStore.status = 'success';
+        const r = await loadFromURL(props.payload.url, []);
 
-            // Append the content to the panel.
-            if (r !== null) {
-                const textContainer = document.createElement('div');
+        metadataStore.status = 'success';
 
-                textContainer.appendChild(stringToFragment(`${r.firstElementChild.outerHTML}`));
+        // Append the content to the panel.
+        if (r?.firstElementChild) {
+            const textContainer = document.createElement('div');
 
-                if (props.payload.catalogueUrl || props.payload.url) {
-                    textContainer.appendChild(
-                        stringToFragment(`<h5 class="text-xl font-bold mb-3">${t('metadata.xslt.metadata')}</h5>`)
-                    );
-                }
+            textContainer.appendChild(stringToFragment(`${r.firstElementChild.outerHTML}`));
 
-                // Append catalogue URL link if it exists
-                if (props.payload.catalogueUrl) {
-                    textContainer.appendChild(
-                        stringToFragment(
-                            `<p><a style="color: blue;" href="${props.payload.catalogueUrl}" target="_blank">${t(
-                                'metadata.xslt.cataloguePage'
-                            )}</a></p>`
-                        )
-                    );
-                }
+            if (props.payload.catalogueUrl || props.payload.url) {
+                textContainer.appendChild(
+                    stringToFragment(`<h5 class="text-xl font-bold mb-3">${t('metadata.xslt.metadata')}</h5>`)
+                );
+            }
 
-                // Append raw XML link
+            // Append catalogue URL link if it exists
+            if (props.payload.catalogueUrl) {
                 textContainer.appendChild(
                     stringToFragment(
-                        `<p><a style="color: blue;" href="${props.payload.url}" target="_blank">${t(
-                            'metadata.xslt.metadataPage'
-                        )}</a> (xml)</p>`
+                        `<p><a style="color: blue;" href="${props.payload.catalogueUrl}" target="_blank">${t(
+                            'metadata.xslt.cataloguePage'
+                        )}</a></p>`
                     )
                 );
-
-                metadataStore.response = textContainer.outerHTML;
             }
-        });
+
+            // Append raw XML link
+            textContainer.appendChild(
+                stringToFragment(
+                    `<p><a style="color: blue;" href="${props.payload.url}" target="_blank">${t(
+                        'metadata.xslt.metadataPage'
+                    )}</a> (xml)</p>`
+                )
+            );
+
+            metadataStore.response = textContainer.outerHTML;
+        }
     } else if (props.payload.type === 'html') {
-        requestContent(props.payload.url).then(r => {
-            metadataStore.status = r.status;
-            metadataStore.response = r.response;
-        });
+        const r = await requestContent(props.payload.url);
+
+        metadataStore.status = r.status;
+        metadataStore.response = r.response;
     } else if (props.payload.type === 'md') {
-        requestContent(props.payload.url).then(r => {
-            metadataStore.status = r.status;
-            metadataStore.response = marked(r.response, { async: false });
-        });
+        const r = await requestContent(props.payload.url);
+
+        metadataStore.status = r.status;
+        metadataStore.response = marked(r.response, { async: false });
     }
 };
 
@@ -191,6 +195,13 @@ const loadFromURL = async (xmlUrl: string, params: any[]) => {
 
     if (!cache[xmlUrl]) {
         const xmlData = await requestContent(xmlUrl);
+        if (xmlData.status === 'error') {
+            const message = xmlData.reason
+                ? t('metadata.notification.rawFallbackWithReason', { reason: xmlData.reason })
+                : t('metadata.notification.rawFallback');
+
+            iApi.notify.show(NotificationType.WARNING, message);
+        }
         cache[xmlUrl] = xmlData.response;
     }
 
@@ -257,9 +268,11 @@ const requestContent = (url: string): Promise<MetadataResult> => {
             if (xobj.status === 200) {
                 resolve({ status: 'success', response: xobj.response });
             } else {
+                const reason = xobj.statusText ? `${xobj.status} ${xobj.statusText}` : `HTTP ${xobj.status}`;
                 resolve({
                     status: 'error',
-                    response: 'Could not load results from remote service.'
+                    response: 'Could not load results from remote service.',
+                    reason: reason || undefined
                 });
             }
         };
