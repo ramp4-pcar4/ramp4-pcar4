@@ -19,6 +19,11 @@ type IFixtureBase = new () => FixtureBase;
  */
 type IFixtureInstance = new (id: string, iApi: InstanceAPI) => FixtureInstance;
 
+type IFixtureConstructor = IFixtureBase | IFixtureInstance;
+
+const isFixtureInstanceConstructor = (constructor: IFixtureConstructor): constructor is IFixtureInstance =>
+    constructor === FixtureInstance || constructor.prototype instanceof FixtureInstance;
+
 export class FixtureAPI extends APIScope {
     /**
      * Creates an instance of FixtureAPI.
@@ -45,12 +50,12 @@ export class FixtureAPI extends APIScope {
      * Loads a (built-in) fixture or adds supplied fixture into the R4MP Vue instance.
      *
      * @param {string} id
-     * @param {IFixtureBase} [constructor]
+     * @param {IFixtureConstructor} [constructor]
      * @returns {Promise<FixtureBase>}
      * @memberof FixtureAPI
      */
     // TODO: implement overload to add a list of features
-    async add(id: string, constructor?: IFixtureBase): Promise<FixtureBase> {
+    async add(id: string, constructor?: IFixtureConstructor): Promise<FixtureBase> {
         let fixture: FixtureBase;
 
         // if the fixture already exist, do nothing and just return it
@@ -64,8 +69,12 @@ export class FixtureAPI extends APIScope {
                 throw new Error('malformed fixture constructor');
             }
 
-            // run the provided constructor and update the resulting object with FixtureInstance functions/properties
-            fixture = FixtureInstance.updateBaseToInstance(new constructor(), id, this.$iApi);
+            if (isFixtureInstanceConstructor(constructor)) {
+                fixture = new constructor(id, this.$iApi);
+            } else {
+                // run the provided constructor and update the resulting object with FixtureInstance functions/properties
+                fixture = FixtureInstance.updateBaseToInstance(new (constructor as IFixtureBase)(), id, this.$iApi);
+            }
         } else {
             const instanceConstructor: IFixtureInstance = (await fixtureModules[`../fixtures/${id}/index.ts`]())
                 .default;
@@ -264,7 +273,7 @@ export class FixtureAPI extends APIScope {
 export class FixtureInstance extends APIScope implements FixtureBase {
     /**
      * Adds missing functions and properties to the object implementing FixtureBase interface.
-     * This is only needed for external fixtures as they can't inherit from FixtureInstance.
+     * This is only needed for external fixtures that do not inherit from FixtureInstance.
      *
      * TODO: If you know a better way to deep-mixin props/getters/functions from a class into another class instance, please tell me. I honestly don't know 🤷‍♂️.
      *

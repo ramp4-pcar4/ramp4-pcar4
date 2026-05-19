@@ -50,6 +50,8 @@ export const createInstance = (el: HTMLElement, config?: RampConfigs | undefined
     return new InstanceAPI(el, config, opts);
 };
 
+export { FixtureInstance } from '@/api/internal';
+
 // the global (as in, RAMP library, not RAMP instance) instantiation
 // of the Geo stuff not bound to instances
 export const geo: GeoCommonAPI = new GeoCommonAPI();
