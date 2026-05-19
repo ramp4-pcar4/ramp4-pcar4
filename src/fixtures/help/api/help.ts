@@ -1,6 +1,6 @@
 import { FixtureInstance } from '@/api';
 import { useHelpStore } from '../store';
-import type { HelpConfig } from '../store';
+import type { DynamicHelpSection, HelpConfig } from '../store';
 
 export class HelpAPI extends FixtureInstance {
     /**
@@ -12,6 +12,28 @@ export class HelpAPI extends FixtureInstance {
     toggleHelp(open?: boolean) {
         const panel = this.$iApi.panel.get('help');
         this.$iApi.panel.toggle(panel, open);
+    }
+
+    /**
+     * Adds or replaces a dynamic Markdown help section.
+     *
+     * @param {DynamicHelpSection} section help section definition
+     * @memberof HelpAPI
+     */
+    addDynamicSection(section: DynamicHelpSection) {
+        const helpStore = useHelpStore(this.$vApp.$pinia);
+        helpStore.addDynamicSection(section);
+    }
+
+    /**
+     * Removes a dynamic Markdown help section.
+     *
+     * @param {string} id help section identifier
+     * @memberof HelpAPI
+     */
+    removeDynamicSection(id: string) {
+        const helpStore = useHelpStore(this.$vApp.$pinia);
+        helpStore.removeDynamicSection(id);
     }
 
     /**
