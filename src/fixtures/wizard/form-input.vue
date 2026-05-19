@@ -372,7 +372,7 @@ const handleUpload = (event: Event) => {
 
 const handleUrlInput = (event: Event) => {
     validUrl((event.target as HTMLInputElement).value);
-    emit('link', (event.target as HTMLInputElement).value, valid);
+    emit('link', (event.target as HTMLInputElement).value, valid.value);
     urlError.value = false;
 };
 
@@ -386,7 +386,7 @@ const handleNestedChecked = (event: Event) => {
 
 const handleNameInput = (event: Event) => {
     validName((event.target as HTMLInputElement).value);
-    emit('link', (event.target as HTMLInputElement).value, valid);
+    emit('link', (event.target as HTMLInputElement).value, valid.value);
     nameError.value = false;
 };
 
