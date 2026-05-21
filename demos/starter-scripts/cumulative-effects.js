@@ -248,7 +248,7 @@ const enConfig = {
             nameField: 'Initiative',
             layerType: 'esri-feature',
             expanded: true,
-            url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/EPB//cumulative_effects_effets_cumulatifs/MapServer/4',
+            url: 'https://maps-cartes.ec.gc.ca/ArcGIS/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/4',
             state: {
                 opacity: 0.6,
                 symbologyExpanded: false,
@@ -280,7 +280,7 @@ const enConfig = {
             name: 'Initiatives - Multipoints',
             nameField: 'Initiative',
             layerType: 'esri-feature',
-            url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/EPB//cumulative_effects_effets_cumulatifs/MapServer/3',
+            url: 'https://maps-cartes.ec.gc.ca/ArcGIS/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/3',
             state: {
                 visibility: true
             },
@@ -293,7 +293,7 @@ const enConfig = {
             name: 'Initiatives - Lines',
             nameField: 'Initiative',
             layerType: 'esri-feature',
-            url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/EPB//cumulative_effects_effets_cumulatifs/MapServer/2',
+            url: 'https://maps-cartes.ec.gc.ca/ArcGIS/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/2',
             state: {
                 visibility: true
             },
@@ -306,7 +306,7 @@ const enConfig = {
             name: 'Initiatives - Points',
             nameField: 'Initiative',
             layerType: 'esri-feature',
-            url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/EPB//cumulative_effects_effets_cumulatifs/MapServer/1',
+            url: 'https://maps-cartes.ec.gc.ca/ArcGIS/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/1',
             state: {
                 visibility: true
             },
@@ -319,7 +319,7 @@ const enConfig = {
             name: 'Initiatives - Unmapped',
             nameField: 'Initiative',
             layerType: 'data-esri-table',
-            url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/EPB//cumulative_effects_effets_cumulatifs/MapServer/10',
+            url: 'https://maps-cartes.ec.gc.ca/ArcGIS/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/10',
             state: {
                 visibility: true
             },
@@ -660,7 +660,7 @@ const frConfig = {
             nameField: 'Initiative',
             layerType: 'esri-feature',
             expanded: true,
-            url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/EPB//cumulative_effects_effets_cumulatifs/MapServer/9',
+            url: 'https://maps-cartes.ec.gc.ca/ArcGIS/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/9',
             state: {
                 opacity: 0.6,
                 symbologyExpanded: false,
@@ -676,7 +676,7 @@ const frConfig = {
             name: '[FR] Initiatives - Multipoints',
             nameField: 'Initiative',
             layerType: 'esri-feature',
-            url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/EPB//cumulative_effects_effets_cumulatifs/MapServer/8',
+            url: 'https://maps-cartes.ec.gc.ca/ArcGIS/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/8',
             state: {
                 visibility: true
             },
@@ -689,7 +689,7 @@ const frConfig = {
             name: 'Initiatives - Lines',
             nameField: 'Initiative',
             layerType: 'esri-feature',
-            url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/EPB//cumulative_effects_effets_cumulatifs/MapServer/7',
+            url: 'https://maps-cartes.ec.gc.ca/ArcGIS/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/7',
             state: {
                 visibility: true
             },
@@ -702,7 +702,7 @@ const frConfig = {
             name: '[FR] Initiatives - Points',
             nameField: 'Initiative',
             layerType: 'esri-feature',
-            url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/EPB//cumulative_effects_effets_cumulatifs/MapServer/6',
+            url: 'https://maps-cartes.ec.gc.ca/ArcGIS/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/6',
             state: {
                 visibility: true
             },
@@ -715,7 +715,7 @@ const frConfig = {
             name: '[FR] Initiatives - Unmapped',
             nameField: 'Initiative__EN_',
             layerType: 'data-esri-table',
-            url: 'https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/EPB//cumulative_effects_effets_cumulatifs/MapServer/11',
+            url: 'https://maps-cartes.ec.gc.ca/ArcGIS/rest/services/EPB/cumulative_effects_effets_cumulatifs/MapServer/11',
             state: {
                 visibility: true
             },
