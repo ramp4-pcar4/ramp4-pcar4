@@ -1,25 +1,27 @@
 import pluginVue from 'eslint-plugin-vue';
-import vueTsEslintConfig from '@vue/eslint-config-typescript';
+import { configureVueProject, defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting';
 
-export default [
-    {
-        name: 'app/files-to-lint',
-        files: ['**/*.{ts,mts,tsx,vue}']
-    },
+configureVueProject({
+    rootDir: import.meta.dirname,
+    scriptLangs: ['ts'],
+    tsSyntaxInTemplates: true
+});
+
+export default defineConfigWithVueTs(
     {
         name: 'app/files-to-ignore',
         ignores: ['**/dist/**', '**/tests/**', '**/*.d.ts']
     },
     {
-        rules: {
-            'vue/script-setup-uses-vars': 'error',
-            'vue/multi-word-component-names': 'off'
-        }
+        name: 'app/files-to-lint',
+        files: ['**/*.{ts,mts,tsx,vue}']
     },
-    ...pluginVue.configs['flat/essential'],
-    ...vueTsEslintConfig(),
+    pluginVue.configs['flat/essential'],
+    vueTsConfigs.recommended,
     {
+        name: 'app/rules',
+        files: ['**/*.{ts,mts,tsx,vue}'],
         rules: {
             '@typescript-eslint/no-explicit-any': 'off',
             '@typescript-eslint/no-this-alias': 'off',
@@ -27,4 +29,4 @@ export default [
         }
     },
     skipFormatting
-];
+);

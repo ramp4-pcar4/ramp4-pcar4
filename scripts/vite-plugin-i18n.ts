@@ -1,15 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import type { Plugin } from 'vite';
-// @ts-expect-error
 import { dsvFormat } from 'd3-dsv';
 
 export default function vueI18nPlugin(): Plugin {
-    type CsvRow = { key: string; [name: string]: string };
-
-    // `dsv.parse` returns an array with an additional property `columns` tucked onto it
-    interface CsvRows extends Array<CsvRow> {
-        columns: string[];
-    }
+    type CsvRow = Record<string, string> & { key: string };
 
     type I18nMessages = { [key: string]: { [name: string]: string } };
 
@@ -19,8 +12,9 @@ export default function vueI18nPlugin(): Plugin {
             if (!/lang\.csv/.test(id)) return;
 
             const valueField = 'Value';
-            const res: CsvRows = dsvFormat(',').parse(
-                src.replace('export default "', '').replace(/"$/, '').replace(/\\n/g, '\n').replace(/\\"/g, '"')
+            const res = dsvFormat(',').parse<CsvRow, string>(
+                src.replace('export default "', '').replace(/"$/, '').replace(/\\n/g, '\n').replace(/\\"/g, '"'),
+                row => ({ ...row, key: row.key })
             );
             // pick columns that have the value suffixes (they contain actual text);
             const locales = res.columns
