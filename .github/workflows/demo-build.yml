@@ -25,6 +25,7 @@ jobs:
             - uses: actions/checkout@v6
               with:
                   path: ramp
+                  persist-credentials: false
 
             - uses: actions/setup-node@v6
               with:
@@ -32,48 +33,6 @@ jobs:
                   registry-url: 'https://registry.npmjs.org'
                   cache: 'npm'
                   cache-dependency-path: ramp/package-lock.json
-
-            - name: Set up Git
-              run: |
-                  git config --global user.name "GitHub Action"
-                  git config --global user.email "action@github.com"
-
-            - name: Create demo-page branch (orphan) if it doesn't exist
-              run: |
-                  # ramp is already checked out in the previous step, use git there to check if demo-pages exists on origin
-                  cd ramp
-                  git fetch origin
-
-                  if git show-ref --quiet refs/remotes/origin/demo-page; then
-                      echo "Branch 'demo-page' exists on origin."
-                  else
-                      echo "Branch 'demo-page' does not exist on origin. Creating an orphan branch..."
-                      cd ../
-                      mkdir -p demo-page
-                      cd demo-page
-                      git init
-                      git checkout --orphan demo-page
-                      git commit --allow-empty -m "Create orphan branch"
-                      git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository_owner }}/ramp4-pcar4
-                      git push -u origin demo-page
-                      echo "Orphan branch 'demo-page' has been created and pushed to origin."
-                      cd ../
-                      # For simplicity we'll delete the demo-page folder now since it'll be checked out in the next step in all cases
-                      rm -rf demo-page
-                  fi
-
-            - uses: actions/checkout@v6
-              with:
-                  ref: demo-page
-                  path: demo-page
-                  fetch-depth: 0
-
-            - name: Remove the old demo if it exists and make docs folder
-              run: |
-                  rm -rf demo-page/${{ github.ref_name }}
-
-                  # this is the deepest folder we need to create
-                  mkdir -p demo-page/${{ github.ref_name }}/docs/api-tech-docs
 
             # Before building the docs we need to find and replace the version and repo owner references in the raw docs (next two steps).
             - name: Update docsite version references before docs are built
@@ -94,6 +53,7 @@ jobs:
 
             - name: Build the project and generate docs
               run: |
+                  set -euo pipefail
                   cd ramp
                   npm ci
                   npm run build
@@ -104,7 +64,7 @@ jobs:
               id: pr-checks
               if: github.ref == 'refs/heads/main'
               with:
-                  gh-token: ${{ secrets.GITHUB_TOKEN }}
+                  gh-token: ${{ github.token }}
                   ts-command: 'npm run ts:check'
                   lint-command: 'npm run lint:check'
                   format-command: 'npm run format:check'
@@ -119,7 +79,7 @@ jobs:
                   label: 'Errors'
                   status: ${{ steps.pr-checks.outputs.ts-errors }}
                   color: blue
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  github_token: ${{ github.token }}
 
             - name: Lint badge
               if: github.ref == 'refs/heads/main'
@@ -130,23 +90,80 @@ jobs:
                   label: 'Status'
                   status: 'Errors: ${{ steps.pr-checks.outputs.lint-errors }}, Warnings: ${{ steps.pr-checks.outputs.lint-warnings }}'
                   color: purple
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  github_token: ${{ github.token }}
 
             - name: Publish to NPM with Trusted Publishing for tag releases on main repo only
               if: github.repository == 'ramp4-pcar4/ramp4-pcar4' && startsWith(github.ref, 'refs/tags/v')
               run: |
+                  set -euo pipefail
                   cd ramp
                   TAG_VERSION=${GITHUB_REF#refs/tags/v}
                   PACKAGE_VERSION=$(node -p "require('./package.json').version")
                   if [ "$TAG_VERSION" != "$PACKAGE_VERSION" ]; then
                       npm version --allow-same-version --no-git-tag-version $TAG_VERSION
-                   fi
+                  fi
 
                   npm publish
 
-            - name: Move the built project and docs into the demo-page folder for deployment
+            - name: Set up Git
               run: |
-                  TARGET_DIR="demo-page/${{ github.ref_name }}"
+                  set -euo pipefail
+                  git config --global user.name "GitHub Action"
+                  git config --global user.email "action@github.com"
+
+            - name: Create demo-page branch (orphan) if it doesn't exist
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}
+              run: |
+                  set -euo pipefail
+
+                  # ramp is already checked out in the previous step, use git there to check if demo-pages exists on origin
+                  cd ramp
+                  git fetch origin
+
+                  if git show-ref --quiet refs/remotes/origin/demo-page; then
+                      echo "Branch 'demo-page' exists on origin."
+                  else
+                      echo "Branch 'demo-page' does not exist on origin. Creating an orphan branch..."
+                      cd ../
+                      mkdir -p demo-page
+                      cd demo-page
+                      git init
+                      git checkout --orphan demo-page
+                      git commit --allow-empty -m "Create orphan branch"
+                      git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+                      git push -u origin demo-page
+                      echo "Orphan branch 'demo-page' has been created and pushed to origin."
+                      cd ../
+                      # For simplicity we'll delete the demo-page folder now since it'll be checked out in the next step in all cases
+                      rm -rf -- demo-page
+                  fi
+
+            - uses: actions/checkout@v6
+              with:
+                  ref: demo-page
+                  path: demo-page
+                  fetch-depth: 0
+
+            - name: Remove the old demo if it exists and make docs folder
+              env:
+                  REF_NAME: ${{ github.ref_name }}
+              run: |
+                  set -euo pipefail
+
+                  TARGET_DIR="demo-page/${REF_NAME}"
+                  rm -rf -- "$TARGET_DIR"
+
+                  # this is the deepest folder we need to create
+                  mkdir -p "$TARGET_DIR/docs/api-tech-docs"
+
+            - name: Move the built project and docs into the demo-page folder for deployment
+              env:
+                  REF_NAME: ${{ github.ref_name }}
+              run: |
+                  set -euo pipefail
+
+                  TARGET_DIR="demo-page/${REF_NAME}"
 
                   if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
                       # Tagged releases do not publish every dist build type.
@@ -154,30 +171,31 @@ jobs:
                       for dir in demos docs file-layers help; do
                           if [[ -d "ramp/dist/${dir}" ]]; then
                               mkdir -p "${TARGET_DIR}/${dir}"
-                              cp -a "ramp/dist/${dir}/." "${TARGET_DIR}/${dir}/"
+                              cp -a -- "ramp/dist/${dir}/." "${TARGET_DIR}/${dir}/"
                           fi
                       done
 
                       if [[ -f ramp/dist/ramp.css ]]; then
-                          cp ramp/dist/ramp.css "${TARGET_DIR}/"
+                          cp -- ramp/dist/ramp.css "${TARGET_DIR}/"
                       fi
                   else
-                      mv ramp/dist/* "${TARGET_DIR}"
+                      mv -- ramp/dist/* "${TARGET_DIR}"
                   fi
 
-                  mv ramp/vite-docs/* "${TARGET_DIR}/docs"
-                  mv ramp/ts-docs/* "${TARGET_DIR}/docs/api-tech-docs"
+                  mv -- ramp/vite-docs/* "${TARGET_DIR}/docs"
+                  mv -- ramp/ts-docs/* "${TARGET_DIR}/docs/api-tech-docs"
 
             - name: Commit and squash to the demo-page branch
               run: |
+                  set -euo pipefail
                   cd demo-page
                   git add .
                   git commit -m "Applied changes from demo-folder to demo-page"
 
                   # Squash the commit history into a single commit
-                  git reset --soft $(git rev-list --max-parents=0 HEAD)
+                  git reset --soft "$(git rev-list --max-parents=0 HEAD)"
                   git commit -m "Applied changes from demo-folder to demo-page"
-                  git push origin HEAD --force
+                  git push origin HEAD:demo-page --force
 
             - name: Upload artifact
               uses: actions/upload-pages-artifact@v5

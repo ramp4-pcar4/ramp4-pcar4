@@ -1,6 +1,11 @@
+name: PR Status Checks
+
 on:
-    pull_request_target:
-        types: [opened, synchronize]
+    pull_request:
+        types: [opened, synchronize, reopened]
+
+permissions:
+    contents: read
 
 jobs:
     pr-status-checks:
@@ -9,50 +14,44 @@ jobs:
         steps:
             - uses: actions/checkout@v6
               with:
-                  ref: ${{ github.event.pull_request.head.sha }}
+                  persist-credentials: false
 
             - uses: actions/setup-node@v6
               with:
                   node-version: '24.15.0'
-                  cache: 'npm'
 
-            - name: Try to restore node_modules folder from cache
-              id: cache-node-modules
-              uses: actions/cache@v5
-              with:
-                  path: ./node_modules
-                  key: npm-${{ hashFiles('./package-lock.json') }}
-
-            - name: Otherwise install npm dependencies
-              if: steps.cache-node-modules.outputs.cache-hit != 'true'
+            - name: Install npm dependencies
               run: npm ci
 
             - uses: ramp4-pcar4/status-checks@main
               id: pr-checks
               with:
-                  gh-token: ${{ secrets.GITHUB_TOKEN }}
+                  gh-token: ${{ github.token }}
                   ts-command: 'npm run ts:check'
                   lint-command: 'npm run lint:check'
                   format-command: 'npm run format:check'
 
-            - name: Typescript badge
+            - name: Write PR check result
               if: always()
-              uses: RubbaBoy/BYOB@v1.3.0
-              with:
-                  name: 'tsbadge-${{ github.event.pull_request.head.repo.owner.login }}-${{ github.head_ref }}'
-                  icon: typescript
-                  label: 'Errors (PR)'
-                  status: ${{ steps.pr-checks.outputs.ts-errors }}
-                  color: blue
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
+              env:
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+                  TS_ERRORS: ${{ steps.pr-checks.outputs.ts-errors }}
+                  LINT_ERRORS: ${{ steps.pr-checks.outputs.lint-errors }}
+                  LINT_WARNINGS: ${{ steps.pr-checks.outputs.lint-warnings }}
+              run: |
+                  set -euo pipefail
+                  mkdir -p pr-check-result
+                  jq -n \
+                    --arg pr "$PR_NUMBER" \
+                    --arg ts "$TS_ERRORS" \
+                    --arg lintErrors "$LINT_ERRORS" \
+                    --arg lintWarnings "$LINT_WARNINGS" \
+                    '{pr: $pr, tsErrors: $ts, lintErrors: $lintErrors, lintWarnings: $lintWarnings}' \
+                    > pr-check-result/result.json
 
-            - name: Lint badge
+            - uses: actions/upload-artifact@v5
               if: always()
-              uses: RubbaBoy/BYOB@v1.3.0
               with:
-                  name: 'lintbadge-${{ github.event.pull_request.head.repo.owner.login }}-${{ github.head_ref }}'
-                  icon: codecov
-                  label: 'Status (PR)'
-                  status: 'Errors: ${{ steps.pr-checks.outputs.lint-errors }}, Warnings: ${{ steps.pr-checks.outputs.lint-warnings }}'
-                  color: purple
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  name: pr-check-result
+                  path: pr-check-result/result.json
+                  retention-days: 1

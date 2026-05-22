@@ -1,0 +1,67 @@
+name: PR Check Badges
+
+on:
+    workflow_run:
+        workflows: ['PR Status Checks']
+        types: [completed]
+
+permissions:
+    actions: read
+    contents: write
+
+jobs:
+    update-pr-badges:
+        if: github.event.workflow_run.event == 'pull_request'
+        runs-on: ubuntu-latest
+        steps:
+            - name: Download PR check result
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  RUN_ID: ${{ github.event.workflow_run.id }}
+              run: |
+                  set -euo pipefail
+                  mkdir -p pr-check-result
+                  gh run download "$RUN_ID" --name pr-check-result --dir pr-check-result
+
+            - name: Validate PR check result
+              id: result
+              run: |
+                  set -euo pipefail
+                  result="pr-check-result/result.json"
+
+                  pr="$(jq -r '.pr // empty' "$result")"
+                  ts="$(jq -r '.tsErrors // "unknown"' "$result")"
+                  lint_errors="$(jq -r '.lintErrors // "unknown"' "$result")"
+                  lint_warnings="$(jq -r '.lintWarnings // "unknown"' "$result")"
+
+                  [[ "$pr" =~ ^[0-9]+$ ]]
+                  [[ "$ts" =~ ^[0-9]+$ ]] || ts="unknown"
+                  [[ "$lint_errors" =~ ^[0-9]+$ ]] || lint_errors="unknown"
+                  [[ "$lint_warnings" =~ ^[0-9]+$ ]] || lint_warnings="unknown"
+
+                  {
+                    echo "pr=$pr"
+                    echo "ts=$ts"
+                    echo "lint_errors=$lint_errors"
+                    echo "lint_warnings=$lint_warnings"
+                  } >> "$GITHUB_OUTPUT"
+
+            - name: Typescript badge
+              uses: RubbaBoy/BYOB@v1.3.0
+              with:
+                  name: 'tsbadge-pr-${{ steps.result.outputs.pr }}'
+                  icon: typescript
+                  label: 'Errors (PR)'
+                  status: ${{ steps.result.outputs.ts }}
+                  color: blue
+                  github_token: ${{ github.token }}
+
+            - name: Lint badge
+              uses: RubbaBoy/BYOB@v1.3.0
+              with:
+                  name: 'lintbadge-pr-${{ steps.result.outputs.pr }}'
+                  icon: codecov
+                  label: 'Status (PR)'
+                  status: 'Errors: ${{ steps.result.outputs.lint_errors }}, Warnings: ${{ steps.result.outputs.lint_warnings }}'
+                  color: purple
+                  github_token: ${{ github.token }}
