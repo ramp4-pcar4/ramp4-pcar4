@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive, ref } from 'vue';
 
-import type { DrawTypeConfig } from '../api/drawApi';
+import type { DrawTypeConfig } from '../api/draw-api';
 import {
     cloneDrawBufferSettings,
     cloneDrawMapLabelSettings,

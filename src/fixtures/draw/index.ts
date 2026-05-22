@@ -4,7 +4,7 @@ import { GlobalEvents } from '@/api';
 
 import { useAppbarStore } from '../appbar/store';
 import { useHelpStore } from '../help/store';
-import { DrawAPI } from './api/drawApi';
+import { DrawAPI } from './api/draw-api';
 import DrawV from './draw.vue';
 import './help.css';
 import { DRAW_HELP_MARKDOWN, DRAW_HELP_SECTION_ID } from './help';
