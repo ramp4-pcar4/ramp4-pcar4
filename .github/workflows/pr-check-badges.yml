@@ -17,11 +17,12 @@ jobs:
             - name: Download PR check result
               env:
                   GH_TOKEN: ${{ github.token }}
+                  REPO: ${{ github.repository }}
                   RUN_ID: ${{ github.event.workflow_run.id }}
               run: |
                   set -euo pipefail
                   mkdir -p pr-check-result
-                  gh run download "$RUN_ID" --name pr-check-result --dir pr-check-result
+                  gh run download "$RUN_ID" --repo "$REPO" --name pr-check-result --dir pr-check-result
 
             - name: Validate PR check result
               id: result
