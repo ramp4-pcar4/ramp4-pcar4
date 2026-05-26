@@ -322,6 +322,9 @@ export class MapImageLayer extends MapLayer {
                     );
                 }
 
+                // align the esri sublayer with our initial setting
+                subLayer.visible = this._sublayers[sid].visibility;
+
                 const _sublayer = this._sublayers[sid] as MapImageSublayer;
 
                 if (_sublayer.isRemoved) {
@@ -488,7 +491,13 @@ export class MapImageLayer extends MapLayer {
         });
 
         // defaults to true
-        this.visibility = this.origState.visibility ?? true;
+        const initialVis = this.origState.visibility ?? true;
+
+        // ensure ESRI layer is set to real value to avoid any flicker.
+        // the this.visibility setter has timeout shenanigans that can work
+        // against us at first load.
+        this.esriLayer!.visible = initialVis;
+        this.visibility = initialVis;
 
         return loadPromises;
     }
