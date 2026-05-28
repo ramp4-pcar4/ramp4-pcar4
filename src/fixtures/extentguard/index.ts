@@ -100,14 +100,10 @@ class ExtentguardFixture extends ExtentguardAPI {
             }
         });
 
-        // do a status check when map creates, or if map already created
-        if (this.$iApi.geo.map.created) {
+        // do a status check when map creates
+        this.$iApi.geo.map.loadPromise().then(() => {
             this.checkActive();
-        } else {
-            this.$iApi.event.once(GlobalEvents.MAP_CREATED, () => {
-                this.checkActive();
-            });
-        }
+        });
     }
 
     /**

@@ -49,13 +49,10 @@ const updateMapNavigation = () => {
 };
 
 onMounted(() => {
-    setup();
-    // setup again when the map reloads
-    rampHanders.push(
-        iApi.event.on(GlobalEvents.MAP_CREATED, () => {
-            setup();
-        })
-    );
+    iApi.geo.map.loadPromise().then(() => {
+        setup();
+    });
+
     rampHanders.push(
         iApi.event.on(GlobalEvents.MAP_DESTROYED, () => {
             resetPanGuard();

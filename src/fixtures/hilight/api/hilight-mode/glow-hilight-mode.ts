@@ -1,4 +1,4 @@
-import { InstanceAPI, GraphicLayer, GlobalEvents } from '@/api';
+import { GraphicLayer, InstanceAPI } from '@/api';
 import type { Graphic } from '@/geo/api';
 import { HILIGHT_LAYER_NAME } from '../hilight-defs';
 import { LiftHilightMode } from './lift-hilight-mode';
@@ -13,13 +13,9 @@ export class GlowHilightMode extends LiftHilightMode {
     constructor(config: any, iApi: InstanceAPI) {
         super(config, iApi);
 
-        this.hilightSetup(config);
-
-        this.handlers.push(
-            this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
-                this.hilightSetup(config);
-            })
-        );
+        this.$iApi.geo.map.loadPromise().then(() => {
+            this.hilightSetup(config);
+        });
     }
 
     private hilightSetup(config: any) {

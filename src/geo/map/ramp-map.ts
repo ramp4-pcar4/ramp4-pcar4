@@ -107,6 +107,7 @@ export class MapAPI extends CommonMapAPI {
             // Note that we don't want to have this raised in the view creation method, since
             // the view can get rebuild during a MAP_REFRESH event, so would be disrespectful
             // to raise an incorrect MAP_CREATED
+            this.loadDefProm.resolveMe();
             this.$iApi.event.emit(GlobalEvents.MAP_CREATED);
         });
     }
@@ -128,6 +129,7 @@ export class MapAPI extends CommonMapAPI {
 
         // now destroy the map
         super.destroyMap();
+
         this.$iApi.event.emit(GlobalEvents.MAP_DESTROYED);
     }
 
@@ -568,7 +570,10 @@ export class MapAPI extends CommonMapAPI {
      * @param {number | undefined} index optional order index to add the layer to
      * @returns {Promise<void>} a promise that resolves when the layer has been added to the map
      */
-    addLayer(layer: LayerInstance, index: number | undefined = undefined): Promise<void> {
+    async addLayer(layer: LayerInstance, index: number | undefined = undefined): Promise<void> {
+        // lets us queue layers prior to the map existing
+        await this.loadPromise();
+
         return new Promise((resolve, reject) => {
             if (!this.esriMap) {
                 this.noMapErr();
