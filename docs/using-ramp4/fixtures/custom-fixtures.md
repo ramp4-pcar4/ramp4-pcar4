@@ -60,6 +60,24 @@ rInstance.fixture.add('headless', HeadlessFixture);
 
 Note the `.add()` method will upgrade the class prototype so it has the standard fixture stuff, like the `.$iApi` property in the example.
 
+### Extending FixtureInstance
+
+External fixtures built with the `ramp-pcar` npm package can extend `FixtureInstance` directly. This gives the fixture typed access to the standard fixture properties and helper methods, including `$iApi`, `$vApp`, `id`, `config`, `remove()`, and the Vue mounting helpers.
+
+```ts
+import { FixtureInstance } from 'ramp-pcar';
+
+export class HeadlessFixture extends FixtureInstance {
+    initialized(): void {
+        this.$iApi.geo.map.zoomToLevel(8);
+    }
+}
+
+rInstance.fixture.add('headless', HeadlessFixture);
+```
+
+When a supplied constructor extends `FixtureInstance`, `.add()` creates it with the fixture id and RAMP instance API. Fixture classes that do not extend `FixtureInstance` are still supported and will continue to be upgraded by `.add()` as shown in the previous example.
+
 ### Plain Javascript
 
 This type of fixture is written in plain JS, and requires no compilation step since it doesn't use Vue components or Vue templates or imports any other third-party code. Vue templates in this type of fixture are written as render functions, hence already compiled in the format Vue runtime can understand.
