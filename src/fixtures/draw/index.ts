@@ -125,15 +125,6 @@ class DrawFixture extends DrawAPI {
 
         // Re-initialize on map create or config change
         if (!this.eventHandlers.length) {
-            if (this.$iApi.geo.map.created) {
-                void this.init();
-            } else {
-                this.eventHandlers.push(
-                    this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
-                        void this.init();
-                    })
-                );
-            }
             this.eventHandlers.push(
                 this.$iApi.event.on(GlobalEvents.FIXTURE_ADDED, fixture => {
                     if (fixture.id === 'help') {
@@ -141,6 +132,9 @@ class DrawFixture extends DrawAPI {
                     }
                 })
             );
+
+            await this.$iApi.geo.map.loadPromise();
+            void this.init();
         }
     }
 

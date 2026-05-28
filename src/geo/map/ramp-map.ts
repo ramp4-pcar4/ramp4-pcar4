@@ -107,6 +107,7 @@ export class MapAPI extends CommonMapAPI {
             // Note that we don't want to have this raised in the view creation method, since
             // the view can get rebuild during a MAP_REFRESH event, so would be disrespectful
             // to raise an incorrect MAP_CREATED
+            this.loadDefProm.resolveMe();
             this.$iApi.event.emit(GlobalEvents.MAP_CREATED);
         });
     }
@@ -128,6 +129,7 @@ export class MapAPI extends CommonMapAPI {
 
         // now destroy the map
         super.destroyMap();
+
         this.$iApi.event.emit(GlobalEvents.MAP_DESTROYED);
     }
 

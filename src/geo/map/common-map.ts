@@ -49,13 +49,31 @@ export class CommonMapAPI extends APIScope {
     esriView: EsriMapView | undefined;
 
     /**
+     * Provides a promise that resolves when the map has finished loading. If using map properties or methods
+     * that depend on the map being loaded, wait on this promise before accessing them.
+     *
+     * @method loadPromise
+     * @returns {Promise} resolves when the map has finished loading
+     */
+    loadPromise(): Promise<void> {
+        return this.loadDefProm.getPromise();
+    }
+
+    /**
+     * A deferred promise that resolves when the map is loaded and safe to use. for convenience of caller
+     * @private
+     */
+    protected loadDefProm: DefPromise<void>;
+
+    /**
      * Internal deferred managing the view promise
      * @private
      */
     protected _viewPromise: DefPromise<void>;
 
     /**
-     * A promise that resolves when the map view has been created
+     * A promise that resolves when the map view has been created.
+     * Note that a schema change can re-create the map view
      */
     get viewPromise(): Promise<void> {
         return this._viewPromise.getPromise();
@@ -100,6 +118,7 @@ export class CommonMapAPI extends APIScope {
         this.esriMap = undefined;
         this._basemapStore = [];
         this._viewPromise = new DefPromise();
+        this.loadDefProm = new DefPromise();
         this.handlers = [];
         this.pointZoomScale = 50000;
         this.name = name;
@@ -228,6 +247,8 @@ export class CommonMapAPI extends APIScope {
         // clear local basemap store
         this._basemapStore.forEach(bm => bm.esriBasemap.destroy());
         this._basemapStore = [];
+
+        this.loadDefProm = new DefPromise();
     }
 
     /**
