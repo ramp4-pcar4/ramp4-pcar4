@@ -1273,7 +1273,7 @@ onUnmounted(() => {
 }
 .rv-content-actions {
     position: sticky;
-    bottom: -8px;
+    bottom: 0;
     z-index: 2;
     display: flex;
     align-items: center;
