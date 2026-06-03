@@ -380,11 +380,10 @@ export class CommonMapAPI extends APIScope {
     /**
      * Projects a geometry to the map's spatial reference
      *
-     * @private
      * @param {BaseGeometry} geom the RAMP API geometry to project
      * @returns {Promise<BaseGeometry>} the geometry projected to the map's projection, in RAMP API Geometry format
      */
-    private geomToMapSR(geom: BaseGeometry): Promise<BaseGeometry> {
+    geomToMapSR(geom: BaseGeometry): Promise<BaseGeometry> {
         if (!this._rampSR) {
             throw new Error('call to map.geomToMapSR before the map spatial ref was created');
         }
