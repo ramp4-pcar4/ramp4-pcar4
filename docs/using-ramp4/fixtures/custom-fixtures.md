@@ -28,10 +28,13 @@ This can be accomplished via the `startingFixtures` array in the instance config
 
 The current list of available fixture names are
 
-- `areas-of-interest`
-- `export`
-- `extentguard`
-- `metadata`
+- `areas-of-interest`: A panel to select pre-defined places and zoom to them.
+- `draw`: Drawing and measuring map tools.
+- `export`: Generates a PNG of the map and other information.
+- `extentguard`: Forces the map view to stay within a defined extent.
+- `metadata`: A layer-linked panel to view metadata sources.
+- `pindrop`: Places pin markers on the map. Can be bound to identify / details.
+- `swipe`: Creates a draggable swipe on the map for layer comparison.
 
 ## Creation
 
