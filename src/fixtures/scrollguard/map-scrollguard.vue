@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { GlobalEvents, InstanceAPI } from '@/api';
+import { InstanceAPI } from '@/api';
 import { computed, inject, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useScrollguardStore } from './store';
@@ -18,14 +18,7 @@ const scrollGuard = ref<HTMLElement>();
 const enabled = computed(() => scrollguardStore.enabled);
 
 onMounted(() => {
-    (iApi.$vApp.$el.querySelector('.inner-shell + .esri-view')! as HTMLElement)?.addEventListener(
-        'wheel',
-        wheelHandler,
-        {
-            capture: true
-        }
-    );
-    iApi.event.on(GlobalEvents.MAP_CREATED, () => {
+    iApi.geo.map.loadPromise().then(() => {
         (iApi.$vApp.$el.querySelector('.inner-shell + .esri-view')! as HTMLElement)?.addEventListener(
             'wheel',
             wheelHandler,

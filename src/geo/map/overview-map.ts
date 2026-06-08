@@ -135,6 +135,7 @@ export class OverviewMapAPI extends CommonMapAPI {
         this.esriView.when(() => {
             this._viewPromise.resolveMe();
             this.created = true;
+            this.loadDefProm.resolveMe();
         });
     }
 

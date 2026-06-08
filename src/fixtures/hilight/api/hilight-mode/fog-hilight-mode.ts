@@ -24,15 +24,9 @@ export class FogHilightMode extends LiftHilightMode {
         this.onOpacity = config.options?.onOpacity ?? 0.75;
         this.offOpacity = config.options?.offOpacity > 0.02 ? config.options.offOpacity : 0.02;
 
-        if (this.$iApi.geo.map.created) {
+        this.$iApi.geo.map.loadPromise().then(() => {
             this.hilightSetup();
-        } else {
-            this.handlers.push(
-                this.$iApi.event.on(GlobalEvents.MAP_CREATED, () => {
-                    this.hilightSetup();
-                })
-            );
-        }
+        });
 
         this.handlers.push(
             this.$iApi.event.on(GlobalEvents.MAP_BASEMAPCHANGE, () => {
