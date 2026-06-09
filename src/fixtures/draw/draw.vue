@@ -304,8 +304,20 @@ const getCurrentDrawIdentifyBufferMode = (): DrawIdentifyBufferMode => drawStore
 const getDrawGraphicId = (graphic: DrawGraphicLike | undefined): string | undefined =>
     graphic ? getDrawShapeId(graphic) : undefined;
 
+const isDrawSourceGraphic = (graphic: EsriGraphic): boolean =>
+    !!graphic.attributes?.id && !graphic.attributes?.drawMeasurement && !graphic.attributes?.drawBufferFor;
+
 const ensureRampGraphicsLayer = async (id: string): Promise<LayerInstance | undefined> => {
     let layer = iApi.geo.layer.getLayer(id);
+
+    if (layer?.esriLayer) {
+        const layerDestroyed = !!(layer.esriLayer as { destroyed?: boolean }).destroyed;
+        const layerInMap = (iApi.geo.map.esriMap?.layers.indexOf(layer.esriLayer) ?? -1) > -1;
+        if (layerDestroyed || !layerInMap) {
+            removeRampGraphicsLayer(id);
+            layer = undefined;
+        }
+    }
 
     if (!layer) {
         layer = iApi.geo.layer.createLayer({
@@ -331,6 +343,44 @@ const ensureRampGraphicsLayer = async (id: string): Promise<LayerInstance | unde
     }
 
     return layer;
+};
+
+const projectGeometryToMapSR = async (geometry: EsriGeometry, id?: string): Promise<EsriGeometry> => {
+    const rampGeometry = iApi.geo.geom.geomEsriToRamp(geometry, id);
+    const projGeometry = await iApi.geo.map.geomToMapSR(rampGeometry);
+    const mapSR = iApi.geo.map.getSR();
+
+    if (rampGeometry.sr.isEqual(mapSR)) {
+        return geometry.clone();
+    }
+
+    return iApi.geo.geom.geomRampToEsri(projGeometry);
+};
+
+const setGraphicGeometry = (graphic: EsriGraphic, geometry: EsriGeometry) => {
+    graphic.geometry = geometry;
+    graphic.set('geometry', geometry);
+};
+
+const syncDrawGraphicsToMapSR = async (initId?: number): Promise<void> => {
+    const layer = graphicsLayer;
+    if (!layer) return;
+
+    for (const graphic of layer.graphics.toArray().filter(isDrawSourceGraphic)) {
+        const id = getDrawGraphicId(graphic);
+        const geometry = graphic.geometry as EsriGeometry | undefined;
+        if (!geometry) continue;
+
+        try {
+            const projectedGeometry = await projectGeometryToMapSR(geometry, id);
+            if (initId !== undefined && initId !== drawToolsInitId) return;
+
+            setGraphicGeometry(graphic, projectedGeometry);
+            syncGraphicStoreRecord(graphic);
+        } catch (e) {
+            console.warn('Unable to project draw graphic to the current map projection.', e);
+        }
+    }
 };
 
 const removeRampGraphicsLayer = (id: string) => {
@@ -504,6 +554,19 @@ const clearBufferGraphics = () => {
     bufferGraphics = new Map<string, EsriGraphic>();
 };
 
+const clearDrawSourceGraphics = () => {
+    if (!graphicsLayer) return;
+
+    const sourceGraphics = graphicsLayer.graphics.toArray().filter(isDrawSourceGraphic);
+    if (!sourceGraphics.length) return;
+
+    try {
+        graphicsLayer.removeMany(sourceGraphics);
+    } catch (e) {
+        console.warn('Unable to clear draw graphics for map refresh.', e);
+    }
+};
+
 const syncBufferGraphic = (sourceGraphic: EsriGraphic) => {
     const id = sourceGraphic.attributes?.id;
     if (!id || !graphicsLayer) return;
@@ -641,19 +704,21 @@ const deleteSelectedGraphic = (): boolean => {
     return true;
 };
 
-const importDrawShapes = (records: DrawShapeImportRecord[]): number => {
+const importDrawShapes = async (records: DrawShapeImportRecord[]): Promise<number> => {
     if (!records.length || !graphicsLayer) return 0;
 
+    const layer = graphicsLayer;
     const importedGraphics: EsriGraphic[] = [];
 
-    records.forEach(record => {
+    for (const record of records) {
         try {
             const geometry = EsriGeometryFromJson(record.geometry as any);
-            if (!geometry) return;
+            if (!geometry) continue;
 
-            const type = record.type || geometry.type;
+            const projectedGeometry = await projectGeometryToMapSR(geometry, record.id);
+            const type = record.type || projectedGeometry.type;
             const graphic = new EsriGraphic({
-                geometry,
+                geometry: projectedGeometry,
                 attributes: {
                     type,
                     drawStyle: cloneDrawStyleSettings(record.settings.drawStyle),
@@ -673,62 +738,78 @@ const importDrawShapes = (records: DrawShapeImportRecord[]): number => {
         } catch {
             // File validation already happened in the import panel. Skip any shape that still cannot hydrate.
         }
-    });
+    }
 
     if (!importedGraphics.length) {
         iApi.updateAlert(t('draw.import.error.invalid'));
         return 0;
     }
 
-    graphicsLayer.addMany(importedGraphics);
+    if (layer !== graphicsLayer) return 0;
+
+    layer.addMany(importedGraphics);
     importedGraphics.forEach(syncBufferGraphic);
     void refreshMeasurementGraphics();
     iApi.updateAlert(t('draw.import.success', { count: importedGraphics.length }));
     return importedGraphics.length;
 };
 
-const processImportShapesRequest = () => {
+const processImportShapesRequest = async () => {
     const requestId = drawStore.importShapesRequestId;
     if (!requestId || requestId === processedImportShapesRequestId || !graphicsLayer) {
         return;
     }
 
-    importDrawShapes([...drawStore.importShapeRecords]);
+    await importDrawShapes([...drawStore.importShapeRecords]);
     processedImportShapesRequestId = requestId;
     drawStore.clearImportShapes(requestId);
 };
 
-const restoreStoredDrawGraphics = () => {
-    if (!graphicsLayer || !drawStore.graphics.length) return;
+const restoreStoredDrawGraphics = async (initId?: number) => {
+    const layer = graphicsLayer;
+    if (!layer || !drawStore.graphics.length) return;
 
     const existingIds = new Set(
-        graphicsLayer.graphics
+        layer.graphics
             .toArray()
             .map(graphic => getDrawGraphicId(graphic))
             .filter((id): id is string => !!id)
     );
-    const restoredGraphics = drawStore.graphics.flatMap(storeGraphic => {
+    const restoredGraphics: EsriGraphic[] = [];
+
+    for (const storeGraphic of drawStore.graphics) {
         const id = getDrawGraphicId(storeGraphic);
         const geometry = storeGraphic.geometry?.clone?.() ?? storeGraphic.geometry;
-        if (!id || !geometry || existingIds.has(id)) return [];
+        if (!id || !geometry || existingIds.has(id)) continue;
 
-        const type = storeGraphic.type ?? storeGraphic.attributes?.type ?? geometry.type;
-        const graphic = new EsriGraphic({
-            geometry,
-            attributes: {
-                ...(storeGraphic.attributes ?? {}),
-                id,
-                type
-            }
-        });
-        applyDrawSymbol(graphic);
-        existingIds.add(id);
-        return [graphic];
-    });
+        try {
+            const projectedGeometry = await projectGeometryToMapSR(geometry, id);
+            const type = storeGraphic.type ?? storeGraphic.attributes?.type ?? projectedGeometry.type;
+            const graphic = new EsriGraphic({
+                geometry: projectedGeometry,
+                attributes: {
+                    ...(storeGraphic.attributes ?? {}),
+                    id,
+                    type
+                }
+            });
+            applyDrawSymbol(graphic);
+            drawStore.updateGraphic(id, {
+                type,
+                geometry: graphic.geometry,
+                attributes: graphic.attributes
+            });
+            existingIds.add(id);
+            restoredGraphics.push(graphic);
+        } catch (e) {
+            console.warn('Unable to restore draw graphic in the current map projection.', e);
+        }
+    }
 
     if (!restoredGraphics.length) return;
+    if ((initId !== undefined && initId !== drawToolsInitId) || layer !== graphicsLayer) return;
 
-    graphicsLayer.addMany(restoredGraphics);
+    layer.addMany(restoredGraphics);
     restoredGraphics.forEach(syncBufferGraphic);
 };
 
@@ -1628,7 +1709,7 @@ watch(
 watch(
     () => drawStore.importShapesRequestId,
     () => {
-        processImportShapesRequest();
+        void processImportShapesRequest();
     }
 );
 
@@ -1787,6 +1868,11 @@ const initializeDrawTools = async () => {
         return;
     }
 
+    await syncDrawGraphicsToMapSR(initId);
+    if (initId !== drawToolsInitId || !iApi.geo.map.esriView) {
+        return;
+    }
+
     const editLayer = await ensureRampGraphicsLayer(DRAW_EDIT_GRAPHICS_LAYER_ID);
     if (initId !== drawToolsInitId || !iApi.geo.map.esriView) {
         removeRampGraphicsLayer(DRAW_EDIT_GRAPHICS_LAYER_ID);
@@ -1850,10 +1936,13 @@ const initializeDrawTools = async () => {
         sketch.create(drawStore.activeTool);
     }
 
-    restoreStoredDrawGraphics();
+    await restoreStoredDrawGraphics(initId);
+    if (initId !== drawToolsInitId || !iApi.geo.map.esriView) {
+        return;
+    }
     void refreshMeasurementGraphics();
 
-    processImportShapesRequest();
+    void processImportShapesRequest();
 };
 
 const cleanupKeyboardShortcuts = () => {
@@ -1870,12 +1959,16 @@ const cleanupKeyboardShortcuts = () => {
 type CleanupDrawToolsOptions = {
     cleanupKeyboard?: boolean;
     clearActiveTool?: boolean;
+    clearSourceGraphics?: boolean;
+    destroyHelperLayers?: boolean;
     destroySketch?: boolean;
 };
 
 const cleanupDrawTools = ({
     cleanupKeyboard = true,
     clearActiveTool = false,
+    clearSourceGraphics = false,
+    destroyHelperLayers = true,
     destroySketch = true
 }: CleanupDrawToolsOptions = {}) => {
     drawToolsInitId++;
@@ -1891,8 +1984,12 @@ const cleanupDrawTools = ({
 
     clearActiveSketchEdit({ restoreSource: true });
     if (editGraphicsLayer) {
-        iApi.geo.map.esriView?.map?.remove(editGraphicsLayer);
-        editGraphicsLayer.destroy();
+        if (destroyHelperLayers) {
+            iApi.geo.map.esriView?.map?.remove(editGraphicsLayer);
+            editGraphicsLayer.destroy();
+        } else {
+            editGraphicsLayer.removeAll();
+        }
         editGraphicsLayer = null;
     }
 
@@ -1919,8 +2016,12 @@ const cleanupDrawTools = ({
     selectedGraphic = null;
     highlightSelectedGraphic(undefined);
     if (highlightGraphicsLayer) {
-        iApi.geo.map.esriView?.map?.remove(highlightGraphicsLayer);
-        highlightGraphicsLayer.destroy();
+        if (destroyHelperLayers) {
+            iApi.geo.map.esriView?.map?.remove(highlightGraphicsLayer);
+            highlightGraphicsLayer.destroy();
+        } else {
+            highlightGraphicsLayer.removeAll();
+        }
         highlightGraphicsLayer = null;
         highlightGraphicLayer = null;
     }
@@ -1931,6 +2032,9 @@ const cleanupDrawTools = ({
     editActivationRequestId++;
     clearMeasurementGraphics();
     clearBufferGraphics();
+    if (clearSourceGraphics) {
+        clearDrawSourceGraphics();
+    }
     drawStore.clearSelection();
     if (clearActiveTool && drawStore.activeTool) {
         drawStore.setActiveTool(null);
@@ -2029,9 +2133,9 @@ const handleSketchUpdateEvent = (event: EsriSketchUpdateEvent) => {
 onMounted(() => {
     handleKeyboardShortcuts();
     void loadDrawBufferOperators();
-    initializeDrawTools();
+    void initializeDrawTools();
 
-// Listen for map creation/destruction events
+    // Listen for map creation/destruction events
     rampEventHandlers.push(
         iApi.event.on(GlobalEvents.MAP_DESTROYED, () => {
             cleanupDrawTools();
@@ -2043,13 +2147,15 @@ onMounted(() => {
             cleanupDrawTools({
                 cleanupKeyboard: false,
                 clearActiveTool: true,
+                clearSourceGraphics: true,
+                destroyHelperLayers: false,
                 destroySketch: false
             });
         })
     );
     rampEventHandlers.push(
         iApi.event.on(GlobalEvents.MAP_REFRESH_END, () => {
-            initializeDrawTools();
+            void initializeDrawTools();
         })
     );
     rampEventHandlers.push(
