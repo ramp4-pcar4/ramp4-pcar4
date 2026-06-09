@@ -1,0 +1,1 @@
+import{_ as e,ft as t}from"./SpatialReference-59DE-EPq.js";var n=class extends e{getOperatorType(){return 4}execute(e,n,r,i){return!t(e,n,r,4,i)}};export{n as t};

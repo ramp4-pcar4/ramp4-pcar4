@@ -1,0 +1,1 @@
+import{a as e,i as t}from"./jsonConverter-XwrET8Lk.js";import{t as n}from"./operatorUnion-BtNay6mH.js";function r(r){let[i,a]=e(r);return t(n(i,a),a)}export{r as executeMany};

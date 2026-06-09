@@ -1,0 +1,1 @@
+import{r as e}from"./chunk-foFoljWS.js";import"./units-DM12kKtO.js";import"./apiConverter-DgVehggs.js";import{t}from"./areaOperator-B7A19Qhq.js";var n=e({execute:()=>t,supportsCurves:()=>!0});export{n as t};

@@ -1,0 +1,1 @@
+import{r as e}from"./chunk-foFoljWS.js";import"./apiConverter-DgVehggs.js";import{n as t}from"./differenceOperator-D4l_K8vL.js";var n=e({execute:()=>t});export{n as t};

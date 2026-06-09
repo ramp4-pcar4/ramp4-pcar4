@@ -1,0 +1,1 @@
+var e=class{constructor(e={},t={},n=8,r=1/0){this.disabledExtensions=e,this.debugWebGLExtensions=t,this.maxAnisotropy=n,this.maxPreferredTexturePixels=r}};export{e as t};

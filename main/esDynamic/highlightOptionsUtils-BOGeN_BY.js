@@ -1,0 +1,1 @@
+import"./HighlightDefaults-DN7Nhrde.js";function e(e){return e?.name??`default`}export{e as t};
