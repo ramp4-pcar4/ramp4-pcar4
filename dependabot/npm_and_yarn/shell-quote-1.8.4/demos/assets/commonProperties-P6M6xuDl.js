@@ -1,1 +1,0 @@
-var e={type:String,json:{read:{source:`token`},write:{target:`token`}}};export{e as t};

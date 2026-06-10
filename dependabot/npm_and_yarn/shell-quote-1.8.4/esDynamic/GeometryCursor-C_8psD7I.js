@@ -1,1 +1,0 @@
-var e=class{*[Symbol.iterator](){let e=this.next();for(;e;)yield e,e=this.next()}};export{e as t};

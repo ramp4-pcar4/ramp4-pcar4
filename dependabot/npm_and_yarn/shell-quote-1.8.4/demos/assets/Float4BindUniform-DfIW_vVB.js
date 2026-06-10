@@ -1,1 +1,0 @@
-import{t as e}from"./Uniform-BSMx8gFw.js";var t=class extends e{constructor(e,t,n){super(e,`vec4`,0,(r,i)=>r.setUniform4fv(e,t(i),n))}};export{t};

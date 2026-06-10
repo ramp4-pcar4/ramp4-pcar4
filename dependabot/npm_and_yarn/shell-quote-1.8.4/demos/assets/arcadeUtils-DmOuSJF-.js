@@ -1,1 +1,0 @@
-function e(e,{timeZone:t,timeExtent:n}){return{$view:{scale:e,timeZone:t,timeProperties:{currentStart:n?.start,currentEnd:n?.end}}}}export{e as t};

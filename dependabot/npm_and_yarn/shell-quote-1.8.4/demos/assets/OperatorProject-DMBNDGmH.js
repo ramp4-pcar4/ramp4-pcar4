@@ -1,1 +1,0 @@
-import"./Point2D-EtCdoF1P.js";import{ht as e}from"./SpatialReference-ClNEoXTN.js";export{e as OperatorProject};

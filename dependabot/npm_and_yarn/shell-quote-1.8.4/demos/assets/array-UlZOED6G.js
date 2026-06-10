@@ -1,1 +1,0 @@
-function e(e,t){return(e+t)%t}export{e as t};

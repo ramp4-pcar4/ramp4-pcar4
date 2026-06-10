@@ -1,1 +1,0 @@
-import{t as e}from"./Uniform-7hXEBJFC.js";var t=class extends e{constructor(e,t){super(e,`bool`,0,(n,r)=>n.setUniform1b(e,t(r)))}};export{t};

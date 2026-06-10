@@ -1,1 +1,0 @@
-function e(e){return e?.type===`graphic`}function t(t){return t.find(e)??null}export{t};

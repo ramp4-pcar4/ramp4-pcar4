@@ -1,1 +1,0 @@
-import"./request-B6KcxqEO.js";import"./Collection-Cdi6Ul8p.js";import"./utils-BbncDLJ5.js";import"./basemapDefinitions-5BY2tgsW.js";function e(e,t){return e.allLayerViews.find(e=>e.uid===t)?.layer.parent===e.map?.basemap}export{e as t};

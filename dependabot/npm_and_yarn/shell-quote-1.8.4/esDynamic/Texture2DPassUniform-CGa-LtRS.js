@@ -1,1 +1,0 @@
-import{t as e}from"./Uniform-7hXEBJFC.js";var t=class extends e{constructor(e,t){super(e,`sampler2D`,1,(n,r,i)=>n.bindTexture(e,t(r,i)))}};export{t};
