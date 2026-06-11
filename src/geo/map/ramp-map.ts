@@ -1147,8 +1147,11 @@ export class MapAPI extends CommonMapAPI {
      * @param {EsriUserSettings} options ESRI takeScreenshot() options
      * @returns {Promise<Screenshot>} a promise that resolves with a Screenshot
      */
-    async takeScreenshot(options: Partial<EsriUserSettings>): Promise<Screenshot> {
+    async takeScreenshot(options?: Partial<EsriUserSettings>): Promise<Screenshot> {
         if (this.esriView) {
+            if (!options) {
+                options = {};
+            }
             if (!options.quality) {
                 options.quality = 1;
             }
