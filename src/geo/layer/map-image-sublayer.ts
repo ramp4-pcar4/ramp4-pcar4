@@ -29,7 +29,7 @@ export class MapImageSublayer extends AttribLayer {
 
         this.maptips = false;
         this.url = this.parentLayer?.url;
-        this.canReload = !!(this.url || this.origRampConfig.caching);
+        this.canReload = true; // CommonLayer constructor would have failed to figure this out since .url was not set yet.
 
         if (!parent.esriLayer) {
             throw new Error('Map Image Layer with no internal esri layer encountered in sublayer creation');
