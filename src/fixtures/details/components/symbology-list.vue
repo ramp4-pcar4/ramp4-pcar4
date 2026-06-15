@@ -8,11 +8,7 @@
         @blur.self="handleItemBlur"
         v-focus-list
         :content="t('details.layers.results.list.tooltip')"
-        v-tippy="{
-            trigger: 'manual',
-            placement: 'top-start',
-            touch: false
-        }"
+        v-tippy="{ trigger: 'manual', placement: 'top-start', touch: false }"
         ref="el"
     >
         <div class="flex justify-start relative" v-for="(item, idx) in props.results" :key="idx">
@@ -110,13 +106,15 @@ const handleMouseLeave = () => {
 };
 
 /**
- * Activates when an item in the list is focused.
+ * Activates when an item in the list is focused. Will only activate if focus is applied via keyboard.
  */
-const handleItemFocus = () => {
-    if (!hovering.value) {
-        expanded.value = true;
+const handleItemFocus = (event: FocusEvent) => {
+    if ((event.target as HTMLElement)?.matches(':focus-visible')) {
+        if (!hovering.value) {
+            expanded.value = true;
+        }
+        hovering.value = true;
     }
-    hovering.value = true;
 };
 
 /**
