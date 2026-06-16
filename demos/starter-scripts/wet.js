@@ -416,7 +416,8 @@ let config = {
                 }
             },
             panels: {
-                reorderable: false
+                reorderable: false,
+                pinable: false
             },
             system: { animate: true }
         }

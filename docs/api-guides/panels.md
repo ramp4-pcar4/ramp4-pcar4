@@ -81,6 +81,7 @@ One of the top level sections of the config is `panels`, where you may include t
     - `screen` - the ID of the screen to show on the panel.
     - `pin` - a boolean indicating whether to pin the panel as well (in addition to opening).
 * `reorderable` - a boolean indicating whether the panel reorder controls are enabled.
+* `pinable` - a boolean indicating whether the panel pin controls are enabled.
 
 ## Creating Your Own Panel (using Vue)
 

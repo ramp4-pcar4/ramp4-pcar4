@@ -85,6 +85,14 @@ export interface PanelState {
      * @memberof PanelState
      */
     reorderable: boolean;
+
+    /**
+     * True if panels have the pin/unpin controls enabled.
+     *
+     * @type {boolean}
+     * @memberof PanelState
+     */
+    pinable: boolean;
 }
 
 // this should have been `AsyncComponentPromise` type, but something is off there
