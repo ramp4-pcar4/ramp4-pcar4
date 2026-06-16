@@ -2906,6 +2906,11 @@
                     "type": "boolean",
                     "description": "Enables panel reorder controls.",
                     "default": true
+                },
+                "pinable": {
+                    "type": "boolean",
+                    "description": "Enables panel pin controls.",
+                    "default": true
                 }
             },
             "additionalProperties": false
