@@ -14,6 +14,9 @@ jobs:
         steps:
             - name: Comment on the PR
               uses: peter-evans/create-or-update-comment@v5
+              env:
+                  PR_OWNER: ${{ github.event.pull_request.head.repo.owner.login }}
+                  PR_HEAD_REF: ${{ github.head_ref }}
               with:
                   token: ${{ github.token }}
                   issue-number: ${{ github.event.pull_request.number }}
@@ -21,12 +24,12 @@ jobs:
                       Your demo site is ready! 🚀
 
                       Enhanced Testing:
-                      Samples: https://${{ github.event.pull_request.head.repo.owner.login }}.github.io/ramp4-pcar4/${{ github.head_ref }}/demos/enhanced-samples.html
-                      Catalogue: https://${{ github.event.pull_request.head.repo.owner.login }}.github.io/ramp4-pcar4/${{ github.head_ref }}/demos/enhanced-all.html
+                      Samples: https://${PR_OWNER}.github.io/ramp4-pcar4/${PR_HEAD_REF}/demos/enhanced-samples.html
+                      Catalogue: https://${PR_OWNER}.github.io/ramp4-pcar4/${PR_HEAD_REF}/demos/enhanced-all.html
 
                       Legacy Testing:
-                      Main: https://${{ github.event.pull_request.head.repo.owner.login }}.github.io/ramp4-pcar4/${{ github.head_ref }}/
-                      Catalogue: https://${{ github.event.pull_request.head.repo.owner.login }}.github.io/ramp4-pcar4/${{ github.head_ref }}/demos/index-all.html
-                      Samples: https://${{ github.event.pull_request.head.repo.owner.login }}.github.io/ramp4-pcar4/${{ github.head_ref }}/demos/index-samples.html
+                      Main: https://${PR_OWNER}.github.io/ramp4-pcar4/${PR_HEAD_REF}/
+                      Catalogue: https://${PR_OWNER}.github.io/ramp4-pcar4/${PR_HEAD_REF}/demos/index-all.html
+                      Samples: https://${PR_OWNER}.github.io/ramp4-pcar4/${PR_HEAD_REF}/demos/index-samples.html
 
                       ![](https://byob.yarr.is/ramp4-pcar4/ramp4-pcar4/tsbadge-pr-${{ github.event.pull_request.number }}) ![](https://byob.yarr.is/ramp4-pcar4/ramp4-pcar4/lintbadge-pr-${{ github.event.pull_request.number }})
