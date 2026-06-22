@@ -1,0 +1,1 @@
+import{wg as e}from"./store-TEwW3sPL.js";import{l as t}from"./decorators-D2aC5xmm.js";var n=0,r=r=>{let i=r,a=class extends i{constructor(...e){super(...e),Object.defineProperty(this,"uid",{writable:!1,configurable:!1,value:n++})}};return a=e([t(`esri.core.NumericIdentifiable`)],a),a};export{r as t};

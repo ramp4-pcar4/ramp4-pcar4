@@ -1,0 +1,1 @@
+import{nv as e}from"./store-TEwW3sPL.js";var t=()=>e.respectPrefersReducedMotion&&window.matchMedia(`(prefers-reduced-motion: reduce)`).matches;export{t};

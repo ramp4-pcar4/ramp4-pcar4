@@ -1,0 +1,1 @@
+import"./apiConverter-C8RBLwwv.js";import{n as e}from"./differenceOperator-qPEUNaeo.js";import{r as t}from"./ramp.js";var n=t({execute:()=>e});export{n as t};

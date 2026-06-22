@@ -1,0 +1,1 @@
+var e=`ESRI__ID`,t=`ESRI__OriginID`,n=`ESRI__DestID`,r=`ESRI__LayoutGeometry`,i=`ESRI__AggregationCount`,a=`LC.ESRI__IsSpatial`;export{i as a,e as i,t as n,n as o,r,a as t};

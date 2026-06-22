@@ -1,0 +1,487 @@
+import { DrawTypeConfig } from '../api/draw-api';
+import { DrawBufferSettings, DrawBufferUnit, DrawIdentifyBufferMode, DrawMapLabelSettings, DrawStyleSettings } from '../settings';
+import { DrawShapeImportRecord } from '../shape-io';
+export type ActiveToolList = 'circle' | 'point' | 'polygon' | 'polyline' | 'rectangle' | 'edit' | '' | null;
+export type DrawShapeInspectorTab = 'details' | 'style' | 'edit';
+export interface DrawShapeFeatureCounts {
+    shape: number | null;
+    buffer: number | null;
+    total: number | null;
+    loading: boolean;
+    updatedAt?: number;
+}
+export declare const useDrawStore: import('pinia').StoreDefinition<"draw", Pick<{
+    supportedTypes: import('../../../../vue/dist/vue.esm-bundler.js').Ref<{
+        type: string;
+        options?: Record<string, any> | undefined;
+        enabled?: boolean | undefined;
+    }[], DrawTypeConfig[] | {
+        type: string;
+        options?: Record<string, any> | undefined;
+        enabled?: boolean | undefined;
+    }[]>;
+    configParsed: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    activeTool: import('../../../../vue/dist/vue.esm-bundler.js').Ref<ActiveToolList, ActiveToolList>;
+    graphics: import('../../../../vue/dist/vue.esm-bundler.js').Reactive<any[]>;
+    selectedGraphicId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    measurementsEnabled: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    hoveredSegmentKey: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    selectedSegmentKey: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    activeSegmentKey: import('../../../../vue/dist/vue.esm-bundler.js').ComputedRef<string | null>;
+    hoveredVertexKey: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    selectedVertexKey: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    activeVertexKey: import('../../../../vue/dist/vue.esm-bundler.js').ComputedRef<string | null>;
+    shapeDetailsPickEnabled: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    shapeDetailsLabelsVisible: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    shapeDetailsLabelsUseSettings: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    shapeDetailsActiveTab: import('../../../../vue/dist/vue.esm-bundler.js').Ref<DrawShapeInspectorTab, DrawShapeInspectorTab>;
+    deleteSelectedGraphicRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    editSelectedGraphicRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    identifySelectedGraphicRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    shapePanelFocusRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    stopEditModeRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    stopEditModeClearSelection: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    cancelEditModeRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    cancelEditModeClearSelection: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    refreshSelectedGraphicFeatureCountsRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    selectedGraphicSettingsUpdateRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    selectedGraphicSettingsUpdatedGraphicId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    mapLabelSettingsUpdateRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    mapLabelSettingsUpdatedGraphicId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    importShapesRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    importShapeRecords: import('../../../../vue/dist/vue.esm-bundler.js').Ref<{
+        id?: string | undefined;
+        type: string;
+        geometry: unknown;
+        settings: {
+            drawStyle: {
+                fillColor: string;
+                borderColor: string;
+                bufferColor: string;
+                opacity: number;
+                borderColorManual: boolean;
+                bufferColorManual: boolean;
+            };
+            drawBuffer: {
+                distance: number;
+                unit: DrawBufferUnit;
+            };
+            drawIdentifyBufferMode: DrawIdentifyBufferMode;
+            drawMapLabels: {
+                areaLabel: boolean;
+                segmentLength: boolean;
+                segmentLetters: boolean;
+                vertexNumbers: boolean;
+            };
+        };
+    }[], import('../shape-io').DrawShapeExportRecord[] | {
+        id?: string | undefined;
+        type: string;
+        geometry: unknown;
+        settings: {
+            drawStyle: {
+                fillColor: string;
+                borderColor: string;
+                bufferColor: string;
+                opacity: number;
+                borderColorManual: boolean;
+                bufferColorManual: boolean;
+            };
+            drawBuffer: {
+                distance: number;
+                unit: DrawBufferUnit;
+            };
+            drawIdentifyBufferMode: DrawIdentifyBufferMode;
+            drawMapLabels: {
+                areaLabel: boolean;
+                segmentLength: boolean;
+                segmentLetters: boolean;
+                vertexNumbers: boolean;
+            };
+        };
+    }[]>;
+    identifyGeometryGraphicId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    styleSettings: {
+        fillColor: string;
+        borderColor: string;
+        bufferColor: string;
+        opacity: number;
+        borderColorManual: boolean;
+        bufferColorManual: boolean;
+    };
+    bufferSettings: {
+        distance: number;
+        unit: DrawBufferUnit;
+    };
+    identifyBufferMode: import('../../../../vue/dist/vue.esm-bundler.js').Ref<DrawIdentifyBufferMode, DrawIdentifyBufferMode>;
+    shapeFeatureCounts: Record<string, DrawShapeFeatureCounts>;
+    setSupportedTypes: (types: DrawTypeConfig[]) => void;
+    setActiveTool: (tool: ActiveToolList) => void;
+    addGraphic: (graphic: any) => any;
+    removeGraphic: (id: string) => void;
+    selectGraphic: (id: string) => void;
+    clearSelection: () => void;
+    requestDeleteSelectedGraphic: () => void;
+    requestEditSelectedGraphic: () => void;
+    requestIdentifySelectedGraphic: () => void;
+    requestStopEditMode: (clearSelection?: boolean) => void;
+    requestCancelEditMode: (clearSelection?: boolean) => void;
+    requestRefreshSelectedGraphicFeatureCounts: () => void;
+    requestShapePanelFocus: () => void;
+    requestImportShapes: (shapes: DrawShapeImportRecord[]) => void;
+    clearImportShapes: (requestId?: number) => void;
+    getSelectedGraphic: () => any;
+    updateGraphicGeometry: (id: string, geometry: any) => void;
+    updateGraphic: (id: string, updates: any) => void;
+    setGraphicMapLabelSettings: (id: string, settings: Partial<DrawMapLabelSettings>) => void;
+    setSelectedGraphicStyleSettings: (settings: Partial<DrawStyleSettings>) => void;
+    setSelectedGraphicFillColor: (color: string) => void;
+    setSelectedGraphicBorderColor: (color: string) => void;
+    setSelectedGraphicBufferColor: (color: string) => void;
+    setSelectedGraphicOpacity: (opacity: number) => void;
+    setSelectedGraphicBufferSettings: (settings: Partial<DrawBufferSettings>) => void;
+    setSelectedGraphicBufferDistance: (distance: number) => void;
+    setSelectedGraphicBufferUnit: (unit: DrawBufferUnit) => void;
+    setSelectedGraphicIdentifyBufferMode: (mode: DrawIdentifyBufferMode) => void;
+    setMeasurementsEnabled: (enabled: boolean) => void;
+    toggleMeasurements: () => void;
+    setHoveredSegmentKey: (key: string | null) => void;
+    setSelectedSegmentKey: (key: string | null) => void;
+    setHoveredVertexKey: (key: string | null) => void;
+    setSelectedVertexKey: (key: string | null) => void;
+    clearMeasurementInteraction: () => void;
+    setShapeDetailsPickEnabled: (enabled: boolean) => void;
+    setShapeDetailsLabelsVisible: (visible: boolean) => void;
+    setShapeDetailsLabelsUseSettings: (useSettings: boolean) => void;
+    setShapeDetailsActiveTab: (tab: DrawShapeInspectorTab) => void;
+    toggleShapeDetailsPickEnabled: () => void;
+    setFillColor: (color: string) => void;
+    setBorderColor: (color: string) => void;
+    setBufferColor: (color: string) => void;
+    setOpacity: (opacity: number) => void;
+    setStyleSettings: (settings: Partial<DrawStyleSettings>) => void;
+    setBufferDistance: (distance: number) => void;
+    setBufferUnit: (unit: DrawBufferUnit) => void;
+    setBufferSettings: (settings: Partial<DrawBufferSettings>) => void;
+    setIdentifyBufferMode: (mode: DrawIdentifyBufferMode) => void;
+    setIdentifyGeometryGraphicId: (id: string | null) => void;
+    setShapeFeatureCounts: (id: string, counts: DrawShapeFeatureCounts) => void;
+    setShapeFeatureCountsLoading: (id: string) => void;
+    mapNavEl: import('../../../../vue/dist/vue.esm-bundler.js').Ref<unknown, unknown>;
+}, "graphics" | "supportedTypes" | "configParsed" | "activeTool" | "selectedGraphicId" | "measurementsEnabled" | "hoveredSegmentKey" | "selectedSegmentKey" | "hoveredVertexKey" | "selectedVertexKey" | "shapeDetailsPickEnabled" | "shapeDetailsLabelsVisible" | "shapeDetailsLabelsUseSettings" | "shapeDetailsActiveTab" | "deleteSelectedGraphicRequestId" | "editSelectedGraphicRequestId" | "identifySelectedGraphicRequestId" | "shapePanelFocusRequestId" | "stopEditModeRequestId" | "stopEditModeClearSelection" | "cancelEditModeRequestId" | "cancelEditModeClearSelection" | "refreshSelectedGraphicFeatureCountsRequestId" | "selectedGraphicSettingsUpdateRequestId" | "selectedGraphicSettingsUpdatedGraphicId" | "mapLabelSettingsUpdateRequestId" | "mapLabelSettingsUpdatedGraphicId" | "importShapesRequestId" | "importShapeRecords" | "identifyGeometryGraphicId" | "styleSettings" | "bufferSettings" | "identifyBufferMode" | "shapeFeatureCounts" | "mapNavEl">, Pick<{
+    supportedTypes: import('../../../../vue/dist/vue.esm-bundler.js').Ref<{
+        type: string;
+        options?: Record<string, any> | undefined;
+        enabled?: boolean | undefined;
+    }[], DrawTypeConfig[] | {
+        type: string;
+        options?: Record<string, any> | undefined;
+        enabled?: boolean | undefined;
+    }[]>;
+    configParsed: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    activeTool: import('../../../../vue/dist/vue.esm-bundler.js').Ref<ActiveToolList, ActiveToolList>;
+    graphics: import('../../../../vue/dist/vue.esm-bundler.js').Reactive<any[]>;
+    selectedGraphicId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    measurementsEnabled: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    hoveredSegmentKey: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    selectedSegmentKey: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    activeSegmentKey: import('../../../../vue/dist/vue.esm-bundler.js').ComputedRef<string | null>;
+    hoveredVertexKey: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    selectedVertexKey: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    activeVertexKey: import('../../../../vue/dist/vue.esm-bundler.js').ComputedRef<string | null>;
+    shapeDetailsPickEnabled: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    shapeDetailsLabelsVisible: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    shapeDetailsLabelsUseSettings: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    shapeDetailsActiveTab: import('../../../../vue/dist/vue.esm-bundler.js').Ref<DrawShapeInspectorTab, DrawShapeInspectorTab>;
+    deleteSelectedGraphicRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    editSelectedGraphicRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    identifySelectedGraphicRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    shapePanelFocusRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    stopEditModeRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    stopEditModeClearSelection: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    cancelEditModeRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    cancelEditModeClearSelection: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    refreshSelectedGraphicFeatureCountsRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    selectedGraphicSettingsUpdateRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    selectedGraphicSettingsUpdatedGraphicId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    mapLabelSettingsUpdateRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    mapLabelSettingsUpdatedGraphicId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    importShapesRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    importShapeRecords: import('../../../../vue/dist/vue.esm-bundler.js').Ref<{
+        id?: string | undefined;
+        type: string;
+        geometry: unknown;
+        settings: {
+            drawStyle: {
+                fillColor: string;
+                borderColor: string;
+                bufferColor: string;
+                opacity: number;
+                borderColorManual: boolean;
+                bufferColorManual: boolean;
+            };
+            drawBuffer: {
+                distance: number;
+                unit: DrawBufferUnit;
+            };
+            drawIdentifyBufferMode: DrawIdentifyBufferMode;
+            drawMapLabels: {
+                areaLabel: boolean;
+                segmentLength: boolean;
+                segmentLetters: boolean;
+                vertexNumbers: boolean;
+            };
+        };
+    }[], import('../shape-io').DrawShapeExportRecord[] | {
+        id?: string | undefined;
+        type: string;
+        geometry: unknown;
+        settings: {
+            drawStyle: {
+                fillColor: string;
+                borderColor: string;
+                bufferColor: string;
+                opacity: number;
+                borderColorManual: boolean;
+                bufferColorManual: boolean;
+            };
+            drawBuffer: {
+                distance: number;
+                unit: DrawBufferUnit;
+            };
+            drawIdentifyBufferMode: DrawIdentifyBufferMode;
+            drawMapLabels: {
+                areaLabel: boolean;
+                segmentLength: boolean;
+                segmentLetters: boolean;
+                vertexNumbers: boolean;
+            };
+        };
+    }[]>;
+    identifyGeometryGraphicId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    styleSettings: {
+        fillColor: string;
+        borderColor: string;
+        bufferColor: string;
+        opacity: number;
+        borderColorManual: boolean;
+        bufferColorManual: boolean;
+    };
+    bufferSettings: {
+        distance: number;
+        unit: DrawBufferUnit;
+    };
+    identifyBufferMode: import('../../../../vue/dist/vue.esm-bundler.js').Ref<DrawIdentifyBufferMode, DrawIdentifyBufferMode>;
+    shapeFeatureCounts: Record<string, DrawShapeFeatureCounts>;
+    setSupportedTypes: (types: DrawTypeConfig[]) => void;
+    setActiveTool: (tool: ActiveToolList) => void;
+    addGraphic: (graphic: any) => any;
+    removeGraphic: (id: string) => void;
+    selectGraphic: (id: string) => void;
+    clearSelection: () => void;
+    requestDeleteSelectedGraphic: () => void;
+    requestEditSelectedGraphic: () => void;
+    requestIdentifySelectedGraphic: () => void;
+    requestStopEditMode: (clearSelection?: boolean) => void;
+    requestCancelEditMode: (clearSelection?: boolean) => void;
+    requestRefreshSelectedGraphicFeatureCounts: () => void;
+    requestShapePanelFocus: () => void;
+    requestImportShapes: (shapes: DrawShapeImportRecord[]) => void;
+    clearImportShapes: (requestId?: number) => void;
+    getSelectedGraphic: () => any;
+    updateGraphicGeometry: (id: string, geometry: any) => void;
+    updateGraphic: (id: string, updates: any) => void;
+    setGraphicMapLabelSettings: (id: string, settings: Partial<DrawMapLabelSettings>) => void;
+    setSelectedGraphicStyleSettings: (settings: Partial<DrawStyleSettings>) => void;
+    setSelectedGraphicFillColor: (color: string) => void;
+    setSelectedGraphicBorderColor: (color: string) => void;
+    setSelectedGraphicBufferColor: (color: string) => void;
+    setSelectedGraphicOpacity: (opacity: number) => void;
+    setSelectedGraphicBufferSettings: (settings: Partial<DrawBufferSettings>) => void;
+    setSelectedGraphicBufferDistance: (distance: number) => void;
+    setSelectedGraphicBufferUnit: (unit: DrawBufferUnit) => void;
+    setSelectedGraphicIdentifyBufferMode: (mode: DrawIdentifyBufferMode) => void;
+    setMeasurementsEnabled: (enabled: boolean) => void;
+    toggleMeasurements: () => void;
+    setHoveredSegmentKey: (key: string | null) => void;
+    setSelectedSegmentKey: (key: string | null) => void;
+    setHoveredVertexKey: (key: string | null) => void;
+    setSelectedVertexKey: (key: string | null) => void;
+    clearMeasurementInteraction: () => void;
+    setShapeDetailsPickEnabled: (enabled: boolean) => void;
+    setShapeDetailsLabelsVisible: (visible: boolean) => void;
+    setShapeDetailsLabelsUseSettings: (useSettings: boolean) => void;
+    setShapeDetailsActiveTab: (tab: DrawShapeInspectorTab) => void;
+    toggleShapeDetailsPickEnabled: () => void;
+    setFillColor: (color: string) => void;
+    setBorderColor: (color: string) => void;
+    setBufferColor: (color: string) => void;
+    setOpacity: (opacity: number) => void;
+    setStyleSettings: (settings: Partial<DrawStyleSettings>) => void;
+    setBufferDistance: (distance: number) => void;
+    setBufferUnit: (unit: DrawBufferUnit) => void;
+    setBufferSettings: (settings: Partial<DrawBufferSettings>) => void;
+    setIdentifyBufferMode: (mode: DrawIdentifyBufferMode) => void;
+    setIdentifyGeometryGraphicId: (id: string | null) => void;
+    setShapeFeatureCounts: (id: string, counts: DrawShapeFeatureCounts) => void;
+    setShapeFeatureCountsLoading: (id: string) => void;
+    mapNavEl: import('../../../../vue/dist/vue.esm-bundler.js').Ref<unknown, unknown>;
+}, "activeSegmentKey" | "activeVertexKey">, Pick<{
+    supportedTypes: import('../../../../vue/dist/vue.esm-bundler.js').Ref<{
+        type: string;
+        options?: Record<string, any> | undefined;
+        enabled?: boolean | undefined;
+    }[], DrawTypeConfig[] | {
+        type: string;
+        options?: Record<string, any> | undefined;
+        enabled?: boolean | undefined;
+    }[]>;
+    configParsed: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    activeTool: import('../../../../vue/dist/vue.esm-bundler.js').Ref<ActiveToolList, ActiveToolList>;
+    graphics: import('../../../../vue/dist/vue.esm-bundler.js').Reactive<any[]>;
+    selectedGraphicId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    measurementsEnabled: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    hoveredSegmentKey: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    selectedSegmentKey: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    activeSegmentKey: import('../../../../vue/dist/vue.esm-bundler.js').ComputedRef<string | null>;
+    hoveredVertexKey: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    selectedVertexKey: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    activeVertexKey: import('../../../../vue/dist/vue.esm-bundler.js').ComputedRef<string | null>;
+    shapeDetailsPickEnabled: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    shapeDetailsLabelsVisible: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    shapeDetailsLabelsUseSettings: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    shapeDetailsActiveTab: import('../../../../vue/dist/vue.esm-bundler.js').Ref<DrawShapeInspectorTab, DrawShapeInspectorTab>;
+    deleteSelectedGraphicRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    editSelectedGraphicRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    identifySelectedGraphicRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    shapePanelFocusRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    stopEditModeRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    stopEditModeClearSelection: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    cancelEditModeRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    cancelEditModeClearSelection: import('../../../../vue/dist/vue.esm-bundler.js').Ref<boolean, boolean>;
+    refreshSelectedGraphicFeatureCountsRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    selectedGraphicSettingsUpdateRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    selectedGraphicSettingsUpdatedGraphicId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    mapLabelSettingsUpdateRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    mapLabelSettingsUpdatedGraphicId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    importShapesRequestId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<number, number>;
+    importShapeRecords: import('../../../../vue/dist/vue.esm-bundler.js').Ref<{
+        id?: string | undefined;
+        type: string;
+        geometry: unknown;
+        settings: {
+            drawStyle: {
+                fillColor: string;
+                borderColor: string;
+                bufferColor: string;
+                opacity: number;
+                borderColorManual: boolean;
+                bufferColorManual: boolean;
+            };
+            drawBuffer: {
+                distance: number;
+                unit: DrawBufferUnit;
+            };
+            drawIdentifyBufferMode: DrawIdentifyBufferMode;
+            drawMapLabels: {
+                areaLabel: boolean;
+                segmentLength: boolean;
+                segmentLetters: boolean;
+                vertexNumbers: boolean;
+            };
+        };
+    }[], import('../shape-io').DrawShapeExportRecord[] | {
+        id?: string | undefined;
+        type: string;
+        geometry: unknown;
+        settings: {
+            drawStyle: {
+                fillColor: string;
+                borderColor: string;
+                bufferColor: string;
+                opacity: number;
+                borderColorManual: boolean;
+                bufferColorManual: boolean;
+            };
+            drawBuffer: {
+                distance: number;
+                unit: DrawBufferUnit;
+            };
+            drawIdentifyBufferMode: DrawIdentifyBufferMode;
+            drawMapLabels: {
+                areaLabel: boolean;
+                segmentLength: boolean;
+                segmentLetters: boolean;
+                vertexNumbers: boolean;
+            };
+        };
+    }[]>;
+    identifyGeometryGraphicId: import('../../../../vue/dist/vue.esm-bundler.js').Ref<string | null, string | null>;
+    styleSettings: {
+        fillColor: string;
+        borderColor: string;
+        bufferColor: string;
+        opacity: number;
+        borderColorManual: boolean;
+        bufferColorManual: boolean;
+    };
+    bufferSettings: {
+        distance: number;
+        unit: DrawBufferUnit;
+    };
+    identifyBufferMode: import('../../../../vue/dist/vue.esm-bundler.js').Ref<DrawIdentifyBufferMode, DrawIdentifyBufferMode>;
+    shapeFeatureCounts: Record<string, DrawShapeFeatureCounts>;
+    setSupportedTypes: (types: DrawTypeConfig[]) => void;
+    setActiveTool: (tool: ActiveToolList) => void;
+    addGraphic: (graphic: any) => any;
+    removeGraphic: (id: string) => void;
+    selectGraphic: (id: string) => void;
+    clearSelection: () => void;
+    requestDeleteSelectedGraphic: () => void;
+    requestEditSelectedGraphic: () => void;
+    requestIdentifySelectedGraphic: () => void;
+    requestStopEditMode: (clearSelection?: boolean) => void;
+    requestCancelEditMode: (clearSelection?: boolean) => void;
+    requestRefreshSelectedGraphicFeatureCounts: () => void;
+    requestShapePanelFocus: () => void;
+    requestImportShapes: (shapes: DrawShapeImportRecord[]) => void;
+    clearImportShapes: (requestId?: number) => void;
+    getSelectedGraphic: () => any;
+    updateGraphicGeometry: (id: string, geometry: any) => void;
+    updateGraphic: (id: string, updates: any) => void;
+    setGraphicMapLabelSettings: (id: string, settings: Partial<DrawMapLabelSettings>) => void;
+    setSelectedGraphicStyleSettings: (settings: Partial<DrawStyleSettings>) => void;
+    setSelectedGraphicFillColor: (color: string) => void;
+    setSelectedGraphicBorderColor: (color: string) => void;
+    setSelectedGraphicBufferColor: (color: string) => void;
+    setSelectedGraphicOpacity: (opacity: number) => void;
+    setSelectedGraphicBufferSettings: (settings: Partial<DrawBufferSettings>) => void;
+    setSelectedGraphicBufferDistance: (distance: number) => void;
+    setSelectedGraphicBufferUnit: (unit: DrawBufferUnit) => void;
+    setSelectedGraphicIdentifyBufferMode: (mode: DrawIdentifyBufferMode) => void;
+    setMeasurementsEnabled: (enabled: boolean) => void;
+    toggleMeasurements: () => void;
+    setHoveredSegmentKey: (key: string | null) => void;
+    setSelectedSegmentKey: (key: string | null) => void;
+    setHoveredVertexKey: (key: string | null) => void;
+    setSelectedVertexKey: (key: string | null) => void;
+    clearMeasurementInteraction: () => void;
+    setShapeDetailsPickEnabled: (enabled: boolean) => void;
+    setShapeDetailsLabelsVisible: (visible: boolean) => void;
+    setShapeDetailsLabelsUseSettings: (useSettings: boolean) => void;
+    setShapeDetailsActiveTab: (tab: DrawShapeInspectorTab) => void;
+    toggleShapeDetailsPickEnabled: () => void;
+    setFillColor: (color: string) => void;
+    setBorderColor: (color: string) => void;
+    setBufferColor: (color: string) => void;
+    setOpacity: (opacity: number) => void;
+    setStyleSettings: (settings: Partial<DrawStyleSettings>) => void;
+    setBufferDistance: (distance: number) => void;
+    setBufferUnit: (unit: DrawBufferUnit) => void;
+    setBufferSettings: (settings: Partial<DrawBufferSettings>) => void;
+    setIdentifyBufferMode: (mode: DrawIdentifyBufferMode) => void;
+    setIdentifyGeometryGraphicId: (id: string | null) => void;
+    setShapeFeatureCounts: (id: string, counts: DrawShapeFeatureCounts) => void;
+    setShapeFeatureCountsLoading: (id: string) => void;
+    mapNavEl: import('../../../../vue/dist/vue.esm-bundler.js').Ref<unknown, unknown>;
+}, "setOpacity" | "clearSelection" | "setSupportedTypes" | "setActiveTool" | "addGraphic" | "removeGraphic" | "selectGraphic" | "requestDeleteSelectedGraphic" | "requestEditSelectedGraphic" | "requestIdentifySelectedGraphic" | "requestStopEditMode" | "requestCancelEditMode" | "requestRefreshSelectedGraphicFeatureCounts" | "requestShapePanelFocus" | "requestImportShapes" | "clearImportShapes" | "getSelectedGraphic" | "updateGraphicGeometry" | "updateGraphic" | "setGraphicMapLabelSettings" | "setSelectedGraphicStyleSettings" | "setSelectedGraphicFillColor" | "setSelectedGraphicBorderColor" | "setSelectedGraphicBufferColor" | "setSelectedGraphicOpacity" | "setSelectedGraphicBufferSettings" | "setSelectedGraphicBufferDistance" | "setSelectedGraphicBufferUnit" | "setSelectedGraphicIdentifyBufferMode" | "setMeasurementsEnabled" | "toggleMeasurements" | "setHoveredSegmentKey" | "setSelectedSegmentKey" | "setHoveredVertexKey" | "setSelectedVertexKey" | "clearMeasurementInteraction" | "setShapeDetailsPickEnabled" | "setShapeDetailsLabelsVisible" | "setShapeDetailsLabelsUseSettings" | "setShapeDetailsActiveTab" | "toggleShapeDetailsPickEnabled" | "setFillColor" | "setBorderColor" | "setBufferColor" | "setStyleSettings" | "setBufferDistance" | "setBufferUnit" | "setBufferSettings" | "setIdentifyBufferMode" | "setIdentifyGeometryGraphicId" | "setShapeFeatureCounts" | "setShapeFeatureCountsLoading">>;

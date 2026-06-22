@@ -1,0 +1,1 @@
+import"./vec3f64-AlvO6xQn.js";import"./glsl-C3kp6zqV.js";import"./ShaderBuilder-BteJty_U.js";import"./VertexColor.glsl-B6NvE-zG.js";import"./NoParameters-CWYi4J7C.js";import{c as e,s as t}from"./ColorMaterial-CMTAmWz2.js";export{t as TexturePassParameters,e as build};

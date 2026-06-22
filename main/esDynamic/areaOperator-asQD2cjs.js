@@ -1,0 +1,1 @@
+import"./units-FLUQmY_F.js";import"./apiConverter-C8RBLwwv.js";import{t as e}from"./areaOperator-DhBwpxfh.js";import{r as t}from"./ramp.js";var n=t({execute:()=>e,supportsCurves:()=>!0});export{n as t};

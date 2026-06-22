@@ -1,0 +1,1 @@
+import{Nv as e,zg as t}from"./store-TEwW3sPL.js";function n(){let n=e(`mapview-essential-goto-duration`);return n==null?n:t(n)}export{n as t};

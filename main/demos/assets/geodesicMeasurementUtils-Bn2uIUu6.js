@@ -1,0 +1,1 @@
+import{Wp as e}from"./store-TEwW3sPL.js";import{o as t}from"./geodesicUtils-CqV1gU6G.js";function n(n){return t(n)||e(n)}function r(e,n,r,...i){return t(e)?n.apply(void 0,i):e.isWebMercator?r.apply(void 0,i):null}export{r as n,n as t};

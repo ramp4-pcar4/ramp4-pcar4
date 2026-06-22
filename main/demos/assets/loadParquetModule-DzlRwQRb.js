@@ -1,0 +1,2 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["./bundle-Cd9nmfSo.js","./store-TEwW3sPL.js","./preload-helper-BTGlBio-.js","./store-9vAoC8ak.css"])))=>i.map(i=>d[i]);
+import{hm as e}from"./store-TEwW3sPL.js";import{t}from"./preload-helper-BTGlBio-.js";var n=null;async function r(){return n||=i(),n}async function i(){let n=await t(()=>import(`./bundle-Cd9nmfSo.js`).then(e=>e.t),__vite__mapDeps([0,1,2,3]),import.meta.url);return await n.default({module_or_path:e(`esri/libs/parquet/pkg/bundle_bg.wasm`)}),n}export{r as t};

@@ -1,0 +1,1 @@
+import"./apiConverter-C8RBLwwv.js";import"./OperatorIntersects-Dh1FNqxn.js";import{n as e,r as t,t as n}from"./intersectsOperator-CiulNztP.js";import{r}from"./ramp.js";var i=r({accelerateGeometry:()=>n,execute:()=>t,supportsCurves:()=>e});export{i as t};

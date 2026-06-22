@@ -1,0 +1,1 @@
+import{A as e,N as t,et as n,f as r,i}from"./store-TEwW3sPL.js";r();var a={},o={xmlns:`http://www.w3.org/2000/svg`,viewBox:`0 0 24 24`};function s(r,i){return n(),t(`svg`,o,[...i[0]||=[e(`path`,{d:`M0 0h24v24H0z`,fill:`none`},null,-1),e(`circle`,{cx:`12`,cy:`12`,r:`8`,fill:`none`,stroke:`currentColor`,"stroke-width":`2`},null,-1)]])}var c=i(a,[[`render`,s]]);export{c as default};

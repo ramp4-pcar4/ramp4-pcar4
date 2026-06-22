@@ -1,0 +1,1 @@
+import{ln as e}from"./store-TEwW3sPL.js";var t=()=>e((e,t)=>{let n=new Set;return t.onDisconnected(()=>{n.forEach(e=>e.cancel())}),{add:e=>{[e].flat().forEach(e=>n.add(e))},resources:n}});export{t};
