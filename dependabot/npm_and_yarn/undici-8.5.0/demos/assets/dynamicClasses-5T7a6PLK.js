@@ -1,1 +1,0 @@
-function e(e,t,n){return t?`${e}-${t}`:n?`${e}-${n}`:`${e}-m`}export{e as t};

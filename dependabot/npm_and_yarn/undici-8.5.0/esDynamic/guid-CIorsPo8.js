@@ -1,1 +1,0 @@
-function e(e){return e.map(e=>{let t=``;for(let n=0;n<e;n++)t+=((1+Math.random())*65536|0).toString(16).substring(1);return t}).join(`-`)}var t=()=>e([2,1,1,1,3]);export{t};
