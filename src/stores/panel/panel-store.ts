@@ -13,6 +13,7 @@ export interface PanelStore {
     remWidth: Ref<number>;
     mobileView: Ref<boolean>;
     reorderable: Ref<boolean>;
+    pinable: Ref<boolean>;
     items: Ref<{ [name: string]: PanelInstance }>;
     regPromises: Ref<{ [name: string]: DefPromise<PanelInstance> }>;
     orderedItems: Ref<[]>;
@@ -45,6 +46,7 @@ export const usePanelStore = defineStore('panel', () => {
     const remWidth = ref(0);
     const mobileView = ref(false);
     const reorderable = ref(true);
+    const pinable = ref(true);
     const items = ref<{ [name: string]: PanelInstance }>({});
     const regPromises = ref<{ [name: string]: DefPromise<PanelInstance> }>({});
     const orderedItems = ref<PanelInstance[]>([]);
@@ -314,6 +316,7 @@ export const usePanelStore = defineStore('panel', () => {
         remWidth,
         mobileView,
         reorderable,
+        pinable,
         teleported,
         getRemainingWidth,
         getVisible,

@@ -37,7 +37,7 @@
                 <div class="flex" v-if="!panel.teleport">
                     <left v-if="reorderable" @click="move('left')" :active="!panel.isLeftMostPanel" />
                     <right v-if="reorderable" @click="move('right')" :active="!panel.isRightMostPanel" />
-                    <pin @click="panel.pin()" :active="panel.isPinned" />
+                    <pin v-if="pinable" @click="panel.pin()" :active="panel.isPinned" />
                     <expand
                         v-if="panel.controls && panel.controls.expand"
                         @click="panel.expand()"
@@ -110,6 +110,7 @@ const props = defineProps({
 const temporary = computed((): Array<string> | undefined => (iApi.fixture.get('appbar') ? appbarStore.temporary : []));
 const mobileView = computed(() => panelStore.mobileView);
 const reorderable = computed(() => panelStore.reorderable);
+const pinable = computed(() => panelStore.pinable);
 const FOCUS_CONTAINER_ATTR = 'focus-container';
 const ACTIVE_FOCUS_CONTAINER_ATTR = 'focus-container-active';
 // Managed focus descendants own keyboard traversal; wrapper should not become a competing tab stop.

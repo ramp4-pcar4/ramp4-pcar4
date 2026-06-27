@@ -248,8 +248,9 @@ export class InstanceAPI {
                     });
                 }
 
-                // enable/disable reorder controls
+                // enable/disable reorder/pin controls
                 panelStore.reorderable = activeConfig.panels.reorderable ?? true;
+                panelStore.pinable = activeConfig.panels.pinable ?? true;
             }
 
             // disable animations if needed
