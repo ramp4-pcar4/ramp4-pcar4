@@ -17,7 +17,13 @@ import {
     resolveGraphicIdentifyBufferMode
 } from '../settings';
 import type { DrawBufferSettings, DrawIdentifyBufferMode } from '../settings';
-import { createDrawShapesExportFile, downloadDrawShapes, getDrawShapeId, parseDrawShapesPayload } from '../shape-io';
+import {
+    createDrawShapesExportFile,
+    downloadDrawShapes,
+    getDrawShapeId,
+    getPayloadShapes,
+    parseDrawShapesPayload
+} from '../shape-io';
 import type { DrawShapeExportRecord, DrawShapesExportFile } from '../shape-io';
 import { useDrawStore } from '../store';
 import type { ActiveToolList } from '../store';
@@ -164,6 +170,14 @@ export class DrawAPI extends FixtureInstance implements IdentifyGeometryProvider
     async importShapes(source: DrawShapeImportSource): Promise<number> {
         const payload =
             typeof source === 'string' || source instanceof URL ? await this.fetchDrawShapesPayload(source) : source;
+
+        const shapes = getPayloadShapes(payload);
+        if (!shapes) {
+            throw new Error('Invalid draw shape payload.');
+        }
+        if (!shapes.length) {
+            return 0;
+        }
 
         const records = parseDrawShapesPayload(payload);
         if (!records.length) {
