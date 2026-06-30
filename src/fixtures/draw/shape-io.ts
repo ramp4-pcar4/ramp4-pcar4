@@ -113,7 +113,7 @@ export const downloadDrawShapes = (graphics: DrawGraphicLike[], fileName?: strin
     return true;
 };
 
-const getPayloadShapes = (payload: unknown): unknown[] | undefined => {
+export const getPayloadShapes = (payload: unknown): unknown[] | undefined => {
     if (Array.isArray(payload)) return payload;
 
     if (!isRecord(payload)) return undefined;
@@ -174,6 +174,7 @@ export const parseDrawShapesPayload = (payload: unknown): DrawShapeImportRecord[
 
 export const readDrawShapeFiles = async (files: File[]): Promise<DrawShapeImportRecord[]> => {
     const importedShapes: DrawShapeImportRecord[] = [];
+    let validPayloadFound = false;
 
     for (const file of files) {
         let payload: unknown;
@@ -183,6 +184,13 @@ export const readDrawShapeFiles = async (files: File[]): Promise<DrawShapeImport
             throw new Error('Invalid draw shape file.');
         }
 
+        const shapes = getPayloadShapes(payload);
+        if (!shapes) {
+            throw new Error('Invalid draw shape file.');
+        }
+        validPayloadFound = true;
+        if (!shapes.length) continue;
+
         const records = parseDrawShapesPayload(payload);
         if (!records.length) {
             throw new Error('Invalid draw shape file.');
@@ -190,7 +198,7 @@ export const readDrawShapeFiles = async (files: File[]): Promise<DrawShapeImport
         importedShapes.push(...records);
     }
 
-    if (!importedShapes.length) {
+    if (!validPayloadFound) {
         throw new Error('Invalid draw shape file.');
     }
 
