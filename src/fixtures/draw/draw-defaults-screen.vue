@@ -134,6 +134,7 @@
                         class="rv-action-button"
                         :title="t('draw.export.all.tooltip')"
                         :aria-label="t('draw.export.all.tooltip')"
+                        :disabled="!hasShapes"
                         @click="exportAllShapes"
                     >
                         <download-icon class="w-16 h-16"></download-icon>
@@ -196,8 +197,11 @@ const identifyBufferMode = computed({
 });
 
 const importOpen = computed(() => isPanelOpen(panelStore, DRAW_IMPORT_PANEL_ID));
+const hasShapes = computed(() => drawStore.graphics.length > 0);
 
 const exportAllShapes = () => {
+    if (!hasShapes.value) return;
+
     const exported = downloadDrawShapes(drawStore.graphics, createDrawShapesFileName('ramp-draw-shapes'));
     iApi.updateAlert(t(exported ? 'draw.export.all.success' : 'draw.export.none'));
 };
@@ -268,6 +272,9 @@ const toggleImport = () => {
     display: block;
     height: 16px;
     width: 16px;
+}
+.rv-action-button:disabled {
+    @apply text-gray-400;
 }
 .rv-active-action-button {
     @apply text-indigo-700 bg-indigo-50;
