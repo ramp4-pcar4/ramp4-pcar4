@@ -1,0 +1,1 @@
+import"./HighlightDefaults-DmW_E45_.js";function e(e){return e?.name??`default`}export{e as t};

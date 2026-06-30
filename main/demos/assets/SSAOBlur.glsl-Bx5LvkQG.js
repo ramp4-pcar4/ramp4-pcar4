@@ -1,0 +1,1 @@
+import"./glsl-D85RBwKC.js";import"./ShaderBuilder-B4XLodJj.js";import"./VertexColor.glsl-CGCZmPas.js";import{v as e}from"./RealisticTree.glsl-DKAPnqCj.js";export{e as build};

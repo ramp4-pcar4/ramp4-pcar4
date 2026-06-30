@@ -1,0 +1,1 @@
+import{Cd as e}from"./store-TEwW3sPL.js";import{t}from"./jsonUtils-ByWKU8r-.js";function n(t){return{geometryType:e(t[0]),geometries:t.map(e=>e.toJSON())}}function r(e,n,r){let i=t(n);return e.map(e=>{let t=i.fromJSON(e);return t.spatialReference=r,t})}export{r as n,n as t};

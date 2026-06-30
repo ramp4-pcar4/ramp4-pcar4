@@ -1,0 +1,1 @@
+import"./glsl-C3kp6zqV.js";import"./ShaderBuilder-BteJty_U.js";import{c as e,l as t}from"./SnappingVisualizer3D-CcSFK9NI.js";import"./VertexColor.glsl-B6NvE-zG.js";import"./NoParameters-CWYi4J7C.js";export{t as CompositingPassParameters,e as build};

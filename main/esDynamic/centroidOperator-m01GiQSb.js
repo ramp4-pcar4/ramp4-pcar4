@@ -1,0 +1,1 @@
+import"./apiConverter-C8RBLwwv.js";import{t as e}from"./centroidOperator-BNny2b85.js";import{r as t}from"./ramp.js";var n=t({execute:()=>e});export{n as t};

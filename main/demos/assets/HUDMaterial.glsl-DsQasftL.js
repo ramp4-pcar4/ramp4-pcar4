@@ -1,0 +1,1 @@
+import"./store-TEwW3sPL.js";import"./glsl-D85RBwKC.js";import"./ShaderBuilder-B4XLodJj.js";import"./VertexColor.glsl-CGCZmPas.js";import{i as e,n as t,r as n}from"./HUDMaterial-BhcVmjbu.js";import"./AlphaCutoff-Dm0bYlmh.js";import"./PositionOutsideClipSpace-CLdt_M-O.js";import"./HUDVisibility.glsl-CRz_W6lO.js";export{n as build,t as calculateAnchorPosition,e as fullUV};

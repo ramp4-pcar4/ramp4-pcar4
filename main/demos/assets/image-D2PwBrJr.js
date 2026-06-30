@@ -1,0 +1,1 @@
+import{gm as e}from"./store-TEwW3sPL.js";async function t(t,n){return(await e(t,{responseType:`image`,...n})).data}export{t};

@@ -1,0 +1,1 @@
+import"./store-TEwW3sPL.js";import{i as e,o as t,r as n}from"./jsonConverter-CSnOjeh1.js";import{t as r}from"./operatorIntersection-Cur_wefO.js";function i(i,a){let o=t(i),s=o.getSpatialReference();return e(r(o.getGeometry(),n(a),s),s)}export{i as execute};
