@@ -133,33 +133,69 @@ function cleanUpFields(geoJson: any, configPackage: EsriFeatureLayerProperties) 
 
 /**
  * Converts a geometry collection into a single geometry structure.
+ * Modifies the geoJson object passed in.
  *
  * @function cleanUpGeomCollection
  * @param {any} geoJson layer data in GeoJSON format
  * @param {number} idx index of feature in geoJson file
  */
 function cleanUpGeomCollection(geoJson: any, idx: number) {
-    const geoms = geoJson.features[idx].geometry.geometries;
+    const MULTI_PREFIX = 'Multi';
 
-    // convert to geometry primitive when collection contains a single geometry
+    const geoms = geoJson.features[idx].geometry.geometries as Array<any>;
+
+    // geometry collection cannot be empty, nor contain empty geometries
+    if (geoms === undefined || geoms.length === 0) {
+        console.error('GeoJSON file has geometry collection with missing geometries');
+        throw new Error();
+    }
+
     if (geoms.length === 1) {
+        // convert to geometry primitive when collection contains a single geometry
+
         geoJson.features[idx].geometry = {
             type: geoms[0].type,
             coordinates: geoms[0].coordinates
         };
-    } else {
-        // form a multipart geometry structure by merging coordinates of each geometry
-        const merged = geoms.map((g: any) => g.coordinates);
 
-        // map geometry type to corresponding multipart type
-        // - Point -> MultiPoint
-        // - LineString -> MultiLineString
-        // - Polygon -> MultiPolygon
-        geoJson.features[idx].geometry = {
-            type: `Multi${geoms[0].type}`,
-            coordinates: merged
-        };
+        return;
     }
+
+    // migrate geometries in the collection to a single MultiX geometry.
+    // at the same time, ensure all the geoms in the collection are of the same flavour (point/line/poly)
+
+    const colTypes = new Set<string>();
+
+    const mergedCoords = geoms.flatMap(g => {
+        const mahType = g.type as string;
+
+        colTypes.add(mahType);
+
+        // types already in Multi format stay as is. types in singular format get a wrapper array, converting it to
+        // a "multi with one item" format
+
+        return mahType.startsWith(MULTI_PREFIX) ? g.coordinates : [g.coordinates];
+    });
+
+    // convert unique collection types to array with any Multi designation removed.
+    const colTypeSingularArr = Array.from(colTypes).map(ct => ct.replace(MULTI_PREFIX, ''));
+    const lenny = colTypeSingularArr.length;
+
+    // bad cases: more than two means must be a mismatch. 0 is garbage. two + mismatch on singular is mismatch
+    if (lenny > 2 || lenny === 0 || (lenny === 2 && colTypeSingularArr[0] !== colTypeSingularArr[1])) {
+        console.error(
+            'GeoJSON file has geometry collection containing multiple geometry types: ' + Array.from(colTypes).join()
+        );
+        throw new Error();
+    }
+
+    // at this point, things should be peachy. edit the original geojson feature to have
+    // a singluar "Multi" geometry
+
+    geoJson.features[idx].geometry = {
+        type: MULTI_PREFIX + colTypeSingularArr[0],
+        coordinates: mergedCoords
+    };
 }
 
 /**
@@ -168,6 +204,10 @@ function cleanUpGeomCollection(geoJson: any, idx: number) {
  * @returns unified geom type string
  */
 function validGeomType(realGeomType: string): string {
+    // Note this is for validating the entire features array of a geojson layer.
+    // So we don't allow point and multipoint currently (though in theory we could force it).
+    // The logic for a GeometryCollection is a bit different.
+
     if (realGeomType === 'MultiLineString') {
         return 'LineString';
     } else if (realGeomType === 'MultiPolygon') {
@@ -224,20 +264,6 @@ export class FileUtils extends APIScope {
             const feature = geoJson.features[i];
             const featType = feature.geometry.type;
             if (featType === 'GeometryCollection') {
-                const geoms = feature.geometry.geometries;
-                // geometry collection cannot be empty, nor contain empty geometries
-                if (geoms === undefined || geoms.length === 0) {
-                    throw new Error('GeoJSON file has geometry collection with missing/incomplete geometries');
-                }
-
-                // geometry type must be consistent within geometry collection
-                const geomType = geoms[0].type;
-                for (let j = 0; j < geoms.length; j++) {
-                    if (geoms[j].type !== geomType) {
-                        throw new Error('GeoJSON file has geometry collection containing multiple geometry types');
-                    }
-                }
-
                 // convert geometry collection to single structure
                 cleanUpGeomCollection(geoJson, i);
             }
@@ -245,6 +271,9 @@ export class FileUtils extends APIScope {
             // This ensures that after any cleanup, geometries in the file are of the same type.
             // LineStrings/MultiLineStrings and Polygons/MultiPolygons can be considered the same type because Esri
             // doesn't differentiate between the single & multi variants. This is NOT the case for Point/MultiPoint.
+            // In theory, could add extra logic to support Point/Multipoint. Would be a bit more complex. Essentially
+            // if any Multipoint exists, and all geoms are Point or Multipoint, force layer type to Multipoint,
+            // convert any single points to multipoint.
 
             const vGeomType = validGeomType(feature.geometry.type);
             if (overallGeomType === '') {
