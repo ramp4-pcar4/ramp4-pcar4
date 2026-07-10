@@ -1,7 +1,7 @@
 import type { GridApi } from 'ag-grid-community';
 
 const GRID_SELECTOR = '.ag-root';
-const HEADER_ROW_SELECTOR = '.ag-header-viewport .ag-header-row';
+const HEADER_ROW_SELECTOR = '.ag-header .ag-header-row';
 
 export class GridAccessibilityManager {
     element: HTMLElement;
