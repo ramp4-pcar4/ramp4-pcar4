@@ -102,10 +102,10 @@
         "tailwindcss": "^3.4.11",
         "typedoc": "^0.28.18",
         "typescript": "^6.0.3",
-        "vite": "^8.0.12",
+        "vite": "^8.1.4",
         "vite-plugin-dts": "^4.5.4",
         "vite-plugin-mkcert": "^2.0.0",
-        "vitepress": "v2.0.0-alpha.17",
+        "vitepress": "v2.0.0-alpha.18",
         "vue-tsc": "^3.2.8",
         "yaml": "^2.6.0"
     }
