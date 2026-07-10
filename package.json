@@ -40,8 +40,8 @@
     },
     "dependencies": {
         "@ag-grid-community/locale": "^35.1.0",
-        "@arcgis/core": "5.0.19",
-        "@arcgis/map-components": "5.0.19",
+        "@arcgis/core": "5.1.12",
+        "@arcgis/map-components": "5.1.12",
         "@popperjs/core": "^2.11.6",
         "@ramp4-pcar4/vue3-treeselect": "github:ramp4-pcar4/vue3-treeselect#v1.0.0",
         "@terraformer/arcgis": "^2.1.2",
