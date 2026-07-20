@@ -1,9 +1,25 @@
 // the structure of the geo element of the RAMP API
 
-import { APIScope, AttributeAPI, InstanceAPI, LayerAPI, MapAPI, QueryAPI, SymbologyAPI } from '@/api/internal';
+import {
+    APIScope,
+    AttributeAPI,
+    InstanceAPI,
+    LayerAPI,
+    MapAPI,
+    NotificationType,
+    QueryAPI,
+    SymbologyAPI
+} from '@/api/internal';
 import { geo } from '@/main';
+import { Point, SpatialReference } from '@/geo/api';
 import type { GeometryAPI, ProjectionAPI, SharedUtilsAPI } from '@/geo/api';
 import { EsriConfig } from '@/geo/esri';
+
+interface GeolocationResult {
+    success: boolean;
+    coord?: Point | undefined;
+    error?: 'permission' | 'internal';
+}
 
 export class GeoAPI extends APIScope {
     attributes: AttributeAPI;
@@ -64,5 +80,67 @@ export class GeoAPI extends APIScope {
      */
     get proxy(): string {
         return EsriConfig.request.proxyUrl || '';
+    }
+
+    /**
+     * Stores any geolocation result to avoid multiple hits
+     * @private
+     */
+    private glCoord: Array<number> = [];
+
+    // These exist in all browsers but aren't predefined, so this tells eslint everything is a-ok
+    /* global GeolocationPosition, GeolocationPositionError, PositionOptions */
+
+    /**
+     * Gets the geolocation of the user's browser. May prompt the user for permission.
+     * @param {boolean} [hideFailNotification=false] option to suppress a RAMP notification if the request fails
+     * @returns resolves with an object containing the these properties:
+     *          - success (boolean)
+     *          - coord (Point) location in lat lon if successful
+     *          - error ('permission' | 'internal') if not successful, indicates if it's a permission problem or something else
+     */
+    async getGeolocation(hideFailNotification: boolean = false): Promise<GeolocationResult> {
+        // prompt user to geolocate via browser
+        const browserLocate = (options: PositionOptions): Promise<GeolocationPosition> => {
+            return new Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(resolve, reject, options));
+        };
+
+        const greatSuccess = (): GeolocationResult => ({
+            success: true,
+            coord: new Point('geolocation', this.glCoord, SpatialReference.latLongSR(), true)
+        });
+
+        // use cached location
+        if (this.glCoord.length) {
+            return greatSuccess();
+        } else {
+            // request current location from browser
+            const positionOrError = await browserLocate({
+                maximumAge: Infinity,
+                timeout: 5000
+            }).catch((error: GeolocationPositionError) => {
+                return error.code === GeolocationPositionError.PERMISSION_DENIED ? 'permission' : 'internal';
+            });
+
+            if (!positionOrError || typeof positionOrError === 'string') {
+                // got a nothing result or the .catch hit
+
+                const safeError = positionOrError || 'internal';
+
+                if (!hideFailNotification) {
+                    // lang key search helpers:  mapnav.geolocator.error.permission  mapnav.geolocator.error.internal
+
+                    this.$iApi.notify.show(
+                        NotificationType.ERROR,
+                        this.$iApi.$i18n.t('mapnav.geolocator.error.' + safeError)
+                    );
+                }
+                return { success: false, error: safeError };
+            } else {
+                // store geolocation as array for speedy zoomIn
+                this.glCoord = [positionOrError.coords.longitude, positionOrError.coords.latitude];
+                return greatSuccess();
+            }
+        }
     }
 }
