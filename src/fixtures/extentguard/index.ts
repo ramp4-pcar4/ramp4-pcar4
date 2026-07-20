@@ -77,7 +77,10 @@ class ExtentguardFixture extends ExtentguardAPI {
         // watch for configuration changes
         const unwatch = this.$vApp.$watch(
             () => this.config,
-            (value: ExtentguardConfig | undefined) => this._parseConfig(value)
+            (value: ExtentguardConfig | undefined) => {
+                this._parseConfig(value);
+                this.checkActive();
+            }
         );
 
         // override the removed method here to get access to scope
