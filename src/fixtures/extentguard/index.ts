@@ -4,6 +4,7 @@ import { ExtentguardAPI } from './api/extentguard';
 import { useExtentguardStore } from './store';
 import type { ExtentguardConfig } from './store';
 import { GlobalEvents } from '@/api';
+import { useConfigStore } from '@/stores/config';
 
 interface ClipResult {
     min: number;
@@ -71,13 +72,18 @@ class ExtentguardFixture extends ExtentguardAPI {
 
     added(): void {
         // take in any configuration
+        const configStore = useConfigStore(this.$vApp.$pinia);
+        (window as any).debugConfigStore = configStore;
 
         this._parseConfig(this.config);
 
         // watch for configuration changes
         const unwatch = this.$vApp.$watch(
             () => this.config,
-            (value: ExtentguardConfig | undefined) => this._parseConfig(value)
+            (value: ExtentguardConfig | undefined) => {
+                this._parseConfig(value);
+                this.checkActive();
+            }
         );
 
         // override the removed method here to get access to scope
