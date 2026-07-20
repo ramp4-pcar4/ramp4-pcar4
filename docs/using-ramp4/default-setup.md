@@ -42,6 +42,7 @@ TODO if we have API docs that expose the payload interfaces, link to those defin
 | MAP_DOUBLECLICK<br>'map/doubleclick'               | MapClick object                                                | The map was double clicked                       |
 | MAP_EXTENTCHANGE<br>'map/extentchanged'            | RAMP Extent object                                             | The map extent changed                           |
 | MAP_FOCUS<br>'map/focus'                           | KeyboardEvent object                                           | The map gained focus                             |
+| MAP_GEOLOCATE<br>'map/geolocate'                   | _success_: boolean, _coord_: Point, _error_: string            | The map geolocated the user                      |
 | MAP_GRAPHICHIT<br>'map/graphichit'                 | _layer_: LayerInstance object, _graphicHit_: object, _attributes_: object, _icon_: string, _screenPoint_: object            | A graphic was found where the mouse/crosshair is |
 | MAP_IDENTIFY<br>'map/identify'                     | MapIdentifyResult object                                       | A map identify was requested                     |
 | MAP_KEYDOWN<br>'map/keydown'                       | KeyboardEvent object                                           | A key was pressed                                |
