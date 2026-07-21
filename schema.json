@@ -499,7 +499,7 @@
             "description": "Determines where to render the panel instead of its usual spot in the panel stack.",
             "properties": {
                 "target": {
-                    "type": ["string", "element"],
+                    "type": ["string", "object"],
                     "description": "The target container where the panel will be rendered. Can be the element itself or a string query selector."
                 },
                 "showHeader": {
@@ -2010,7 +2010,7 @@
                     "description": "Name to be displayed as the header of the metadata panel."
                 },
                 "xmlType": {
-                    "type": "enum",
+                    "type": "string",
                     "description": "What xslt to match to the metadata XML. HNAP and DCAT are currently supported.",
                     "enum": ["HNAP", "DCAT"],
                     "default": "HNAP"

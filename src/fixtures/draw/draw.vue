@@ -79,7 +79,7 @@ import type { DrawShapeDetailsTab } from './panel-utils';
 import { getDrawShapeId } from './shape-io';
 import type { DrawShapeImportRecord } from './shape-io';
 import { useDrawStore } from './store';
-import type { DrawGraphicLike } from './types';
+import type { DrawGraphicLike, DrawGraphicType } from './types';
 import { buildDrawSegments, buildDrawVertices, parseDrawMeasurementTargetKey } from './measurement-utils';
 import { useDrawIdentify } from './use-draw-identify';
 import { useDrawKeyboard } from './use-draw-keyboard';
@@ -118,6 +118,10 @@ let viewClickHandler: { remove: () => void } | null = null;
 let sketchEventsRegistered = false;
 let drawToolsInitId = 0;
 let sketchUpdateTimeout: number | null = null;
+
+/**
+ * Maps an id from a drawn graphic (the raw, non-buffered geometry) to the graphic that represents the buffer of that graphic
+ */
 let bufferGraphics = new Map<string, EsriGraphic>();
 let editActivationRequestId = 0;
 const drawGraphicIdCounters: Record<string, number> = {};
@@ -716,7 +720,7 @@ const importDrawShapes = async (records: DrawShapeImportRecord[]): Promise<numbe
             if (!geometry) continue;
 
             const projectedGeometry = await projectGeometryToMapSR(geometry, record.id);
-            const type = record.type || projectedGeometry.type;
+            const type = (record.type || projectedGeometry.type) as DrawGraphicType;
             const graphic = new EsriGraphic({
                 geometry: projectedGeometry,
                 attributes: {

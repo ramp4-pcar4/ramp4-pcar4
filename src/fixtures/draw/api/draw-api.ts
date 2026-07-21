@@ -1,14 +1,18 @@
 import { toRaw } from 'vue';
 
 import { FixtureInstance } from '@/api';
-import type { InstanceAPI } from '@/api';
+import type { GraphicLayer, InstanceAPI } from '@/api';
+import { Extent, GeometryType } from '@/geo/api';
 import type { BaseGeometry, IdentifyGeometryProvider, MapClick } from '@/geo/api';
-import { EsriIntersectsOperator } from '@/geo/esri';
+import { EsriIntersectsOperator, EsriSpatialReference } from '@/geo/esri';
 import type { EsriGeometry } from '@/geo/esri';
 
-import { DRAW_GRAPHICS_LAYER_ID } from '../constants';
+import { DRAW_EDIT_GRAPHICS_LAYER_ID, DRAW_GRAPHICS_LAYER_ID, DRAW_HIGHLIGHT_GRAPHICS_LAYER_ID } from '../constants';
 import { openDrawShapeDetailsPanel } from '../panel-utils';
 import {
+    cloneDrawBufferSettings,
+    cloneDrawStyleSettings,
+    createDefaultDrawMapLabelSettings,
     createDrawBufferGeometry,
     createDrawBufferOnlyGeometry,
     DRAW_SHAPE_DETAILS_PANEL_ID,
@@ -16,12 +20,12 @@ import {
     resolveGraphicBufferSettings,
     resolveGraphicIdentifyBufferMode
 } from '../settings';
-import type { DrawBufferSettings, DrawIdentifyBufferMode } from '../settings';
+import type { DrawBufferSettings, DrawBufferUnit, DrawIdentifyBufferMode } from '../settings';
 import {
+    createDrawShapeExportRecord,
     createDrawShapesExportFile,
     downloadDrawShapes,
     getDrawShapeId,
-    getPayloadShapes,
     parseDrawShapesPayload
 } from '../shape-io';
 import type { DrawShapeExportRecord, DrawShapesExportFile } from '../shape-io';
@@ -169,23 +173,17 @@ export class DrawAPI extends FixtureInstance implements IdentifyGeometryProvider
      */
     async importShapes(source: DrawShapeImportSource): Promise<number> {
         const payload =
-            typeof source === 'string' || source instanceof URL ? await this.fetchDrawShapesPayload(source) : source;
-
-        const shapes = getPayloadShapes(payload);
-        if (!shapes) {
-            throw new Error('Invalid draw shape payload.');
-        }
-        if (!shapes.length) {
-            return 0;
-        }
+            typeof source === 'string' || source instanceof URL ? await fetchDrawShapesPayload(source) : source;
 
         const records = parseDrawShapesPayload(payload);
-        if (!records.length) {
+        if (Array.isArray(records)) {
+            if (records.length) {
+                this.store.requestImportShapes(records);
+            }
+            return records.length;
+        } else {
             throw new Error('Invalid draw shape payload.');
         }
-
-        this.store.requestImportShapes(records);
-        return records.length;
     }
 
     /**
@@ -219,10 +217,9 @@ export class DrawAPI extends FixtureInstance implements IdentifyGeometryProvider
         return downloadDrawShapes(this.resolveExportGraphics(selection), fileName ?? optionFileName);
     }
 
-    /**
-     * Prevent default map identify while the draw fixture is creating or editing graphics.
-     */
     suppressIdentify(mapClick: MapClick): boolean {
+        // Prevent the default map identify while the draw fixture is creating or editing graphics.
+
         if (this.store.identifyGeometryGraphicId) {
             return false;
         }
@@ -262,16 +259,11 @@ export class DrawAPI extends FixtureInstance implements IdentifyGeometryProvider
         return drawingToolEnabled || editActive;
     }
 
-    private async fetchDrawShapesPayload(source: string | URL): Promise<unknown> {
-        const response = await fetch(source);
-
-        if (!response.ok) {
-            throw new Error(`Unable to import draw shapes from ${source.toString()}.`);
-        }
-
-        return response.json();
-    }
-
+    /**
+     * Based on a "selection" of draw-shapes, generates an array of their ids.
+     * @param selection supports: id string, array of id strings, object with prop id containing string or array of string ids.
+     * @returns array of ids, or undefined if input doesn't conform
+     */
     private getExportSelectionIds(
         selection?: DrawShapeExportSelection | DrawShapeDownloadSelection
     ): string[] | undefined {
@@ -292,10 +284,6 @@ export class DrawAPI extends FixtureInstance implements IdentifyGeometryProvider
         return Array.isArray(selection.ids) ? selection.ids : [selection.ids];
     }
 
-    private getDrawGraphicId(graphic: DrawGraphicLike): string | undefined {
-        return getDrawShapeId(graphic);
-    }
-
     private resolveExportGraphics(
         selection?: DrawShapeExportSelection | DrawShapeDownloadSelection
     ): DrawGraphicLike[] {
@@ -305,7 +293,7 @@ export class DrawAPI extends FixtureInstance implements IdentifyGeometryProvider
 
         const idSet = new Set(ids);
         return graphics.filter(graphic => {
-            const id = this.getDrawGraphicId(graphic);
+            const id = getDrawShapeId(graphic);
             return id ? idSet.has(id) : false;
         });
     }
@@ -341,6 +329,13 @@ export class DrawAPI extends FixtureInstance implements IdentifyGeometryProvider
             });
     }
 
+    /**
+     * For a point / click on the map, return the geometry in the drawing layer that should represent
+     * the identifiable area (think of selecting a shape to use as an identify region).
+     *
+     * @param mapClick point on the map to look for a drawing graphic
+     * @returns the drawing graphic, including any buffer, as a RAMP Geometry. Undefined if no shapes found.
+     */
     getIdentifyGeometry(mapClick: MapClick): BaseGeometry | undefined {
         const hitGraphic = this.getHitDrawGraphic(mapClick);
 
@@ -358,4 +353,140 @@ export class DrawAPI extends FixtureInstance implements IdentifyGeometryProvider
 
         return this.$iApi.geo.geom.geomEsriToRamp(identifyGeometry, hitGraphic.id ?? hitGraphic.attributes?.id);
     }
+
+    /**
+     * Remove all drawings
+     */
+    removeAll(): void {
+        this.store.removeAll();
+
+        // TODO is there an easier way to find these layers? It looks like the only pointer is cooked into draw.vue
+        [DRAW_GRAPHICS_LAYER_ID, DRAW_EDIT_GRAPHICS_LAYER_ID, DRAW_HIGHLIGHT_GRAPHICS_LAYER_ID].forEach(layerId => {
+            const drawLayer = this.$iApi.geo.layer.getLayer(layerId);
+            if (drawLayer) {
+                (drawLayer as GraphicLayer).removeGraphic();
+            }
+        });
+    }
+
+    /**
+     * Set the current buffer distance (for the fixture, not for an already existing drawing)
+     * @param distance distance value, non-negative, in whatever the current buffer unit is
+     */
+    setBufferDistance(distance: number) {
+        this.store.setBufferDistance(distance);
+    }
+
+    /**
+     * Set the units for the buffer distance (for the fixture, not for an already existing drawing)
+     * @param {DrawBufferUnit} unit the unit string
+     */
+    setBufferUnit(unit: DrawBufferUnit) {
+        this.store.setBufferUnit(unit);
+    }
+
+    /**
+     * Import ramp geometries to the drawing tool. The "new shape" settings will be applied (styles, buffers, etc).
+     * @param rampGeoms a ramp geometry or array of ramp geometries
+     */
+    async importRampGeometry(rampGeoms: BaseGeometry | Array<BaseGeometry>): Promise<void> {
+        const rampGeomArray = Array.isArray(rampGeoms) ? rampGeoms : [rampGeoms];
+
+        const drawingGeoms = rampGeomArray.map(rampG => {
+            // handle extent case
+            const safeRampGeom = rampG.type === GeometryType.EXTENT ? (rampG as Extent).toPolygon() : rampG;
+
+            const esriGeom = this.$iApi.geo.geom.geomRampToEsri(safeRampGeom);
+
+            const drawGeom = {
+                spatialReference: esriGeom.spatialReference,
+                // @ts-expect-error grabbing all possibilities, the "type" on the final object will know which ones to use
+                rings: esriGeom.rings,
+                // @ts-expect-error grabbing all possibilities, the "type" on the final object will know which ones to use
+                paths: esriGeom.paths,
+                // @ts-expect-error grabbing all possibilities, the "type" on the final object will know which ones to use
+                x: esriGeom.x,
+                // @ts-expect-error grabbing all possibilities, the "type" on the final object will know which ones to use
+                y: esriGeom.y
+            };
+
+            const drawShape: DrawShapeExportRecord = {
+                // TODO not sure how important id is. we might be risking ramp duplicates. but using the ramp id allows us
+                //      to track the imported geometry in the drawing tool.
+                id: rampG.id,
+                type: esriGeom.type,
+                geometry: drawGeom,
+                settings: {
+                    drawStyle: cloneDrawStyleSettings(this.store.styleSettings),
+                    drawBuffer: cloneDrawBufferSettings(this.store.bufferSettings),
+                    drawIdentifyBufferMode: this.store.identifyBufferMode,
+                    // note: there is currently no global setting for lables (that I can find). So just using the default
+                    drawMapLabels: createDefaultDrawMapLabelSettings()
+                }
+            };
+
+            return drawShape;
+        });
+
+        await this.importShapes(drawingGeoms);
+    }
+
+    /**
+     * Convert all the drawings to RAMP Geometries.
+     * Some fidelity will be lost (e.g. special types like circles and rectangles become polygons,
+     * styles are dropped, buffers are currently not included)
+     * @returns array of RAMP geometries
+     */
+    exportRampGeometry(): Array<BaseGeometry> {
+        return (this.store.graphics as DrawGraphicLike[])
+            .map(drawingGraphic => {
+                // note this "export record create" is needed. using the raw graphic from the store
+                // explodes things somehow (missing geometry?? doesn't make sense but thats the erro).
+                // Maybe can revisit with deep dive through all the methods later, but this WOMM.
+                const fancyGraphic = createDrawShapeExportRecord(drawingGraphic)!;
+                if (!fancyGraphic.geometry) {
+                    return undefined;
+                }
+
+                // convert the drawing type to a neutral esri geometry type.
+                let esriGeomType: string;
+
+                switch (fancyGraphic.type) {
+                    case 'point':
+                    case 'polyline':
+                    case 'multipoint':
+                    case 'polygon':
+                        esriGeomType = fancyGraphic.type;
+                        break;
+
+                    case 'rectangle':
+                    case 'circle':
+                        esriGeomType = 'polygon';
+                        break;
+
+                    default:
+                        console.error(`Encountered unhandled drawing type ${fancyGraphic.type}`);
+                        return undefined;
+                }
+
+                // make an esri-ish geometry, having enough stuff for our esri-to-ramp converter.
+                // the converter needs a real esri SR so that gets enhanced
+                const esriLikeGeom: any = fancyGraphic.geometry;
+                esriLikeGeom.type = esriGeomType;
+                esriLikeGeom.spatialReference = new EsriSpatialReference(esriLikeGeom.spatialReference);
+
+                return this.$iApi.geo.geom.geomEsriToRamp(esriLikeGeom, drawingGraphic.id);
+            })
+            .filter(x => !!x);
+    }
+}
+
+async function fetchDrawShapesPayload(source: string | URL): Promise<unknown> {
+    const response = await fetch(source);
+
+    if (!response.ok) {
+        throw new Error(`Unable to import draw shapes from ${source.toString()}.`);
+    }
+
+    return response.json();
 }

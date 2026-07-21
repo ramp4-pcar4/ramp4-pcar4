@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { computed, reactive, ref } from 'vue';
 
 import type { DrawTypeConfig } from '../api/draw-api';
+import type { DrawGraphicLike } from '../types';
 import {
     cloneDrawBufferSettings,
     cloneDrawMapLabelSettings,
@@ -41,7 +42,11 @@ export const useDrawStore = defineStore('draw', () => {
     const supportedTypes = ref<DrawTypeConfig[]>([]);
     const configParsed = ref(false);
     const activeTool = ref<ActiveToolList>(null);
-    const graphics = reactive<any[]>([]);
+
+    /**
+     * List of graphics that have been drawn. The type is DrawGraphicLike
+     */
+    const graphics = reactive<any[]>([]); // using the type instead of `any` here leads to billions of casts since pinapple store likes to disrespect types
     const selectedGraphicId = ref<string | null>(null);
     const mapNavEl = ref<unknown | null>(null);
     const measurementsEnabled = ref(false);
@@ -85,13 +90,21 @@ export const useDrawStore = defineStore('draw', () => {
         activeTool.value = tool;
     }
 
-    function addGraphic(graphic: any) {
+    function addGraphic(graphic: DrawGraphicLike) {
         const id = graphic.id ?? graphic.attributes?.id ?? `graphic-${Date.now()}-${++graphicIdCounter}`;
         graphics.push({
             ...graphic,
             id
         });
         return id;
+    }
+
+    function setNoGraphicsState() {
+        // just a re-usable worker for setting stuff when we have no graphics
+        shapeDetailsPickEnabled.value = false;
+        shapeDetailsLabelsVisible.value = false;
+        shapeDetailsLabelsUseSettings.value = false;
+        shapeDetailsActiveTab.value = 'details';
     }
 
     function removeGraphic(id: string) {
@@ -105,13 +118,30 @@ export const useDrawStore = defineStore('draw', () => {
                 selectedGraphicId.value = null;
             }
             if (graphics.length === 0) {
-                shapeDetailsPickEnabled.value = false;
-                shapeDetailsLabelsVisible.value = false;
-                shapeDetailsLabelsUseSettings.value = false;
-                shapeDetailsActiveTab.value = 'details';
+                setNoGraphicsState();
             }
             clearMeasurementInteraction();
         }
+    }
+
+    function removeAll() {
+        // pop-clear so we keep the pointer to the same array
+        while (graphics.length) {
+            const gId = graphics.at(-1).id;
+
+            // measurement labels lurk in the map view, and its tricky to get at them
+            // unless you are in draw.vue.  This appears to be the best way, as draw.vue
+            // has watcher on the Request Id and will then scrub the Graphic Id
+            mapLabelSettingsUpdatedGraphicId.value = gId;
+            mapLabelSettingsUpdateRequestId.value++;
+
+            delete shapeFeatureCounts[gId];
+
+            graphics.pop();
+        }
+
+        setNoGraphicsState();
+        clearSelection();
     }
 
     function selectGraphic(id: string) {
@@ -431,94 +461,95 @@ export const useDrawStore = defineStore('draw', () => {
     }
 
     return {
-        supportedTypes,
-        configParsed,
-        activeTool,
-        graphics,
-        selectedGraphicId,
-        measurementsEnabled,
-        hoveredSegmentKey,
-        selectedSegmentKey,
         activeSegmentKey,
-        hoveredVertexKey,
-        selectedVertexKey,
+        activeTool,
         activeVertexKey,
-        shapeDetailsPickEnabled,
-        shapeDetailsLabelsVisible,
-        shapeDetailsLabelsUseSettings,
-        shapeDetailsActiveTab,
+        bufferSettings,
+        cancelEditModeClearSelection,
+        cancelEditModeRequestId,
+        configParsed,
         deleteSelectedGraphicRequestId,
         editSelectedGraphicRequestId,
+        graphics,
+        hoveredSegmentKey,
+        hoveredVertexKey,
+        identifyBufferMode,
+        identifyGeometryGraphicId,
         identifySelectedGraphicRequestId,
-        shapePanelFocusRequestId,
-        stopEditModeRequestId,
-        stopEditModeClearSelection,
-        cancelEditModeRequestId,
-        cancelEditModeClearSelection,
-        refreshSelectedGraphicFeatureCountsRequestId,
-        selectedGraphicSettingsUpdateRequestId,
-        selectedGraphicSettingsUpdatedGraphicId,
+        importShapeRecords,
+        importShapesRequestId,
         mapLabelSettingsUpdateRequestId,
         mapLabelSettingsUpdatedGraphicId,
-        importShapesRequestId,
-        importShapeRecords,
-        identifyGeometryGraphicId,
-        styleSettings,
-        bufferSettings,
-        identifyBufferMode,
+        mapNavEl,
+        measurementsEnabled,
+        refreshSelectedGraphicFeatureCountsRequestId,
+        selectedGraphicId,
+        selectedGraphicSettingsUpdateRequestId,
+        selectedGraphicSettingsUpdatedGraphicId,
+        selectedSegmentKey,
+        selectedVertexKey,
+        shapeDetailsActiveTab,
+        shapeDetailsLabelsUseSettings,
+        shapeDetailsLabelsVisible,
+        shapeDetailsPickEnabled,
         shapeFeatureCounts,
-        setSupportedTypes,
-        setActiveTool,
+        shapePanelFocusRequestId,
+        stopEditModeClearSelection,
+        stopEditModeRequestId,
+        styleSettings,
+        supportedTypes,
         addGraphic,
-        removeGraphic,
-        selectGraphic,
+        clearImportShapes,
+        clearMeasurementInteraction,
         clearSelection,
+        getSelectedGraphic,
+        removeAll,
+        removeGraphic,
+        requestCancelEditMode,
         requestDeleteSelectedGraphic,
         requestEditSelectedGraphic,
         requestIdentifySelectedGraphic,
-        requestStopEditMode,
-        requestCancelEditMode,
+        requestImportShapes,
         requestRefreshSelectedGraphicFeatureCounts,
         requestShapePanelFocus,
-        requestImportShapes,
-        clearImportShapes,
-        getSelectedGraphic,
-        updateGraphicGeometry,
-        updateGraphic,
-        setGraphicMapLabelSettings,
-        setSelectedGraphicStyleSettings,
-        setSelectedGraphicFillColor,
-        setSelectedGraphicBorderColor,
-        setSelectedGraphicBufferColor,
-        setSelectedGraphicOpacity,
-        setSelectedGraphicBufferSettings,
-        setSelectedGraphicBufferDistance,
-        setSelectedGraphicBufferUnit,
-        setSelectedGraphicIdentifyBufferMode,
-        setMeasurementsEnabled,
-        toggleMeasurements,
-        setHoveredSegmentKey,
-        setSelectedSegmentKey,
-        setHoveredVertexKey,
-        setSelectedVertexKey,
-        clearMeasurementInteraction,
-        setShapeDetailsPickEnabled,
-        setShapeDetailsLabelsVisible,
-        setShapeDetailsLabelsUseSettings,
-        setShapeDetailsActiveTab,
-        toggleShapeDetailsPickEnabled,
-        setFillColor,
+        requestStopEditMode,
+        selectGraphic,
+        setActiveTool,
         setBorderColor,
         setBufferColor,
-        setOpacity,
-        setStyleSettings,
         setBufferDistance,
-        setBufferUnit,
         setBufferSettings,
+        setBufferUnit,
+        setFillColor,
+        setGraphicMapLabelSettings,
+        setHoveredSegmentKey,
+        setHoveredVertexKey,
         setIdentifyBufferMode,
         setIdentifyGeometryGraphicId,
+        setMeasurementsEnabled,
+        setOpacity,
+        setSelectedGraphicBorderColor,
+        setSelectedGraphicBufferColor,
+        setSelectedGraphicBufferDistance,
+        setSelectedGraphicBufferSettings,
+        setSelectedGraphicBufferUnit,
+        setSelectedGraphicFillColor,
+        setSelectedGraphicIdentifyBufferMode,
+        setSelectedGraphicOpacity,
+        setSelectedGraphicStyleSettings,
+        setSelectedSegmentKey,
+        setSelectedVertexKey,
+        setShapeDetailsActiveTab,
+        setShapeDetailsLabelsUseSettings,
+        setShapeDetailsLabelsVisible,
+        setShapeDetailsPickEnabled,
         setShapeFeatureCounts,
         setShapeFeatureCountsLoading,
-        mapNavEl
+        setStyleSettings,
+        setSupportedTypes,
+        toggleMeasurements,
+        toggleShapeDetailsPickEnabled,
+        updateGraphic,
+        updateGraphicGeometry
     };
 });

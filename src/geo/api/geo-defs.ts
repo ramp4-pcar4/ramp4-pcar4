@@ -333,7 +333,11 @@ export interface MapClick {
  */
 export interface IdentifyGeometryProvider {
     /**
-     * Return true when this provider wants the map identify request blocked.
+     * Allows the provider to stop the standard map identify request, and do
+     * processing on the map click.
+     *
+     * @param {MapClick} mapClick the incoming click for the identify request.
+     * @returns {boolean} true if this provider wants the map identify request blocked.
      */
     suppressIdentify?(mapClick: MapClick): boolean;
 
