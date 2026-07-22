@@ -9,54 +9,20 @@
 </template>
 
 <script setup lang="ts">
-import { InstanceAPI, NotificationType } from '@/api';
-import { Point, SpatialReference } from '@/geo/api';
-import { inject, reactive } from 'vue';
+import { InstanceAPI } from '@/api';
+
+import { inject } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const iApi = inject('iApi') as InstanceAPI;
 
-let geolocation = reactive<Array<number>>([]);
-
-// These exist in all browsers but aren't predefined, so this tells eslint everything is a-ok
-/* global GeolocationPosition, GeolocationPositionError, PositionOptions */
-
 const geolocate = async () => {
-    // use cached location
-    if (!geolocation.length) {
-        // request current location from browser
-        const position = await browserLocate({
-            maximumAge: Infinity,
-            timeout: 5000
-        }).catch((error: GeolocationPositionError) => {
-            if (error.code === GeolocationPositionError.PERMISSION_DENIED) {
-                // send an error message for a denied permission error
-                iApi.notify.show(NotificationType.ERROR, t('mapnav.geolocator.error.permission'));
-            } else {
-                // send an error message for an internal/timeout error
-                iApi.notify.show(NotificationType.ERROR, t('mapnav.geolocator.error.internal'));
-            }
-        });
-        if (position) {
-            // store geolocation as array for speedy zoomIn
-            geolocation = [position.coords.longitude, position.coords.latitude];
-            zoomIn(geolocation);
-        }
-    } else {
-        zoomIn(geolocation);
+    const glAttempt = await iApi.geo.getGeolocation();
+
+    if (glAttempt.success) {
+        iApi.geo.map.zoomMapTo(glAttempt.coord!);
     }
-};
-
-// zoom to point
-const zoomIn = (coords: Array<number>): void => {
-    const zoomTarget = new Point('geolocation', coords, SpatialReference.latLongSR(), true);
-    iApi.geo.map.zoomMapTo(zoomTarget);
-};
-
-// prompt user to geolocate via browser
-const browserLocate = (options: PositionOptions): Promise<GeolocationPosition> => {
-    return new Promise((resolve, reject) => navigator.geolocation.getCurrentPosition(resolve, reject, options));
 };
 </script>
 
