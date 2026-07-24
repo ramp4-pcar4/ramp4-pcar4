@@ -1,0 +1,1 @@
+var e=Symbol.for(`esri-plugin-setting-freehand-snapping-enabled`),t=Symbol.for(`esri-plugin-setting-bezier-enable-spline-behavior`),n={AboveCoordinates:-1e3,Coordinates:-100,Middle:0,BelowMiddle:100,ShapeMeasurements:1e3};export{t as n,n as r,e as t};

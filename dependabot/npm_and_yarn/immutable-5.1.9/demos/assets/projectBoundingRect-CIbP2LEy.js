@@ -1,0 +1,1 @@
+import{Jp as e,Qu as t,wo as n}from"./store-5v4E3u6t.js";import{h as r}from"./aaBoundingRect-Cmwi3kBO.js";function i(t,i,o,s){return t!=null&&(e(i,s)?(r(o,t),!0):(a[0]=t[0],a[1]=t[1],a[2]=0,!!n(a,i,0,a,s,0)&&(o[0]=a[0],o[1]=a[1],a[0]=t[2],a[1]=t[3],a[2]=0,!!n(a,i,0,a,s,0)&&(o[2]=a[0],o[3]=a[1],!0))))}var a=t();export{i as t};

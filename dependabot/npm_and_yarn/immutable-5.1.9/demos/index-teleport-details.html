@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <title>ramp-core</title>
+      <script type="module" crossorigin src="./assets/preload-helper-C6XEuiEO.js"></script>
+      <script type="module" crossorigin src="./assets/store-5v4E3u6t.js"></script>
+      <script type="module" crossorigin src="./assets/decorators-Ddg95x5O.js"></script>
+      <script type="module" crossorigin src="./assets/Color-D9mT-snG.js"></script>
+      <script type="module" crossorigin src="./assets/scheduling-CjAJH4tw.js"></script>
+      <script type="module" crossorigin src="./assets/Accessor-d3_CTXeF.js"></script>
+      <script type="module" crossorigin src="./assets/reactiveUtils-DJWUbjDy.js"></script>
+      <script type="module" crossorigin src="./assets/JSONSupport-BjpGP83m.js"></script>
+      <script type="module" crossorigin src="./assets/SpatialReference-CtYlZ12x.js"></script>
+      <script type="module" crossorigin src="./assets/Extent-DRt_O1tL.js"></script>
+      <script type="module" crossorigin src="./assets/aaBoundingRect-Cmwi3kBO.js"></script>
+      <script type="module" crossorigin src="./assets/ellipticArc7Utils-BX76jNF2.js"></script>
+      <script type="module" crossorigin src="./assets/curveExtent-CuNZJ2DN.js"></script>
+      <script type="module" crossorigin src="./assets/zmUtils--ihLQQBg.js"></script>
+      <script type="module" crossorigin src="./assets/Multipoint-DeAqN5DV.js"></script>
+      <script type="module" crossorigin src="./assets/Polygon-WF325tFJ.js"></script>
+      <script type="module" crossorigin src="./assets/Polyline-CvwV6eRt.js"></script>
+      <script type="module" crossorigin src="./assets/jsonUtils-CUpAYS5n.js"></script>
+      <script type="module" crossorigin src="./assets/Clonable-BjFPMyJ-.js"></script>
+      <script type="module" crossorigin src="./assets/Evented-hr5MaQDr.js"></script>
+      <script type="module" crossorigin src="./assets/Collection-DfXL-nZj.js"></script>
+      <script type="module" crossorigin src="./assets/fieldUtils-DYxDX3d-.js"></script>
+      <script type="module" crossorigin src="./assets/Identifiable-BbWQwj2_.js"></script>
+      <script type="module" crossorigin src="./assets/getPopupProvider-BNdklzXU.js"></script>
+      <script type="module" crossorigin src="./assets/typeUtils-CPzEmqIh.js"></script>
+      <script type="module" crossorigin src="./assets/screenUtils-CFOhT9Tk.js"></script>
+      <script type="module" crossorigin src="./assets/SimpleMarkerSymbol-DMJhRyaT.js"></script>
+      <script type="module" crossorigin src="./assets/collectionUtils-eGZyjcTl.js"></script>
+      <script type="module" crossorigin src="./assets/Promise-BciZMwyN.js"></script>
+      <script type="module" crossorigin src="./assets/Loadable-BatSE45R.js"></script>
+      <script type="module" crossorigin src="./assets/Portal-CabQPlok.js"></script>
+      <script type="module" crossorigin src="./assets/opacityUtils-DvHzhkFd.js"></script>
+      <script type="module" crossorigin src="./assets/aaBoundingBox-BO87v4lC.js"></script>
+      <script type="module" crossorigin src="./assets/symbolLayerUtils3D-BcWzp5JV.js"></script>
+      <script type="module" crossorigin src="./assets/textUtils-ChCzyGZb.js"></script>
+      <script type="module" crossorigin src="./assets/TextSymbol-BnLHjJxq.js"></script>
+      <script type="module" crossorigin src="./assets/PictureMarkerSymbol-CD_4zcSh.js"></script>
+      <script type="module" crossorigin src="./assets/typeUtils-DVgiWGF2.js"></script>
+      <script type="module" crossorigin src="./assets/Graphic-CoXEiqqP.js"></script>
+      <script type="module" crossorigin src="./assets/MultiPathImpl-D_RbIeyd.js"></script>
+      <script type="module" crossorigin src="./assets/SpatialReference-CzCvrPtS2.js"></script>
+      <script type="module" crossorigin src="./assets/FlatGeometry-ONAhEMjn.js"></script>
+      <script type="module" crossorigin src="./assets/FlatGeometry-CoaDL5uf.js"></script>
+      <script type="module" crossorigin src="./assets/jsonConverter-C3i8r5GE.js"></script>
+      <script type="module" crossorigin src="./assets/apiConverter-iUcS7iVV.js"></script>
+      <script type="module" crossorigin src="./assets/areaOperator-C0iRjg2z.js"></script>
+      <script type="module" crossorigin src="./assets/areaOperator-DzYDvMgQ.js"></script>
+      <script type="module" crossorigin src="./assets/OperatorSimplifyOGC-C1JpQOrL.js"></script>
+      <script type="module" crossorigin src="./assets/OperatorGeneralize-Cjih7cSc.js"></script>
+      <script type="module" crossorigin src="./assets/Bufferer-CclWhXVb-CVAnEsIL.js"></script>
+      <script type="module" crossorigin src="./assets/operatorBuffer-gjiCPpg8.js"></script>
+      <script type="module" crossorigin src="./assets/geodesicBufferOperator-CAuI6Qhd.js"></script>
+      <script type="module" crossorigin src="./assets/centroidOperator-DYH-s9sM.js"></script>
+      <script type="module" crossorigin src="./assets/centroidOperator-BeBlivsp.js"></script>
+      <script type="module" crossorigin src="./assets/differenceOperator-CNISOuhw.js"></script>
+      <script type="module" crossorigin src="./assets/differenceOperator-BCdZ1xG8.js"></script>
+      <script type="module" crossorigin src="./assets/OperatorIntersects-Be9FnazK.js"></script>
+      <script type="module" crossorigin src="./assets/intersectsOperator-Bu44dVsy.js"></script>
+      <script type="module" crossorigin src="./assets/intersectsOperator-DA_t5PAs.js"></script>
+      <script type="module" crossorigin src="./assets/lengthOperator-CnP-sYlK.js"></script>
+      <script type="module" crossorigin src="./assets/lengthOperator-D3a6K7CS.js"></script>
+      <script type="module" crossorigin src="./assets/TimeExtent-CUsTEUrt.js"></script>
+      <script type="module" crossorigin src="./assets/Layer-qw0HV9fU.js"></script>
+      <script type="module" crossorigin src="./assets/layerUtils-DQiqbWf2.js"></script>
+      <script type="module" crossorigin src="./assets/defaults-C7Z75Mkd.js"></script>
+      <script type="module" crossorigin src="./assets/jsonUtils-ESVxu6JJ.js"></script>
+      <script type="module" crossorigin src="./assets/GraphicsCollection-BZZgtI0C.js"></script>
+      <script type="module" crossorigin src="./assets/utils-C-7gGiLR.js"></script>
+      <script type="module" crossorigin src="./assets/parser-BHjEC2ej.js"></script>
+      <script type="module" crossorigin src="./assets/jsonUtils-Dm9t_feB.js"></script>
+      <script type="module" crossorigin src="./assets/BlendLayer-CEpsW3v4.js"></script>
+      <script type="module" crossorigin src="./assets/ScaleRangeLayer-nFlkgfEL.js"></script>
+      <script type="module" crossorigin src="./assets/ElevationInfo-ZpZYXXv4.js"></script>
+      <script type="module" crossorigin src="./assets/GraphicsLayer-Ch-2Ns2T.js"></script>
+      <script type="module" crossorigin src="./assets/UpdatingHandles-D_h048r5.js"></script>
+      <script type="module" crossorigin src="./assets/spatialReferenceEllipsoidUtils-Js7ijEsn.js"></script>
+      <script type="module" crossorigin src="./assets/GeographicTransformation-6E10XrsI.js"></script>
+      <script type="module" crossorigin src="./assets/projectionUtils-DVjXhc5z.js"></script>
+      <script type="module" crossorigin src="./assets/editableLayers-BO8FYrts.js"></script>
+      <script type="module" crossorigin src="./assets/layerUtils-Ng9n7xk1.js"></script>
+      <script type="module" crossorigin src="./assets/PropertiesPool-YTEdlImr.js"></script>
+      <script type="module" crossorigin src="./assets/InputManager-DHcYZHAK.js"></script>
+      <script type="module" crossorigin src="./assets/keybindings-19PDPOjH.js"></script>
+      <script type="module" crossorigin src="./assets/SketchLabelOptions-Bj_1dWL-.js"></script>
+      <script type="module" crossorigin src="./assets/SketchOptions-CThvMRpY.js"></script>
+      <script type="module" crossorigin src="./assets/asyncUtils-D1yodJM9.js"></script>
+      <script type="module" crossorigin src="./assets/ParallelSnappingHint-DdK31uUL.js"></script>
+      <script type="module" crossorigin src="./assets/SnappingOptions-Bz0udys-.js"></script>
+      <script type="module" crossorigin src="./assets/Field-Cy314f9t.js"></script>
+      <script type="module" crossorigin src="./assets/DynamicDataLayer-pPDgTyew.js"></script>
+      <script type="module" crossorigin src="./assets/QuantizationParameters-2PTFo7Du.js"></script>
+      <script type="module" crossorigin src="./assets/StatisticDefinition-DqP18ze8.js"></script>
+      <script type="module" crossorigin src="./assets/Query-CzALGPTm.js"></script>
+      <script type="module" crossorigin src="./assets/snappingUtils-CWvYDIBj.js"></script>
+      <script type="module" crossorigin src="./assets/geodesicUtils-CKVDwSag.js"></script>
+      <script type="module" crossorigin src="./assets/plane-wK2-mEau.js"></script>
+      <script type="module" crossorigin src="./assets/sphere-D0ubc12Z.js"></script>
+      <script type="module" crossorigin src="./assets/closestPointOnCurve-CYq5o8IB.js"></script>
+      <script type="module" crossorigin src="./assets/constraints-C5GD4mxR.js"></script>
+      <script type="module" crossorigin src="./assets/EdgeSnappingCandidate-p91_GmFg.js"></script>
+      <script type="module" crossorigin src="./assets/DrapedEdgeSnappingCandidate-2KvZ2XFY.js"></script>
+      <script type="module" crossorigin src="./assets/IntersectionSnappingCandidate-CUO7s3sE.js"></script>
+      <script type="module" crossorigin src="./assets/LineSnappingCandidate-CwaXIbXC.js"></script>
+      <script type="module" crossorigin src="./assets/RightAngleTriangleSnappingCandidate-DjbUb2yT.js"></script>
+      <script type="module" crossorigin src="./assets/viewUtils-DO8pXMpM.js"></script>
+      <script type="module" crossorigin src="./assets/viewUtils-CtvvHnz0.js"></script>
+      <script type="module" crossorigin src="./assets/VertexSnappingCandidate-BVnAkbXb.js"></script>
+      <script type="module" crossorigin src="./assets/intl-CJiFs-fD.js"></script>
+      <script type="module" crossorigin src="./assets/workers-q-ssK7Dk.js"></script>
+      <script type="module" crossorigin src="./assets/workers-DuRH1XWz.js"></script>
+      <script type="module" crossorigin src="./assets/WorkerHandle-CobbaU7d.js"></script>
+      <script type="module" crossorigin src="./assets/GeometryWorkerHandle-DlFlfJu7.js"></script>
+      <script type="module" crossorigin src="./assets/HighlightDefaults-DnFGrots.js"></script>
+      <script type="module" crossorigin src="./assets/screenUtils-BoF_BLlk.js"></script>
+      <script type="module" crossorigin src="./assets/SketchViewModel-AoiLHpU_.js"></script>
+      <script type="module" crossorigin src="./assets/controllers-pqT48-Qz.js"></script>
+      <script type="module" crossorigin src="./assets/widget-CcvTv9Q3.js"></script>
+      <script type="module" crossorigin src="./assets/Widget-uHzKLHSK.js"></script>
+      <script type="module" crossorigin src="./assets/LabeledSwitch-QQsg-ki0.js"></script>
+      <script type="module" crossorigin src="./assets/drapedUtils-DxDbMGkL.js"></script>
+      <script type="module" crossorigin src="./assets/ClipRect-Bpg7nfit.js"></script>
+      <script type="module" crossorigin src="./assets/esri-Dynwv1UU.js"></script>
+      <script type="module" crossorigin src="./assets/main-Chn90S0P.js"></script>
+      <script type="module" crossorigin src="./assets/teleport-details-Daq4AKYO.js"></script>
+      <link rel="stylesheet" crossorigin href="./assets/store-CGbH87qM.css">
+      <link rel="stylesheet" crossorigin href="./assets/esri-DiaU3tS9.css">
+      <link rel="stylesheet" crossorigin href="./assets/main-faf9c_-s.css">
+      <link rel="stylesheet" crossorigin href="./assets/form-CRXRz4C6.css">
+    </head>
+    <body style="margin: 0">
+        <style>
+            #ramp-instance {
+                height: 60vh;
+            }
+
+            #details {
+                min-width: 350px;
+                max-width: 350px;
+                height: 60vh;
+                border: 2px solid black;
+                box-sizing: border-box;
+                margin: 10px 0;
+                border-radius: 6px;
+            }
+        </style>
+        <noscript>
+            <strong
+                >We're sorry but ramp-core doesn't work properly without JavaScript enabled. Please enable it to
+                continue.</strong
+            >
+        </noscript>
+        <div id="container">
+            <h1 style="text-align: center">RAMP Teleportation Magic</h1>
+            <div id="form" style="display: flex">
+                <div class="ramp-styles" id="details" style="width: 400px"></div>
+                <div id="ramp-instance"></div>
+            </div>
+        </div>
+
+    </body>
+</html>

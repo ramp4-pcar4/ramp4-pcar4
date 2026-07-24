@@ -1,0 +1,1 @@
+import{d as e,f as t,g as n,h as r}from"./layerUtils-Pe4Fp8Wm.js";function i(e){return e&&`layer`in e?e.layer:void 0}function a(a){let o=i(a.origin);return n(o)?o=o.findSublayerForFeature(a):(e(o)||r(o))&&t(a.sourceLayer)&&(o=a.sourceLayer),o??a.sourceLayer??a.layer}export{a as t};
