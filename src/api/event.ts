@@ -195,6 +195,12 @@ export enum GlobalEvents {
     MAP_FOCUS = 'map/focus',
 
     /**
+     * Fires when the map attempts to geolocate the user.
+     * Payload: `( { success: boolean, coord: Point, error: string })`
+     */
+    MAP_GEOLOCATE = 'map/geolocate',
+
+    /**
      * Fires when the mouse enters the graphic of a vector layer symbol.
      * Payload: TODO huge untyped object. Create type? Type it all out?
      */
