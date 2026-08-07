@@ -27,7 +27,7 @@ import {
 } from './measurement-utils';
 import { resolveGraphicMapLabelSettings } from './settings';
 import { useDrawStore } from './store';
-import type { Vertex } from './types';
+import type { DrawGraphicLike, Vertex } from './types';
 
 type MeasurementGraphicKind = 'vertex-marker' | 'vertex-label';
 
@@ -1400,7 +1400,8 @@ export const useDrawMeasurements = ({
         return labels;
     };
 
-    const getGraphicId = (graphic: EsriGraphic | null | undefined): string | undefined => graphic?.attributes?.id;
+    const getGraphicId = (graphic: EsriGraphic | DrawGraphicLike | null | undefined): string | undefined =>
+        graphic?.attributes?.id;
 
     const makeMeasurableGraphic = (
         id: string,

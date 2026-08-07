@@ -1287,6 +1287,7 @@ export class MapAPI extends CommonMapAPI {
 
     /**
      * Checks whether any optional provider wants to suppress the current identify request.
+     * Will only process the first provider that wants suppression.
      *
      * @param mapClick map click that initiated identify
      * @returns true if identify should be skipped

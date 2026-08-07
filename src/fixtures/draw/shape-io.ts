@@ -29,6 +29,11 @@ export interface DrawShapeSettingsExport {
 export interface DrawShapeExportRecord {
     id?: string;
     type: string;
+
+    /**
+     * this has the format of an ESRI geometry, but lacks the .type property.
+     * typically only has the coordinate props (e.g. rings, paths, x, y) and spatialReference
+     */
     geometry: unknown;
     settings: DrawShapeSettingsExport;
 }
@@ -113,6 +118,12 @@ export const downloadDrawShapes = (graphics: DrawGraphicLike[], fileName?: strin
     return true;
 };
 
+/**
+ * Takes a payload and attempts to extract the shapes
+ *
+ * @param payload typically an export file format, an individual drawing shape, or an array of drawing shapes
+ * @returns an array of shape objects, or undefined if the payload is a bad format
+ */
 export const getPayloadShapes = (payload: unknown): unknown[] | undefined => {
     if (Array.isArray(payload)) return payload;
 
@@ -164,17 +175,33 @@ const normalizeImportRecord = (payload: unknown): DrawShapeImportRecord | undefi
     };
 };
 
-export const parseDrawShapesPayload = (payload: unknown): DrawShapeImportRecord[] => {
+/**
+ * Attempts to parse various shape payloads into a standarized format.
+ *
+ * @param payload typically an export file format, an individual drawing shape, or an array of drawing shapes
+ * @returns an array of normalized drawing shapes (records), or undefined if the payload could not be processed
+ */
+export const parseDrawShapesPayload = (payload: unknown): DrawShapeImportRecord[] | undefined => {
     const shapes = getPayloadShapes(payload);
-    if (!shapes?.length) return [];
-
-    const records = shapes.map(normalizeImportRecord);
-    return records.every(Boolean) ? (records as DrawShapeImportRecord[]) : [];
+    if (Array.isArray(shapes)) {
+        if (shapes.length) {
+            const records = shapes.map(normalizeImportRecord);
+            return records.every(Boolean) ? (records as DrawShapeImportRecord[]) : [];
+        } else {
+            // empty, avoid doing pointless parsing
+            return [];
+        }
+    } else {
+        // something failed
+        return undefined;
+    }
 };
 
 export const readDrawShapeFiles = async (files: File[]): Promise<DrawShapeImportRecord[]> => {
+    const badFileMsg = 'Invalid draw shape file.';
+
     if (!files.length) {
-        throw new Error('Invalid draw shape file.');
+        throw new Error(badFileMsg);
     }
 
     const importedShapes: DrawShapeImportRecord[] = [];
@@ -184,20 +211,22 @@ export const readDrawShapeFiles = async (files: File[]): Promise<DrawShapeImport
         try {
             payload = JSON.parse(await file.text());
         } catch {
-            throw new Error('Invalid draw shape file.');
+            throw new Error(badFileMsg);
         }
-
-        const shapes = getPayloadShapes(payload);
-        if (!shapes) {
-            throw new Error('Invalid draw shape file.');
-        }
-        if (!shapes.length) continue;
 
         const records = parseDrawShapesPayload(payload);
-        if (!records.length) {
-            throw new Error('Invalid draw shape file.');
+
+        if (Array.isArray(records)) {
+            if (records.length) {
+                importedShapes.push(...records);
+            } else {
+                // empty, avoid doing pointless parsing
+                return [];
+            }
+        } else {
+            // something failed
+            throw new Error(badFileMsg);
         }
-        importedShapes.push(...records);
     }
 
     return importedShapes;
