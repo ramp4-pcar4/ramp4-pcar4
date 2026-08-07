@@ -1,0 +1,1 @@
+import"./TriangleTechniqueConfiguration-COBrPyyo.js";import"./oitResolution.glsl-BFyFSgo3.js";import"./ShaderBuilder-B5bKgQt6.js";import{n as e}from"./SlicePlaneMaterial.glsl-BfNDV74B.js";export{e as build};

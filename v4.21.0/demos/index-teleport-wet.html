@@ -1,0 +1,645 @@
+<!doctype html>
+<!--[if lt IE 9]><html class="no-js lt-ie9" lang="en" dir="ltr"><![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" dir="ltr" lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <!-- Web Experience Toolkit (WET) / Boîte à outils de l'expérience Web (BOEW) wet-boew.github.io/wet-boew/License-en.html / wet-boew.github.io/wet-boew/Licence-fr.html -->
+        <title>Wet Template</title>
+        <meta content="width=device-width,initial-scale=1" name="viewport" />
+        <!-- Meta data -->
+        <meta
+            content="Web Experience Toolkit (WET) includes reusable components for building and maintaining innovative Web sites that are accessible, usable, and interoperable. These reusable components are open source software and free for use by departments and external Web communities"
+            name="description"
+        />
+        <!-- Meta data-->
+
+        <!-- the host page must load Vue since RAMP doesn't bundle it -->
+        <script src="https://unpkg.com/vue@3.1.5/dist/vue.global.prod.js"></script>
+
+        <!-- Load closure template scripts -->
+        <script
+            id="CDTSsoyutils"
+            src="https://ssl-templates.services.gc.ca/app/cls/WET/gcweb/v4_0_32/cdts/compiled/soyutils.js"
+            type="text/javascript"
+        ></script>
+        <script
+            id="CDTSwet"
+            src="https://ssl-templates.services.gc.ca/app/cls/WET/gcweb/v4_0_32/cdts/compiled/wet-en.js"
+            type="text/javascript"
+        ></script>
+        <script
+            src="https://code.jquery.com/jquery-2.0.3.min.js"
+            integrity="sha384-5BJxsRUsHmz1Kk/hmquvrNXoqth2fWO8TW4G5MbuwrD7g7eyanb4SJ9KV+VGChAT"
+            crossorigin="anonymous"
+        ></script>
+
+        <noscript>
+            <!-- Write closure fall-back static file -->
+            <!-- /ROOT/etc/designs/canada/cdts/gcweb/latest/cdts/static/refTop.html -->
+            <!--[if gte IE 9 | !IE]><!-->
+            <link
+                href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/assets/favicon.ico"
+                rel="icon"
+                type="image/x-icon"
+            />
+            <link
+                href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/css/theme.min.css"
+                rel="stylesheet"
+            />
+            <link
+                href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/cdts/cdtsfixes.css"
+                rel="stylesheet"
+            />
+            <!--<![endif]-->
+            <!--[if lt IE 9]>
+                <link
+                    href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/assets/favicon.ico"
+                    rel="shortcut icon"
+                />
+                <link
+                    rel="stylesheet"
+                    href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/css/ie8-theme.min.css"
+                />
+            <![endif]-->
+            <!--[if lte IE 9]> <![endif]-->
+            <link
+                href="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/css/noscript.min.css"
+                rel="stylesheet"
+            />
+        </noscript>
+
+        <!-- Write closure template -->
+        <script id="CDTSRefTopScript" type="text/javascript">
+            document.write(
+                wet.builder.refTop({
+                    cdnEnv: 'prod'
+                })
+            );
+        </script>
+      <script type="module" crossorigin src="./assets/modulepreload-polyfill-Btlm8H0F.js"></script>
+      <script type="module" crossorigin src="./assets/chunk-Dlc_4G4q.js"></script>
+      <script type="module" crossorigin src="./assets/_plugin-vue_export-helper-AMViizoi.js"></script>
+      <script type="module" crossorigin src="./assets/preload-helper-vbhJseOO.js"></script>
+      <script type="module" crossorigin src="./assets/colorUtils-5k45YqB0.js"></script>
+      <script type="module" crossorigin src="./assets/typedArrayUtil-DxTGOhzQ.js"></script>
+      <script type="module" crossorigin src="./assets/Error-_QwNfXD7.js"></script>
+      <script type="module" crossorigin src="./assets/MapUtils-DwnuR8xA.js"></script>
+      <script type="module" crossorigin src="./assets/promiseUtils-EhwQ1IZ9.js"></script>
+      <script type="module" crossorigin src="./assets/tracking-CuAHZTYz.js"></script>
+      <script type="module" crossorigin src="./assets/jsonMap-DzF7stRy.js"></script>
+      <script type="module" crossorigin src="./assets/decorators-WD3KHYjQ.js"></script>
+      <script type="module" crossorigin src="./assets/mathUtils-DVisTpq9.js"></script>
+      <script type="module" crossorigin src="./assets/Color-CDpiCU3_.js"></script>
+      <script type="module" crossorigin src="./assets/PooledArray-BNxXaena.js"></script>
+      <script type="module" crossorigin src="./assets/nextTick-BWMNH7yv.js"></script>
+      <script type="module" crossorigin src="./assets/time-Bkk5J56U.js"></script>
+      <script type="module" crossorigin src="./assets/scheduling-Bjw_4qGk.js"></script>
+      <script type="module" crossorigin src="./assets/ObservableBase-BEVqi4sQ.js"></script>
+      <script type="module" crossorigin src="./assets/Accessor-3ctWgOIt.js"></script>
+      <script type="module" crossorigin src="./assets/tslib.es6-CQRs8sXx.js"></script>
+      <script type="module" crossorigin src="./assets/Clonable-DiRL2n5O.js"></script>
+      <script type="module" crossorigin src="./assets/request-CQ3-VUI2.js"></script>
+      <script type="module" crossorigin src="./assets/Evented-DmJ48OBM.js"></script>
+      <script type="module" crossorigin src="./assets/SimpleObservable-wl6k_xn2.js"></script>
+      <script type="module" crossorigin src="./assets/Collection-CSlQ0_t4.js"></script>
+      <script type="module" crossorigin src="./assets/Identifiable-BVWRxFwr.js"></script>
+      <script type="module" crossorigin src="./assets/JSONSupport-sXMOfSOe.js"></script>
+      <script type="module" crossorigin src="./assets/UnknownTimeZone-DDunUVlI.js"></script>
+      <script type="module" crossorigin src="./assets/locale-BMZWfAMz.js"></script>
+      <script type="module" crossorigin src="./assets/timeZoneUtils-Bt7LbX5w.js"></script>
+      <script type="module" crossorigin src="./assets/date-CK76iv7e.js"></script>
+      <script type="module" crossorigin src="./assets/guards-g3Zd-SmJ.js"></script>
+      <script type="module" crossorigin src="./assets/sql-QpXf0tDh.js"></script>
+      <script type="module" crossorigin src="./assets/fieldUtils-CXLvdfOP.js"></script>
+      <script type="module" crossorigin src="./assets/fieldFormatUtils-_oFy_zHO.js"></script>
+      <script type="module" crossorigin src="./assets/getPopupProvider-WLpEiW_m.js"></script>
+      <script type="module" crossorigin src="./assets/reactiveUtils-BzPwUTd6.js"></script>
+      <script type="module" crossorigin src="./assets/Ellipsoid-BkNuzpru.js"></script>
+      <script type="module" crossorigin src="./assets/assets-duvxoJlG.js"></script>
+      <script type="module" crossorigin src="./assets/pe-BR8teSn4.js"></script>
+      <script type="module" crossorigin src="./assets/spatialReferenceUtils-BPxDR0tA.js"></script>
+      <script type="module" crossorigin src="./assets/units-BmtEzRZz.js"></script>
+      <script type="module" crossorigin src="./assets/SpatialReference-BfcPEfmY.js"></script>
+      <script type="module" crossorigin src="./assets/Point-BGPtqVlk.js"></script>
+      <script type="module" crossorigin src="./assets/Extent-BsKUPdoS.js"></script>
+      <script type="module" crossorigin src="./assets/aaBoundingRect-BrhN8s4O.js"></script>
+      <script type="module" crossorigin src="./assets/mat3f64-CHFEVEZ6.js"></script>
+      <script type="module" crossorigin src="./assets/common-BETyAHYu.js"></script>
+      <script type="module" crossorigin src="./assets/mat3-Cqwq-S0j.js"></script>
+      <script type="module" crossorigin src="./assets/vec2-ugL5NakP.js"></script>
+      <script type="module" crossorigin src="./assets/curveUtils-G5wXDv1W.js"></script>
+      <script type="module" crossorigin src="./assets/curveExtent-BKvvaMa0.js"></script>
+      <script type="module" crossorigin src="./assets/Polyline-BeMwothk.js"></script>
+      <script type="module" crossorigin src="./assets/Multipoint-CuVzxsJ9.js"></script>
+      <script type="module" crossorigin src="./assets/coordsUtils-CpuoNUb0.js"></script>
+      <script type="module" crossorigin src="./assets/Polygon-CD6MjneU.js"></script>
+      <script type="module" crossorigin src="./assets/jsonTypeUtils-CAFH7qLO.js"></script>
+      <script type="module" crossorigin src="./assets/jsonUtils-Dm2CQ09V.js"></script>
+      <script type="module" crossorigin src="./assets/typeUtils-BmWQMUr8.js"></script>
+      <script type="module" crossorigin src="./assets/createFeatureId-2xAK-9AA.js"></script>
+      <script type="module" crossorigin src="./assets/graphicInstanceUtils-BSQRzNRh.js"></script>
+      <script type="module" crossorigin src="./assets/collectionUtils-DZQteK2T.js"></script>
+      <script type="module" crossorigin src="./assets/screenUtils-CP6dF01I.js"></script>
+      <script type="module" crossorigin src="./assets/Promise-Din8WYnn.js"></script>
+      <script type="module" crossorigin src="./assets/Loadable-SL_XLEdn.js"></script>
+      <script type="module" crossorigin src="./assets/apiKeyUtils-Dw9uWR--.js"></script>
+      <script type="module" crossorigin src="./assets/Portal-BTdAjp9M.js"></script>
+      <script type="module" crossorigin src="./assets/SimpleMarkerSymbol-D8uvIdqH.js"></script>
+      <script type="module" crossorigin src="./assets/textUtils-BEnOQiYD.js"></script>
+      <script type="module" crossorigin src="./assets/TextSymbol-DelrWF-N.js"></script>
+      <script type="module" crossorigin src="./assets/PictureMarkerSymbol-BDaISsRP.js"></script>
+      <script type="module" crossorigin src="./assets/vec3f64-AstwQ_2i.js"></script>
+      <script type="module" crossorigin src="./assets/mat4f64-CR6tgU3J.js"></script>
+      <script type="module" crossorigin src="./assets/DoubleArray-DM52IV1B.js"></script>
+      <script type="module" crossorigin src="./assets/aaBoundingBox-C4yz-mW2.js"></script>
+      <script type="module" crossorigin src="./assets/symbolLayerUtils3D-BqgKxNZP.js"></script>
+      <script type="module" crossorigin src="./assets/opacityUtils-DxdYk549.js"></script>
+      <script type="module" crossorigin src="./assets/typeUtils-Cd4H8Jpc.js"></script>
+      <script type="module" crossorigin src="./assets/Graphic-DJwEZEE_.js"></script>
+      <script type="module" crossorigin src="./assets/Point2D-EtCdoF1P.js"></script>
+      <script type="module" crossorigin src="./assets/Envelope2D-C9FbjYyi.js"></script>
+      <script type="module" crossorigin src="./assets/GeometryCursor-DBwRvRyT.js"></script>
+      <script type="module" crossorigin src="./assets/Transformation2D-EndgAiCy.js"></script>
+      <script type="module" crossorigin src="./assets/MultiPathImpl-C9v2ytog.js"></script>
+      <script type="module" crossorigin src="./assets/GeometryCleaner-BEJM7I4l-Cskqb0S9.js"></script>
+      <script type="module" crossorigin src="./assets/OperatorDefinitions-CD4dQIsP.js"></script>
+      <script type="module" crossorigin src="./assets/SimpleGeometryCursor-CadWMBol.js"></script>
+      <script type="module" crossorigin src="./assets/SpatialReference-ClNEoXTN.js"></script>
+      <script type="module" crossorigin src="./assets/OperatorGeneralize-Bqrlresh.js"></script>
+      <script type="module" crossorigin src="./assets/OperatorSimplifyOGC-ChiVUmg_.js"></script>
+      <script type="module" crossorigin src="./assets/Bufferer-Dw9Qi4T1-CxLIjEuC.js"></script>
+      <script type="module" crossorigin src="./assets/operatorBuffer-B2Kn8SAK.js"></script>
+      <script type="module" crossorigin src="./assets/operatorGeodesicBuffer-Bjly7chg.js"></script>
+      <script type="module" crossorigin src="./assets/FlatGeometry-B9i_Z40w.js"></script>
+      <script type="module" crossorigin src="./assets/memoryEstimations-CXPj04VA.js"></script>
+      <script type="module" crossorigin src="./assets/OptimizedGeometry-4ZNeO_dM.js"></script>
+      <script type="module" crossorigin src="./assets/FlatGeometry-BUKqGgWg.js"></script>
+      <script type="module" crossorigin src="./assets/jsonConverter-Bly-jvGP.js"></script>
+      <script type="module" crossorigin src="./assets/apiConverter-BZwkdFyx.js"></script>
+      <script type="module" crossorigin src="./assets/geodeticCurveType-5uv_YcTI.js"></script>
+      <script type="module" crossorigin src="./assets/geodesicBufferOperator-Cg0z7Etc.js"></script>
+      <script type="module" crossorigin src="./assets/asyncUtils-BAetWY3Y.js"></script>
+      <script type="module" crossorigin src="./assets/widget-DkiBM9IN.js"></script>
+      <script type="module" crossorigin src="./assets/uuid-B9JmSwrj.js"></script>
+      <script type="module" crossorigin src="./assets/messages-2pdZ739n.js"></script>
+      <script type="module" crossorigin src="./assets/number-C4E5D5sW.js"></script>
+      <script type="module" crossorigin src="./assets/intl-4ZQMaznz.js"></script>
+      <script type="module" crossorigin src="./assets/sanitizerUtils-CsubPMhQ.js"></script>
+      <script type="module" crossorigin src="./assets/projector-f-VVCqnv.js"></script>
+      <script type="module" crossorigin src="./assets/runtime-CTrG-1yD.js"></script>
+      <script type="module" crossorigin src="./assets/Widget-C_z7uFdj.js"></script>
+      <script type="module" crossorigin src="./assets/signal-D6moSO86.js"></script>
+      <script type="module" crossorigin src="./assets/areaOperator-B9BnmF0t.js"></script>
+      <script type="module" crossorigin src="./assets/areaOperator-DPipQY1D.js"></script>
+      <script type="module" crossorigin src="./assets/Centroid-DZi-eb9F-BEwdQALV.js"></script>
+      <script type="module" crossorigin src="./assets/centroidOperator-DtWdKgBq.js"></script>
+      <script type="module" crossorigin src="./assets/centroidOperator-VHrN-BN4.js"></script>
+      <script type="module" crossorigin src="./assets/differenceOperator-8YcBF08y.js"></script>
+      <script type="module" crossorigin src="./assets/differenceOperator-BjBu-Ky3.js"></script>
+      <script type="module" crossorigin src="./assets/geodeticAreaOperator-BK8vN09u.js"></script>
+      <script type="module" crossorigin src="./assets/geodeticAreaOperator-DhXoX9aY.js"></script>
+      <script type="module" crossorigin src="./assets/geodeticLengthOperator-CMBdPD-9.js"></script>
+      <script type="module" crossorigin src="./assets/geodeticLengthOperator-DJfxe3pr.js"></script>
+      <script type="module" crossorigin src="./assets/OperatorIntersects-BRUl0iHy.js"></script>
+      <script type="module" crossorigin src="./assets/intersectsOperator-BadQGat4.js"></script>
+      <script type="module" crossorigin src="./assets/intersectsOperator-C9hXjSV4.js"></script>
+      <script type="module" crossorigin src="./assets/lengthOperator-B105I54I.js"></script>
+      <script type="module" crossorigin src="./assets/lengthOperator-DGh7ni8G.js"></script>
+      <script type="module" crossorigin src="./assets/GraphicsCollection-DntRpSjU.js"></script>
+      <script type="module" crossorigin src="./assets/timeUtils-B9sCCp74.js"></script>
+      <script type="module" crossorigin src="./assets/TimeExtent-D9IH5gli.js"></script>
+      <script type="module" crossorigin src="./assets/Layer-b1jxMpZR.js"></script>
+      <script type="module" crossorigin src="./assets/layerContainerType-BeGhI4iw.js"></script>
+      <script type="module" crossorigin src="./assets/mat4-CPohtlak.js"></script>
+      <script type="module" crossorigin src="./assets/utils-BbncDLJ5.js"></script>
+      <script type="module" crossorigin src="./assets/parser-C3BZANsQ.js"></script>
+      <script type="module" crossorigin src="./assets/jsonUtils-CgwM2QcE.js"></script>
+      <script type="module" crossorigin src="./assets/BlendLayer-CYP7COQc.js"></script>
+      <script type="module" crossorigin src="./assets/ScaleRangeLayer-CWddimdP.js"></script>
+      <script type="module" crossorigin src="./assets/lengthUtils-CrbgIo24.js"></script>
+      <script type="module" crossorigin src="./assets/unitConversionUtils-DueYquCA.js"></script>
+      <script type="module" crossorigin src="./assets/ElevationInfo-B4j8Zo8x.js"></script>
+      <script type="module" crossorigin src="./assets/GraphicsLayer-qC9ZUfjk.js"></script>
+      <script type="module" crossorigin src="./assets/layerUtils-D4_BaSmw.js"></script>
+      <script type="module" crossorigin src="./assets/ClipRect-D6rcrve6.js"></script>
+      <script type="module" crossorigin src="./assets/drapedUtils-D7S-bdEn.js"></script>
+      <script type="module" crossorigin src="./assets/defaultsJSON-BnWFTKe1.js"></script>
+      <script type="module" crossorigin src="./assets/defaults-D-NxT9M6.js"></script>
+      <script type="module" crossorigin src="./assets/jsonUtils-CmFUCVkT.js"></script>
+      <script type="module" crossorigin src="./assets/UpdatingHandles-CQW0er7h.js"></script>
+      <script type="module" crossorigin src="./assets/GeographicTransformation-tBQdmAt_.js"></script>
+      <script type="module" crossorigin src="./assets/geodesicConstants-RkI2sl0J.js"></script>
+      <script type="module" crossorigin src="./assets/projectBuffer-2ikqaLnf.js"></script>
+      <script type="module" crossorigin src="./assets/spatialReferenceEllipsoidUtils-B8mh1Do2.js"></script>
+      <script type="module" crossorigin src="./assets/projectionUtils-C-THMQWE.js"></script>
+      <script type="module" crossorigin src="./assets/memoize-DAUHl20f.js"></script>
+      <script type="module" crossorigin src="./assets/elevationInfoUtils-F4PMaJyv.js"></script>
+      <script type="module" crossorigin src="./assets/isSupportedObject-C72NWUC1.js"></script>
+      <script type="module" crossorigin src="./assets/editableLayers-CQCFjV3d.js"></script>
+      <script type="module" crossorigin src="./assets/layerUtils-2SoGDF9W.js"></script>
+      <script type="module" crossorigin src="./assets/Queue-nj1eSXlX.js"></script>
+      <script type="module" crossorigin src="./assets/PropertiesPool-CwAf9IY0.js"></script>
+      <script type="module" crossorigin src="./assets/InputManager-CacmUiqv.js"></script>
+      <script type="module" crossorigin src="./assets/keybindings-DPGqsyfM.js"></script>
+      <script type="module" crossorigin src="./assets/SketchLabelOptions-CPnKHdvF.js"></script>
+      <script type="module" crossorigin src="./assets/SketchOptions-xrVTjX57.js"></script>
+      <script type="module" crossorigin src="./assets/dehydratedPoint-BuH6XblQ.js"></script>
+      <script type="module" crossorigin src="./assets/normalizedPoint-BSP4A24h.js"></script>
+      <script type="module" crossorigin src="./assets/earcut-DCx9rpll.js"></script>
+      <script type="module" crossorigin src="./assets/vec3-PQmvgJ1Y.js"></script>
+      <script type="module" crossorigin src="./assets/quantity-Q556oWvx.js"></script>
+      <script type="module" crossorigin src="./assets/geodesicUtils-B1Ua5G6k.js"></script>
+      <script type="module" crossorigin src="./assets/projectPointToVector-BRvxcfcL.js"></script>
+      <script type="module" crossorigin src="./assets/projectVectorToVector-BuDQDjU1.js"></script>
+      <script type="module" crossorigin src="./assets/quatf64-pUDZM2_2.js"></script>
+      <script type="module" crossorigin src="./assets/vec2f64-DZhw8ZRS.js"></script>
+      <script type="module" crossorigin src="./assets/vec4f64-BO3RRiMM.js"></script>
+      <script type="module" crossorigin src="./assets/vectorStacks--KjWvEao.js"></script>
+      <script type="module" crossorigin src="./assets/vec4-BNrB6D4A.js"></script>
+      <script type="module" crossorigin src="./assets/mathUtils-CVs6XJFk.js"></script>
+      <script type="module" crossorigin src="./assets/plane-BhdL2uiY.js"></script>
+      <script type="module" crossorigin src="./assets/ObjectStack-B065HhLq.js"></script>
+      <script type="module" crossorigin src="./assets/lineSegment-tickby8C.js"></script>
+      <script type="module" crossorigin src="./assets/triangle-DVdxWjoT.js"></script>
+      <script type="module" crossorigin src="./assets/LineSnappingHint-Cl31zJJW.js"></script>
+      <script type="module" crossorigin src="./assets/ParallelSnappingHint-1Gb71Hy9.js"></script>
+      <script type="module" crossorigin src="./assets/workers-0ijceD5Z.js"></script>
+      <script type="module" crossorigin src="./assets/workers-Cz3znSTT.js"></script>
+      <script type="module" crossorigin src="./assets/WorkerHandle-DzlyI5K8.js"></script>
+      <script type="module" crossorigin src="./assets/MeasurementWorkerHandle-BMUeGBMY.js"></script>
+      <script type="module" crossorigin src="./assets/euclideanLengthMeasurementUtils-OgiJmq_4.js"></script>
+      <script type="module" crossorigin src="./assets/geodesicMeasurementUtils-BZFgT2e2.js"></script>
+      <script type="module" crossorigin src="./assets/automaticLengthMeasurementUtils-CpQGbMyU.js"></script>
+      <script type="module" crossorigin src="./assets/vec3-DXLMrBBd.js"></script>
+      <script type="module" crossorigin src="./assets/ray-DETB3akN.js"></script>
+      <script type="module" crossorigin src="./assets/sphere-B7VEplbb.js"></script>
+      <script type="module" crossorigin src="./assets/closestPointOnCurve-BS2r0cnz.js"></script>
+      <script type="module" crossorigin src="./assets/geometry2dUtils-Di6XQy1_.js"></script>
+      <script type="module" crossorigin src="./assets/constraints-C5uTwwvQ.js"></script>
+      <script type="module" crossorigin src="./assets/SnappingCandidate-DJWSQ404.js"></script>
+      <script type="module" crossorigin src="./assets/CurveSnappingHint-Bk-SIabG.js"></script>
+      <script type="module" crossorigin src="./assets/EdgeSnappingCandidate-DLaCiUgv.js"></script>
+      <script type="module" crossorigin src="./assets/DrapedEdgeSnappingCandidate-gBiEIau3.js"></script>
+      <script type="module" crossorigin src="./assets/IntersectionSnappingHint-lSti3e5V.js"></script>
+      <script type="module" crossorigin src="./assets/IntersectionSnappingCandidate-BsWfkvjN.js"></script>
+      <script type="module" crossorigin src="./assets/LineSnappingCandidate-DHKNqV7-.js"></script>
+      <script type="module" crossorigin src="./assets/RightAngleSnappingHint-Drimc0IP.js"></script>
+      <script type="module" crossorigin src="./assets/RightAngleTriangleSnappingCandidate-C1usoEeI.js"></script>
+      <script type="module" crossorigin src="./assets/viewUtils-BAuJ976I.js"></script>
+      <script type="module" crossorigin src="./assets/viewUtils-DzxIecBW.js"></script>
+      <script type="module" crossorigin src="./assets/PointSnappingHint-C5HXKGVu.js"></script>
+      <script type="module" crossorigin src="./assets/VertexSnappingCandidate-BNBokRhY.js"></script>
+      <script type="module" crossorigin src="./assets/fieldType-DIc_qUMP.js"></script>
+      <script type="module" crossorigin src="./assets/Field-D3eizVNR.js"></script>
+      <script type="module" crossorigin src="./assets/DynamicDataLayer-B3mlnXPT.js"></script>
+      <script type="module" crossorigin src="./assets/QuantizationParameters-Do6FSPy4.js"></script>
+      <script type="module" crossorigin src="./assets/StatisticDefinition-WVMJGi87.js"></script>
+      <script type="module" crossorigin src="./assets/Query-BPFppZCU.js"></script>
+      <script type="module" crossorigin src="./assets/Version-CN5PG9rI.js"></script>
+      <script type="module" crossorigin src="./assets/utils-DC4mADO3.js"></script>
+      <script type="module" crossorigin src="./assets/snappingUtils-YX8FtYYu.js"></script>
+      <script type="module" crossorigin src="./assets/HighlightDefaults-Bmt_G8-Y.js"></script>
+      <script type="module" crossorigin src="./assets/hitTestSelectUtils-DlKGZpR4.js"></script>
+      <script type="module" crossorigin src="./assets/screenUtils-CdOGdopX.js"></script>
+      <script type="module" crossorigin src="./assets/SketchViewModel-nE6AlMmK.js"></script>
+      <script type="module" crossorigin src="./assets/directionModeIcons-Dme0WKDW.js"></script>
+      <script type="module" crossorigin src="./assets/layerViewUtils-Dduj7GFq.js"></script>
+      <script type="module" crossorigin src="./assets/selectionUtils-mp6PXfnL.js"></script>
+      <script type="module" crossorigin src="./assets/LabeledSwitch-DCNN9l9v.js"></script>
+      <script type="module" crossorigin src="./assets/globalCss-C4cP7MDu.js"></script>
+      <script type="module" crossorigin src="./assets/dom-DMXQnfVw.js"></script>
+      <script type="module" crossorigin src="./assets/controllers-B6JDnX6c.js"></script>
+      <script type="module" crossorigin src="./assets/esri-CLw38gKM.js"></script>
+      <script type="module" crossorigin src="./assets/vue.esm-bundler-C8jEQ2uK.js"></script>
+      <script type="module" crossorigin src="./assets/vue-i18n-DEeVtG1C.js"></script>
+      <script type="module" crossorigin src="./assets/debounce-Ck0CD9YY.js"></script>
+      <script type="module" crossorigin src="./assets/throttle-BaVoYOBM.js"></script>
+      <script type="module" crossorigin src="./assets/lib-CiP5ZqnR.js"></script>
+      <script type="module" crossorigin src="./assets/pinia-BCtZLLxl.js"></script>
+      <script type="module" crossorigin src="./assets/store-bRl8hg0M.js"></script>
+      <script type="module" crossorigin src="./assets/config-FCb3RsFJ.js"></script>
+      <script type="module" crossorigin src="./assets/keyboard-Z-d1iwdp.js"></script>
+      <script type="module" crossorigin src="./assets/main-DrUpZMGs.js"></script>
+      <script type="module" crossorigin src="./assets/teleport-wet-DEVDBFS9.js"></script>
+      <link rel="stylesheet" crossorigin href="./assets/runtime-9vAoC8ak.css">
+      <link rel="stylesheet" crossorigin href="./assets/esri-DL6SRSWb.css">
+      <link rel="stylesheet" crossorigin href="./assets/main-faf9c_-s.css">
+    </head>
+    <body typeof="WebPage" vocab="http://schema.org/">
+        <div id="def-top">
+            <!-- Write closure fall-back static file -->
+            <!-- /ROOT/etc/designs/canada/cdts/gcweb/latest/cdts/static/top-en.html -->
+            <ul id="wb-tphp">
+                <li class="wb-slc">
+                    <a class="wb-sl" href="#wb-cont">Skip to main content</a>
+                </li>
+                <li class="wb-slc visible-sm visible-md visible-lg">
+                    <a class="wb-sl" href="#wb-info">Skip to "About this site"</a>
+                </li>
+            </ul>
+            <header role="banner">
+                <div class="container" id="wb-bnr">
+                    <section class="visible-md visible-lg text-right" id="wb-lng">
+                        <h2 class="wb-inv">Language selection</h2>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <ul class="list-inline margin-bottom-none">
+                                    <li>
+                                        <a href="javascript:;" lang="fr">Français</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                    <div class="row">
+                        <div class="brand col-xs-8 col-sm-9 col-md-6">
+                            <a href="https://www.canada.ca/en.html">
+                                <img
+                                    data="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/assets/sig-blk-en.svg"
+                                    tabindex="-1"
+                                    type="image/svg+xml"
+                                />
+                                <span class="wb-inv"> Government of Canada</span>
+                            </a>
+                        </div>
+                        <section class="wb-mb-links col-xs-4 col-sm-3 visible-sm visible-xs" id="wb-glb-mn">
+                            <h2>Search and menus</h2>
+                            <ul class="list-inline text-right chvrn">
+                                <li>
+                                    <a
+                                        aria-controls="mb-pnl"
+                                        class="overlay-lnk"
+                                        href="#mb-pnl"
+                                        role="button"
+                                        title="Search and menus"
+                                        ><span class="glyphicon glyphicon-search"
+                                            ><span class="glyphicon glyphicon-th-list"
+                                                ><span class="wb-inv">Search and menus</span></span
+                                            ></span
+                                        ></a
+                                    >
+                                </li>
+                            </ul>
+                            <div id="mb-pnl"></div>
+                        </section>
+                        <section class="col-xs-6 text-right visible-md visible-lg" id="wb-srch">
+                            <h2>Search</h2>
+                            <form
+                                action="https://www.canada.ca/en/sr.html#wb-land"
+                                class="form-inline"
+                                method="get"
+                                name="cse-search-box"
+                                role="search"
+                            >
+                                <div class="form-group">
+                                    <label class="wb-inv" for="wb-srch-q">Search website</label>
+                                    <input name="cdn" type="hidden" value="canada" />
+                                    <input name="st" type="hidden" value="s" />
+                                    <input name="num" type="hidden" value="10" />
+                                    <input name="langs" type="hidden" value="en" />
+                                    <input name="st1rt" type="hidden" value="1" />
+                                    <input name="s5bm3ts21rch" type="hidden" value="x" />
+                                    <input
+                                        class="wb-srch-q form-control"
+                                        id="wb-srch-q"
+                                        list="wb-srch-q-ac"
+                                        maxlength="150"
+                                        name="q"
+                                        placeholder="Search Canada.ca"
+                                        size="27"
+                                        type="search"
+                                        value=""
+                                    />
+                                    <input name="_charset_" type="hidden" value="UTF-8" />
+                                    <datalist id="wb-srch-q-ac">
+                                        <!--[if lte IE 9]><select><![endif]-->
+                                        <!--[if lte IE 9]></select><![endif]-->
+                                    </datalist>
+                                </div>
+                                <div class="form-group submit">
+                                    <button
+                                        class="btn btn-primary btn-small"
+                                        id="wb-srch-sub"
+                                        name="wb-srch-sub"
+                                        type="submit"
+                                    >
+                                        <span class="glyphicon-search glyphicon"></span
+                                        ><span class="wb-inv">Search</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </section>
+                    </div>
+                </div>
+                <nav class="wb-menu visible-md visible-lg" id="wb-sm" role="navigation" typeof="SiteNavigationElement">
+                    <div class="container nvbar">
+                        <h2>Topics menu</h2>
+                        <div class="row">
+                            <ul class="list-inline menu">
+                                <li>
+                                    <a href="https://www.esdc.gc.ca/en/jobs/index.page">Jobs</a>
+                                </li>
+                                <li>
+                                    <a href="https://www.cic.gc.ca/english/index.asp">Immigration</a>
+                                </li>
+                                <li>
+                                    <a href="https://travel.gc.ca/">Travel</a>
+                                </li>
+                                <li>
+                                    <a href="https://www.canada.ca/en/services/business.html">Business</a>
+                                </li>
+                                <li>
+                                    <a href="https://www.canada.ca/en/services/benefits.html">Benefits</a>
+                                </li>
+                                <li>
+                                    <a href="https://healthycanadians.gc.ca/index-eng.php">Health</a>
+                                </li>
+                                <li>
+                                    <a href="https://www.canada.ca/en/services/taxes.html">Taxes</a>
+                                </li>
+                                <li>
+                                    <a href="https://www.canada.ca/en/services.html">More services</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+                <nav id="wb-bc" property="breadcrumb" role="navigation">
+                    <h2>You are here:</h2>
+                    <div class="container">
+                        <div class="row">
+                            <ol class="breadcrumb">
+                                <li>
+                                    <a href="https://www.canada.ca/en.html">Home</a>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+        </div>
+        <!-- Write closure template -->
+        <script id="CDTSTopScript" type="text/javascript">
+            var defTop = document.getElementById('def-top');
+            defTop.outerHTML = wet.builder.top({
+                cdnEnv: 'prod',
+                lngLinks: [
+                    {
+                        lang: 'fr',
+                        href: '#',
+                        text: 'Français'
+                    }
+                ],
+                search: true
+            });
+        </script>
+        <main class="container" property="mainContentOfPage" role="main">
+            <div id="IE"></div>
+            <div style="display: flex">
+                <div class="ramp-styles" id="legend" style="height: 70vh; width: 30%"></div>
+                <div id="app" style="height: 70vh; width: 70%"></div>
+            </div>
+            <div class="ramp-styles" id="grid" style="height: 70vh"></div>
+            <span id="ramp-version"></span>
+
+            <div id="def-preFooter">
+                <!-- Write closure fall-back static file -->
+                <!-- /ROOT/etc/designs/canada/cdts/gcweb/latest/cdts/static/preFooter-en.html -->
+                <div class="row pagedetails">
+                    <div class="col-sm-6 col-lg-4 mrgn-tp-sm">
+                        <a class="btn btn-default btn-block" href="https://www.canada.ca/en/report-problem.html"
+                            >Report a problem or mistake on this page</a
+                        >
+                    </div>
+                    <div class="datemod col-xs-12 mrgn-tp-lg">
+                        <dl id="wb-dtmd"></dl>
+                    </div>
+                </div>
+            </div>
+            <script>
+                $(function () {
+                    var iframeBody = $('#if-content').contents().find('body');
+                    var styleTag = iframeBody.append($('#app'));
+                });
+            </script>
+            <!-- Write closure template -->
+            <script id="CDTSPreFooterScript" type="text/javascript">
+                var defPreFooter = document.getElementById('def-preFooter');
+                defPreFooter.outerHTML = wet.builder.preFooter({
+                    cdnEnv: 'prod'
+                });
+            </script>
+
+        </main>
+
+        <div id="def-footer">
+            <!-- Write closure fall-back static file -->
+            <!-- /ROOT/etc/designs/canada/cdts/gcweb/latest/cdts/static/footer-en.html -->
+            <aside class="gc-nttvs container">
+                <h2>Government of Canada activities and initiatives</h2>
+                <div class="wb-eqht row" id="gcwb_prts">
+                    <p class="mrgn-lft-md">
+                        <a href="https://www.canada.ca/activities.html"
+                            >Access Government of Canada activities and initiatives</a
+                        >
+                    </p>
+                </div>
+            </aside>
+            <footer id="wb-info" role="contentinfo">
+                <nav class="container wb-navcurr" role="navigation">
+                    <h2 class="wb-inv">About government</h2>
+                    <ul class="list-unstyled colcount-sm-2 colcount-md-3">
+                        <li>
+                            <a href="https://www.canada.ca/en/contact.html">Contact us</a>
+                        </li>
+                        <li>
+                            <a href="https://www.canada.ca/en/government/dept.html">Departments and agencies</a>
+                        </li>
+                        <li>
+                            <a href="https://www.canada.ca/en/government/publicservice.html"
+                                >Public service and military</a
+                            >
+                        </li>
+                        <li>
+                            <a href="https://www.servicecanada.gc.ca/gcnews">News</a>
+                        </li>
+                        <li>
+                            <a href="https://www.canada.ca/en/government/system/laws.html"
+                                >Treaties, laws and regulations</a
+                            >
+                        </li>
+                        <li>
+                            <a href="https://www.canada.ca/en/transparency/reporting.html">Government-wide reporting</a>
+                        </li>
+                        <li>
+                            <a href="https://pm.gc.ca/eng">Prime Minister</a>
+                        </li>
+                        <li>
+                            <a href="https://www.canada.ca/en/government/system.html">How government works</a>
+                        </li>
+                        <li>
+                            <a href="https://open.canada.ca/en/">Open government</a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="brand">
+                    <div class="container">
+                        <div class="row">
+                            <nav class="col-md-10 ftr-urlt-lnk">
+                                <h2 class="wb-inv">About this site</h2>
+                                <ul>
+                                    <li>
+                                        <a href="https://www.canada.ca/en/social.html">Social media</a>
+                                    </li>
+                                    <li>
+                                        <a href="https://www.canada.ca/en/mobile.html">Mobile applications</a>
+                                    </li>
+                                    <li>
+                                        <a href="https://www1.canada.ca/en/newsite.html">About Canada.ca</a>
+                                    </li>
+                                    <li>
+                                        <a href="https://www.canada.ca/en/transparency/terms.html"
+                                            >Terms and conditions</a
+                                        >
+                                    </li>
+                                    <li>
+                                        <a href="https://www.canada.ca/en/transparency/privacy.html">Privacy</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                            <div class="col-xs-6 visible-sm visible-xs tofpg">
+                                <a href="#wb-cont">Top of Page <span class="glyphicon glyphicon-chevron-up"></span></a>
+                            </div>
+                            <div class="col-xs-6 col-md-2 text-right">
+                                <img
+                                    aria-label="Symbol of the Government of Canada"
+                                    data="https://www.canada.ca/etc/designs/canada/cdts/gcweb/v4_0_32/assets/wmms-blk.svg"
+                                    role="img"
+                                    tabindex="-1"
+                                    type="image/svg+xml"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <!-- Write closure template -->
+        <script id="CDTSDefFooterScript" type="text/javascript">
+            var defFooter = document.getElementById('def-footer');
+            defFooter.outerHTML = wet.builder.footer({
+                cdnEnv: 'prod'
+            });
+        </script>
+        <!-- Write closure template -->
+        <script id="CDTSRefFooterScript" type="text/javascript">
+            document.write(
+                wet.builder.refFooter({
+                    cdnEnv: 'prod'
+                })
+            );
+        </script>
+    </body>
+</html>

@@ -1,0 +1,1 @@
+import{S as e}from"./featureConversionUtils-CKgvE4ah.js";var t={getObjectId:e=>e.objectId,getAttributes:e=>e.attributes,getAttribute:(e,t)=>e.attributes[t],cloneWithGeometry:(t,n,r)=>new e(n,t.attributes,null,t.objectId,t.displayId,t.distance,t.vertexCount),getGeometry:e=>e.geometry,getCentroid:(e,t)=>e.ensureCentroid(t)};export{t};

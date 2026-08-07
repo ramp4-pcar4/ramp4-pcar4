@@ -1,1 +1,0 @@
-import"./apiConverter-BCJgYvXl.js";import{i as e,r as t,t as n}from"./clipOperator-C-v0WtNL.js";export{e as execute,n as executeMany,t as supportsCurves};

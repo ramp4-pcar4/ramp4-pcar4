@@ -1,0 +1,1 @@
+import{t as e}from"./workers-BC20G6QP.js";var t,n,r=!1;function i(){return t??=e(`arcadeGeometryOperatorsWorker`).then(e=>{n=e,r=!0,t=void 0})}async function a(e,t){return r?n.apply(`invokeGeometryOp`,[e,t]):(await i(),a(e,t))}export{a as t};
