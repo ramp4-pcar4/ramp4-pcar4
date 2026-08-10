@@ -186,9 +186,14 @@ export const parseDrawShapesPayload = (payload: unknown): DrawShapeImportRecord[
     if (Array.isArray(shapes)) {
         if (shapes.length) {
             const records = shapes.map(normalizeImportRecord);
-            return records.every(Boolean) ? (records as DrawShapeImportRecord[]) : [];
+            if (records.every(Boolean)) {
+                return records as DrawShapeImportRecord[];
+            } else {
+                // stuff in our payload could not be normalized. treat payload as bad
+                return undefined;
+            }
         } else {
-            // empty, avoid doing pointless parsing
+            // empty payload. treat as valid, avoid doing pointless parsing
             return [];
         }
     } else {
