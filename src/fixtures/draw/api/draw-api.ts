@@ -4,7 +4,7 @@ import { FixtureInstance } from '@/api';
 import type { GraphicLayer, InstanceAPI } from '@/api';
 import { Extent, GeometryType } from '@/geo/api';
 import type { BaseGeometry, IdentifyGeometryProvider, MapClick } from '@/geo/api';
-import { EsriIntersectsOperator, EsriSpatialReference } from '@/geo/esri';
+import { EsriIntersectsOperator } from '@/geo/esri';
 import type { EsriGeometry } from '@/geo/esri';
 
 import { DRAW_EDIT_GRAPHICS_LAYER_ID, DRAW_GRAPHICS_LAYER_ID, DRAW_HIGHLIGHT_GRAPHICS_LAYER_ID } from '../constants';
@@ -22,9 +22,9 @@ import {
 } from '../settings';
 import type { DrawBufferSettings, DrawBufferUnit, DrawIdentifyBufferMode } from '../settings';
 import {
-    createDrawShapeExportRecord,
     createDrawShapesExportFile,
     downloadDrawShapes,
+    drawingToRampGeom,
     getDrawShapeId,
     parseDrawShapesPayload
 } from '../shape-io';
@@ -439,45 +439,9 @@ export class DrawAPI extends FixtureInstance implements IdentifyGeometryProvider
      */
     exportRampGeometry(): Array<BaseGeometry> {
         return (this.store.graphics as DrawGraphicLike[])
-            .map(drawingGraphic => {
-                // note this "export record create" is needed. using the raw graphic from the store
-                // explodes things somehow (missing geometry?? doesn't make sense but thats the erro).
-                // Maybe can revisit with deep dive through all the methods later, but this WOMM.
-                const fancyGraphic = createDrawShapeExportRecord(drawingGraphic)!;
-                if (!fancyGraphic.geometry) {
-                    return undefined;
-                }
-
-                // convert the drawing type to a neutral esri geometry type.
-                let esriGeomType: string;
-
-                switch (fancyGraphic.type) {
-                    case 'point':
-                    case 'polyline':
-                    case 'multipoint':
-                    case 'polygon':
-                        esriGeomType = fancyGraphic.type;
-                        break;
-
-                    case 'rectangle':
-                    case 'circle':
-                        esriGeomType = 'polygon';
-                        break;
-
-                    default:
-                        console.error(`Encountered unhandled drawing type ${fancyGraphic.type}`);
-                        return undefined;
-                }
-
-                // make an esri-ish geometry, having enough stuff for our esri-to-ramp converter.
-                // the converter needs a real esri SR so that gets enhanced
-                const esriLikeGeom: any = fancyGraphic.geometry;
-                esriLikeGeom.type = esriGeomType;
-                esriLikeGeom.spatialReference = new EsriSpatialReference(esriLikeGeom.spatialReference);
-
-                return this.$iApi.geo.geom.geomEsriToRamp(esriLikeGeom, drawingGraphic.id);
-            })
-            .filter(x => !!x);
+            .map(drawingGraphic => drawingToRampGeom(drawingGraphic, this.$iApi))
+            .filter(x => !!x)
+            .map(nugget => nugget.ramp);
     }
 }
 

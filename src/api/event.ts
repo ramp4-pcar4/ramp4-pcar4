@@ -45,10 +45,30 @@ export enum GlobalEvents {
     CONFIG_CHANGE = 'config/configchanged',
 
     /**
-     * Fires when a request is issued to toggle (show if hidden, hide if showing) the details of an identify result.
-     * Payload: `({ identifyItem: IdentifyItem, uid: string, format: string }, force?: boolean)`
+     * Fires when a request is issued to toggle (show if hidden, hide if showing) the details panel with a given payload.
+     * Payload: `({ data: any, uid: string, format: string }, force?: boolean)`
      */
     DETAILS_TOGGLE = 'details/toggle',
+
+    /**
+     * Fires when a single item's details are viewed in the detail panel. If another item is viewed before the current item's
+     * data finishes loading, the event will not fire.
+     * Payload: `({ identifyItem: IdentifyItem, uid: string })`
+     */
+    DETAILS_VIEW = 'details/view',
+
+    /**
+     * Fires when a drawing has been edited.
+     * Payload: `({ id: string, drawing: DrawShapeExportRecord, rampGeom: BaseGeometry })`
+     */
+    DRAW_EDIT_DRAWING = 'draw/edit',
+
+    /**
+     * Fires when a new drawing is created.
+     * The user flag is true if it was drawn via the drawing tools. False if imported from file/api.
+     * Payload: `({ id: string, drawing: DrawShapeExportRecord, rampGeom: BaseGeometry, user: boolean })`
+     */
+    DRAW_NEW_DRAWING = 'draw/new',
 
     /**
      * Fires when a filter is changed.

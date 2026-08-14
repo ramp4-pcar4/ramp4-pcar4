@@ -1,6 +1,6 @@
 import FileSaver from 'file-saver';
 
-import { EsriGeometryFromJson } from '@/geo/esri';
+import { EsriGeometryFromJson, EsriSpatialReference } from '@/geo/esri';
 
 import {
     cloneDrawBufferSettings,
@@ -14,6 +14,8 @@ import {
 } from './settings';
 import type { DrawBufferSettings, DrawIdentifyBufferMode, DrawMapLabelSettings, DrawStyleSettings } from './settings';
 import type { DrawGraphicLike } from './types';
+import type { InstanceAPI } from '@/api';
+import type { BaseGeometry } from '@/geo/api';
 
 export const DRAW_SHAPES_FILE_TYPE = 'ramp4-draw-shapes';
 export const DRAW_SHAPES_FILE_VERSION = 1;
@@ -235,4 +237,56 @@ export const readDrawShapeFiles = async (files: File[]): Promise<DrawShapeImport
     }
 
     return importedShapes;
+};
+
+/**
+ * Converts a drawing graphic thing to a RAMP geometry
+ *
+ * @param drawShape drawing graphic internal thing
+ * @param rampInstance a ramp instance
+ * @returns resolves with Ramp geometry and the Drawing Export shape, or undefined if things went weird
+ */
+export const drawingToRampGeom = (
+    drawShape: DrawGraphicLike,
+    rampInstance: InstanceAPI
+): { ramp: BaseGeometry; draw: DrawShapeExportRecord } | undefined => {
+    // note this "export record create" is needed. using the raw graphic from the store
+    // explodes things somehow (missing geometry?? doesn't make sense but thats the erro).
+    // Maybe can revisit with deep dive through all the methods later, but this WOMM.
+    const drawExportShape = createDrawShapeExportRecord(drawShape)!;
+    if (!drawExportShape.geometry) {
+        return undefined;
+    }
+
+    // convert the drawing type to a neutral esri geometry type.
+    let esriGeomType: string;
+
+    switch (drawExportShape.type) {
+        case 'point':
+        case 'polyline':
+        case 'multipoint':
+        case 'polygon':
+            esriGeomType = drawExportShape.type;
+            break;
+
+        case 'rectangle':
+        case 'circle':
+            esriGeomType = 'polygon';
+            break;
+
+        default:
+            console.error(`Encountered unhandled drawing type ${drawExportShape.type}`);
+            return undefined;
+    }
+
+    // make an esri-ish geometry, having enough stuff for our esri-to-ramp converter.
+    // the converter needs a real esri SR so that gets enhanced
+    const esriLikeGeom: any = drawExportShape.geometry;
+    esriLikeGeom.type = esriGeomType;
+    esriLikeGeom.spatialReference = new EsriSpatialReference(esriLikeGeom.spatialReference);
+
+    return {
+        ramp: rampInstance.geo.geom.geomEsriToRamp(esriLikeGeom, drawShape.id),
+        draw: drawExportShape
+    };
 };

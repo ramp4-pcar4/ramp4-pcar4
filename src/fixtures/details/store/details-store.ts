@@ -35,6 +35,12 @@ export const useDetailsStore = defineStore('details', () => {
     const lastHilight = ref<number>(0);
 
     /**
+     * Indicates the time of the lastest "view" request of a detail item (a specific item, or a list view).
+     * Used to mitigate slow loading items and fast clicking users.
+     */
+    const lastestDetailView = ref<number>(0);
+
+    /**
      * Whether or not the details hilight toggle is on.
      */
     const hilightToggle = ref<boolean>(true);
@@ -63,6 +69,7 @@ export const useDetailsStore = defineStore('details', () => {
         defaultTemplates,
         currentFeatureId,
         activeGreedy,
+        lastestDetailView,
         lastHilight,
         hilightToggle,
         origin,
