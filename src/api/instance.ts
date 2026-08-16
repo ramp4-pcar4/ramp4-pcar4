@@ -84,6 +84,7 @@ export class InstanceAPI {
         formatNumber: (num: number) => string;
         scrollToInstance: boolean;
         suppressNumberLocalization: boolean;
+        showThousandsSeparator: boolean;
         escapeHtml: (content: string) => string;
 
         /**
@@ -136,6 +137,7 @@ export class InstanceAPI {
             formatNumber: () => '',
             scrollToInstance: false,
             suppressNumberLocalization: false,
+            showThousandsSeparator: false,
             escapeHtml: () => '',
             isPlainText: () => true
         };
@@ -274,6 +276,9 @@ export class InstanceAPI {
             if (activeConfig.system?.suppressNumberLocalization) {
                 this.ui.suppressNumberLocalization = activeConfig.system?.suppressNumberLocalization;
             }
+            if (activeConfig.system?.showThousandsSeparator) {
+                this.ui.showThousandsSeparator = activeConfig.system?.showThousandsSeparator;
+            }
 
             // set up key to SVG bindings for zoom icons
             const zoomSvgs: { [key: string]: string } = {
@@ -290,7 +295,9 @@ export class InstanceAPI {
             };
 
             this.ui.formatNumber = (num: number) => {
-                return this.ui.suppressNumberLocalization ? num.toString() : this.$i18n.n(num, 'number');
+                return this.ui.suppressNumberLocalization
+                    ? num.toString()
+                    : this.$i18n.n(num, { key: 'number', useGrouping: this.ui.showThousandsSeparator } as any);
             };
 
             /**
