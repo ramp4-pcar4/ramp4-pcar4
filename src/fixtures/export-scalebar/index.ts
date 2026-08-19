@@ -25,7 +25,7 @@ class ExportScalebarFixture extends FixtureInstance implements ExportSubFixture 
 
             const fbScaleText = new fabric.Text(
                 this.$iApi.$i18n.t('export.scaleBar.approx', [
-                    `${this.$iApi.$i18n.n(sInfo[i].distance, 'number')}${sInfo[i].units}`
+                    `${this.$iApi.ui.formatNumber(sInfo[i].distance)}${sInfo[i].units}`
                 ]),
                 {
                     fontFamily: 'Montserrat, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif',

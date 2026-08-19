@@ -207,7 +207,7 @@ export class MapCaptionAPI extends APIScope {
 
         mapCaptionStore.scale = {
             width: `${scaleInfo.pixels}px`,
-            label: `${this.$iApi.$i18n.n(scaleInfo.distance, 'number')}${scaleInfo.units}`,
+            label: `${this.$iApi.ui.formatNumber(scaleInfo.distance)}${scaleInfo.units}`,
             isImperialScale: isImperialScale
         };
     }
@@ -343,16 +343,17 @@ export class MapCaptionAPI extends APIScope {
         const mx = Math.floor(Math.abs((lon - dx) * 60));
         const sx = Math.floor((Math.abs(lon) - Math.abs(dx) - mx / 60) * 3600);
 
-        return `${this.$iApi.$i18n.n(Math.abs(dy), 'number')}${degreeSymbol} ${this.$iApi.$i18n.n(my, 'number', {
+        return `${this.$iApi.ui.formatNumber(Math.abs(dy))}${degreeSymbol} ${this.$iApi.$i18n.n(my, 'number', {
             minimumIntegerDigits: 2
         } as any)}' ${this.$iApi.$i18n.n(sy, 'number', {
             minimumIntegerDigits: 2
-        } as any)}" ${this.$iApi.$i18n.t('map.coordinates.' + (lat > 0 ? 'north' : 'south'))} | ${this.$iApi.$i18n.n(
-            Math.abs(dx),
-            'number'
-        )}${degreeSymbol} ${this.$iApi.$i18n.n(mx, 'number', {
-            minimumIntegerDigits: 2
-        } as any)}' ${this.$iApi.$i18n.n(sx, 'number', {
+        } as any)}" ${this.$iApi.$i18n.t('map.coordinates.' + (lat > 0 ? 'north' : 'south'))} | ${this.$iApi.ui.formatNumber(Math.abs(dx))}${degreeSymbol} ${this.$iApi.$i18n.n(
+            mx,
+            'number',
+            {
+                minimumIntegerDigits: 2
+            } as any
+        )}' ${this.$iApi.$i18n.n(sx, 'number', {
             minimumIntegerDigits: 2
         } as any)}" ${this.$iApi.$i18n.t('map.coordinates.' + (0 > lon ? 'west' : 'east'))}`;
     }
@@ -379,18 +380,19 @@ export class MapCaptionAPI extends APIScope {
         const dx = Math.floor(Math.abs(lon)) * (lon < 0 ? -1 : 1);
         const mx = Math.abs((lon - dx) * 60);
 
-        return `${this.$iApi.$i18n.n(Math.abs(dy), 'number')}${degreeSymbol} ${this.$iApi.$i18n.n(my, 'number', {
+        return `${this.$iApi.ui.formatNumber(Math.abs(dy))}${degreeSymbol} ${this.$iApi.$i18n.n(my, 'number', {
             minimumIntegerDigits: 2,
             minimumFractionDigits: 5,
             maximumFractionDigits: 5
-        } as any)} ${this.$iApi.$i18n.t('map.coordinates.' + (lat > 0 ? 'north' : 'south'))} | ${this.$iApi.$i18n.n(
-            Math.abs(dx),
-            'number'
-        )}${degreeSymbol} ${this.$iApi.$i18n.n(mx, 'number', {
-            minimumIntegerDigits: 2,
-            minimumFractionDigits: 5,
-            maximumFractionDigits: 5
-        } as any)} ${this.$iApi.$i18n.t('map.coordinates.' + (0 > lon ? 'west' : 'east'))}`;
+        } as any)} ${this.$iApi.$i18n.t('map.coordinates.' + (lat > 0 ? 'north' : 'south'))} | ${this.$iApi.ui.formatNumber(Math.abs(dx))}${degreeSymbol} ${this.$iApi.$i18n.n(
+            mx,
+            'number',
+            {
+                minimumIntegerDigits: 2,
+                minimumFractionDigits: 5,
+                maximumFractionDigits: 5
+            } as any
+        )} ${this.$iApi.$i18n.t('map.coordinates.' + (0 > lon ? 'west' : 'east'))}`;
     }
 
     /**
@@ -436,10 +438,9 @@ export class MapCaptionAPI extends APIScope {
         // project using Web-Mercator wkid
         const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(102100, p);
 
-        return `${this.$iApi.$i18n.n(
-            Math.floor(projectedPoint.x),
-            'number'
-        )} m | ${this.$iApi.$i18n.n(Math.floor(projectedPoint.y), 'number')} m`;
+        return `${this.$iApi.ui.formatNumber(Math.floor(projectedPoint.x))} m | ${this.$iApi.ui.formatNumber(
+            Math.floor(projectedPoint.y)
+        )} m`;
     }
 
     /**
@@ -453,9 +454,9 @@ export class MapCaptionAPI extends APIScope {
         // project using Lambert wkid
         const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(3978, p);
 
-        return `${this.$iApi.$i18n.n(Math.abs(Math.floor(projectedPoint.x)), 'number')} m ${this.$iApi.$i18n.t(
+        return `${this.$iApi.ui.formatNumber(Math.abs(Math.floor(projectedPoint.x)))} m ${this.$iApi.$i18n.t(
             'map.coordinates.' + (0 > projectedPoint.x ? 'west' : 'east')
-        )} | ${this.$iApi.$i18n.n(Math.abs(Math.floor(projectedPoint.y)), 'number')} m ${this.$iApi.$i18n.t(
+        )} | ${this.$iApi.ui.formatNumber(Math.abs(Math.floor(projectedPoint.y)))} m ${this.$iApi.$i18n.t(
             'map.coordinates.' + (projectedPoint.y > 0 ? 'north' : 'south')
         )}`;
     }
@@ -481,12 +482,10 @@ export class MapCaptionAPI extends APIScope {
 
         return `${this.$iApi.$i18n.n(zone, 'number', {
             minimumIntegerDigits: 2
-        } as any)} ${this.$iApi.$i18n.t('map.coordinates.' + (lat > 0 ? 'north' : 'south'))} ${this.$iApi.$i18n.n(
-            Math.floor(projectedPoint.x),
-            'number'
-        )} m${this.$iApi.$i18n.t('map.coordinates.east')} | ${this.$iApi.$i18n.n(
-            Math.abs(Math.floor(projectedPoint.y)),
-            'number'
+        } as any)} ${this.$iApi.$i18n.t('map.coordinates.' + (lat > 0 ? 'north' : 'south'))} ${this.$iApi.ui.formatNumber(
+            Math.floor(projectedPoint.x)
+        )} m${this.$iApi.$i18n.t('map.coordinates.east')} | ${this.$iApi.ui.formatNumber(
+            Math.abs(Math.floor(projectedPoint.y))
         )} m${this.$iApi.$i18n.t('map.coordinates.north')}`;
     }
 
@@ -501,6 +500,6 @@ export class MapCaptionAPI extends APIScope {
         // project the point using the basemaps spatial reference
         const projectedPoint: any = await this.$iApi.geo.proj.projectGeometry(this.$iApi.geo.map.getSR(), p);
 
-        return `${this.$iApi.$i18n.n(projectedPoint.x, 'number')} | ${this.$iApi.$i18n.n(projectedPoint.y, 'number')}`;
+        return `${this.$iApi.ui.formatNumber(projectedPoint.x)} | ${this.$iApi.ui.formatNumber(projectedPoint.y)}`;
     }
 }

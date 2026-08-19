@@ -26,6 +26,7 @@ export interface RampConfig {
         zoomIcon?: string;
         scrollToInstance?: boolean;
         suppressNumberLocalization?: boolean;
+        showThousandsSeparator?: boolean;
     };
 }
 

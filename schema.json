@@ -3092,6 +3092,11 @@
                     "type": "boolean",
                     "description": "If set to true, the app will display numbers in plain decimal format instead of formatting them based on the app language.",
                     "default": false
+                },
+                "showThousandsSeparator": {
+                    "type": "boolean",
+                    "description": "If set to true, the app will group digits and display a thousands separator based on the app language when formatting numbers.",
+                    "default": false
                 }
             },
             "required": [],
