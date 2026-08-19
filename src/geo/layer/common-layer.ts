@@ -110,7 +110,7 @@ export class CommonLayer extends LayerInstance {
             load: undefined
         };
         this.origRampConfig = rampConfig;
-        this.id = rampConfig.id || '';
+        this.id = rampConfig.id || this.$iApi.geo.shared.generateUUID();
         this.uid = this.$iApi.geo.shared.generateUUID();
         this.isCosmetic = false;
         this.isSystem = rampConfig.system || false;
@@ -341,7 +341,7 @@ export class CommonLayer extends LayerInstance {
             this.$iApi.notify.show(
                 NotificationType.ERROR,
                 this.$iApi.$i18n.t('layer.error', {
-                    id: this.id
+                    id: this.name || this.id
                 })
             );
         }
@@ -438,12 +438,6 @@ export class CommonLayer extends LayerInstance {
         throw new Error(`Attempted to use a method not valid for ${this.layerType}`);
     }
 
-    /**
-     * Invokes the process to get the full set of attribute values for the layer.
-     * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
-     *
-     * @returns {Promise} resolves with set of attribute values
-     */
     getAttributes(): Promise<AttributeSet> {
         this.stubError();
         return Promise.resolve({

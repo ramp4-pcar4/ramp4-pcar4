@@ -20,6 +20,7 @@ export * from '@/geo/layer/layer';
 export * from '@/geo/layer/layer-instance';
 export * from '@/geo/layer/common-layer';
 export * from '@/geo/layer/map-layer';
+export * from '@/geo/layer/diverted-identify-layer';
 export * from '@/geo/layer/attrib-layer';
 export * from '@/geo/layer/common-graphic-layer';
 export * from '@/geo/layer/graphic-layer';

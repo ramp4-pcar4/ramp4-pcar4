@@ -11,6 +11,7 @@ Below is a list of the various properties that can be specified for a layer conf
 - [cosmetic](./layers/basic-properties.md#cosmetic)
 - [customRenderer](./layers/fancy-properties.md#customrenderer)
 - [disabledControls](./layers/basic-properties.md#disabledcontrols)
+- [divertIdentifyLayer](./layers/fancy-properties.md#divertidentifylayer)
 - [drawOrder](./layers/fancy-properties.md#draworder)
 - [expectedDrawTime](./layers/basic-properties.md#expecteddrawtime)
 - [expectedLoadTime](./layers/basic-properties.md#expectedloadtime)

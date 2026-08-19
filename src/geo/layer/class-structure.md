@@ -8,8 +8,6 @@ LayerInstance: RAMP's internal "base class" for layers. Any code dealing with ge
 
 ~ ~ MapLayer: The generic class for layers that implement a layer on the map.
 
-~ ~ ~ ImageryLayer: Handles ArcGIS Server Imagery layers.
-
 ~ ~ ~ WMSLayer: Handles WMS layers.
 
 ~ ~ ~ MapImageLayer: Handles ArcGIS Server Map Image layers (formerly Dynamic layers).
@@ -30,17 +28,21 @@ LayerInstance: RAMP's internal "base class" for layers. Any code dealing with ge
 
 ~ ~ ~ ~ ~ ShapefileLayer: Handles layers populated by a zipped shapefile.
 
-~ ~ ~ CommonTileLayer: The generic class for Tile layers.
-
-~ ~ ~ ~ TileLayer: Handles ArcGIS Server Tile layers.
-
-~ ~ ~ ~ VectorTileLayer: Handles ArcGIS Server Vector Tile layers.
-
-~ ~ ~ ~ ImageryTileLayer: Handles ArcGIS Server ImageryTile layers.
-
 ~ ~ ~ CommonGraphicLayer: The generic class for Graphic layers.
 
 ~ ~ ~ ~ GraphicLayer: Handles basic client-side Graphic layer.
+
+~ ~ ~ DiverteIdentifyLayer: Provides plubming to allow a classic non-identify layer to pipe an identify request to a feature layer service
+
+~ ~ ~ ~ ImageryLayer: Handles ArcGIS Server Imagery layers.
+
+~ ~ ~ ~ CommonTileLayer: The generic class for Tile layers.
+
+~ ~ ~ ~ ~ TileLayer: Handles ArcGIS Server Tile layers.
+
+~ ~ ~ ~ ~ VectorTileLayer: Handles ArcGIS Server Vector Tile layers.
+
+~ ~ ~ ~ ~ ImageryTileLayer: Handles ArcGIS Server ImageryTile layers.
 
 ~ ~ DataLayer: The generic class for layers that do not have a layer on the map.
 
@@ -66,6 +68,8 @@ This chain is the `onInitiate()` calls. They tend to go backwards (subclass --> 
 ~ ~ ~ ~ GeoJsonLayer, CsvLayer, ShapefileLayer: Gets data, converts to GeoJSON. Blocks if file is server based. Some converters block but processing is local.
 
 ~ ~ ~ ~ WfsLayer: Blocks as it downloads GeoJSON.
+
+~ ~ ~ DivertedIdentifyLayer: Does nothing.
 
 ~  MapImageSublayer: Just sets status.
 

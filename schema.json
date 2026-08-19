@@ -986,6 +986,11 @@
                     "enum": ["esri-imagery", "esri-tile", "esri-vector-tile", "esri-imagery-tile"],
                     "description": "Service type for basic layers."
                 },
+                "divertIdentifyLayer": {
+                    "$ref": "#/$defs/featureLayer",
+                    "default": null,
+                    "description": "Defines a hidden layer to use as the identify source for this layer. Recommend using Feature layer or WMS layer."
+                },
                 "extent": {
                     "$ref": "#/$defs/extentWithReference"
                 },

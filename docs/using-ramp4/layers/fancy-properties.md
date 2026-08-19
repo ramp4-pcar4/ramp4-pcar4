@@ -51,6 +51,23 @@ The object structure matches the ArcGIS Server [Renderer](https://developers.arc
 }
 ```
 
+## divertIdentifyLayer
+
+*object*, only applies to `esri-tile`, `esri-vector-tile`, `esri-imagery-tile`, `esri-imagery`.
+
+Specifies a layer config for a secret layer that will be used as an identify source for this layer. The layer will not appear on the map, in the legend, etc. Goes without saying that the content of the diverted layer should align in some sensible manner with what the primary layer displays on the map.
+
+Recommended layer types for this diverted layer are `esri-feature` or `ogc-wms`.
+
+```js
+{
+    divertIdentifyLayer: {
+        layerType: 'esri-feature',
+        url: 'https://funmaps.ca/server/rest/services/goodstuff/MapServer/1'
+    }
+}
+```
+
 ## drawOrder
 
 *array of objects*, only applies to layers that [have vector client data](./additional-layer-sections.md#layer-abilities)

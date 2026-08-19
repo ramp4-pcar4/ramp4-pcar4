@@ -185,12 +185,6 @@ export class AttribLayer extends MapLayer {
         }
     }
 
-    /**
-     * Invokes the process to get the full set of attribute values for the layer.
-     * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
-     *
-     * @returns {Promise} resolves with set of attribute values
-     */
     getAttributes(): Promise<AttributeSet> {
         return this.attribs.attLoader.getAttribs();
 
@@ -239,13 +233,6 @@ export class AttribLayer extends MapLayer {
             .map(field => field.name);
     }
 
-    /**
-     * Invokes the process to get the full set of attribute values for the layer,
-     * formatted in a tabular format. Additional data properties are also included.
-     * Repeat calls will re-use the downloaded values unless the values have been explicitly cleared.
-     *
-     * @returns {Promise} resolves with set of tabular attribute values
-     */
     getTabularAttributes(): Promise<TabularAttributeSet> {
         // this call will generate the tabular format, or return the cache if
         // it exists
@@ -292,9 +279,13 @@ export class AttribLayer extends MapLayer {
             // attempt to get geometry from fastest source.
             if (gCache) {
                 resultGeom = gCache;
-            } else if (this.layerType === LayerType.FEATURE && !(this.attribs.quickCache.isPoint && options.forZoom)) {
-                // attempt to find geometry on the client layer.
-                // for point-based layers, this can be too inaccurate when the geometry is for a zoom request
+            } else if (
+                this.layerType === LayerType.FEATURE &&
+                !((options.forZoom && this.attribs.quickCache.isPoint) || options.serverOnly)
+            ) {
+                // attempt to find geometry on the client feature layer.
+                // for point-based layers, this can be too inaccurate when the geometry is for a zoom request.
+                // for secret feature layers acting as diverted identify targets, local geometry lookups will hang (waits on non-existent layer view forever).
                 // (hence the fancy IF statement above)
 
                 const localGeom = await this.getLocalGeometry(objectId);

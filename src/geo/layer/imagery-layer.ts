@@ -1,4 +1,4 @@
-import { InstanceAPI, MapLayer } from '@/api/internal';
+import { DivertedIdentifyLayer, InstanceAPI } from '@/api/internal';
 import { DataFormat, LayerFormat, LayerType } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 import type { EsriImageryLayer, EsriImageryLayerProperties } from '@/geo/esri';
@@ -8,7 +8,7 @@ import { markRaw } from 'vue';
 /**
  * A layer class which implements an ESRI Imagery Layer.
  */
-export class ImageryLayer extends MapLayer {
+export class ImageryLayer extends DivertedIdentifyLayer {
     declare esriLayer: EsriImageryLayer | undefined;
 
     constructor(rampConfig: RampLayerConfig, $iApi: InstanceAPI) {

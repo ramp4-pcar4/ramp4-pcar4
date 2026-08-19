@@ -1,11 +1,11 @@
-import { InstanceAPI, MapLayer, NotificationType } from '@/api/internal';
+import { DivertedIdentifyLayer, InstanceAPI, NotificationType } from '@/api/internal';
 import { DataFormat, DrawState, LayerState } from '@/geo/api';
 import type { RampLayerConfig } from '@/geo/api';
 
 /**
  * A common layer class which is inherited by layer classes that implement tile layers (layers locked in a tile schema).
  */
-export class CommonTileLayer extends MapLayer {
+export class CommonTileLayer extends DivertedIdentifyLayer {
     /**
      * Determines if we run a "matching projection" check when the layer loads.
      * Appears that imagery tile layers will reproject, so this allows them to skip it
