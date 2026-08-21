@@ -76,10 +76,10 @@ import {
 import type { DrawBufferSettings, DrawIdentifyBufferMode, DrawMapLabelSettings, DrawStyleSettings } from './settings';
 import { isPanelOpen, openDrawShapeDetailsPanel } from './panel-utils';
 import type { DrawShapeDetailsTab } from './panel-utils';
-import { getDrawShapeId } from './shape-io';
+import { drawingToRampGeom, getDrawShapeId } from './shape-io';
 import type { DrawShapeImportRecord } from './shape-io';
 import { useDrawStore } from './store';
-import type { DrawGraphicLike, DrawGraphicType } from './types';
+import type { DrawGraphicLike, DrawGraphicType, DrawingEventPayload, NewDrawingEventPayload } from './types';
 import { buildDrawSegments, buildDrawVertices, parseDrawMeasurementTargetKey } from './measurement-utils';
 import { useDrawIdentify } from './use-draw-identify';
 import { useDrawKeyboard } from './use-draw-keyboard';
@@ -464,11 +464,11 @@ const applySketchSymbols = () => {
     sketch.polygonSymbol = createDrawSymbol('polygon', style) as any;
 };
 
-const syncGraphicStoreRecord = (graphic: EsriGraphic) => {
+const syncGraphicStoreRecord = (graphic: EsriGraphic): DrawGraphicLike | undefined => {
     const id = graphic.attributes?.id;
-    if (!id) return;
+    if (!id) return undefined;
 
-    drawStore.updateGraphic(id, {
+    return drawStore.updateGraphic(id, {
         type: graphic.attributes?.type,
         geometry: graphic.geometry,
         attributes: graphic.attributes
@@ -708,6 +708,22 @@ const deleteSelectedGraphic = (): boolean => {
     return true;
 };
 
+const emitNewGraphicEvent = (drawGraphic: DrawGraphicLike, byUser: boolean): void => {
+    const graphicConversion = drawingToRampGeom(drawGraphic, iApi);
+
+    if (graphicConversion) {
+        // graphicConversion should always exist. using the IF here just to avoid runtime bomb in very weird cases
+        const eventPayload: NewDrawingEventPayload = {
+            id: drawGraphic.id!,
+            drawing: graphicConversion.draw,
+            rampGeom: graphicConversion.ramp,
+            user: byUser
+        };
+
+        iApi.event.emit(GlobalEvents.DRAW_NEW_DRAWING, eventPayload);
+    }
+};
+
 const importDrawShapes = async (records: DrawShapeImportRecord[]): Promise<number> => {
     if (!records.length || !graphicsLayer) return 0;
 
@@ -733,12 +749,17 @@ const importDrawShapes = async (records: DrawShapeImportRecord[]): Promise<numbe
             });
             const id = prepareDrawGraphic(graphic, type, record.id);
             importedGraphics.push(graphic);
-            drawStore.addGraphic({
+
+            const drawGraphic: DrawGraphicLike = {
                 id,
                 type,
                 geometry: graphic.geometry,
                 attributes: graphic.attributes
-            });
+            };
+
+            drawStore.addGraphic(drawGraphic);
+
+            emitNewGraphicEvent(drawGraphic, false);
         } catch {
             // File validation already happened in the import panel. Skip any shape that still cannot hydrate.
         }
@@ -2069,13 +2090,18 @@ const handleSketchCreateEvent = (event: EsriSketchCreateEvent) => {
         }
         const id = prepareDrawGraphic(graphic, event.tool);
         syncBufferGraphic(graphic);
-        drawStore.addGraphic({
+
+        const drawGraphic: DrawGraphicLike = {
             id,
             type: event.tool,
             geometry: graphic.geometry,
             attributes: graphic.attributes
-        });
+        };
+
+        drawStore.addGraphic(drawGraphic);
         void refreshMeasurementGraphics(graphic, event.tool);
+
+        emitNewGraphicEvent(drawGraphic, true);
 
         if (event.tool !== 'point') {
             drawStore.setActiveTool('');
@@ -2118,16 +2144,32 @@ const handleSketchUpdateEvent = (event: EsriSketchUpdateEvent) => {
         const sourceGraphic = syncActiveSketchEditToSource() ?? graphic;
         clearActiveSketchEdit({ restoreSource: true });
 
+        let finalStoreGraphic: DrawGraphicLike | undefined = undefined;
+
         if (sourceGraphic.attributes?.id) {
             applyDrawSymbol(sourceGraphic);
             syncBufferGraphic(sourceGraphic);
-            syncGraphicStoreRecord(sourceGraphic);
+            finalStoreGraphic = syncGraphicStoreRecord(sourceGraphic);
             cancelPendingFeatureCountRefresh();
             void refreshSelectedGraphicFeatureCounts(sourceGraphic);
             iApi.updateAlert(t('draw.graphic.updated'));
         }
         highlightSelectedGraphic(shapeDetailsPanelOpen() ? sourceGraphic : undefined);
         void refreshMeasurementGraphics(sourceGraphic, sourceGraphic.attributes?.type);
+
+        if (finalStoreGraphic) {
+            const graphicConversion = drawingToRampGeom(finalStoreGraphic, iApi);
+
+            if (graphicConversion) {
+                const eventPayload: DrawingEventPayload = {
+                    id: finalStoreGraphic.id!,
+                    drawing: graphicConversion.draw,
+                    rampGeom: graphicConversion.ramp
+                };
+
+                iApi.event.emit(GlobalEvents.DRAW_EDIT_DRAWING, eventPayload);
+            }
+        }
     }
 };
 

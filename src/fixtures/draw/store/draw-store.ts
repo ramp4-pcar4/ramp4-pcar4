@@ -210,11 +210,13 @@ export const useDrawStore = defineStore('draw', () => {
         }
     }
 
-    function updateGraphic(id: string, updates: any) {
+    function updateGraphic(id: string, updates: any): DrawGraphicLike | undefined {
         const graphic = graphics.find(g => g.id === id);
         if (graphic) {
             Object.assign(graphic, updates);
         }
+
+        return graphic;
     }
 
     function setGraphicMapLabelSettings(id: string, settings: Partial<DrawMapLabelSettings>) {

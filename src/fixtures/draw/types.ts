@@ -1,4 +1,6 @@
 import type { EsriGeometry } from '@/geo/esri';
+import type { BaseGeometry } from '@/geo/api';
+import type { DrawShapeExportRecord } from './shape-io';
 
 export type Vertex = [number, number];
 
@@ -26,3 +28,16 @@ export type DrawGraphicLike = {
     attributes?: any;
     geometry?: EsriGeometry | null;
 };
+
+export interface DrawingEventPayload {
+    id: string;
+    drawing: DrawShapeExportRecord;
+    rampGeom: BaseGeometry;
+}
+
+export interface NewDrawingEventPayload extends DrawingEventPayload {
+    /**
+     * True if the user drew it via the tools. False if imported.
+     */
+    user: boolean;
+}

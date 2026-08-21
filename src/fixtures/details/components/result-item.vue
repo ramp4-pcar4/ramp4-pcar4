@@ -103,7 +103,7 @@ import ESRIDefault from '../templates/esri-default.vue';
 import HTMLDefault from '../templates/html-default.vue';
 
 import type { FieldDefinition } from '@/geo/api';
-import { NotificationType } from '@/api';
+import { GlobalEvents, NotificationType } from '@/api';
 import type { IdentifyItem, InstanceAPI, LayerInstance } from '@/api';
 
 const layerStore = useLayerStore();
@@ -194,8 +194,20 @@ const makeHtmlLink = (html: any): any => {
  * Called whenever the displayed item changes
  */
 const itemChanged = () => {
+    const thisViewRequest = Date.now();
+    detailsStore.lastestDetailView = thisViewRequest;
+
+    const emitDetailViewEvent = () => {
+        // only emit if not in list view, and the item we think we are viewing is still
+        // the latest item being viewed.
+        if (!props.inList && thisViewRequest === detailsStore.lastestDetailView) {
+            iApi.event.emit(GlobalEvents.DETAILS_VIEW, { identifyItem: props.data, uid: props.uid });
+        }
+    };
+
     updateZoomStatus('none');
     if (props.data.loaded) {
+        emitDetailViewEvent();
         fetchIcon();
     } else {
         // request any details download and wait.
@@ -206,6 +218,7 @@ const itemChanged = () => {
         //      will cause issue #2156
 
         props.data.load().then(() => {
+            emitDetailViewEvent();
             fetchIcon();
         });
 

@@ -72,6 +72,9 @@ These events will be present if the associated core fixtures are running
 | Event Name                           | Payload                                                 | Event Announces                                                |
 | ------------------------------------ | ------------------------------------------------------- | -------------------------------------------------------------- |
 | DETAILS_TOGGLE<br>'details/toggle'   | { data: any, uid: string, format: string }, boolean (optional)         | A feature's details panel toggle was requested with optional force open/close       |
+| DETAILS_VIEW<br>'details/view'       | _identifyItem_: IdentifyItem, _uid_: string             | An individual item has loaded and displayed in the detail panel |
+| DRAW_EDIT<br>'draw/edit'             | _id_: string, _drawing_: DrawShapeExportRecord, _rampGeom_: BaseGeometry  | A drawing shape was edited |
+| DRAW_NEW<br>'draw/new'             | _id_: string, _drawing_: DrawShapeExportRecord, _rampGeom_: BaseGeometry, _user_: boolean  | A drawing shape was created |
 | GEOSEARCH_ZOOM<br>'geosearch/zoom'   | _zoomPromise_: Promise, _searchItem_: ISearchResult     | An item in GeoSearch was selected and zoomed to |
 | GRID_TOGGLE<br>'grid/toggle'         | _layer_: LayerInstance, _open_: boolean (optional)      | Grid panel toggle was requested with optional force open/close |
 | HELP_TOGGLE<br>'help/toggle'         | boolean (optional)                                      | Help panel toggle was requested with optional force open/close |
