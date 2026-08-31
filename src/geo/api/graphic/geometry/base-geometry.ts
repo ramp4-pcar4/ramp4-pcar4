@@ -1,5 +1,5 @@
-import { GeometryType, SpatialReference } from '@/geo/api';
-import type { SrDef, IdDef } from '@/geo/api';
+import { GeometryFlavour, GeometryType, SpatialReference } from '@/geo/api';
+import type { IdDef, SrDef } from '@/geo/api';
 import type { EsriGeometry } from '@/geo/esri';
 import type GeoJson from 'geojson';
 
@@ -20,10 +20,17 @@ export class BaseGeometry {
 
     /**
      * Returns the type of the geometry object.
-     * Function implementation in subclasses.
      */
     get type(): GeometryType {
         return GeometryType.UNKNOWN;
+    }
+
+    /**
+     * Returns the flavour of the geometry object.
+     * Useful for things like determining a valid symbology definition for the geometry.
+     */
+    get flavour(): GeometryFlavour {
+        return GeometryFlavour.NONE;
     }
 
     protected childIdGenerator(idx: number): string {

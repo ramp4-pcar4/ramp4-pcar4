@@ -1,6 +1,7 @@
 import {
     BaseGeometry,
     GeoJsonGeomType,
+    GeometryFlavour,
     GeometryType,
     LinearRing,
     LineString,
@@ -10,7 +11,7 @@ import {
     PointSet,
     SpatialReference
 } from '@/geo/api';
-import type { SrDef, IdDef } from '@/geo/api';
+import type { IdDef, SrDef } from '@/geo/api';
 import { EsriPolygon } from '@/geo/esri';
 import type GeoJson from 'geojson';
 
@@ -68,9 +69,12 @@ export class Polygon extends BaseGeometry {
         return this.rawArray.map((lra, i) => new LinearRing(this.childIdGenerator(i), lra, this.sr, true));
     }
 
-    /** Returns the string 'Polygon'. */
     get type(): GeometryType {
         return GeometryType.POLYGON;
+    }
+
+    get flavour(): GeometryFlavour {
+        return GeometryFlavour.POLYGON;
     }
 
     /**

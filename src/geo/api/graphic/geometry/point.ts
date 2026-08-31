@@ -1,5 +1,5 @@
-import { BaseGeometry, GeoJsonGeomType, GeometryType } from '@/geo/api';
-import type { SrDef, IdDef } from '@/geo/api';
+import { BaseGeometry, GeoJsonGeomType, GeometryFlavour, GeometryType } from '@/geo/api';
+import type { IdDef, SrDef } from '@/geo/api';
 import { EsriPoint } from '@/geo/esri';
 import { SpatialReference } from './spatial-reference';
 import type GeoJson from 'geojson';
@@ -31,9 +31,12 @@ export class Point extends BaseGeometry {
         }
     }
 
-    /** Returns the string 'Point'. */
     get type(): GeometryType {
         return GeometryType.POINT;
+    }
+
+    get flavour(): GeometryFlavour {
+        return GeometryFlavour.POINT;
     }
 
     get x(): number {

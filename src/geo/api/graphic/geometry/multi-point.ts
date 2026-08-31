@@ -1,5 +1,5 @@
-import { GeoJsonGeomType, GeometryType, Point, PointSet, SpatialReference } from '@/geo/api';
-import type { SrDef, IdDef } from '@/geo/api';
+import { GeoJsonGeomType, GeometryFlavour, GeometryType, Point, PointSet, SpatialReference } from '@/geo/api';
+import type { IdDef, SrDef } from '@/geo/api';
 import { EsriMultipoint } from '@/geo/esri';
 import type GeoJson from 'geojson';
 
@@ -23,9 +23,12 @@ export class MultiPoint extends PointSet {
         super(id, geometry, sr, raw);
     }
 
-    /** Returns the string 'MultiPoint'. */
     get type(): GeometryType {
         return GeometryType.MULTIPOINT;
+    }
+
+    get flavour(): GeometryFlavour {
+        return GeometryFlavour.POINT;
     }
 
     // TODO make an .addPoint? .removePoint?

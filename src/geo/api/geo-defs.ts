@@ -98,6 +98,16 @@ export const enum GeometryType {
     UNKNOWN = 'Unknown'
 }
 
+/**
+ * Indicates the "basic structure" of a geometry
+ */
+export const enum GeometryFlavour {
+    POINT = 'Point',
+    LINE = 'Line',
+    POLYGON = 'Polygon',
+    NONE = 'None'
+}
+
 export const enum RendererType {
     Simple = 'simple',
     Unique = 'uniqueValue',

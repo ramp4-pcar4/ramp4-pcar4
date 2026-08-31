@@ -1,6 +1,13 @@
-import { BaseGeometry, GeoJsonGeomType, GeometryType, Point, Polygon, SpatialReference } from '@/geo/api';
-
-import type { RampExtentConfig, SrDef, IdDef } from '@/geo/api';
+import {
+    BaseGeometry,
+    GeoJsonGeomType,
+    GeometryFlavour,
+    GeometryType,
+    Point,
+    Polygon,
+    SpatialReference
+} from '@/geo/api';
+import type { IdDef, RampExtentConfig, SrDef } from '@/geo/api';
 import { EsriExtent } from '@/geo/esri';
 import type GeoJson from 'geojson';
 
@@ -33,9 +40,12 @@ export class Extent extends BaseGeometry {
 
     // TODO setters for individul values? classic [x|y][min|max] set
 
-    /** Returns the string 'Extent'. */
     get type(): GeometryType {
         return GeometryType.EXTENT;
+    }
+
+    get flavour(): GeometryFlavour {
+        return GeometryFlavour.POLYGON;
     }
 
     get xmin(): number {
