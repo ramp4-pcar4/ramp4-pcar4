@@ -572,7 +572,7 @@ import 'vue-slider-component/theme/default.css';
 import type { PanelInstance } from '@/api';
 import type { InstanceAPI } from '@/api/internal';
 import { Point, SpatialReference } from '@/geo/api';
-import { EsriCentroidOperator, EsriPoint, EsriPolygon, EsriPolyline } from '@/geo/esri';
+import { EsriPoint, EsriPolygon, EsriPolyline } from '@/geo/esri';
 import type { EsriGeometry } from '@/geo/esri';
 
 import CopyIcon from './icons/copy-icon.vue';
@@ -584,6 +584,7 @@ import DrawColorControl from './color-control.vue';
 import {
     buildDrawSegments,
     buildDrawVertices,
+    centroidEsri,
     formatDrawLength,
     loadDrawMeasurementOperators,
     measureDrawPolygonPerimeterMeters,
@@ -891,32 +892,6 @@ const buildSegmentRows = async (
     });
 };
 
-const centroidPoint = (geometry: EsriGeometry | undefined): EsriPoint | undefined => {
-    if (!geometry) return undefined;
-
-    if (geometry.type === 'point') {
-        return geometry as EsriPoint;
-    }
-
-    if (geometry.type === 'polygon') {
-        try {
-            const centroid = EsriCentroidOperator(geometry as EsriPolygon);
-            if (centroid) return centroid;
-        } catch {
-            // Fall back to extent center below.
-        }
-    }
-
-    const extent = geometry.extent;
-    if (!extent) return undefined;
-
-    return new EsriPoint({
-        x: (extent.xmin + extent.xmax) / 2,
-        y: (extent.ymin + extent.ymax) / 2,
-        spatialReference: geometry.spatialReference
-    });
-};
-
 const esriPointToRampPoint = (point: EsriPoint): Point =>
     new Point(
         'draw-coordinate',
@@ -1018,7 +993,7 @@ const refreshDetails = async () => {
     }
 
     detailsLoading.value = true;
-    const centroid = centroidPoint(geometry);
+    const centroid = centroidEsri(geometry);
     const graphicId = selectedGraphicId.value ? String(selectedGraphicId.value) : undefined;
     const vertices = showVerticesSection.value && graphicId ? buildDrawVertices(geometry, graphicId) : [];
     const vertexPoints = vertices.map(
@@ -1681,9 +1656,9 @@ onUnmounted(() => {
     position: relative;
     height: 72px;
     border: 1px solid #e5e7eb;
-    background: linear-gradient(45deg, #f8fafc 25%, transparent 25%),
-        linear-gradient(-45deg, #f8fafc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f8fafc 75%),
-        linear-gradient(-45deg, transparent 75%, #f8fafc 75%);
+    background:
+        linear-gradient(45deg, #f8fafc 25%, transparent 25%), linear-gradient(-45deg, #f8fafc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #f8fafc 75%), linear-gradient(-45deg, transparent 75%, #f8fafc 75%);
     background-size: 18px 18px;
     background-position:
         0 0,

@@ -3,11 +3,11 @@ import { toRaw } from 'vue';
 import type { IdentifyResult } from '@/api';
 import type { InstanceAPI } from '@/api/internal';
 import { Point } from '@/geo/api';
-import { EsriCentroidOperator, EsriPoint } from '@/geo/esri';
-import type { EsriGeometry, EsriGraphic, EsriPolygon } from '@/geo/esri';
+import type { EsriGeometry, EsriGraphic } from '@/geo/esri';
 
 import { createDrawBufferGeometry, createDrawBufferOnlyGeometry, loadDrawBufferOperators } from './settings';
 import type { DrawBufferSettings, DrawIdentifyBufferMode } from './settings';
+import { centroidEsri } from './measurement-utils';
 import { useDrawStore } from './store';
 import type { DrawGraphicLike } from './types';
 
@@ -160,37 +160,11 @@ export const useDrawIdentify = ({
         }, 350);
     };
 
-    const identifyPointForGeometry = (geometry: EsriGeometry | undefined): EsriPoint | undefined => {
-        if (!geometry) return undefined;
-
-        if (geometry.type === 'point') {
-            return geometry as EsriPoint;
-        }
-
-        if (geometry.type === 'polygon') {
-            try {
-                const centroid = EsriCentroidOperator(geometry as EsriPolygon);
-                if (centroid) return centroid;
-            } catch {
-                // Fall back to extent center below.
-            }
-        }
-
-        const extent = geometry.extent;
-        if (!extent) return undefined;
-
-        return new EsriPoint({
-            x: (extent.xmin + extent.xmax) / 2,
-            y: (extent.ymin + extent.ymax) / 2,
-            spatialReference: geometry.spatialReference
-        });
-    };
-
     const runIdentifyForSelectedGraphic = async () => {
         const graphic = getSelectedFeatureCountGraphic();
         const id = getDrawGraphicId(graphic);
         const geometry = toRaw(graphic?.geometry) as EsriGeometry | undefined;
-        const identifyPoint = identifyPointForGeometry(geometry);
+        const identifyPoint = centroidEsri(geometry);
         if (!id || !identifyPoint) return;
 
         await refreshSelectedGraphicFeatureCounts(graphic);

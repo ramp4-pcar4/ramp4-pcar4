@@ -34,7 +34,7 @@ import type {
     EsriViewDoubleClickEvent,
     EsriViewPointerMoveEvent
 } from '@/geo/esri';
-import { EsriGraphic } from '@/geo/esri';
+import { EsriCentroidOperator, EsriGraphic } from '@/geo/esri';
 
 import { LineStyle } from '../style/line-style';
 import { PolygonStyle } from '../style/polygon-style';
@@ -334,5 +334,44 @@ export class GeometryAPI {
      */
     isImageUrl(text: string): boolean {
         return PointStyle.isImageUrl(text);
+    }
+
+    /**
+     * Given a RAMP geometry, find its centroid
+     *
+     * @param geom A ramp geometry
+     * @returns a point at the centroid
+     */
+    getCentroid(geom: BaseGeometry): Point {
+        const pointMaker = (x: number, y: number, sr: any): Point => {
+            return new Point('centroid', [x, y], sr);
+        };
+
+        if (geom.type === GeometryType.POINT) {
+            // clone & return
+            return pointMaker((geom as Point).x, (geom as Point).y, geom.sr);
+        }
+
+        const esriGeom = geom.toESRI();
+
+        try {
+            const centroid = EsriCentroidOperator(esriGeom);
+            if (centroid) {
+                return pointMaker(centroid.x, centroid.y, geom.sr);
+            }
+        } catch {
+            // Fall back to extent center below.
+        }
+
+        const extent = esriGeom.extent;
+        if (extent) {
+            return pointMaker((extent.xmin + extent.xmax) / 2, (extent.ymin + extent.ymax) / 2, geom.sr);
+        }
+
+        // ping here for now. if we find this occurs with any regularity, could add a dumb manual extent builder.
+        // essentially find min and max X & Y across all verticies of the geometry, then do the above / 2 middle math.
+        console.error('Encountered a geometry that we could not centroid');
+        console.log(geom, esriGeom);
+        return pointMaker(1, 1, undefined);
     }
 }
