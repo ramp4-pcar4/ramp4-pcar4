@@ -520,20 +520,7 @@ const r2config = {
                 ],
                 tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
-            {
-                id: 'baseEsriStreet',
-                name: 'World Street Map',
-                description: 'This worldwide street map presents highway-level data for the world.',
-                altText: 'ESWorld Street Map',
-                layers: [
-                    {
-                        id: 'World_Street_Map',
-                        layerType: 'esriFeature',
-                        url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer'
-                    }
-                ],
-                tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
-            },
+
             {
                 id: 'baseEsriTerrain',
                 name: 'World Terrain Base',
@@ -550,16 +537,21 @@ const r2config = {
                 tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
             },
             {
-                id: 'baseEsriTopo',
+                id: 'baseNrCanTopo',
                 name: 'World Topographic Map',
                 description:
                     'This map is designed to be used as a basemap by GIS professionals and as a reference map by anyone.',
                 altText: 'World Topographic Map',
                 layers: [
                     {
-                        id: 'World_Topo_Map',
-                        layerType: 'esriFeature',
-                        url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer'
+                        id: 'nrcan_topo_images',
+                        layerType: 'esri-tile',
+                        url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT_CBCT_GEOM_3857/MapServer'
+                    },
+                    {
+                        id: 'nrcan_topo_text',
+                        layerType: 'esri-tile',
+                        url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT_TXT_3857/MapServer'
                     }
                 ],
                 tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'

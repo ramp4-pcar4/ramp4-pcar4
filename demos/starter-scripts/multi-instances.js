@@ -190,20 +190,7 @@ let config = {
                         ],
                         tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
-                    {
-                        id: 'baseEsriStreet',
-                        name: 'World Street Map',
-                        description: 'This worldwide street map presents highway-level data for the world.',
-                        altText: 'ESWorld Street Map',
-                        layers: [
-                            {
-                                id: 'World_Street_Map',
-                                layerType: 'esri-tile',
-                                url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer'
-                            }
-                        ],
-                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
-                    },
+
                     {
                         id: 'baseEsriTerrain',
                         name: 'World Terrain Base',
@@ -220,33 +207,23 @@ let config = {
                         tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     },
                     {
-                        id: 'baseEsriTopo',
+                        id: 'baseNrCanTopo',
                         name: 'World Topographic Map',
                         description:
                             'This map is designed to be used as a basemap by GIS professionals and as a reference map by anyone.',
                         altText: 'World Topographic Map',
                         layers: [
                             {
-                                id: 'World_Topo_Map',
+                                id: 'nrcan_topo_images',
                                 layerType: 'esri-tile',
-                                url: 'https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer'
-                            }
-                        ],
-                        tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
-                    },
-                    {
-                        id: 'baseOpenStreetMap',
-                        name: 'OpenStreetMap',
-                        description: 'Open sourced topographical map.',
-                        altText: 'OpenStreetMap',
-                        layers: [
+                                url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT_CBCT_GEOM_3857/MapServer'
+                            },
                             {
-                                id: 'Open_Street_Map',
-                                layerType: 'osm-tile'
+                                id: 'nrcan_topo_text',
+                                layerType: 'esri-tile',
+                                url: 'https://maps-cartes.services.geo.ca/server2_serveur2/rest/services/BaseMaps/CBMT_TXT_3857/MapServer'
                             }
                         ],
-                        thumbnailUrl:
-                            'https://www.openstreetmap.org/assets/about/osm-a74d2c94082260032c133b9d206ee2fdd911e5c82bf03daae10393a02d7b4809.png',
                         tileSchemaId: 'EXT_ESRI_World_AuxMerc_3857#LOD_ESRI_World_AuxMerc_3857'
                     }
                 ],
