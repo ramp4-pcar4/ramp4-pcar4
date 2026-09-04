@@ -1,0 +1,1 @@
+import{t as e}from"./defaultCIMValues-0gms35lZ.js";var t=15.5,n=1024,r={outlineWidth:.75,referenceWidth:.75,cap:e.CIMSolidStroke.capstyle,join:e.CIMSolidStroke.joinstyle,miterLimit:e.CIMSolidStroke.miterlimit};export{r as n,n as r,t};

@@ -1,0 +1,1 @@
+var e=Symbol(`GroundInstance`);function t(t){return typeof t==`object`&&!!t&&e in t}export{t as n,e as t};

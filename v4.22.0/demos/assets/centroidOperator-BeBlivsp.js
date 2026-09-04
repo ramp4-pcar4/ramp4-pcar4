@@ -1,0 +1,1 @@
+import{ab as e}from"./store-5v4E3u6t.js";import"./apiConverter-iUcS7iVV.js";import{n as t,t as n}from"./centroidOperator-DYH-s9sM.js";var r=e({execute:()=>t,supportsCurves:()=>n});export{r as t};

@@ -1,0 +1,1 @@
+function e(e){return e&&`getAtOrigin`in e&&`originOf`in e}export{e as t};

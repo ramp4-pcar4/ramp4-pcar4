@@ -1,0 +1,1 @@
+import"./TriangleTechniqueConfiguration-COBrPyyo.js";import"./oitResolution.glsl-BFyFSgo3.js";import"./ShaderBuilder-B5bKgQt6.js";import"./VertexColor.glsl-DRxd_ZMj.js";import{n as e}from"./ColorMaterial-BxaOJ4Al.js";export{e as build};
