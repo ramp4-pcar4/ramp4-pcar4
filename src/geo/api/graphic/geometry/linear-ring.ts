@@ -1,6 +1,14 @@
-import { GeoJsonGeomType, GeometryType, LineString, MultiPoint, Point, PointSet, SpatialReference } from '@/geo/api';
-
-import type { SrDef, IdDef } from '@/geo/api';
+import {
+    GeoJsonGeomType,
+    GeometryFlavour,
+    GeometryType,
+    LineString,
+    MultiPoint,
+    Point,
+    PointSet,
+    SpatialReference
+} from '@/geo/api';
+import type { IdDef, SrDef } from '@/geo/api';
 
 import { EsriPolygon } from '@/geo/esri';
 import type GeoJson from 'geojson';
@@ -34,9 +42,12 @@ export class LinearRing extends PointSet {
         }
     }
 
-    /** Returns the string 'LinearRing'. */
     get type(): GeometryType {
         return GeometryType.LINEARRING;
+    }
+
+    get flavour(): GeometryFlavour {
+        return GeometryFlavour.POLYGON;
     }
 
     /** Will update the n-th contained point with the values of the point parameter. It is assumed the point is in the same spatial reference as the Multipoint */

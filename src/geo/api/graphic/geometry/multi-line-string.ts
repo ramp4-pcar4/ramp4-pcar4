@@ -1,5 +1,6 @@
 import {
     BaseGeometry,
+    GeometryFlavour,
     GeoJsonGeomType,
     GeometryType,
     LineString,
@@ -8,7 +9,7 @@ import {
     PointSet,
     SpatialReference
 } from '@/geo/api';
-import type { SrDef, IdDef } from '@/geo/api';
+import type { IdDef, SrDef } from '@/geo/api';
 import { EsriPolyline } from '@/geo/esri';
 import type GeoJson from 'geojson';
 
@@ -86,9 +87,12 @@ export class MultiLineString extends BaseGeometry {
         return this.rawArray.length;
     }
 
-    /** Returns the string 'MultiLineString'. */
     get type(): GeometryType {
         return GeometryType.MULTILINESTRING;
+    }
+
+    get flavour(): GeometryFlavour {
+        return GeometryFlavour.LINE;
     }
 
     /**

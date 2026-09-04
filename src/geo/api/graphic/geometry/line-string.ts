@@ -1,6 +1,13 @@
-import { GeoJsonGeomType, GeometryType, MultiPoint, Point, PointSet, SpatialReference } from '@/geo/api';
-
-import type { SrDef, IdDef } from '@/geo/api';
+import {
+    GeoJsonGeomType,
+    GeometryFlavour,
+    GeometryType,
+    MultiPoint,
+    Point,
+    PointSet,
+    SpatialReference
+} from '@/geo/api';
+import type { IdDef, SrDef } from '@/geo/api';
 import { EsriPolyline } from '@/geo/esri';
 import type GeoJson from 'geojson';
 
@@ -28,9 +35,12 @@ export class LineString extends PointSet {
         }
     }
 
-    /** Returns the string 'LineString'. */
     get type(): GeometryType {
         return GeometryType.LINESTRING;
+    }
+
+    get flavour(): GeometryFlavour {
+        return GeometryFlavour.LINE;
     }
 
     static fromESRI(esriLine: EsriPolyline, id?: number | string): LineString {

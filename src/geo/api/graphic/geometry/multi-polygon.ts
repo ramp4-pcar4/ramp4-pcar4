@@ -1,6 +1,7 @@
 import {
     BaseGeometry,
     GeoJsonGeomType,
+    GeometryFlavour,
     GeometryType,
     LinearRing,
     LineString,
@@ -11,7 +12,7 @@ import {
     Polygon,
     SpatialReference
 } from '@/geo/api';
-import type { SrDef, IdDef } from '@/geo/api';
+import type { IdDef, SrDef } from '@/geo/api';
 import { EsriPolygon } from '@/geo/esri';
 import type GeoJson from 'geojson';
 
@@ -68,9 +69,12 @@ export class MultiPolygon extends BaseGeometry {
         return this.rawArray.map((p, i) => new Polygon(this.childIdGenerator(i), p, this.sr, true));
     }
 
-    /** Returns the string 'MultiPolygon'. */
     get type(): GeometryType {
         return GeometryType.MULTIPOLYGON;
+    }
+
+    get flavour(): GeometryFlavour {
+        return GeometryFlavour.POLYGON;
     }
 
     /**

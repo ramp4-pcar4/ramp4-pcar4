@@ -1,5 +1,5 @@
 import { BaseGeometry, Point } from '@/geo/api';
-import type { SrDef, IdDef } from '@/geo/api';
+import type { IdDef, SrDef } from '@/geo/api';
 
 // this is a generic class for sets of points. Abstracting to avoid collisions of the various
 // subtypes, since they can be very similar but different enough to be grousy.
