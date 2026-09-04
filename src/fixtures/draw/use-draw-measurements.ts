@@ -18,12 +18,12 @@ import type {
 import {
     buildDrawSegments,
     buildDrawVertices,
+    centroidEsri,
     formatDrawLength,
     formatDrawMapArea,
     loadDrawMeasurementOperators,
     measureDrawPolygonSquareMeters,
-    parseDrawMeasurementTargetKey,
-    polygonLabelPoint
+    parseDrawMeasurementTargetKey
 } from './measurement-utils';
 import { resolveGraphicMapLabelSettings } from './settings';
 import { useDrawStore } from './store';
@@ -349,6 +349,10 @@ export const useDrawMeasurements = ({
             : ring;
 
     const polygonScreenCentroid = (polygon: EsriPolygon, view: EsriMapView): ScreenPoint | undefined => {
+        // TODO figure out if this centroid algo is same as centroidEsri, or something fancier.
+        //      It does appear to be doing stuff in the Screen coordinates.
+        //      Some method documentation would have really helped.
+
         const rings = polygon.rings as Vertex[][];
         let areaSum = 0;
         let centroidX = 0;
@@ -1360,7 +1364,7 @@ export const useDrawMeasurements = ({
 
         const polygon = geometry as EsriPolygon;
         const area = measureDrawPolygonSquareMeters(polygon);
-        const point = polygonLabelPoint(polygon);
+        const point = centroidEsri(polygon);
 
         if (!area || area < 0.01 || !point) {
             return undefined;

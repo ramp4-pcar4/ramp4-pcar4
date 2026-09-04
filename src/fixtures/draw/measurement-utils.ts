@@ -278,23 +278,32 @@ export const segmentLengthMeters = (
         })
     );
 
-export const polygonLabelPoint = (polygon: EsriPolygon): EsriPoint | undefined => {
-    try {
-        const centroid = EsriCentroidOperator(polygon);
-        if (centroid) {
-            return centroid;
-        }
-    } catch {
-        // Fall back to the extent center below.
+/**
+ * Finds the centroid of an ESRI geometry, if possible
+ * @param geometry an esri geometry
+ * @returns the geometry centroid as an esri point, or undefined if we couldn't derive it
+ */
+export const centroidEsri = (geometry: EsriGeometry | undefined): EsriPoint | undefined => {
+    if (!geometry) return undefined;
+
+    if (geometry.type === 'point') {
+        return geometry as EsriPoint;
     }
 
-    const extent = polygon.extent;
+    try {
+        const centroid = EsriCentroidOperator(geometry);
+        if (centroid) return centroid;
+    } catch {
+        // Fall back to extent center below.
+    }
+
+    const extent = geometry.extent;
     if (!extent) return undefined;
 
     return new EsriPoint({
         x: (extent.xmin + extent.xmax) / 2,
         y: (extent.ymin + extent.ymax) / 2,
-        spatialReference: polygon.spatialReference
+        spatialReference: geometry.spatialReference
     });
 };
 
