@@ -1,0 +1,6 @@
+var e=(e,t,n)=>(n.addLayerLegend({id:`Happy`,name:`Happy Tester`,layerType:`file-geojson`,url:`../file-layers/geojson.json`,colour:`#4ef542`,nameField:`name`}),{config:e,options:t}),t=e=>{e.fixture.isLoaded(`basemap`).then(()=>{let t=e.fixture.get(`basemap`);t.persist=!1}),e.$element.component(`WFSLayer-Custom`,{props:[`identifyData`],template:`
+            <div>
+                <span>This is an example template that contains an image.</span>
+                <img src="https://i.imgur.com/WtY0tdC.gif" />
+            </div>
+        `}),e.fixture.add(`export`).then(e=>{e.persist=!1}),e.fixture.add(`areas-of-interest`);let t=e.panel.registerHTML({content:{en:`<div> This is a new panel in html </div>`,fr:`<div> Ceci est un nouveau panneau en HTML </div>`},id:`panel3`,alertName:`new.title`,i18nMap:{en:{"new.title":`English`},fr:{"new.title":`French`}}});e.panel.updateHTML(t,{en:`<div> This is an updated html panel </div>`,fr:`<div> Ceci est un panneau HTML mis à jour </div>`},`panel3`),e.panel.open(t)};export{t as runPostTest,e as runPreTest};

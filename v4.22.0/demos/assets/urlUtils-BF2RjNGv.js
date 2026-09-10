@@ -1,0 +1,1 @@
+import{_m as e}from"./store-5v4E3u6t.js";var t=/\.(\w+)$/;function n(e){let n=new URL(e).pathname.match(t);return!n||n.length<2?null:n[1].toUpperCase()}var r=async(t,n)=>{let r=(await e(t,{...n,method:`head`}))?.getHeader?.(`Content-Type`);return r?r.split(`/`)[1]:null};export{r as getDatasetFormat,n as guessExtensionFromURI};

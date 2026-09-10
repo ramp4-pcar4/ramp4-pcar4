@@ -1,0 +1,1 @@
+import{Ur as e}from"./store-5v4E3u6t.js";import{o as t}from"./constraints-C5GD4mxR.js";import{n}from"./EdgeSnappingCandidate-p91_GmFg.js";var r=class extends n{constructor(e){super({...e,isDraped:!0,constraint:new t(e.edgeStart,e.edgeEnd,e.getGroundElevation)})}get hints(){return[new e(1,this.constraint.start,this.constraint.end,this.isDraped,this.domain)]}};export{r as t};
