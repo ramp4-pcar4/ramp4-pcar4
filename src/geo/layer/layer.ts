@@ -282,7 +282,8 @@ export class LayerAPI extends APIScope {
 
     /**
      * Returns all map-based layers currently on the map.
-     * Result can be ordered in map stack order. Unordered is more performant.
+     * Result can be ordered in map stack order (lowest in visibility to highest).
+     * Unordered is more performant.
      *
      * @param {boolean} [inMapOrder=true] if result array should be sorted by map order.
      * @returns {Array<LayerInstance>} all layers on the map

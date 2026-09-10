@@ -1356,7 +1356,11 @@ export class MapAPI extends CommonMapAPI {
      * @returns {MapIdentifyResult} results of the identify
      */
     runIdentify(targetPoint: MapClick | Point): MapIdentifyResult {
-        const layers = this.$iApi.geo.layer.allLayersOnMap(false).filter(l => l.canIdentify());
+        // get valid layers in map order, highest showing first
+        const layers = this.$iApi.geo.layer
+            .allLayersOnMap(true)
+            .filter(l => l.canIdentify())
+            .toReversed();
 
         let mapClick: MapClick;
         if (targetPoint instanceof Point) {
