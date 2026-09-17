@@ -1,0 +1,1 @@
+function e(){let e=navigator.userAgent,t=RegExp(`MSIE`),n=RegExp(`Trident`);return t.test(e)||n.test(e)}e()&&(document.getElementById(`IE`).className=`notification`,document.getElementById(`IE`).innerHTML=`Internet Explorer is not a supported browser, please use a different browser.`);

@@ -1,0 +1,1 @@
+function e(e){return e}function t(t){return e(1e3*t)}function n(e){return e}function r(e){return n(.001*e)}function i(){return e(performance.now())}export{r as a,n as i,e as n,t as r,i as t};

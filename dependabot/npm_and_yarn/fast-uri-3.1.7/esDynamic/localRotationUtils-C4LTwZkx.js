@@ -1,0 +1,1 @@
+import{A as e}from"./mat4-DSO-PSgk.js";function t(e,t,n){let r=Math.sin(e),i=Math.cos(e),a=Math.sin(t),o=Math.cos(t),s=n;return s[0]=-r,s[4]=-a*i,s[8]=o*i,s[12]=0,s[1]=i,s[5]=-a*r,s[9]=o*r,s[13]=0,s[2]=0,s[6]=o,s[10]=a,s[14]=0,s[3]=0,s[7]=0,s[11]=0,s[15]=1,s}function n(n,r,i){return t(n,r,i),e(i,i),i}export{n,t};

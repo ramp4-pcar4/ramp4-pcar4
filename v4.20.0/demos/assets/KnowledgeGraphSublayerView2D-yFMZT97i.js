@@ -1,0 +1,1 @@
+import{n as e}from"./decorators-CLILM215.js";import{r as t}from"./tslib.es6-CQRs8sXx.js";import{n,t as r}from"./FeatureLikeLayerView-BDo3R_MT.js";var i=class extends r{constructor(){super(...arguments),this.layer=null}},a=class extends n(i){};a=t([e(`esri.views.2d.layers.KnowledgeGraphSublayerView2D`)],a);var o=a;export{o as default};

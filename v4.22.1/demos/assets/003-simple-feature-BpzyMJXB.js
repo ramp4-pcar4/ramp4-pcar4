@@ -1,0 +1,1 @@
+var e=(e,t,n)=>(n.addLayerLegend({id:`Nature`,layerType:`esri-feature`,url:`https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/6`}),n.addLayerLegend({id:`Water`,layerType:`esri-feature`,url:`https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/8`}),{config:e,options:t}),t=()=>{};export{t as runPostTest,e as runPreTest};

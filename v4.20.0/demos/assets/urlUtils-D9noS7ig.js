@@ -1,0 +1,1 @@
+function e(t){let n={};for(let r in t){if(r===`declaredClass`)continue;let i=t[r];if(i!=null&&typeof i!=`function`)if(Array.isArray(i)){n[r]=[];for(let t=0;t<i.length;t++)n[r][t]=e(i[t])}else typeof i==`object`?i.toJSON&&(n[r]=JSON.stringify(i)):n[r]=i}return n}export{e as t};

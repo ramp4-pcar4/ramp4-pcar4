@@ -1,0 +1,16 @@
+
+:root {
+    --light-color-background: #FFFFFF;
+    --light-color-background-secondary: #F6F6F7;
+    --light-color-accent: #dedede;
+    --light-color-active-menu-item: #dedede;
+    --light-color-text: #3C3C43;
+    --light-color-link: #10B981;
+
+    --dark-color-background: #1E1E20;
+    --dark-color-background-secondary: #252529;
+    --dark-color-active-menu-item: #252529;
+    --dark-color-accent: #444444;
+    --dark-color-text: #DFDFD7;
+    --dark-color-link: #10B981;
+}
