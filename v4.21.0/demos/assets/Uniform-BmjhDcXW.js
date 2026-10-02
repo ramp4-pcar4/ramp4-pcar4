@@ -1,0 +1,1 @@
+var e=class{constructor(e,t,n,r,i=null){if(this.name=e,this.type=t,this.arraySize=i,this.bind={0:null,1:null,2:null},r)switch(n){case void 0:break;case 0:this.bind[0]=r;break;case 1:this.bind[1]=r;break;case 2:this.bind[2]=r}}equals(e){return this.type===e.type&&this.name===e.name&&this.arraySize===e.arraySize}};export{e as t};

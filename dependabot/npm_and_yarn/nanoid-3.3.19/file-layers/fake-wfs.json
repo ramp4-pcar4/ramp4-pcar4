@@ -1,0 +1,1020 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "id": "6130257.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-83.1, 42.1], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6130257.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": "1918-2017",
+                "elevation__elevation": 182,
+                "station_id__id_station": "6130257",
+                "station_name__nom_station": "AMHERSTBURG",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": 381.47,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6040330.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-89.1, 50.25], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6040330.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 341,
+                "station_id__id_station": "6040330",
+                "station_name__nom_station": "ARMSTRONG JELLIEN",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6020384.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-91.5833, 48.8], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6020384.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 442,
+                "station_id__id_station": "6020384",
+                "station_name__nom_station": "ATIKOKAN MARMION",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6110606.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-79.4, 45.1333], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6110606.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 297,
+                "station_id__id_station": "6110606",
+                "station_name__nom_station": "BEATRICE",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6150689.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-77.4, 44.15], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6150689.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 76,
+                "station_id__id_station": "6150689",
+                "station_name__nom_station": "BELLEVILLE",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6010738.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-89.87, 53.83], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6010738.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 224.1,
+                "station_id__id_station": "6010738",
+                "station_name__nom_station": "BIG TROUT LAKE",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6060773.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-82.1, 47.3], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6060773.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 407,
+                "station_id__id_station": "6060773",
+                "station_name__nom_station": "BISCOTASING",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6100971.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-75.6667, 44.6], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6100971.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": "1916-2017",
+                "elevation__elevation": 96,
+                "station_id__id_station": "6100971",
+                "station_name__nom_station": "BROCKVILLE PCC",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": 289.16,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6041109.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-88.35, 49.15], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6041109.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 229,
+                "station_id__id_station": "6041109",
+                "station_name__nom_station": "CAMERON FALLS",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6061361.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-83.35, 47.82], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6061361.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 446.5,
+                "station_id__id_station": "6061361",
+                "station_name__nom_station": "CHAPLEAU A",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6101874.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-74.75, 45.02], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6101874.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 64,
+                "station_id__id_station": "6101874",
+                "station_name__nom_station": "CORNWALL",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6032119.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-92.75, 49.83], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6032119.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 412.7,
+                "station_id__id_station": "6032119",
+                "station_name__nom_station": "DRYDEN A",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6072225.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-79.85, 47.7], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6072225.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 243.2,
+                "station_id__id_station": "6072225",
+                "station_name__nom_station": "EARLTON A",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6022476.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-93.4333, 48.65], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6022476.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 342,
+                "station_id__id_station": "6022476",
+                "station_name__nom_station": "FORT FRANCES",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6042716.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-86.93, 49.78], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6042716.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": "1952-2014",
+                "elevation__elevation": 348.7,
+                "station_id__id_station": "6042716",
+                "station_name__nom_station": "GERALDTON A",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": 105.4,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6102857.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-76.6333, 44.5667], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6102857.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 160,
+                "station_id__id_station": "6102857",
+                "station_name__nom_station": "GODFREY",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6092925.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-82.5667, 45.8833], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6092925.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 193.5,
+                "station_id__id_station": "6092925",
+                "station_name__nom_station": "GORE BAY A",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6163171.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-78.53, 45.03], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6163171.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 330,
+                "station_id__id_station": "6163171",
+                "station_name__nom_station": "HALIBURTON",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6153194.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-79.9342, 43.1717], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6153194.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 237.7,
+                "station_id__id_station": "6153194",
+                "station_name__nom_station": "HAMILTON A",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6053575.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-84.77, 49.2], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6053575.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 335,
+                "station_id__id_station": "6053575",
+                "station_name__nom_station": "HORNEPAYNE",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6073810.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-80.67, 48.75], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6073810.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 259,
+                "station_id__id_station": "6073810",
+                "station_name__nom_station": "IROQUOIS_FALLS",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6073975.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-82.4675, 49.4139], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6073975.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": "1919-2013",
+                "elevation__elevation": 226.5,
+                "station_id__id_station": "6073975",
+                "station_name__nom_station": "KAPUSKASING A",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": 3.77,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6034075.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-94.3653, 49.7903], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6034075.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 409.65,
+                "station_id__id_station": "6034075",
+                "station_name__nom_station": "KENORA A",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6104175.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-76.4806, 44.2439], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6104175.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 77,
+                "station_id__id_station": "6104175",
+                "station_name__nom_station": "KINGSTON PUMPING STATION",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6014350.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-87.88, 52.23], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6014350.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 254.5,
+                "station_id__id_station": "6014350",
+                "station_name__nom_station": "LANSDOWNE HOUSE",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6144475.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-81.1511, 43.0331], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6144475.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 278,
+                "station_id__id_station": "6144475",
+                "station_name__nom_station": "LONDON INT'L AIRPORT",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6124700.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-81.5, 43.95], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6124700.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 290,
+                "station_id__id_station": "6124700",
+                "station_name__nom_station": "LUCKNOW",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6084770.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-77.9833, 45.5], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6084770.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 316,
+                "station_id__id_station": "6084770",
+                "station_name__nom_station": "MADAWASKA",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6025205.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-92.62, 48.77], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6025205.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 361,
+                "station_id__id_station": "6025205",
+                "station_name__nom_station": "MINE_CENTRE",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6075425.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-80.65, 51.2667], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6075425.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 10,
+                "station_id__id_station": "6075425",
+                "station_name__nom_station": "MOOSONEE UA",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6105460.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-75.18, 44.92], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6105460.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 82,
+                "station_id__id_station": "6105460",
+                "station_name__nom_station": "MORRISBURG",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6085700.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-79.4228, 46.3636], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6085700.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 370.3,
+                "station_id__id_station": "6085700",
+                "station_name__nom_station": "NORTH BAY A",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6155790.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-80.08, 43.92], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6155790.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 412,
+                "station_id__id_station": "6155790",
+                "station_name__nom_station": "ORANGEVILLE",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6115811.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-79.4389, 44.6028], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6115811.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 250,
+                "station_id__id_station": "6115811",
+                "station_name__nom_station": "ORILLIA BRAIN",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6105976.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-75.7167, 45.3833], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6105976.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": "1890-2017",
+                "elevation__elevation": 79,
+                "station_id__id_station": "6105976",
+                "station_name__nom_station": "OTTAWA",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": 37.6,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6116132.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-80.93, 44.58], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6116132.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 179,
+                "station_id__id_station": "6116132",
+                "station_name__nom_station": "OWEN_SOUND",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6136336.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-82.6833, 41.7833], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6136336.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 174,
+                "station_id__id_station": "6136336",
+                "station_name__nom_station": "PELEE ISLAND",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6166418.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-78.37, 44.23], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6166418.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 191.4,
+                "station_id__id_station": "6166418",
+                "station_name__nom_station": "PETERBOROUGH A",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6016527.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-90.21, 51.45], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6016527.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 386.2,
+                "station_id__id_station": "6016527",
+                "station_name__nom_station": "PICKLE LAKE A",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6016975.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-93.7931, 51.0669], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6016975.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 385.88,
+                "station_id__id_station": "6016975",
+                "station_name__nom_station": "RED LAKE A",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6137149.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-81.8833, 42.45], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6137149.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 206,
+                "station_id__id_station": "6137149",
+                "station_name__nom_station": "RIDGETOWN",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6057592.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-84.5094, 46.4833], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6057592.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 192,
+                "station_id__id_station": "6057592",
+                "station_name__nom_station": "SAULT STE MARIE A",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6037775.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-91.9, 50.1167], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6037775.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 383.1,
+                "station_id__id_station": "6037775",
+                "station_name__nom_station": "SIOUX LOOKOUT A",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6077845.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-82.17, 50.07], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6077845.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 183,
+                "station_id__id_station": "6077845",
+                "station_name__nom_station": "SMOKY_FALLS",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6068150.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-80.7978, 46.6256], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6068150.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 348.39,
+                "station_id__id_station": "6068150",
+                "station_name__nom_station": "SUDBURY A",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6048231.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-87.1, 48.8167], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6048231.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 290,
+                "station_id__id_station": "6048231",
+                "station_name__nom_station": "TERRACE BAY",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6078285.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-81.3767, 48.5697], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6078285.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 294.7,
+                "station_id__id_station": "6078285",
+                "station_name__nom_station": "TIMMINS VICTOR POWER A",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6128323.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-81.5333, 45.2333], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6128323.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 190,
+                "station_id__id_station": "6128323",
+                "station_name__nom_station": "TOBERMORY CYPRUS LAKE",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6158350.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-79.4, 43.67], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6158350.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 112.5,
+                "station_id__id_station": "6158350",
+                "station_name__nom_station": "TORONTO",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6158733.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-79.6306, 43.6772], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6158733.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 173.4,
+                "station_id__id_station": "6158733",
+                "station_name__nom_station": "TORONTO LESTER B. PEARSON INT'L A",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6048864.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-89.5167, 48.2333], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6048864.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 317,
+                "station_id__id_station": "6048864",
+                "station_name__nom_station": "TRANQUILLO RIDGE",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6139141.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-79.4167, 43.15], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6139141.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": "1919-2013",
+                "elevation__elevation": 110,
+                "station_id__id_station": "6139141",
+                "station_name__nom_station": "VINELAND",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": 172.42,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6139265.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-82.4, 42.58], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6139265.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 177,
+                "station_id__id_station": "6139265",
+                "station_name__nom_station": "WALLACEBURG",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6059D09.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-84.78, 47.97], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6059D09.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 287.1,
+                "station_id__id_station": "6059D09",
+                "station_name__nom_station": "WAWA A",
+                "joined__rejoint": 1,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6139445.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-79.2611, 42.9925], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6139445.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 175,
+                "station_id__id_station": "6139445",
+                "station_name__nom_station": "WELLAND",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6119500.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-81.1072, 44.7458], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6119500.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": "1948-2013",
+                "elevation__elevation": 222.2,
+                "station_id__id_station": "6119500",
+                "station_name__nom_station": "WIARTON A",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": 293.34,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6139525.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-82.9556, 42.2756], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6139525.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 189.6,
+                "station_id__id_station": "6139525",
+                "station_name__nom_station": "WINDSOR A",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        },
+        {
+            "id": "6149625.Ann.total_precip",
+            "type": "Feature",
+            "geometry": { "coordinates": [-80.77, 43.13], "type": "Point" },
+            "properties": {
+                "period__periode": "Ann",
+                "identifier__identifiant": "6149625.Ann.total_precip",
+                "measurement_type__type_mesure": "total_precip",
+                "year_range__annees": null,
+                "elevation__elevation": 282,
+                "station_id__id_station": "6149625",
+                "station_name__nom_station": "WOODSTOCK",
+                "joined__rejoint": 0,
+                "trend_value__valeur_tendance": null,
+                "province__province": "ON"
+            }
+        }
+    ],
+    "numberMatched": 58,
+    "numberReturned": 58,
+    "links": [
+        {
+            "type": "application/geo+json",
+            "rel": "self",
+            "title": "This document as GeoJSON",
+            "href": "https://api.weather.gc.ca/collections/ahccd-trends/items?f=json&measurement_type__type_mesure=total_precip&period__periode=Ann&limit=1000&province__province=on"
+        },
+        {
+            "rel": "alternate",
+            "type": "application/ld+json",
+            "title": "This document as RDF (JSON-LD)",
+            "href": "https://api.weather.gc.ca/collections/ahccd-trends/items?f=jsonld&measurement_type__type_mesure=total_precip&period__periode=Ann&limit=1000&province__province=on"
+        },
+        {
+            "type": "text/html",
+            "rel": "alternate",
+            "title": "This document as HTML",
+            "href": "https://api.weather.gc.ca/collections/ahccd-trends/items?f=html&measurement_type__type_mesure=total_precip&period__periode=Ann&limit=1000&province__province=on"
+        },
+        {
+            "type": "application/json",
+            "title": "Adjusted and Homogenized Canadian Climate Data (AHCCD) Trends",
+            "rel": "collection",
+            "href": "https://api.weather.gc.ca/collections/ahccd-trends/items"
+        }
+    ],
+    "timeStamp": "2024-10-01T12:21:54.033551Z"
+}

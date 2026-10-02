@@ -1,0 +1,1 @@
+var e=class{constructor(e,t,n=t){this.data=e,this.size=t,this.stride=n}},t=class extends e{constructor(e,t,n,r=!1,i=n){super(e,n,i),this.indices=t,this.exclusive=r}};export{t as n,e as t};

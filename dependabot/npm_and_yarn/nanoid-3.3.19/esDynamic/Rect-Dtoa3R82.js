@@ -1,0 +1,1 @@
+var e=class{constructor(e=0,t=0,n=0,r=0){this.x=e,this.y=t,this.width=n,this.height=r}get isEmpty(){return this.width<=0||this.height<=0}union(e){this.x=Math.min(this.x,e.x),this.y=Math.min(this.y,e.y),this.width=Math.max(this.width,e.width),this.height=Math.max(this.height,e.height)}};export{e as t};

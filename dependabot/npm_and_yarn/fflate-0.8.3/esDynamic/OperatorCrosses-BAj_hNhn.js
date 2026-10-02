@@ -1,0 +1,1 @@
+import{_ as e,c as t}from"./SpatialReference-BEZcVuB4.js";var n=class extends e{getOperatorType(){return 6}execute(e,n,r,i){return t(e,n,r,16,i)}};export{n as t};
