@@ -1,6 +1,6 @@
 import { execSync } from 'child_process';
 import type { Plugin } from 'vite';
-import pkg from '../package.json';
+import pkg from '../package.json' with { type: 'json' };
 
 export default (): Plugin => {
     return {

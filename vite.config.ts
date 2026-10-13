@@ -1,15 +1,15 @@
 import { defineConfig, mergeConfig } from 'vite';
 import mkcert from 'vite-plugin-mkcert';
 import vue from '@vitejs/plugin-vue';
-import VitePluginI18n from './scripts/vite-plugin-i18n';
-import VitePluginVersion from './scripts/vite-plugin-version';
-import ViteMinifyEsPlugin from './scripts/vite-minify-es-plugin';
-import ViteCssFontRemovalPlugin from './scripts/vite-css-font-remover-plugin';
+import VitePluginI18n from './scripts/vite-plugin-i18n.js';
+import VitePluginVersion from './scripts/vite-plugin-version.js';
+import ViteMinifyEsPlugin from './scripts/vite-minify-es-plugin.js';
+import ViteCssFontRemovalPlugin from './scripts/vite-css-font-remover-plugin.js';
 import { resolve } from 'path';
-import pkg from './package.json';
+import pkg from './package.json' with { type: 'json' };
 import dts from 'vite-plugin-dts';
 
-const distName = resolve(__dirname, process.env.DIST_NAME || 'dist');
+const distName = resolve(import.meta.dirname, process.env.DIST_NAME || 'dist');
 
 const browserBuildDefines = {
     'process.env.NODE_ENV': JSON.stringify('production'),
@@ -34,7 +34,7 @@ const baseConfig = {
     base: './',
     resolve: {
         alias: {
-            '@': resolve(__dirname, 'src'),
+            '@': resolve(import.meta.dirname, 'src'),
             vue: 'vue/dist/vue.esm-bundler.js'
         }
     },
@@ -44,7 +44,7 @@ const baseConfig = {
         outDir: distName,
         sourcemap: false,
         lib: {
-            entry: resolve(__dirname, 'src/main.ts'),
+            entry: resolve(import.meta.dirname, 'src/main.ts'),
             name: 'RAMP',
             cssFileName: 'ramp'
         }
