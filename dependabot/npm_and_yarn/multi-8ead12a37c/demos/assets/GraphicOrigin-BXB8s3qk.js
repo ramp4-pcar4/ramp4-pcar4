@@ -1,0 +1,1 @@
+import{Mg as e}from"./store-Bly-CI_i.js";import{n as t}from"./decorators-CsTvkc3p.js";var n=Symbol(`getSliceableSymbol`),r=class{};r=e([t(`esri.graphic.GraphicOrigin`)],r);export{n,r as t};

@@ -1,0 +1,1 @@
+import"./apiConverter-BZwkdFyx.js";import{i as e,r as t,t as n}from"./equalsOperator-CL7tBlrg.js";export{e as accelerateGeometry,n as execute,t as supportsCurves};

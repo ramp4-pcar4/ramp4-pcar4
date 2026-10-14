@@ -1,0 +1,1 @@
+var e=`/ramp4-pcar4/dependabot/npm_and_yarn/fflate-0.8.3/docs/geosearch-search.png`,t=`/ramp4-pcar4/dependabot/npm_and_yarn/fflate-0.8.3/docs/geosearch-top-filters.png`,n=`/ramp4-pcar4/dependabot/npm_and_yarn/fflate-0.8.3/docs/geosearch-bottom-filters.png`,r=`/ramp4-pcar4/dependabot/npm_and_yarn/fflate-0.8.3/docs/geosearch-results.png`;export{e as i,n,t as r,r as t};
