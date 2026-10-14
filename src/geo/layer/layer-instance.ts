@@ -275,6 +275,11 @@ export class LayerInstance extends APIScope {
     identifyMode: LayerIdentifyMode;
 
     /**
+     * Indicates if the layer's identify is being diverted to another source
+     */
+    divertedIdentify: boolean;
+
+    /**
      * DEPRECIATED #2595
      * Use maptips
      */
@@ -398,6 +403,7 @@ export class LayerInstance extends APIScope {
         this.lastCancel = 0;
         this.canModifyLayer = true;
         this.canReload = true;
+        this.divertedIdentify = false;
         this.url = '';
     }
 

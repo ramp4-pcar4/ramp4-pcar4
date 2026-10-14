@@ -986,6 +986,11 @@
                     "enum": ["esri-imagery", "esri-tile", "esri-vector-tile", "esri-imagery-tile"],
                     "description": "Service type for basic layers."
                 },
+                "divertIdentify": {
+                    "$ref": "#/$defs/divertIdentify",
+                    "default": null,
+                    "description": "Specifies settings for a hidden layer that will be used as an identify source for this layer."
+                },
                 "extent": {
                     "$ref": "#/$defs/extentWithReference"
                 },
@@ -2065,6 +2070,22 @@
                     "type": "boolean",
                     "default": false,
                     "description": "If true, the layer's field array will be ordered the same as fieldInfo. Otherwise, the array will be ordered as it appears in the source."
+                }
+            }
+        },
+        "divertIdentify": {
+            "type": "object",
+            "description": "Specifies settings for a hidden layer that will be used as an identify source for this layer.",
+            "properties": {
+                "layer": {
+                    "$ref": "#/$defs/featureLayer",
+                    "default": null,
+                    "description": "Defines a hidden layer to use as the identify source for the host layer. Recommend using Feature layer or WMS layer."
+                },
+                "useDivertedLegend": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Determines if the host layer should use the legend of the diverted layer."
                 }
             }
         },
