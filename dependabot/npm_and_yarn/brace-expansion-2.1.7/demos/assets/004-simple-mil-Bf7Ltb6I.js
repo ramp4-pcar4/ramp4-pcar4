@@ -1,0 +1,1 @@
+var e=(e,t,n)=>(n.addLayer({id:`EcoGeo`,layerType:`esri-map-image`,url:`https://maps-cartes.qa.ec.gc.ca/arcgis/rest/services/TestData/EcoAction/MapServer/`,sublayers:[{index:6},{index:8}]}),n.addLegend({layerId:`EcoGeo`,sublayerIndex:6}),n.addLegend({layerId:`EcoGeo`,sublayerIndex:8}),{config:e,options:t}),t=()=>{};export{t as runPostTest,e as runPreTest};

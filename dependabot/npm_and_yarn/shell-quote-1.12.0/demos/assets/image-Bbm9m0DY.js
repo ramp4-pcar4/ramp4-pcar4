@@ -1,0 +1,1 @@
+import{gm as e}from"./store-Bly-CI_i.js";async function t(t,n){return(await e(t,{responseType:`image`,...n})).data}export{t};

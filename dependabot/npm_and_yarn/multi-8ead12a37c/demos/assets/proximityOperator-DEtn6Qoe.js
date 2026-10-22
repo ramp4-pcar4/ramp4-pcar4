@@ -1,0 +1,1 @@
+import"./store-Bly-CI_i.js";import"./apiConverter-CvRCbMGX.js";import"./OperatorProximity-Xd-nMzvJ.js";import{a as e,i as t,r as n,t as r}from"./proximityOperator-CdZgzwmn.js";export{r as getNearestCoordinate,n as getNearestVertex,t as getNearestVertices,e as supportsCurves};
