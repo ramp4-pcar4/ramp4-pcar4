@@ -32,16 +32,20 @@ The Draw tools are intended for advanced users and are _not_ enabled by default.
         }
         // Add other types as needed: "circle", "rectangle", etc.
       ]
-    }
+    },
+    "defaultTool": "point",
+    "bufferMath": "geodesic"
   }
 }
 ```
 
 **Config options:**  
 - **types** (array): List of draw‐tool definitions. Each entry supports:
-  - **type** (string, required): Tool identifier (`"point"`, `"polyline"`, `"polygon"`, `"circle"`, `"rectangle"`, etc.).
+  - **type** (string, required): Tool identifier (`"point"`, `"polyline"`, `"polygon"`, `"circle"`, `"rectangle"`, `"edit"`).
   - **enabled** (boolean, default `true`): Whether this tool is available.
   - **options** (object): Tool‐specific settings (see below).
+- **defaultTool** (string, default `""`): An optional tool "type" (from above) to pre-select at startup.
+- **bufferMath** (stringm default `"geodesic"`): Determines how buffers are calculated. `"geodesic"` follows the curve of the earth. `"planar"` follows the plane of the active map projection.
 
 > If the draw config is missing, all types will be loaded with default configuration.
 

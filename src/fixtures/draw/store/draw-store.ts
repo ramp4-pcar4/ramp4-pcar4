@@ -15,6 +15,7 @@ import {
     normalizeHexColor
 } from '../settings';
 import type {
+    DrawBufferMathType,
     DrawBufferSettings,
     DrawBufferUnit,
     DrawIdentifyBufferMode,
@@ -76,6 +77,7 @@ export const useDrawStore = defineStore('draw', () => {
     const identifyGeometryGraphicId = ref<string | null>(null);
     const styleSettings = reactive<DrawStyleSettings>(createDefaultDrawStyleSettings());
     const bufferSettings = reactive<DrawBufferSettings>(createDefaultDrawBufferSettings());
+    const bufferMath = ref<DrawBufferMathType>('geodesic');
     const identifyBufferMode = ref<DrawIdentifyBufferMode>('shape-buffer');
     const shapeFeatureCounts = reactive<Record<string, DrawShapeFeatureCounts>>({});
     const activeSegmentKey = computed(() => hoveredSegmentKey.value ?? selectedSegmentKey.value);
@@ -88,6 +90,10 @@ export const useDrawStore = defineStore('draw', () => {
 
     function setActiveTool(tool: ActiveToolList) {
         activeTool.value = tool;
+    }
+
+    function setBufferMath(mathType: DrawBufferMathType) {
+        bufferMath.value = mathType;
     }
 
     function addGraphic(graphic: DrawGraphicLike) {
@@ -466,6 +472,7 @@ export const useDrawStore = defineStore('draw', () => {
         activeSegmentKey,
         activeTool,
         activeVertexKey,
+        bufferMath,
         bufferSettings,
         cancelEditModeClearSelection,
         cancelEditModeRequestId,
@@ -520,6 +527,7 @@ export const useDrawStore = defineStore('draw', () => {
         setBorderColor,
         setBufferColor,
         setBufferDistance,
+        setBufferMath,
         setBufferSettings,
         setBufferUnit,
         setFillColor,

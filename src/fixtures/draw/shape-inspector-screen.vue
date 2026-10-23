@@ -594,14 +594,13 @@ import {
 import {
     cloneDrawBufferSettings,
     cloneDrawStyleSettings,
-    createDrawBufferGeometry,
     DRAW_BUFFER_UNITS,
-    loadDrawBufferOperators,
     resolveGraphicBufferSettings,
     resolveGraphicIdentifyBufferMode,
     resolveGraphicMapLabelSettings,
     resolveGraphicStyleSettings
 } from './settings';
+import { createDrawBufferGeometry, loadDrawBufferOperators } from './draw-utils.ts';
 import type { DrawBufferSettings, DrawBufferUnit, DrawIdentifyBufferMode, DrawMapLabelSettings } from './settings';
 import { createDrawShapesFileName, downloadDrawShapes } from './shape-io';
 import { useDrawStore } from './store';

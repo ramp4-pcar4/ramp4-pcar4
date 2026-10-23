@@ -63,17 +63,15 @@ import {
     cloneDrawBufferSettings,
     cloneDrawMapLabelSettings,
     cloneDrawStyleSettings,
-    createDrawBufferGraphic,
-    createDrawSymbol,
     DRAW_SETTINGS_PANEL_ID,
     DRAW_SHAPE_DETAILS_PANEL_ID,
-    loadDrawBufferOperators,
     resolveGraphicBufferSettings,
     resolveGraphicIdentifyBufferMode,
     resolveGraphicMapLabelSettings,
     resolveGraphicStyleSettings
 } from './settings';
 import type { DrawBufferSettings, DrawIdentifyBufferMode, DrawMapLabelSettings, DrawStyleSettings } from './settings';
+import { createDrawBufferGraphic, createDrawSymbol, loadDrawBufferOperators } from './draw-utils.ts';
 import { isPanelOpen, openDrawShapeDetailsPanel } from './panel-utils';
 import type { DrawShapeDetailsTab } from './panel-utils';
 import { drawingToRampGeom, getDrawShapeId } from './shape-io';
