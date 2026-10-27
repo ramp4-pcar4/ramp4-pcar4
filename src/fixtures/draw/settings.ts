@@ -1,16 +1,3 @@
-import {
-    EsriBufferOperator,
-    EsriDifferenceOperator,
-    EsriGeodesicBufferOperator,
-    EsriGeodesicBufferOperatorIsLoaded,
-    EsriGeodesicBufferOperatorLoad,
-    EsriGraphic,
-    EsriSimpleFillSymbol,
-    EsriSimpleLineSymbol,
-    EsriSimpleMarkerSymbol
-} from '@/geo/esri';
-import type { EsriGeometry, EsriPolygon, EsriSymbol } from '@/geo/esri';
-
 export const DRAW_SETTINGS_PANEL_ID = 'draw-settings';
 export const DRAW_SHAPE_DETAILS_PANEL_ID = 'draw-shape-details';
 export const DRAW_IMPORT_PANEL_ID = 'draw-import';
@@ -18,6 +5,8 @@ export const DRAW_IMPORT_PANEL_ID = 'draw-import';
 export type DrawBufferUnit = 'meters' | 'kilometers';
 
 export type DrawIdentifyBufferMode = 'shape-buffer' | 'shape' | 'buffer-only';
+
+export type DrawBufferMathType = 'geodesic' | 'planar';
 
 export interface DrawStyleSettings {
     fillColor: string;
@@ -56,7 +45,7 @@ const DEFAULT_FILL_COLOR = '#0099db';
 const DEFAULT_OPACITY = 35;
 const DEFAULT_IDENTIFY_BUFFER_MODE: DrawIdentifyBufferMode = 'shape-buffer';
 
-const clamp = (value: number, min: number, max: number): number => Math.min(max, Math.max(min, value));
+export const clamp = (value: number, min: number, max: number): number => Math.min(max, Math.max(min, value));
 const hasOwn = <T extends object, K extends PropertyKey>(value: T, key: K): value is T & Record<K, unknown> =>
     Object.prototype.hasOwnProperty.call(value, key);
 
@@ -198,113 +187,7 @@ export const resolveGraphicIdentifyBufferMode = (
     fallback: DrawIdentifyBufferMode = DEFAULT_IDENTIFY_BUFFER_MODE
 ): DrawIdentifyBufferMode => normalizeDrawIdentifyBufferMode(attributes?.drawIdentifyBufferMode, fallback);
 
-const rgba = (color: string, alpha: number): [number, number, number, number] => [
+export const rgba = (color: string, alpha: number): [number, number, number, number] => [
     ...hexToRgb(color),
     clamp(alpha, 0, 1)
 ];
-
-export const createDrawSymbol = (geometryType: string | undefined, style: DrawStyleSettings): EsriSymbol => {
-    const fillAlpha = style.opacity / 100;
-    const outlineAlpha = clamp(fillAlpha + 0.35, 0, 1);
-
-    switch (geometryType) {
-        case 'point':
-        case 'multipoint':
-            return new EsriSimpleMarkerSymbol({
-                color: rgba(style.fillColor, fillAlpha),
-                size: 12,
-                outline: {
-                    color: rgba(style.borderColor, outlineAlpha),
-                    width: 1.5
-                }
-            });
-        case 'polyline':
-            return new EsriSimpleLineSymbol({
-                color: rgba(style.borderColor, outlineAlpha),
-                width: 2
-            });
-        default:
-            return new EsriSimpleFillSymbol({
-                color: rgba(style.fillColor, fillAlpha),
-                outline: {
-                    color: rgba(style.borderColor, outlineAlpha),
-                    width: 1.5
-                }
-            });
-    }
-};
-
-export const createDrawBufferSymbol = (style: DrawStyleSettings): EsriSimpleFillSymbol =>
-    new EsriSimpleFillSymbol({
-        color: rgba(style.bufferColor, (style.opacity / 100) * 0.65),
-        outline: {
-            color: rgba(style.bufferColor, 0),
-            width: 0
-        }
-    });
-
-export const loadDrawBufferOperators = async (): Promise<void> => {
-    if (!EsriGeodesicBufferOperatorIsLoaded()) {
-        await EsriGeodesicBufferOperatorLoad();
-    }
-};
-
-export const createDrawBufferOnlyGeometry = (
-    geometry: EsriGeometry | null | undefined,
-    buffer: DrawBufferSettings
-): EsriGeometry | undefined => {
-    const bufferGeometry = createDrawBufferGeometry(geometry, buffer);
-    if (!geometry || !bufferGeometry) return undefined;
-
-    if (geometry.type !== 'polygon') {
-        return bufferGeometry;
-    }
-
-    try {
-        return (EsriDifferenceOperator(bufferGeometry, geometry) as EsriGeometry | null | undefined) ?? undefined;
-    } catch {
-        return bufferGeometry;
-    }
-};
-
-const shouldUseGeodesicBuffer = (geometry: EsriGeometry): boolean =>
-    !!geometry.spatialReference?.isGeographic || !!geometry.spatialReference?.isWebMercator;
-
-export const createDrawBufferGeometry = (
-    geometry: EsriGeometry | null | undefined,
-    buffer: DrawBufferSettings
-): EsriPolygon | undefined => {
-    if (!geometry || !buffer.distance) return undefined;
-
-    if (shouldUseGeodesicBuffer(geometry) && EsriGeodesicBufferOperatorIsLoaded()) {
-        try {
-            return EsriGeodesicBufferOperator(geometry, buffer.distance, { unit: buffer.unit }) ?? undefined;
-        } catch {
-            // Try the planar operator below.
-        }
-    }
-
-    try {
-        return EsriBufferOperator(geometry, buffer.distance, { unit: buffer.unit }) ?? undefined;
-    } catch {
-        return undefined;
-    }
-};
-
-export const createDrawBufferGraphic = (
-    sourceGraphic: EsriGraphic,
-    style: DrawStyleSettings,
-    buffer: DrawBufferSettings
-): EsriGraphic | undefined => {
-    const id = sourceGraphic.attributes?.id;
-    const geometry = createDrawBufferGeometry(sourceGraphic.geometry as EsriGeometry | undefined, buffer);
-    if (!id || !geometry) return undefined;
-
-    return new EsriGraphic({
-        geometry,
-        symbol: createDrawBufferSymbol(style),
-        attributes: {
-            drawBufferFor: id
-        }
-    });
-};

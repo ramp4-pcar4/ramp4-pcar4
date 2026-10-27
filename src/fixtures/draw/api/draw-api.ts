@@ -13,14 +13,12 @@ import {
     cloneDrawBufferSettings,
     cloneDrawStyleSettings,
     createDefaultDrawMapLabelSettings,
-    createDrawBufferGeometry,
-    createDrawBufferOnlyGeometry,
     DRAW_SHAPE_DETAILS_PANEL_ID,
-    loadDrawBufferOperators,
     resolveGraphicBufferSettings,
     resolveGraphicIdentifyBufferMode
 } from '../settings';
-import type { DrawBufferSettings, DrawBufferUnit, DrawIdentifyBufferMode } from '../settings';
+import type { DrawBufferMathType, DrawBufferSettings, DrawBufferUnit, DrawIdentifyBufferMode } from '../settings';
+import { createDrawBufferGeometry, createDrawBufferOnlyGeometry, loadDrawBufferOperators } from '../draw-utils.ts';
 import {
     createDrawShapesExportFile,
     downloadDrawShapes,
@@ -50,6 +48,7 @@ export interface DrawTypeConfig {
 export interface DrawFixtureConfig {
     types?: DrawTypeConfig[];
     defaultTool?: ActiveToolList;
+    bufferMath?: DrawBufferMathType;
 }
 
 export type DrawShapeImportSource =
@@ -147,6 +146,10 @@ export class DrawAPI extends FixtureInstance implements IdentifyGeometryProvider
         // Set default tool if provided in the configuration
         if (drawConfig.defaultTool) {
             this.store.setActiveTool(drawConfig.defaultTool);
+        }
+
+        if (drawConfig.bufferMath) {
+            this.store.setBufferMath(drawConfig.bufferMath);
         }
     }
 

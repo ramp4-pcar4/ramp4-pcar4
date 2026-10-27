@@ -5,7 +5,7 @@ import type { InstanceAPI } from '@/api/internal';
 import { Point } from '@/geo/api';
 import type { EsriGeometry, EsriGraphic } from '@/geo/esri';
 
-import { createDrawBufferGeometry, createDrawBufferOnlyGeometry, loadDrawBufferOperators } from './settings';
+import { createDrawBufferGeometry, createDrawBufferOnlyGeometry, loadDrawBufferOperators } from './draw-utils';
 import type { DrawBufferSettings, DrawIdentifyBufferMode } from './settings';
 import { centroidEsri } from './measurement-utils';
 import { useDrawStore } from './store';
