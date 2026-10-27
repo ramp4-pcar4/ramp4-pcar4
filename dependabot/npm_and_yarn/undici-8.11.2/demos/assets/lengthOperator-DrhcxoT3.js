@@ -1,0 +1,1 @@
+import{np as e}from"./store-DCNLIr2s.js";import{r as t,t as n}from"./jsonConverter-Bm4UzXN6.js";function r(r,i={}){let{unit:a}=i,o=t(r).calculateLength2D(),s=n(r);return o&&a&&s&&(o=e(o,s,a)),o}export{r as execute};

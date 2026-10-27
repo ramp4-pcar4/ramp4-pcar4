@@ -1,0 +1,1 @@
+import{Ld as e,Md as t,Pd as n,jd as r}from"./store-DBhOFu5Q.js";import{g as i}from"./aaBoundingRect-LtQob9Hs.js";import{g as a,h as o,l as s,n as c,w as l}from"./ellipticArc7Utils-Co8icgn2.js";function u(u,d,f){if(t(f))return i(u,d),i(u,f),u;if(n(f))return l(u,d,f);if(r(f)){let e=o(d,f);return a(u,e)}if(e(f)){let e=s(d,f);return a(u,e)}return c(u,d,f)}export{u as t};

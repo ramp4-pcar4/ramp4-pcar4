@@ -1,0 +1,1 @@
+import{eb as e}from"./store-DBhOFu5Q.js";import"./apiConverter-DJGhCaRo.js";import{i as t,r as n,t as r}from"./differenceOperator-BIL4rPhq.js";var i=e({execute:()=>n,executeMany:()=>t,supportsCurves:()=>r});export{i as t};
