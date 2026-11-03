@@ -1,0 +1,1 @@
+import{tp as e}from"./store-CYuESy5_.js";import{r as t,t as n}from"./jsonConverter-CB38LQ__.js";function r(r,i={}){let{unit:a}=i,o=t(r).calculateLength2D(),s=n(r);return o&&a&&s&&(o=e(o,s,a)),o}export{r as execute};

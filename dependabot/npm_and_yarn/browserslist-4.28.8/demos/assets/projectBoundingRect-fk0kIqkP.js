@@ -1,0 +1,1 @@
+import{Zu as e,qp as t,wo as n}from"./store-DqDAc_Fp.js";import{h as r}from"./aaBoundingRect-rKtgQWGy.js";function i(e,i,o,s){return e!=null&&(t(i,s)?(r(o,e),!0):(a[0]=e[0],a[1]=e[1],a[2]=0,!!n(a,i,0,a,s,0)&&(o[0]=a[0],o[1]=a[1],a[0]=e[2],a[1]=e[3],a[2]=0,!!n(a,i,0,a,s,0)&&(o[2]=a[0],o[3]=a[1],!0))))}var a=e();export{i as t};

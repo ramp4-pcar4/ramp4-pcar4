@@ -1,0 +1,1 @@
+import{ab as e}from"./store-Bly-CI_i.js";import"./apiConverter-CvRCbMGX.js";import{n as t,t as n}from"./centroidOperator-CjAu4toY.js";var r=e({execute:()=>t,supportsCurves:()=>n});export{r as t};

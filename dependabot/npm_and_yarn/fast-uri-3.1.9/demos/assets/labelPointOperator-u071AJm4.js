@@ -1,0 +1,1 @@
+import"./apiConverter-DJGhCaRo.js";export{r as execute,i as executeMany,n as supportsCurves}from"./labelPointOperator-CGQeaMe2.js";
