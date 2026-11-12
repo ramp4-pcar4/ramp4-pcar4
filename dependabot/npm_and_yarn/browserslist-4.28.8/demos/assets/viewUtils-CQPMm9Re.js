@@ -1,0 +1,1 @@
+import{Da as e,Lu as t,Zu as n}from"./store-DqDAc_Fp.js";import{a as r}from"./screenUtils-BjEA_qFF.js";function i(r,i,o,s,c=n()){let l=t(a,r);return l[2]=e(s,l,i,o)||0,s.renderCoordsHelper.toRenderCoords(l,i,c),c}var a=n();r(),r();export{i as t};

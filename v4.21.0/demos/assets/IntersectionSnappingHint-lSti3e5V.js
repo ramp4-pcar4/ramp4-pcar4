@@ -1,0 +1,1 @@
+import{n as e}from"./vec3-PQmvgJ1Y.js";import{n as t}from"./LineSnappingHint-Cl31zJJW.js";var n=class n extends t{constructor(e,t,n=3){super(t,n),this.intersectionPoint=e}equals(t){return t instanceof n&&e(this.intersectionPoint,t.intersectionPoint)}};export{n as t};

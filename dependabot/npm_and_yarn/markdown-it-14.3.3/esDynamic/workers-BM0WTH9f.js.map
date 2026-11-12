@@ -1,0 +1,1 @@
+{"version":3,"file":"workers-BM0WTH9f.js","names":["o","g","r"],"sources":["../../node_modules/@arcgis/core/core/workers.js"],"sourcesContent":["/* COPYRIGHT Esri - https://js.arcgis.com/5.1.27/LICENSE.txt */\nimport{open as o}from\"./workers/workers.js\";const r=o;export{r as open};\n"],"ignoreList":[0],"mappings":";;AAC4C,IAAME,IAAEF"}

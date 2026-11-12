@@ -1,0 +1,1 @@
+import{Ss as e}from"./store-DCNLIr2s.js";import{t}from"./OperatorSimplifyOGC-BXtBwNpk.js";var n=new t;function r(e,t,r){return n.execute(e,t,r,null)}function i(t,r,i){let a=n.executeMany(new e(t),r,i,null);return Array.from(a)}function a(e,t,r,i){return n.isSimple(e,t,r,i,null)}function o(){return n.supportsCurves()}export{i,o as n,r,a as t};

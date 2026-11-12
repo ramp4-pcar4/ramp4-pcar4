@@ -1,0 +1,1 @@
+import"./apiConverter-BAU9dRZQ.js";export{a as accelerateGeometry,n as execute,r as isValidDE9IM,i as supportsCurves}from"./relateOperator-BDxFE7Tf.js";

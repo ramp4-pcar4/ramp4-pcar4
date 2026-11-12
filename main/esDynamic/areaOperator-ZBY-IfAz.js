@@ -1,0 +1,1 @@
+import{r as e}from"./rolldown-runtime-CEFd7nDs.js";import"./units-CZHdfYaD.js";import"./apiConverter-D9D7aHEd.js";import{t}from"./areaOperator-D4MS0ZWb.js";var n=e({execute:()=>t,supportsCurves:()=>!0});export{n as t};
