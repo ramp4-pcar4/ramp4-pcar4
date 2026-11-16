@@ -108,8 +108,7 @@ function doSearch(sections: any) {
         //reset the text to original before looking for search term
         section.info = originalTextArray.value[index];
         //find the search term in each section
-        section.drawn =
-            findInfo(section) || section.header.toLowerCase().indexOf(normalizedSearchTerm) > -1;
+        section.drawn = findInfo(section) || section.header.toLowerCase().indexOf(normalizedSearchTerm) > -1;
         numResults = section.drawn ? numResults + 1 : numResults;
         section.expanded = section.drawn && currentSearchTerm.length > 2;
         if (section.drawn && currentSearchTerm.length > 2) {

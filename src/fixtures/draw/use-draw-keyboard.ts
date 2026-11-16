@@ -12,7 +12,7 @@ import {
 import type { EsriGeometry, EsriGraphicHit, EsriGraphicsLayer } from '@/geo/esri';
 
 import { useDrawStore } from './store';
-import type { DrawGraphicLike, Vertex } from './types';
+import type { DrawGraphicLike, DrawGraphicType, Vertex } from './types';
 
 type DrawKeyboardOptions = {
     iApi: InstanceAPI;
@@ -71,19 +71,37 @@ export const useDrawKeyboard = ({
     cancelPendingFeatureCountRefresh,
     refreshSelectedGraphicFeatureCounts
 }: DrawKeyboardOptions) => {
+    /**
+     * If we are creating a line or polygon (something with multiple vertices)
+     */
     let multiPointMode = false;
+
+    /**
+     * The multipoint thing we are building (as shown on the map)
+     */
     let multiPointGraphic: EsriGraphic | null = null;
+
+    /**
+     * Our collection of points for our multipoint thing
+     */
     let multiPointVertices: Vertex[] = [];
 
-    const resetMultiPointState = () => {
+    /**
+     * Resets / turns off the multi-point var trackers
+     */
+    const resetMultiPointState = (): void => {
         multiPointMode = false;
         multiPointGraphic = null;
         multiPointVertices = [];
     };
 
-    const updateMultiPointGraphicGeometry = () => {
-        const view = iApi.geo.map.esriView!;
+    /**
+     * Updates the geometry part of our multi-point graphic using the values of the multi-point vertice array
+     */
+    const updateMultiPointGraphicGeometry = (): void => {
         if (!multiPointGraphic) return;
+
+        const view = iApi.geo.map.esriView!;
 
         if (drawStore.activeTool === 'polyline') {
             multiPointGraphic.geometry = new EsriPolyline({
@@ -98,6 +116,10 @@ export const useDrawKeyboard = ({
         }
     };
 
+    /**
+     * Generates the initial line/polygon when starting our keyboard drawing process.
+     * @returns the esri graphic with proper styling, but no fancy attributes
+     */
     const createMultiPointGraphic = (): EsriGraphic => {
         const sketch = getSketch();
         const view = iApi.geo.map.esriView!;
@@ -126,12 +148,16 @@ export const useDrawKeyboard = ({
         });
     };
 
-    const addMultiPointVertexAtCenter = () => {
+    /**
+     * Will add a vertex to our line/poly based on the crosshairs position. If first call, will set up multiPointMode
+     */
+    const addMultiPointVertexAtCenter = (): void => {
         const view = iApi.geo.map.esriView!;
         const activeTool = drawStore.activeTool ?? undefined;
         const centerScreen = { x: Math.floor(view.width / 2), y: Math.floor(view.height / 2) };
         const centerPoint = view.toMap(centerScreen);
 
+        // check for initial / starting case
         if (!multiPointMode) {
             multiPointMode = true;
             multiPointVertices = [[centerPoint.x, centerPoint.y]];
@@ -148,6 +174,25 @@ export const useDrawKeyboard = ({
             );
             return;
         }
+
+        // check for ending case: user had booped the last position twice
+        const lastPoint = multiPointVertices.at(-1)!;
+
+        // if we encounter floating point mismatches, try doing a toFixed down to 8 or 9 decimals on all the numbers
+        if (lastPoint[0] === centerPoint.x && lastPoint[1] === centerPoint.y) {
+            if (multiPointVertices.length === 1) {
+                // they are being foolish on the first position. ignore it.
+                return;
+            }
+
+            // note: this call will ping the .updateAlert() for this action
+            commitDrawing(multiPointGraphic!);
+            resetMultiPointState();
+
+            return;
+        }
+
+        // we are still drawing the shape, add the new vertex to our shape-in-progress
 
         multiPointVertices.push([centerPoint.x, centerPoint.y]);
         updateMultiPointGraphicGeometry();
@@ -300,12 +345,25 @@ export const useDrawKeyboard = ({
 
         if (!graphic) return;
 
+        commitDrawing(graphic);
+    };
+
+    /**
+     * Will finalize a graphic into the store, and clean up stuff
+     * @param graphic the new drawing to commit
+     */
+    const commitDrawing = (graphic: EsriGraphic): void => {
+        const sketch = getSketch();
+        const activeTool = drawStore.activeTool;
+
+        if (!sketch || !activeTool) return;
+
         const id = prepareDrawGraphic(graphic, activeTool);
         getGraphicsLayer()?.add(graphic);
         syncBufferGraphic(graphic);
         drawStore.addGraphic({
             id,
-            type: activeTool,
+            type: activeTool as DrawGraphicType,
             geometry: graphic.geometry,
             attributes: graphic.attributes
         });
@@ -325,7 +383,11 @@ export const useDrawKeyboard = ({
         );
     };
 
-    const removeLastMultiPointVertex = () => {
+    /**
+     * Remove the last point of the line/poly being constructed
+     */
+    const removeLastMultiPointVertex = (): void => {
+        // note: the code that calls this has protections against running this on one-vertex shapes
         const activeTool = drawStore.activeTool ?? undefined;
         multiPointVertices.pop();
         updateMultiPointGraphicGeometry();
@@ -339,7 +401,10 @@ export const useDrawKeyboard = ({
         );
     };
 
-    const cancelMultiPointMode = () => {
+    /**
+     * Will cancel a multi point mode session and clean things up
+     */
+    const cancelMultiPointMode = (): void => {
         if (multiPointGraphic) {
             getGraphicsLayer()?.remove(multiPointGraphic);
         }
@@ -349,9 +414,9 @@ export const useDrawKeyboard = ({
     };
 
     /**
-     * Handles keyboard events for drawing and selecting graphics.
+     * Handles keyboard keystroke events for drawing and selecting graphics.
      */
-    const handleNavigationKeyDown = (e: KeyboardEvent) => {
+    const handleNavigationKeyDown = (e: KeyboardEvent): void => {
         const mapElement = iApi.geo.map.esriView?.container;
         if (!document.activeElement || !mapElement?.contains(document.activeElement)) {
             return;
@@ -394,12 +459,25 @@ export const useDrawKeyboard = ({
                 setSelectedGraphic(null);
                 highlightSelectedGraphic(undefined);
                 drawStore.clearSelection();
+                if (multiPointMode && multiPointVertices.length) {
+                    // note: this call will also make an update alert.
+                    //       it says "drawing cancelled", while the one below says "drawing tool cancelled"
+                    //       both statements are technically true (we stopped the multipoint in progress, but also deselected the tool)
+                    //       leaving both for now, since more info should be more helpful.
+                    cancelMultiPointMode();
+                }
                 void refreshMeasurementGraphics();
                 iApi.updateAlert(t('draw.tool.canceled'));
                 break;
         }
     };
 
+    /**
+     * Does a cheap "center" calculation for geometry. Point is point, line/poly uses a
+     * "middle of the bounding box" approach.
+     * @param geometry
+     * @returns object with x & y props, representing the center of the param
+     */
     const getGeometryCenter = (geometry: EsriGeometry): { x: number; y: number } => {
         if (geometry.type === 'point') {
             const point = geometry as EsriPoint;

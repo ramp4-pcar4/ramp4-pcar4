@@ -62,7 +62,7 @@ Open the Draw tool group in the map navigation controls and choose one of the av
 | ${mapnavButton(DRAW_HELP_ICONS.rectangle)} | Rectangle | Select-hold on the map, drag to size the rectangle, then release. |
 | ${mapnavButton(DRAW_HELP_ICONS.circle)} | Circle | Select-hold on the map, drag to size the circle, then release. |
 
-Press <kbd>Escape</kbd> to cancel the active drawing tool.
+Press <kbd>Escape</kbd> to cancel the active drawing tool. <kbd>Enter</kbd> can be used in place of a mouse click, using the center of the map. Pressing <kbd>Enter</kbd> twice will finalize a polygon or polyline.
 
 ### Shape Inspector
 
@@ -115,7 +115,7 @@ Ouvrez le groupe d'outils de dessin dans les contrôles de navigation de la cart
 | ${mapnavButton(DRAW_HELP_ICONS.rectangle)} | Rectangle | Sélectionnez et maintenez sur la carte, faites glisser pour dimensionner le rectangle, puis relâchez. |
 | ${mapnavButton(DRAW_HELP_ICONS.circle)} | Cercle | Sélectionnez et maintenez sur la carte, faites glisser pour dimensionner le cercle, puis relâchez. |
 
-Appuyez sur <kbd>Échap</kbd> pour annuler l'outil de dessin actif.
+Appuyez sur <kbd>Échap</kbd> pour annuler l'outil de dessin actif. La touche <kbd>Entrée</kbd> peut être utilisée en remplacement d'un clic de souris, en prenant comme référence le centre de la carte. Appuyer deux fois sur <kbd>Entrée</kbd> permet de finaliser un polygone ou une polyligne.
 
 ### Inspecteur de forme
 

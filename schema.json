@@ -751,7 +751,7 @@
                     "description": "Map navigation buttons displayed on mapnav. These will be displayed in addition to the zoom buttons, which are always visible.",
                     "items": {
                         "type": "string",
-                        "enum": ["geolocator", "home", "basemap", "help", "fullscreen", "geosearch", "legend"]
+                        "enum": ["geolocator", "home", "basemap", "help", "fullscreen", "geosearch", "legend", "draw"]
                     },
                     "uniqueItems": true
                 }

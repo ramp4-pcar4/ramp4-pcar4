@@ -49,6 +49,20 @@ The Draw tools are intended for advanced users and are _not_ enabled by default.
 
 > If the draw config is missing, all types will be loaded with default configuration.
 
+### Drawing Toolbar
+
+To have the drawing options appear as buttons on the map naviagtion toolbar, add `'draw'` to the `mapnav` fixture config's `items` array.
+
+```json
+{
+  "fixtures": {
+    "mapnav": {
+      "items": ["fullscreen", "help", "home", "geolocator", "basemap", "draw"]
+    }
+  }
+}
+```
+
 ## Importing Shapes By API
 
 Map authors can import saved draw shapes through the Draw fixture API. The source can be a JSON URL or a JSON object using the same format produced by the Draw fixture export buttons.
