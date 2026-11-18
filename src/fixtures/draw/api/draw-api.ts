@@ -18,7 +18,7 @@ import {
     resolveGraphicIdentifyBufferMode
 } from '../settings';
 import type { DrawBufferMathType, DrawBufferSettings, DrawBufferUnit, DrawIdentifyBufferMode } from '../settings';
-import { createDrawBufferGeometry, createDrawBufferOnlyGeometry, loadDrawBufferOperators } from '../draw-utils.ts';
+import { createDrawBufferGeometry, createDrawBufferOnlyGeometry, loadDrawBufferOperators } from '../draw-utils';
 import {
     createDrawShapesExportFile,
     downloadDrawShapes,

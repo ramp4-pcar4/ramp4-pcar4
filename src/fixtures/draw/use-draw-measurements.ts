@@ -1729,6 +1729,13 @@ export const useDrawMeasurements = ({
         }
     };
 
+    /**
+     * Will re-do / refresh any measurements on the map for a shape, including removing them if appropriate.
+     * Typical call would be new shape, edited shape, toggling measurement settings.
+     *
+     * @param activeGraphic the shape to refresh
+     * @param activeTool will force the tool type, if missing will use the property on the activeGraphic
+     */
     const refreshMeasurementGraphics = async (activeGraphic?: EsriGraphic, activeTool?: string) => {
         const refreshRunId = ++measurementRefreshRunId;
 

@@ -600,7 +600,7 @@ import {
     resolveGraphicMapLabelSettings,
     resolveGraphicStyleSettings
 } from './settings';
-import { createDrawBufferGeometry, loadDrawBufferOperators } from './draw-utils.ts';
+import { createDrawBufferGeometry, loadDrawBufferOperators } from './draw-utils';
 import type { DrawBufferSettings, DrawBufferUnit, DrawIdentifyBufferMode, DrawMapLabelSettings } from './settings';
 import { createDrawShapesFileName, downloadDrawShapes } from './shape-io';
 import { useDrawStore } from './store';

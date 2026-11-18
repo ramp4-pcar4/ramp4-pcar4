@@ -71,7 +71,7 @@ import {
     resolveGraphicStyleSettings
 } from './settings';
 import type { DrawBufferSettings, DrawIdentifyBufferMode, DrawMapLabelSettings, DrawStyleSettings } from './settings';
-import { createDrawBufferGraphic, createDrawSymbol, loadDrawBufferOperators } from './draw-utils.ts';
+import { createDrawBufferGraphic, createDrawSymbol, loadDrawBufferOperators } from './draw-utils';
 import { isPanelOpen, openDrawShapeDetailsPanel } from './panel-utils';
 import type { DrawShapeDetailsTab } from './panel-utils';
 import { drawingToRampGeom, getDrawShapeId } from './shape-io';
