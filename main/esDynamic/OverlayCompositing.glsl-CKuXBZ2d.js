@@ -1,0 +1,1 @@
+import"./SceneLighting-6kzqAvBp.js";import"./oitResolution.glsl-BCtuJbnO.js";import"./NoParameters-DkFljfyr.js";import"./ShaderBuilder-DLSRsa9t.js";export{n as OverlayCompositingPassParameters,t as build}from"./OverlayRenderer-B5T29xNZ.js";

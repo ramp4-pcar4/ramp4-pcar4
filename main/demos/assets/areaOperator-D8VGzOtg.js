@@ -1,0 +1,1 @@
+import{r as e}from"./rolldown-runtime-BCiCTKAo.js";import"./store-Dx3UekD1.js";import"./apiConverter-Bi_vhE0d.js";import{t}from"./areaOperator-X6unrM5s.js";var n=e({execute:()=>t,supportsCurves:()=>!0});export{n as t};

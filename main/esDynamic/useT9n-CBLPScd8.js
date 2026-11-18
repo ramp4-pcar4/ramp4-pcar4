@@ -1,0 +1,1 @@
+import{r as e}from"./controllers-CPNASnbI.js";import{i as t}from"./runtime-HDefNvCR.js";var n=e(t);export{n as t};

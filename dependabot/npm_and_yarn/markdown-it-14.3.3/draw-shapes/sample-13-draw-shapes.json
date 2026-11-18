@@ -1,0 +1,93 @@
+{
+    "fileType": "ramp4-draw-shapes",
+    "version": 1,
+    "exportedAt": "2026-05-07T19:25:41.629Z",
+    "shapes": [
+        {
+            "id": "R1000",
+            "type": "rectangle",
+            "geometry": {
+                "spatialReference": {
+                    "wkid": 3978
+                },
+                "rings": [
+                    [
+                        [-107717.95847091451, 574747.4465752258],
+                        [554403.1574379839, 574747.4465752258],
+                        [554403.1574379839, -110524.75730251614],
+                        [-107717.95847091451, -110524.75730251614],
+                        [-107717.95847091451, 574747.4465752258]
+                    ]
+                ]
+            },
+            "settings": {
+                "drawStyle": {
+                    "fillColor": "#0099db",
+                    "borderColor": "#006895",
+                    "bufferColor": "#75c8ec",
+                    "opacity": 35,
+                    "borderColorManual": false,
+                    "bufferColorManual": false
+                },
+                "drawBuffer": {
+                    "distance": 100,
+                    "unit": "kilometers"
+                },
+                "drawIdentifyBufferMode": "buffer-only",
+                "drawMapLabels": {
+                    "areaLabel": true,
+                    "segmentLength": false,
+                    "segmentLetters": false,
+                    "vertexNumbers": false
+                }
+            }
+        },
+        {
+            "id": "P1000",
+            "type": "polyline",
+            "geometry": {
+                "spatialReference": {
+                    "wkid": 3978
+                },
+                "paths": [
+                    [
+                        [2267583.6671323357, 1097962.0346710691],
+                        [1623983.4215985108, 1412816.8310473287],
+                        [1693436.685505039, 1111852.6874523745],
+                        [2406490.1949453913, 185809.16869867034],
+                        [1915687.1300059278, 139506.99276098516],
+                        [873888.1714080106, 1232238.344890356],
+                        [665528.3796884269, 278413.5205740407],
+                        [1360061.0187537055, 482143.0946998559],
+                        [1341540.148378631, -360556.5073660156],
+                        [114532.48602997325, -314254.3314283304],
+                        [-237364.0510964347, 625679.84010668],
+                        [225657.70828041807, 1116482.905046143],
+                        [355303.8009059364, 834039.6318262634]
+                    ]
+                ]
+            },
+            "settings": {
+                "drawStyle": {
+                    "fillColor": "#dc2626",
+                    "borderColor": "#7f1d1d",
+                    "bufferColor": "#fca5a5",
+                    "opacity": 42,
+                    "borderColorManual": true,
+                    "bufferColorManual": true
+                },
+                "drawBuffer": {
+                    "distance": 50,
+                    "unit": "kilometers"
+                },
+                "drawIdentifyBufferMode": "shape-buffer",
+                "drawMapLabels": {
+                    "areaLabel": false,
+                    "segmentLength": true,
+                    "segmentLetters": true,
+                    "vertexNumbers": true
+                }
+            }
+        }
+    ]
+}

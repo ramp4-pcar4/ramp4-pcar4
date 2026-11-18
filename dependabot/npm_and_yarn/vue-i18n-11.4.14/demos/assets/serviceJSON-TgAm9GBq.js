@@ -1,0 +1,1 @@
+import{hm as e}from"./store-CYuESy5_.js";async function t(t,n){return(await e(t,{responseType:`json`,query:{f:`json`,...n?.customParameters,token:n?.apiKey}})).data}export{t};

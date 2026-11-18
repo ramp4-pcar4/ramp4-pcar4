@@ -1,0 +1,1 @@
+import{u as e}from"./arrayUtils-CWRatn_8.js";import{t}from"./lengthUtils-D1XxBKNY.js";function n(e){return!!e&&t[e]!=null}function r(e){return 1/(t[e]||1)}function i(){let n=Object.keys(t);return e(n,`decimal-degrees`),n.sort(),n}var a=i();export{r as n,a as r,n as t};

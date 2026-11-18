@@ -1,0 +1,1 @@
+import{b as e}from"./units-Z4tu6x-X.js";import{t}from"./Portal-DQjgK7gC.js";function n(n){let r=`metric`;if(!n)return r;let{map:i}=n,a=(i&&`portalItem`in i?i.portalItem?.portal:null)??t.getDefault();switch(a.user?.units??a.units){case r:return r;case`english`:return`imperial`}return e(n.spatialReference)??r}export{n as t};

@@ -1,0 +1,1 @@
+import{xt as e}from"./SpatialReference-ClNEoXTN.js";import{o as t,r as n}from"./jsonConverter-Bly-jvGP.js";var r=new e;function i(e,i){let a=t(e);return r.execute(a.getGeometry(),n(i),a.getSpatialReference())}export{i as execute};

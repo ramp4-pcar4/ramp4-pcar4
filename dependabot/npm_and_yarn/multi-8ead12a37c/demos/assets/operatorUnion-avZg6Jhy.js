@@ -1,0 +1,1 @@
+import{Ss as e}from"./store-Bly-CI_i.js";import"./MultiPathImpl-Dnp-OZBL.js";import{Q as t}from"./SpatialReference-BXCxVO742.js";var n=new t;function r(e,t,r){return n.execute(e,t,r,null)}function i(t,r){return n.executeMany(new e(t),r,null).next()}function a(){return n.supportsCurves()}export{r as n,i as r,a as t};

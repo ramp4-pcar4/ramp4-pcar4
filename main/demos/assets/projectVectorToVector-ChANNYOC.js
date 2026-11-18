@@ -1,0 +1,1 @@
+import{g as e}from"./projectionUtils-X55hLa1H.js";import{t}from"./SpatialReference-iBXlculN.js";import{Co as n,ha as r}from"./store-Dx3UekD1.js";import{n as i}from"./projectPointToVector-CCeILgFz.js";function a(t,r,a,s){return!(r==null||s==null||t.length<2)&&(e(r,s)?n(t,r,0,a,s,0,1):(o.x=t[0],o.y=t[1],o.z=t[2],o.spatialReference=r,i(o,a,s)))}var o=r(0,0,0,t.WGS84);export{a as t};

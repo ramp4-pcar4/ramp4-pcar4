@@ -1,0 +1,1 @@
+import{r as e}from"./rolldown-runtime-BCiCTKAo.js";import"./OperatorIntersects-BR75_Fhx.js";import"./apiConverter-Bi_vhE0d.js";import{n as t,r as n,t as r}from"./intersectsOperator-BmhXfifX.js";var i=e({accelerateGeometry:()=>r,execute:()=>n,supportsCurves:()=>t});export{i as t};

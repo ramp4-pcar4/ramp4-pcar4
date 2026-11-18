@@ -1,0 +1,1 @@
+import{n as e}from"./controllers-B-trUjtY.js";var t=t=>e(e=>{function n(n){let{form:r}=e.elementInternals;n.defaultPrevented||e.disabled||t?.disabled?.()||!r||e.type===`button`||(e.type===`submit`?r.requestSubmit():r.reset())}e.listen(`luminaFormAssociatedCallback`,({detail:[t]})=>{t?e.el.addEventListener(`click`,n):e.el.removeEventListener(`click`,n)})});export{t};

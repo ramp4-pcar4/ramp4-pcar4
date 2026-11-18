@@ -1,0 +1,1 @@
+import{xs as e}from"./store-DBhOFu5Q.js";import{t}from"./OperatorGeneralize-DhJUQqnn.js";var n=new t;function r(e,t,r){return n.execute(e,t,r,null)}function i(t,r,i){let a=n.executeMany(new e(t),r,i,null);return Array.from(a)}function a(){return n.supportsCurves()}export{r as n,a as r,i as t};

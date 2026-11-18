@@ -1,0 +1,1 @@
+import"./OperatorProximity-DpMgasX3.js";import"./units-Z4tu6x-X.js";import"./apiConverter-Bg_87aFH.js";export{t as getNearestCoordinate,r as getNearestVertex,i as getNearestVertices,a as supportsCurves}from"./proximityOperator-DtD-lr_z.js";

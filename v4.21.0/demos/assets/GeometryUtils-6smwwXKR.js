@@ -1,0 +1,1 @@
+128/Math.PI;var e=256/360,t=1/Math.LN2;function n(e,t){return(e%=t)>=0?e:e+t}function r(t){return n(t*e,256)}function i(e){return Math.log(e)*t}export{i as n,r as t};

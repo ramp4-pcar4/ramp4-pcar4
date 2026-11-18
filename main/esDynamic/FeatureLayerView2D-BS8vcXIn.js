@@ -1,0 +1,1 @@
+import{r as e}from"./tslib.es6-B8mhy9sW.js";import{n as t}from"./decorators-BC6FetWB.js";import{n}from"./FeatureLikeLayerView-CREQtQQu.js";import{t as r}from"./FeatureLayerView-_d5LgWtA.js";var i=class extends n(r){};i=e([t(`esri.views.2d.layers.FeatureLayerView2D`)],i);var a=i;export{a as default};

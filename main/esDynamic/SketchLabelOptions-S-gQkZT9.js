@@ -1,0 +1,1 @@
+import{r as e}from"./tslib.es6-B8mhy9sW.js";import{t}from"./Accessor-DddR378_.js";import{n,t as r}from"./decorators-BC6FetWB.js";var i=class extends t{constructor(e){super(e),this.enabled=!1}};e([r({type:Boolean,nonNullable:!0})],i.prototype,`enabled`,void 0),i=e([n(`esri.views.interactive.sketch.SketchLabelOptions`)],i);export{i as t};

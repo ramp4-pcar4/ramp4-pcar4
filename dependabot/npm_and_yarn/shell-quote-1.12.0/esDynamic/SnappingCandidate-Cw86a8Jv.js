@@ -1,0 +1,1 @@
+var e=class{constructor(e,t,n,r){this.targetPoint=e,this.constraint=t,this.isDraped=n,this.domain=r}};export{e as t};

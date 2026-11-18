@@ -1,0 +1,1 @@
+import{_m as e}from"./store-5v4E3u6t.js";async function t(t,n){return(await e(t,{responseType:`image`,...n})).data}export{t};

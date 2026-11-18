@@ -1,0 +1,40 @@
+import e from "./screen-CegGh2BG.js";
+import { P as t, W as n, s as r } from "./main-DxKmGvij.js";
+import { markRaw as i } from "vue";
+// src/fixtures/areas-of-interest/lang/lang.csv?raw
+var a = {
+	en: {
+		"areas-of-interest.title": "Areas of Interest",
+		"areas-of-interest.select": "Select area of interest"
+	},
+	fr: {
+		"areas-of-interest.title": "Zones d'intérêt",
+		"areas-of-interest.select": "Sélectionner la zone d'intérêt"
+	}
+}, o = class extends r {
+	get config() {
+		return super.config;
+	}
+	_parseConfig(e) {
+		if (!e) return;
+		let n = t(this.$vApp.$pinia);
+		n.areas = e.areas, this.handlePanelTeleports(["areas-of-interest"]);
+	}
+}, s = class extends o {
+	added() {
+		this.$iApi.panel.register({ "areas-of-interest": {
+			screens: { "areas-of-interest-screen": i(e) },
+			style: { width: "350px" },
+			button: {
+				tooltip: "areas-of-interest.title",
+				icon: "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\"/><path d=\"M12 10.9c-.61 0-1.1.49-1.1 1.1s.49 1.1 1.1 1.1c.61 0 1.1-.49 1.1-1.1s-.49-1.1-1.1-1.1zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm2.19 12.19L6 18l3.81-8.19L18 6l-3.81 8.19z\"/></svg>"
+			},
+			alertName: "areas-of-interest.title"
+		} }, { i18n: { messages: a } }), this._parseConfig(this.config);
+		let r = this.$vApp.$watch(() => this.config, (e) => this._parseConfig(e));
+		this.removed = () => {
+			r(), this.$iApi.fixture.exists("appbar") && n(this.$vApp.$pinia).removeButton("areas-of-interest"), this.$iApi.panel.remove("areas-of-interest"), t(this.$vApp.$pinia).$reset();
+		};
+	}
+};
+export { s as default };

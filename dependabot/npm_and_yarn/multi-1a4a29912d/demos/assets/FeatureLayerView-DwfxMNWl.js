@@ -1,0 +1,1 @@
+import{t as e}from"./FeatureLikeLayerView-5ve_E5Ic.js";var t=class extends e{constructor(){super(...arguments),this.layer=null}};export{t};

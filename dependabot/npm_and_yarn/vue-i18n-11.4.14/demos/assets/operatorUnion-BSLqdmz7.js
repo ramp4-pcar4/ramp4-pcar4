@@ -1,0 +1,1 @@
+import{xs as e}from"./store-CYuESy5_.js";import"./MultiPathImpl-DUGfNPfa.js";import{Q as t}from"./SpatialReference-yZ_LSCnD.js";var n=new t;function r(e,t,r){return n.execute(e,t,r,null)}function i(t,r){return n.executeMany(new e(t),r,null).next()}function a(){return n.supportsCurves()}export{r as n,i as r,a as t};
